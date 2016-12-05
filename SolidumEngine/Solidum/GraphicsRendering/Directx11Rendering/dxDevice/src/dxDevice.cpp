@@ -1,0 +1,346 @@
+#include "..\include\dxDevice.h"
+
+dxDevice::dxDevice()
+{
+}
+
+dxDevice::~dxDevice()
+{
+	dxDev->Release();
+	dxDevContext->Release();
+	dxSwapchain->Release();
+}
+
+void dxDevice::Initialize(dxConfigBlock *config)
+{
+	dxConfigBlock *devConfig = config;
+
+	HRESULT result;
+
+	DXGI_SWAP_CHAIN_DESC scd;
+
+	ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
+
+	scd.BufferCount = devConfig->swapchain.BufferCount;
+	scd.BufferDesc.Format = devConfig->swapchain.Format;
+	scd.BufferUsage = devConfig->swapchain.BufferUsage;
+
+	scd.SampleDesc.Count = config->swapchain.SampleCount;
+	scd.OutputWindow = devConfig->swapchain.OutputWindow;
+	scd.Windowed = devConfig->swapchain.Windowed;
+
+	result = D3D11CreateDeviceAndSwapChain(
+		NULL,
+		devConfig->dev.DriverType,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		devConfig->dev.SDKVersion,
+		&scd,
+		&dxSwapchain,
+		&dxDev,
+		NULL,
+		&dxDevContext
+		);
+
+		assert(result == S_OK && "dx device creation failed");
+
+		InitializeFrameBuffer();
+		InitializeDepthBuffer();
+		InitializeDepthStencilStates();
+		InitializeViewport();
+		InitializeBlendStates();
+
+		InitializeLightMesh();
+}
+
+void dxDevice::InitializeDepthBuffer()
+{
+	HRESULT result;
+	D3D11_TEXTURE2D_DESC descDepth;
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+
+	ZeroMemory(&descDepth, sizeof(descDepth));
+	ZeroMemory(&descDSV, sizeof(descDSV));
+
+	descDepth.Width = windowAccessor::screen_width;
+	descDepth.Height = windowAccessor::screen_height;
+	descDepth.MipLevels = 1;
+	descDepth.ArraySize = 1;
+	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDepth.SampleDesc.Count = 1;
+	descDepth.SampleDesc.Quality = 0;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descDepth.CPUAccessFlags = 0;
+	descDepth.MiscFlags = 0;
+
+	descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice = 0;
+
+	result = dxDev->CreateTexture2D(&descDepth, NULL, &depthTexture);
+
+	result = dxDev->CreateDepthStencilView(depthTexture, &descDSV, &depthStencil);
+}
+
+void dxDevice::InitializeFrameBuffer()
+{
+	HRESULT result;
+
+	result = dxSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&FrameBufferTexture);
+	result = dxDev->CreateRenderTargetView(FrameBufferTexture, NULL, &FrameBufferShaderAccess);
+}
+
+void dxDevice::InitializeDepthStencilStates()
+{
+	HRESULT result;
+
+	D3D11_DEPTH_STENCIL_DESC depthStencilDisabledDesc;
+	D3D11_DEPTH_STENCIL_DESC depthStencilEnableDesc;
+
+	ZeroMemory(&depthStencilEnableDesc, sizeof(depthStencilEnableDesc));
+
+	depthStencilEnableDesc.DepthEnable = true;
+	depthStencilEnableDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilEnableDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	depthStencilEnableDesc.StencilEnable = true;
+	depthStencilEnableDesc.StencilReadMask = 0xFF;
+	depthStencilEnableDesc.StencilWriteMask = 0xFF;
+
+	depthStencilEnableDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilEnableDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthStencilEnableDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilEnableDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	depthStencilEnableDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilEnableDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthStencilEnableDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilEnableDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	result = dxDev->CreateDepthStencilState(&depthStencilEnableDesc, &depthStencilEnable);
+
+	ZeroMemory(&depthStencilDisabledDesc, sizeof(depthStencilDisabledDesc));
+
+	depthStencilDisabledDesc.DepthEnable = false;
+	depthStencilDisabledDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilDisabledDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	depthStencilDisabledDesc.StencilEnable = true;
+	depthStencilDisabledDesc.StencilReadMask = 0xFF;
+	depthStencilDisabledDesc.StencilWriteMask = 0xFF;
+
+	depthStencilDisabledDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDisabledDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthStencilDisabledDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDisabledDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	depthStencilDisabledDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDisabledDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthStencilDisabledDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDisabledDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	result = dxDev->CreateDepthStencilState(&depthStencilDisabledDesc, &depthStencilDisable);
+}
+
+void dxDevice::InitializeBlendStates()
+{
+	HRESULT result;
+
+	D3D11_BLEND_DESC BlendEnableDesc;
+	ZeroMemory(&BlendEnableDesc, sizeof(D3D11_BLEND_DESC));
+	
+	//BlendEnableDesc.AlphaToCoverageEnable = FALSE;
+	//BlendEnableDesc.IndependentBlendEnable = FALSE;
+
+	//BlendEnableDesc.RenderTarget[0].BlendEnable = TRUE;
+	//BlendEnableDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	//BlendEnableDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	//BlendEnableDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	//BlendEnableDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+
+	BlendEnableDesc.RenderTarget[0].BlendEnable = TRUE;
+	BlendEnableDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendEnableDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendEnableDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	BlendEnableDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	BlendEnableDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	BlendEnableDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendEnableDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+
+	result = dxDev->CreateBlendState(&BlendEnableDesc, &blendEnable);
+
+
+	D3D11_BLEND_DESC BlendDisableDesc;
+	ZeroMemory(&BlendDisableDesc, sizeof(D3D11_BLEND_DESC));
+	BlendDisableDesc.RenderTarget[0].BlendEnable = TRUE;
+	BlendDisableDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	BlendDisableDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	BlendDisableDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	BlendDisableDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	BlendDisableDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+	BlendDisableDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	BlendDisableDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	result = dxDev->CreateBlendState(&BlendDisableDesc, &blendDisable);
+
+
+
+	int i = 9;
+}
+
+void dxDevice::InitializeLightMesh()
+{
+	int screen_width = windowAccessor::screen_width;
+	int screen_height = windowAccessor::screen_height;
+
+	int m_vertexCount, m_indexCount;
+
+	float left, right, top, bottom;
+	LIGHT_VERTEX* vertices;
+	unsigned long* indices;
+	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
+	D3D11_SUBRESOURCE_DATA vertexData, indexData;
+	HRESULT result;
+	int i;
+
+	left = (float)((screen_width / 2) * -1);
+	right = left + (float)screen_width;
+	top = (float)(screen_height / 2);
+	bottom = top - (float)screen_height;
+
+	m_vertexCount = 6;
+	m_indexCount = m_vertexCount;
+
+	vertices = new LIGHT_VERTEX[m_vertexCount];
+
+	indices = new unsigned long[m_indexCount];
+
+	vertices[0].position = D3DXVECTOR3(left, top, 0.0f);
+	vertices[0].texture = D3DXVECTOR2(0.0f, 0.0f);
+
+	vertices[1].position = D3DXVECTOR3(right, bottom, 0.0f);
+	vertices[1].texture = D3DXVECTOR2(1.0f, 1.0f);
+
+	vertices[2].position = D3DXVECTOR3(left, bottom, 0.0f);
+	vertices[2].texture = D3DXVECTOR2(0.0f, 1.0f);
+
+	vertices[3].position = D3DXVECTOR3(left, top, 0.0f);
+	vertices[3].texture = D3DXVECTOR2(0.0f, 0.0f);
+
+	vertices[4].position = D3DXVECTOR3(right, top, 0.0f);
+	vertices[4].texture = D3DXVECTOR2(1.0f, 0.0f);
+
+	vertices[5].position = D3DXVECTOR3(right, bottom, 0.0f);
+	vertices[5].texture = D3DXVECTOR2(1.0f, 1.0f);
+
+	for (i = 0; i<m_indexCount; i++)
+	{
+		indices[i] = i;
+	}
+
+	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufferDesc.ByteWidth = sizeof(LIGHT_VERTEX) * m_vertexCount;
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = 0;
+	vertexBufferDesc.MiscFlags = 0;
+	vertexBufferDesc.StructureByteStride = 0;
+
+	vertexData.pSysMem = vertices;
+	vertexData.SysMemPitch = 0;
+	vertexData.SysMemSlicePitch = 0;
+
+	result = dxDev->CreateBuffer(&vertexBufferDesc, &vertexData, &lightMeshVertices);
+
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.StructureByteStride = 0;
+
+	indexData.pSysMem = indices;
+	indexData.SysMemPitch = 0;
+	indexData.SysMemSlicePitch = 0;
+
+	result = dxDev->CreateBuffer(&indexBufferDesc, &indexData, &lightMeshIndex);
+
+	delete[] vertices;
+	vertices = 0;
+
+	delete[] indices;
+	indices = 0;
+}
+
+void dxDevice::setLightMesh()
+{
+	unsigned int stride;
+	unsigned int offset;
+
+
+	// Set vertex buffer stride and offset.
+	stride = sizeof(LIGHT_VERTEX);
+	offset = 0;
+
+	dxDevContext->IASetVertexBuffers(0, 1, &lightMeshVertices, &stride, &offset);
+
+	dxDevContext->IASetIndexBuffer(lightMeshIndex, DXGI_FORMAT_R32_UINT, 0);
+
+	dxDevContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void dxDevice::InitializeViewport()
+{
+	ZeroMemory(&meshViewport, sizeof(D3D11_VIEWPORT));
+
+	meshViewport.Width = (FLOAT)windowAccessor::screen_width;
+	meshViewport.Height = (FLOAT)windowAccessor::screen_height;
+	meshViewport.TopLeftX = 0;
+	meshViewport.TopLeftY = 0;
+	meshViewport.MaxDepth = 1;
+	meshViewport.MinDepth = 0;
+
+	ZeroMemory(&lightViewport, sizeof(D3D11_VIEWPORT));
+
+	lightViewport.Width = (FLOAT)windowAccessor::screen_width;
+	lightViewport.Height = (FLOAT)windowAccessor::screen_height;
+	lightViewport.TopLeftX = 0;
+	lightViewport.TopLeftY = 0;
+	lightViewport.MaxDepth = 1;
+	lightViewport.MinDepth = 0;
+}
+
+void dxDevice::clearDepthStencil()
+{
+	dxDevContext->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH, 1.0f, 0);
+}
+
+void dxDevice::disableDepthStencil()
+{
+	dxDevContext->OMSetDepthStencilState(depthStencilDisable, 1);
+}
+
+void dxDevice::enableDepthStencil()
+{
+	dxDevContext->OMSetDepthStencilState(depthStencilEnable, 1);
+}
+
+void dxDevice::enableBlending()
+{
+	dxDevContext->OMSetBlendState(blendEnable, 0, 0xffffffff);
+}
+
+void dxDevice::disableBlending()
+{
+	dxDevContext->OMSetBlendState(blendDisable, 0, 0xffffffff);
+}
+
+void dxDevice::setViewport(std::string viewportSelect)
+{
+	if(viewportSelect == "mesh")
+	dxDevContext->RSSetViewports(1, &meshViewport);
+	if(viewportSelect == "light")
+	dxDevContext->RSSetViewports(1, &lightViewport);
+}
+
