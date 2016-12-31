@@ -11,18 +11,15 @@ GPUPipeline::~GPUPipeline()
 {
 }
 
-void GPUPipeline::attachOP(void *pOpTarget, std::string opType, std::string opTargetName, std::string opTargetType)
+void GPUPipeline::attachOP(void *pOpTarget, std::string opType, std::string opTargetName, std::string opTargetType, std::string executionContext)
 {
-	GPUPipelineElement *newElement = new GPUPipelineElement;
+	GPUPipelineOP *newOP = new GPUPipelineOP;
 
-	newElement->name = opTargetName;
-	newElement->type = opType;
-	newElement->__opTargetType = opTargetType;
-	newElement->core = pOpTarget;
-	newElement->parentShader = "AGNOSTIC";
-	newElement->resourceSlot = 0;
+	newOP->type = opType;
+	newOP->targetType = opTargetType;
+	newOP->pTarget = pOpTarget;
 
-	_elementList->insert({ "OP", newElement });
+	_opList->push_back(newOP);
 }
 
 

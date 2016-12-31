@@ -206,12 +206,14 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 				}
 			}
 
-			if (splitStr.at(0) == "CLEAR") {
+			if (splitStr.at(0) == "PIPELINE_OP") {
 
-				RenderTarget* renderTarget = (RenderTarget*)GraphicsResourcePoolManagerAccessor::poolManager->
-					getPool("render_target_pool")->getResource(splitStr.at(2));
+				if (splitStr.at(3) == "GBUFFER") {
+					RenderTarget* renderTarget = (RenderTarget*)GraphicsResourcePoolManagerAccessor::poolManager->
+						getPool("render_target_pool")->getResource(splitStr.at(4));
 
-				newPipeline->attachOP(renderTarget, splitStr.at(0), splitStr.at(2), splitStr.at(1));
+					newPipeline->attachOP(renderTarget, splitStr.at(2), splitStr.at(4), "GBUFFER", splitStr.at(1));
+				}		
 			}
 
 			if (splitStr.at(0) == "DEPTH_TEST") {

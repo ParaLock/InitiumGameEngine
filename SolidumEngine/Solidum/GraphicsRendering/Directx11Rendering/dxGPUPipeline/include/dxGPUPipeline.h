@@ -5,6 +5,7 @@
 class dxGPUPipeline : public GPUPipeline
 {
 private:
+	void processOp(GPUPipelineOP* op);
 public:
 	dxGPUPipeline();
 	~dxGPUPipeline();

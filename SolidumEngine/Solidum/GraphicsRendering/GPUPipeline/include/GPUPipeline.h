@@ -14,13 +14,21 @@ public:
 	std::string parentShader;
 	std::string resourcePoolID;
 
-	//Only for ops
-	std::string __opTargetType;
-
 	int resourceSlot;
 	bool isOutput;
 
 	void * core;
+};
+
+class GPUPipelineOP {
+public:
+	void *pTarget;
+
+	std::string targetType;
+
+	std::string type;
+
+	bool deferred;
 };
 
 class GPUPipeline
@@ -35,6 +43,7 @@ private:
 
 protected:
 	std::map<std::string, GPUPipelineElement*> *_elementList;
+	std::list<GPUPipelineOP*> *_opList;
 	std::map<std::string, ShaderGeneralDataBuffer*> *_generalDataVarToBuffHash;
 
 	bool blendingEnabled;
@@ -44,7 +53,7 @@ public:
 	GPUPipeline();
 	~GPUPipeline();
 
-	void attachOP(void *pOpTarget, std::string opType, std::string opTargetName, std::string opTargetType);
+	void attachOP(void *pOpTarget, std::string opType, std::string opTargetName, std::string opTargetType, std::string executionContext);
 
 	void setDepthTest(bool enable);
 	void setBlending(bool enable);

@@ -2,10 +2,12 @@
 
 
 
+
 dxGPUPipeline::dxGPUPipeline()
 {
 	_elementList = new std::map<std::string, GPUPipelineElement*>;
 	_generalDataVarToBuffHash = new std::map<std::string, ShaderGeneralDataBuffer*>;
+	_opList = new std::list<GPUPipelineOP*>;
 }
 
 
@@ -13,6 +15,7 @@ dxGPUPipeline::~dxGPUPipeline()
 {
 	delete _elementList;
 	delete _generalDataVarToBuffHash;
+	delete _opList;
 }
 
 void dxGPUPipeline::use()
@@ -164,15 +167,6 @@ void dxGPUPipeline::use()
 				dxDeviceAccessor::dxEncapsulator->dxDevContext->
 					IASetInputLayout((ID3D11InputLayout*)inputLayout->getParameter("D3D_INPUT_LAYOUT"));
 			}
-
-			if (newElement->type == "CLEAR") {
-				if (newElement->__opTargetType == "GBUFFER") {
-
-					RenderTarget* gBuffToClear = (RenderTarget*)newElement->core;
-
-					gBuffToClear->Clear(0,0,0,0);
-				}
-			}
 		}
 	}
 
@@ -191,7 +185,34 @@ void dxGPUPipeline::use()
 	}
 }
 
+void dxGPUPipeline::processOp(GPUPipelineOP * op)
+{
+	if (op->type == "CLEAR") {
+		if (op->targetType == "GBUFFER") {
+			RenderTarget *renderTarget = (RenderTarget*)op->pTarget;
+
+			renderTarget->Clear(0,0,0,0);
+		}
+	}	
+}
+
 void dxGPUPipeline::draw(int numIndices)
 {
+	std::list<GPUPipelineOP*> deferredOps;
+
+	for (std::list<GPUPipelineOP*>::iterator itr = _opList->begin(); itr != _opList->end(); itr++) {
+		GPUPipelineOP* op = *itr;
+		if (!op->deferred) {
+			processOp(op);
+		}
+		else {
+			deferredOps.push_back(op);
+		}
+	}
+
 	dxDeviceAccessor::dxEncapsulator->dxDevContext->DrawIndexed(numIndices, 0, 0);
+
+	for (std::list<GPUPipelineOP*>::iterator itr = deferredOps.begin(); itr != deferredOps.end(); itr++) {
+		processOp(*itr);
+	}
 }

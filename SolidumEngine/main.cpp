@@ -147,12 +147,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		dxDeviceAccessor::dxEncapsulator->dxSwapchain->Present(1, 0);
 
-		RenderTarget* colorBuff = (RenderTarget*)GraphicsResourcePoolManagerAccessor::poolManager->getPool("render_target_pool")->getResource("color_gbuff");
-		RenderTarget* normalsBuff = (RenderTarget*)GraphicsResourcePoolManagerAccessor::poolManager->getPool("render_target_pool")->getResource("normals_gbuff");
-
-		colorBuff->Clear(0,0,0,0);
-		normalsBuff->Clear(0,0,0,0);
-
 		dxDeviceAccessor::dxEncapsulator->dxDevContext->ClearRenderTargetView(dxDeviceAccessor::dxEncapsulator->FrameBufferShaderAccess, D3DXCOLOR(0, 0, 0, 0));
 		dxDeviceAccessor::dxEncapsulator->clearDepthStencil();
 
