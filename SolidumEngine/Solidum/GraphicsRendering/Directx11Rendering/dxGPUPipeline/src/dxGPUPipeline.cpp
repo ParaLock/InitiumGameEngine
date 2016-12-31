@@ -1,0 +1,197 @@
+#include "../include/dxGPUPipeline.h"
+
+
+
+dxGPUPipeline::dxGPUPipeline()
+{
+	_elementList = new std::map<std::string, GPUPipelineElement*>;
+	_generalDataVarToBuffHash = new std::map<std::string, ShaderGeneralDataBuffer*>;
+}
+
+
+dxGPUPipeline::~dxGPUPipeline()
+{
+	delete _elementList;
+	delete _generalDataVarToBuffHash;
+}
+
+void dxGPUPipeline::use()
+{
+	dxDeviceAccessor::dxEncapsulator->dxDevContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	int debugRefPoint = -1;
+
+	std::vector<RenderTarget*> outputList;
+
+	ShaderInputLayout* currentInputLayout = nullptr;
+
+	for (std::map<std::string, GPUPipelineElement*>::iterator itr = 
+		_elementList->begin(); itr != _elementList->end(); ++itr)
+	{
+		GPUPipelineElement *newElement = itr->second;
+
+		newElement->type;
+		newElement->parentShader;
+
+		if (newElement->core != nullptr) {
+
+			if (newElement->type == "TEXTURE") {
+
+				Texture *tex = (Texture*)newElement->core;
+
+				ID3D11ShaderResourceView* dxTex =
+					(ID3D11ShaderResourceView*)tex->getParameter("D3D_TEXTURE");
+
+				if (newElement->parentShader == "PS") {
+					dxDeviceAccessor::dxEncapsulator->dxDevContext->PSSetShaderResources(newElement->resourceSlot, 1,
+						&dxTex);
+				}
+				else if (newElement->parentShader == "VS") {
+					dxDeviceAccessor::dxEncapsulator->dxDevContext->VSSetShaderResources(newElement->resourceSlot, 1,
+						&dxTex);
+				}
+			}
+
+			if (newElement->type == "TEXTURE_SAMPLER") {
+
+				TextureSampler *texSampler = (TextureSampler*)newElement->core;
+	
+				ID3D11SamplerState* dxTexSampler =
+					(ID3D11SamplerState*)texSampler->getParameter("D3D_TEXTURESAMPLER");
+	
+				if (newElement->parentShader == "PS") {
+					dxDeviceAccessor::dxEncapsulator->dxDevContext->PSSetSamplers(newElement->resourceSlot, 1,
+						&dxTexSampler);
+				}
+				else if (newElement->parentShader == "VS") {
+					dxDeviceAccessor::dxEncapsulator->dxDevContext->VSSetSamplers(newElement->resourceSlot, 1,
+						&dxTexSampler);
+				}
+			}
+
+
+			if (newElement->type == "RENDER_TARGET") {
+
+				RenderTarget *renderTarget = (RenderTarget*)newElement->core;
+
+
+				if (newElement->isOutput) {
+					outputList.push_back(renderTarget);
+				}
+				else {
+
+					ID3D11ShaderResourceView* tmpRT = (ID3D11ShaderResourceView*)renderTarget->getParameter("D3D_SHADERVIEW");
+
+					if (newElement->parentShader == "PS") {
+
+						dxDeviceAccessor::dxEncapsulator->dxDevContext->
+							PSSetShaderResources(newElement->resourceSlot, 1,
+							&tmpRT);
+					}
+					else if (newElement->parentShader == "VS") {
+						dxDeviceAccessor::dxEncapsulator->dxDevContext->
+							VSSetShaderResources(newElement->resourceSlot, 1,
+								&tmpRT);
+					}
+				}
+
+				if (outputList.size() > 0) {
+
+					dxDevice* dxCore = dxDeviceAccessor::dxEncapsulator;
+
+					ID3D11RenderTargetView **renderTargets = new ID3D11RenderTargetView*[outputList.size()];
+
+					for (size_t i = 0; i < outputList.size(); i++) {
+
+						renderTargets[i] = (ID3D11RenderTargetView*)outputList.at(i)->getParameter("D3D_RENDERTARGET");
+					}
+
+					dxCore->dxDevContext->OMSetRenderTargets(outputList.size(), renderTargets, dxCore->depthStencil);
+
+					delete[] renderTargets;
+				}
+			}
+
+			if (newElement->type == "BUFFER") {
+
+				GPUBuffer *gpuBuff = (GPUBuffer*)newElement->core;
+				ID3D11Buffer *gpuBuffPtr = (ID3D11Buffer*)gpuBuff->getParameter("D3D_BUFFER");
+
+				if (gpuBuff->getBuffType() == BUFFER_TYPE::INDEX_BUFF) {
+
+					dxDeviceAccessor::dxEncapsulator->dxDevContext->
+						IASetIndexBuffer(gpuBuffPtr, DXGI_FORMAT_R32_UINT, 0);
+				}
+				if (gpuBuff->getBuffType() == BUFFER_TYPE::VERTEX_BUFF) {
+
+					if (currentInputLayout != nullptr) {
+
+						UINT offset = 0;
+						UINT stride = currentInputLayout->getDataStride();
+
+						dxDeviceAccessor::dxEncapsulator->dxDevContext->
+							IASetVertexBuffers(0, 1, &gpuBuffPtr, &stride, &offset);
+					}
+				}
+			}
+
+
+			if (newElement->type == "CONSTANT_BUFFER") {
+
+				ShaderGeneralDataBuffer *shaderBuff = (ShaderGeneralDataBuffer*)newElement->core;
+
+				GPUBuffer *gpuBuff = (GPUBuffer*)shaderBuff->getGPUBuffer();
+				ID3D11Buffer *gpuBuffPtr = (ID3D11Buffer*)gpuBuff->getParameter("D3D_BUFFER");
+
+				if (gpuBuff->getBuffType() == BUFFER_TYPE::SHADER_BUFF) {
+					if (newElement->parentShader == "VS") {
+						dxDeviceAccessor::dxEncapsulator->dxDevContext->
+							VSSetConstantBuffers(newElement->resourceSlot, 1, &gpuBuffPtr);
+					}
+					if (newElement->parentShader == "PS") {
+						dxDeviceAccessor::dxEncapsulator->dxDevContext->
+							PSSetConstantBuffers(newElement->resourceSlot, 1, &gpuBuffPtr);
+					}
+				}
+			}
+
+			if (newElement->type == "INPUT_LAYOUT") {
+
+				ShaderInputLayout *inputLayout = (ShaderInputLayout*)newElement->core;
+
+				currentInputLayout = inputLayout;
+
+				dxDeviceAccessor::dxEncapsulator->dxDevContext->
+					IASetInputLayout((ID3D11InputLayout*)inputLayout->getParameter("D3D_INPUT_LAYOUT"));
+			}
+
+			if (newElement->type == "CLEAR") {
+				if (newElement->__opTargetType == "GBUFFER") {
+
+					RenderTarget* gBuffToClear = (RenderTarget*)newElement->core;
+
+					gBuffToClear->Clear(0,0,0,0);
+				}
+			}
+		}
+	}
+
+	if (depthTestEnabled) {
+		dxDeviceAccessor::dxEncapsulator->enableDepthStencil();
+	}
+	else {
+		dxDeviceAccessor::dxEncapsulator->disableDepthStencil();
+	}
+
+	if (blendingEnabled) {
+		dxDeviceAccessor::dxEncapsulator->enableBlending();
+	}
+	else {
+		dxDeviceAccessor::dxEncapsulator->disableBlending();
+	}
+}
+
+void dxGPUPipeline::draw(int numIndices)
+{
+	dxDeviceAccessor::dxEncapsulator->dxDevContext->DrawIndexed(numIndices, 0, 0);
+}
