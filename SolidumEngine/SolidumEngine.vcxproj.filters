@@ -4,7 +4,6 @@
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDevice.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDeviceAccessor.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDeviceManager.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxRenderer3D\include\dxRenderer3D.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxRenderTarget\include\dxRenderTarget.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxTextures\include\dxTexture.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxTextures\include\dxTextureSampleState.h" />
@@ -12,7 +11,6 @@
     <ClInclude Include="Solidum\GraphicsRendering\Mesh\include\mesh.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Mesh\include\meshLoader.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Mesh\include\meshLoaderOBJ.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Renderer3D\include\IRenderer3D.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Window\include\window.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Window\include\windowAccessor.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Camera\include\camera.h" />
@@ -54,13 +52,11 @@
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\src\dxDevice.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\src\dxDeviceAccessor.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\src\dxDeviceManager.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxRenderer3D\src\dxRenderer3D.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxRenderTarget\src\dxRenderTarget.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Lights\src\Light.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Mesh\src\mesh.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Mesh\src\meshLoader.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Mesh\src\meshLoaderOBJ.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Renderer3D\src\IRenderer3D.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Window\src\window.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Window\src\windowAccessor.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Camera\src\camera.cpp" />

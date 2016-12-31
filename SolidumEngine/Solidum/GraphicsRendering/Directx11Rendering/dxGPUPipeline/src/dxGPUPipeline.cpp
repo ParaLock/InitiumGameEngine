@@ -38,42 +38,42 @@ void dxGPUPipeline::use()
 
 		if (newElement->core != nullptr) {
 
-			if (newElement->type == "TEXTURE") {
+			if (newElement->type == GPUPipelineElementType::SOL_TEXTURE_HOOK) {
 
 				Texture *tex = (Texture*)newElement->core;
 
 				ID3D11ShaderResourceView* dxTex =
 					(ID3D11ShaderResourceView*)tex->getParameter("D3D_TEXTURE");
 
-				if (newElement->parentShader == "PS") {
+				if (newElement->parentShader == GPUPipelineElementParentShader::SOL_PS) {
 					dxDeviceAccessor::dxEncapsulator->dxDevContext->PSSetShaderResources(newElement->resourceSlot, 1,
 						&dxTex);
 				}
-				else if (newElement->parentShader == "VS") {
+				else if (newElement->parentShader == GPUPipelineElementParentShader::SOL_VS) {
 					dxDeviceAccessor::dxEncapsulator->dxDevContext->VSSetShaderResources(newElement->resourceSlot, 1,
 						&dxTex);
 				}
 			}
 
-			if (newElement->type == "TEXTURE_SAMPLER") {
+			if (newElement->type == GPUPipelineElementType::SOL_SAMPLER) {
 
 				TextureSampler *texSampler = (TextureSampler*)newElement->core;
 	
 				ID3D11SamplerState* dxTexSampler =
 					(ID3D11SamplerState*)texSampler->getParameter("D3D_TEXTURESAMPLER");
 	
-				if (newElement->parentShader == "PS") {
+				if (newElement->parentShader == GPUPipelineElementParentShader::SOL_PS) {
 					dxDeviceAccessor::dxEncapsulator->dxDevContext->PSSetSamplers(newElement->resourceSlot, 1,
 						&dxTexSampler);
 				}
-				else if (newElement->parentShader == "VS") {
+				else if (newElement->parentShader == GPUPipelineElementParentShader::SOL_VS) {
 					dxDeviceAccessor::dxEncapsulator->dxDevContext->VSSetSamplers(newElement->resourceSlot, 1,
 						&dxTexSampler);
 				}
 			}
 
 
-			if (newElement->type == "RENDER_TARGET") {
+			if (newElement->type == GPUPipelineElementType::SOL_RENDER_TARGET) {
 
 				RenderTarget *renderTarget = (RenderTarget*)newElement->core;
 
@@ -85,13 +85,13 @@ void dxGPUPipeline::use()
 
 					ID3D11ShaderResourceView* tmpRT = (ID3D11ShaderResourceView*)renderTarget->getParameter("D3D_SHADERVIEW");
 
-					if (newElement->parentShader == "PS") {
+					if (newElement->parentShader == GPUPipelineElementParentShader::SOL_PS) {
 
 						dxDeviceAccessor::dxEncapsulator->dxDevContext->
 							PSSetShaderResources(newElement->resourceSlot, 1,
 							&tmpRT);
 					}
-					else if (newElement->parentShader == "VS") {
+					else if (newElement->parentShader == GPUPipelineElementParentShader::SOL_VS) {
 						dxDeviceAccessor::dxEncapsulator->dxDevContext->
 							VSSetShaderResources(newElement->resourceSlot, 1,
 								&tmpRT);
@@ -115,7 +115,7 @@ void dxGPUPipeline::use()
 				}
 			}
 
-			if (newElement->type == "BUFFER") {
+			if (newElement->type == GPUPipelineElementType::SOL_BUFFER_HOOK) {
 
 				GPUBuffer *gpuBuff = (GPUBuffer*)newElement->core;
 				ID3D11Buffer *gpuBuffPtr = (ID3D11Buffer*)gpuBuff->getParameter("D3D_BUFFER");
@@ -139,7 +139,7 @@ void dxGPUPipeline::use()
 			}
 
 
-			if (newElement->type == "CONSTANT_BUFFER") {
+			if (newElement->type == GPUPipelineElementType::SOL_GENERAL_DATA_BUFF) {
 
 				ShaderGeneralDataBuffer *shaderBuff = (ShaderGeneralDataBuffer*)newElement->core;
 
@@ -147,18 +147,18 @@ void dxGPUPipeline::use()
 				ID3D11Buffer *gpuBuffPtr = (ID3D11Buffer*)gpuBuff->getParameter("D3D_BUFFER");
 
 				if (gpuBuff->getBuffType() == BUFFER_TYPE::SHADER_BUFF) {
-					if (newElement->parentShader == "VS") {
+					if (newElement->parentShader == GPUPipelineElementParentShader::SOL_VS) {
 						dxDeviceAccessor::dxEncapsulator->dxDevContext->
 							VSSetConstantBuffers(newElement->resourceSlot, 1, &gpuBuffPtr);
 					}
-					if (newElement->parentShader == "PS") {
+					if (newElement->parentShader == GPUPipelineElementParentShader::SOL_PS) {
 						dxDeviceAccessor::dxEncapsulator->dxDevContext->
 							PSSetConstantBuffers(newElement->resourceSlot, 1, &gpuBuffPtr);
 					}
 				}
 			}
 
-			if (newElement->type == "INPUT_LAYOUT") {
+			if (newElement->type == GPUPipelineElementType::SOL_MESH_DATA_LAYOUT) {
 
 				ShaderInputLayout *inputLayout = (ShaderInputLayout*)newElement->core;
 
@@ -187,8 +187,8 @@ void dxGPUPipeline::use()
 
 void dxGPUPipeline::processOp(GPUPipelineOP * op)
 {
-	if (op->type == "CLEAR") {
-		if (op->targetType == "GBUFFER") {
+	if (op->type == GPUPipelineSupportedOP::SOL_CLEAR) {
+		if (op->targetType == GPUPipelineElementType::SOL_RENDER_TARGET) {
 			RenderTarget *renderTarget = (RenderTarget*)op->pTarget;
 
 			renderTarget->Clear(0,0,0,0);

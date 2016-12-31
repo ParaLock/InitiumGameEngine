@@ -44,8 +44,6 @@
     <ClInclude Include="Solidum\EngineCore\SolidumObject\Controllers\include\movementController.h" />
     <ClInclude Include="Solidum\EngineCore\SolidumObject\Objects\include\SolidumObject.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Lights\include\Light.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxRenderer3D\include\dxRenderer3D.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Renderer3D\include\IRenderer3D.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxRenderTarget\include\dxRenderTarget.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDevice.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDeviceManager.h" />
@@ -93,8 +91,6 @@
     <ClCompile Include="Solidum\EngineCore\SolidumObject\Controllers\src\movementController.cpp" />
     <ClCompile Include="Solidum\EngineCore\SolidumObject\Objects\src\SolidumObject.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Lights\src\Light.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxRenderer3D\src\dxRenderer3D.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Renderer3D\src\IRenderer3D.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxRenderTarget\src\dxRenderTarget.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\src\dxDevice.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\src\dxDeviceManager.cpp" />

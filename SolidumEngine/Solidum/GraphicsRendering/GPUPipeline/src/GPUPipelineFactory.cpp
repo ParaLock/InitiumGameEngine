@@ -39,7 +39,8 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 				line->push_back(new std::string(buf));
 		}
 
-		std::string shaderContext = "null";
+		GPUPipelineElementParentShader shaderContext = GPUPipelineElementParentShader::SOL_NON;
+
 		std::string meshDataLayoutContext = "null";
 		std::string generalDataContext = "null";
 
@@ -53,11 +54,11 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 			std::string debugTest = splitStr.at(0);
 
 			if (splitStr.at(0) == "VS_SHADER_END") {
-				shaderContext = "null";
+				shaderContext = GPUPipelineElementParentShader::SOL_NON;
 			}
 
 			if (splitStr.at(0) == "PS_SHADER_END") {
-				shaderContext = "null";
+				shaderContext = GPUPipelineElementParentShader::SOL_NON;
 			}
 
 			if (splitStr.at(0) == "GENERAL_DATA_END") {
@@ -89,11 +90,11 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 			}
 
 			if (splitStr.at(0) == "VS_SHADER_BEGIN") {
-				shaderContext = "VS";
+				shaderContext = GPUPipelineElementParentShader::SOL_VS;
 			}
 
 			if (splitStr.at(0) == "PS_SHADER_BEGIN") {
-				shaderContext = "PS";
+				shaderContext = GPUPipelineElementParentShader::SOL_PS;
 			}
 
 			if (splitStr.at(0) == "INIT") {
@@ -208,11 +209,23 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 
 			if (splitStr.at(0) == "PIPELINE_OP") {
 
+				bool executionContext;
+
+				if (splitStr.at(1) == "DEFERRED") {
+					executionContext = true;
+				}
+				else {
+					executionContext = false;
+				}
+
 				if (splitStr.at(3) == "GBUFFER") {
 					RenderTarget* renderTarget = (RenderTarget*)GraphicsResourcePoolManagerAccessor::poolManager->
 						getPool("render_target_pool")->getResource(splitStr.at(4));
 
-					newPipeline->attachOP(renderTarget, splitStr.at(2), splitStr.at(4), "GBUFFER", splitStr.at(1));
+					if (splitStr.at(2) == "CLEAR") {
+						newPipeline->attachOP(renderTarget, GPUPipelineSupportedOP::SOL_CLEAR,
+							GPUPipelineElementType::SOL_RENDER_TARGET, executionContext);
+					}		
 				}		
 			}
 

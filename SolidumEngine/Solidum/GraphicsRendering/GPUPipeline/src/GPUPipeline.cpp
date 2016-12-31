@@ -11,7 +11,7 @@ GPUPipeline::~GPUPipeline()
 {
 }
 
-void GPUPipeline::attachOP(void *pOpTarget, std::string opType, std::string opTargetName, std::string opTargetType, std::string executionContext)
+void GPUPipeline::attachOP(void *pOpTarget, GPUPipelineSupportedOP opType, GPUPipelineElementType opTargetType, bool executionContext)
 {
 	GPUPipelineOP *newOP = new GPUPipelineOP;
 
@@ -111,12 +111,12 @@ void GPUPipeline::setSecondaryTexture(Texture * newTex)
 	}
 }
 
-void GPUPipeline::attachRenderTarget(RenderTarget * renderTarget, std::string name, std::string parentShader, bool isOutput)
+void GPUPipeline::attachRenderTarget(RenderTarget * renderTarget, std::string name, GPUPipelineElementParentShader parentShader, bool isOutput)
 {
 	GPUPipelineElement *newElement = new GPUPipelineElement;
 
 	newElement->name = name;
-	newElement->type = "RENDER_TARGET";
+	newElement->type = GPUPipelineElementType::SOL_RENDER_TARGET;
 	newElement->core = renderTarget;
 	newElement->parentShader = parentShader;
 	newElement->resourceSlot = renderTargetResNumCounter;
@@ -128,12 +128,12 @@ void GPUPipeline::attachRenderTarget(RenderTarget * renderTarget, std::string na
 	renderTargetResNumCounter++;
 }
 
-void GPUPipeline::attachTextureSampler(TextureSampler * texSampler, std::string name, std::string parentShader)
+void GPUPipeline::attachTextureSampler(TextureSampler * texSampler, std::string name, GPUPipelineElementParentShader parentShader)
 {
 	GPUPipelineElement *newElement = new GPUPipelineElement;
 
 	newElement->name = name;
-	newElement->type = "TEXTURE_SAMPLER";
+	newElement->type = GPUPipelineElementType::SOL_SAMPLER;
 	newElement->core = texSampler;
 	newElement->parentShader = parentShader;
 	newElement->resourceSlot = samplerResNumCounter;
@@ -143,12 +143,12 @@ void GPUPipeline::attachTextureSampler(TextureSampler * texSampler, std::string 
 	samplerResNumCounter++;
 }
 
-void GPUPipeline::attachTextureHook(std::string name, std::string parentShader)
+void GPUPipeline::attachTextureHook(std::string name, GPUPipelineElementParentShader parentShader)
 {
 	GPUPipelineElement *newElement = new GPUPipelineElement;
 
 	newElement->name = name;
-	newElement->type = "TEXTURE";
+	newElement->type = GPUPipelineElementType::SOL_TEXTURE_HOOK;
 	newElement->core = nullptr;
 	newElement->parentShader = parentShader;
 	newElement->resourceSlot = 0;
@@ -156,12 +156,12 @@ void GPUPipeline::attachTextureHook(std::string name, std::string parentShader)
 	_elementList->insert({ name, newElement });
 }
 
-void GPUPipeline::attachBufferHook(std::string name, std::string parentShader)
+void GPUPipeline::attachBufferHook(std::string name, GPUPipelineElementParentShader parentShader)
 {
 	GPUPipelineElement *newElement = new GPUPipelineElement;
 
 	newElement->name = name;
-	newElement->type = "BUFFER";
+	newElement->type = GPUPipelineElementType::SOL_BUFFER_HOOK;
 	newElement->core = nullptr;
 	newElement->parentShader = parentShader;
 	newElement->resourceSlot = 0;
@@ -174,14 +174,14 @@ void GPUPipeline::attachShaderInputLayout(ShaderInputLayout * inputLayout, std::
 	GPUPipelineElement *newElement = new GPUPipelineElement;
 
 	newElement->name = name;
-	newElement->type = "INPUT_LAYOUT";
+	newElement->type = GPUPipelineElementType::SOL_MESH_DATA_LAYOUT;
 	newElement->core = inputLayout;
 	newElement->resourceSlot = 0;
 
 	_elementList->insert({ name, newElement });
 }
 
-void GPUPipeline::attachGeneralShaderDataBuffer(ShaderGeneralDataBuffer * generalBuff, std::string name, std::string parentShader)
+void GPUPipeline::attachGeneralShaderDataBuffer(ShaderGeneralDataBuffer * generalBuff, std::string name, GPUPipelineElementParentShader parentShader)
 {
 	GPUPipelineElement *newElement = new GPUPipelineElement;
 
@@ -192,7 +192,7 @@ void GPUPipeline::attachGeneralShaderDataBuffer(ShaderGeneralDataBuffer * genera
 	}
 
 	newElement->name = name;
-	newElement->type = "CONSTANT_BUFFER";
+	newElement->type = GPUPipelineElementType::SOL_GENERAL_DATA_BUFF;
 	newElement->core = generalBuff;
 	newElement->resourceSlot = 0;//generalShaderDataBufferResNumCounter;
 
