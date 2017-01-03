@@ -19,13 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\EngineUtils\include\DynamicBuffer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderFactory.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderingCore\include\ActiveAPITypeAccessor.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsResourcePool\include\GraphicsResourcePoolManagerAccessor.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsBuffers\include\GPUBufferFactory.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderTarget\include\RenderTargetFactory.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\Shader.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderGeneralDataBuffer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsResourcePool\include\GraphicsResourcePoolManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderInputLayout.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxShaders\include\dxShaderInputLayout.h" />
@@ -66,13 +66,13 @@
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureSampler.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\EngineUtils\src\DynamicBuffer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderFactory.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderingCore\src\ActiveAPITypeAccessor.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsResourcePool\src\GraphicsResourcePoolManagerAccessor.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsBuffers\src\GPUBufferFactory.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderTarget\src\RenderTargetFactory.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\Shader.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderGeneralDataBuffer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsResourcePool\src\GraphicsResourcePool.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsResourcePool\src\GraphicsResourcePoolManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderInputLayout.cpp" />

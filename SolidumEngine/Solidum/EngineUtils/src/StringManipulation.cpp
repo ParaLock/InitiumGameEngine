@@ -26,3 +26,12 @@ std::vector<std::string> StringManipulation::split(std::string * text, char sep)
 	tokens.push_back(text->substr(start));
 	return tokens;
 }
+
+std::string StringManipulation::ws2s(const std::wstring & wstr)
+{
+	using convert_typeX = std::codecvt_utf8<wchar_t>;
+	std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+	return converterX.to_bytes(wstr);
+	
+}

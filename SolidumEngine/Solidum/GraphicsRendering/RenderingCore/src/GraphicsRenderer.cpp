@@ -25,6 +25,13 @@ GraphicsRenderer::GraphicsRenderer(SUPPORTED_GRAPHICS_API api, window *outputWin
 		_dxManager->dxCreateDev(&dxConfig);
 
 		dxDeviceAccessor::initAccessor(_dxManager);
+
+		RenderTarget* frameBufferRT = new dxRenderTarget(
+			dxDeviceAccessor::dxEncapsulator->getFrameBufferRenderTarget(), 
+			dxDeviceAccessor::dxEncapsulator->getFrameBufferTexture());
+ 
+		GraphicsResourcePoolManagerAccessor::poolManager->getPool("render_target_pool")->
+			addResource(frameBufferRT, "framebuffer", true);
 	}
 }
 
@@ -35,6 +42,4 @@ GraphicsRenderer::~GraphicsRenderer()
 		delete _graphicsResourcePoolManager;
 	if (_dxManager != nullptr)
 		delete _dxManager;
-	/*if (_graphicsFactory != nullptr)
-		delete _graphicsFactory;*/
 }

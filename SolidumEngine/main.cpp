@@ -38,6 +38,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	GraphicsRenderer* myRenderer = new GraphicsRenderer(SUPPORTED_GRAPHICS_API::DIRECTX11, myWindow);
 
+	GPUPipeline* endScene = GPUPipelineFactory::createPipeline(L"endScene_pipeline.solPipe");
+
 	std::shared_ptr<meshLoader> objLdr = std::shared_ptr<meshLoader>(new meshLoaderOBJ());
 
 	mesh *hammerMesh = meshFactory::createMesh(L"hammer2.obj", objLdr, "hammer_mesh");
@@ -56,8 +58,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	woodTex->loadImage(L"Wood.png");
 
 	Light* dirLight1 = new Light();
+	Light* dirLight2 = new Light();
 
 	dirLight1->attachShader(dirLightShader);
+	dirLight2->attachShader(dirLightShader);
 
 	cubeMesh->setActiveShader(deferredShader);
 	cubeMesh->setActiveTexture(grassTex);
@@ -72,9 +76,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	D3DXMATRIX LStage_projectionMatrix, LStage_viewMatrix, LStage_worldMatrix;
 
-	float lightColor[4] = { 2.0f, 2.0f, 2.0f, 2.0f };
-	float lightPos[3] = { 0.0f, 0.0f, 0.0f };
-	float lightDirection[3] = { 0.0f, 0.0f, 9.0f };
+	float light1Color[4] = { 2.0f, 2.0f, 2.0f, 2.0f };
+	float light1Pos[3] = { 0.0f, 0.0f, 0.0f };
+	float light1Direction[3] = { 0.0f, 0.0f, 9.0f };
+
+	float light2Color[4] = { 2.0f, 2.0f, 9.0f, 2.0f };
+	float light2Pos[3] = { 0.0f, 0.0f, 0.0f };
+	float light2Direction[3] = { 0.0f, 0.0f, 3.0f };
 
 	while (myWindow->running) {
 
@@ -129,27 +137,22 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		dirLightShader->updateCPUGeneralDataVar("viewMatrix", LStage_viewMatrix);
 		dirLightShader->updateCPUGeneralDataVar("projectionMatrix", LStage_projectionMatrix);
 
-		dirLightShader->updateCPUGeneralDataVar("lightDirection", lightDirection);
-		dirLightShader->updateCPUGeneralDataVar("lightPos", lightPos);
-		dirLightShader->updateCPUGeneralDataVar("lightColor", lightColor);
-
-		dxDeviceAccessor::dxEncapsulator->setViewport("mesh");
-
 		cubeMesh->draw();
 		hammerMesh->draw();
 
-		dxDeviceAccessor::dxEncapsulator->setViewport("light");
-		dxDevice* dxCore = dxDeviceAccessor::dxEncapsulator;
-
-		dxDeviceAccessor::dxEncapsulator->dxDevContext->OMSetRenderTargets(1, &dxCore->FrameBufferShaderAccess, dxCore->depthStencil);
+		dirLightShader->updateCPUGeneralDataVar("lightDirection", light1Direction);
+		dirLightShader->updateCPUGeneralDataVar("lightPos", light1Pos);
+		dirLightShader->updateCPUGeneralDataVar("lightColor", light1Color);
 
 		dirLight1->draw();
 
-		dxDeviceAccessor::dxEncapsulator->dxSwapchain->Present(1, 0);
+		dirLightShader->updateCPUGeneralDataVar("lightDirection", light2Direction);
+		dirLightShader->updateCPUGeneralDataVar("lightPos", light2Pos);
+		dirLightShader->updateCPUGeneralDataVar("lightColor", light2Color);
 
-		dxDeviceAccessor::dxEncapsulator->dxDevContext->ClearRenderTargetView(dxDeviceAccessor::dxEncapsulator->FrameBufferShaderAccess, D3DXCOLOR(0, 0, 0, 0));
-		dxDeviceAccessor::dxEncapsulator->clearDepthStencil();
+		dirLight2->draw();
 
+		endScene->draw(NULL);
 	}
 
 	myWindow->destroyWindow();

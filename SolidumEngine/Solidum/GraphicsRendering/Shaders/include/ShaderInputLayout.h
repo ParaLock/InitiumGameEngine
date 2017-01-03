@@ -1,10 +1,27 @@
 #pragma once
 #include "../../../sysInclude.h"
 
+class ShaderInputLayoutElement {
+public:
+	ShaderInputLayoutElement(std::string semantic, int type, UINT index, BYTE mask) {
+		_semantic = semantic;
+		_type = type;
+		_index = index;
+		_mask = mask;
+	}
+
+	UINT _index;
+	std::string _semantic;
+
+	BYTE _mask;
+
+	int _type;
+};
+
 class ShaderInputLayout
 {
 protected:
-	std::list<std::pair<std::string, std::string>> *_inputLayoutElementList;
+	std::list<ShaderInputLayoutElement*> *_inputLayoutElementList;
 
 	std::string _name;
 
@@ -13,11 +30,10 @@ public:
 	ShaderInputLayout();
 	~ShaderInputLayout();
 
-	void addInput(std::string type, std::string name);
+	virtual void addInput(int type, std::string name, UINT index, BYTE mask);
 
 	virtual void updateParameter(std::string varName, void *data);
 	virtual void* getParameter(std::string varName);
-
 	virtual void generateInputLayout();
 
 	std::string getName() { return _name; };

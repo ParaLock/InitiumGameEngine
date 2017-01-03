@@ -9,12 +9,14 @@
 class dxRenderTarget : public RenderTarget
 {
 private:
-	ID3D11Texture2D* texture = NULL;
-	ID3D11ShaderResourceView* shaderView = NULL;
-	ID3D11RenderTargetView* renderTarget = NULL;
+	ID3D11Texture2D* _texture = nullptr;
+	ID3D11ShaderResourceView* _shaderView = nullptr;
+	ID3D11RenderTargetView* _renderTarget = nullptr;
 
 public:
 	dxRenderTarget(int mipLevel, int aaSamples, TEX_FORMAT texFormat);
+	dxRenderTarget(ID3D11RenderTargetView* rt, ID3D11Texture2D* rtTex);
+
 	~dxRenderTarget();
 
 	void updateParameter(std::string varName, void *data);

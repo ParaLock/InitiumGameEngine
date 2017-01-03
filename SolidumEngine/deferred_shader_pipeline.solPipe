@@ -4,10 +4,13 @@ PIPELINE_INIT
 	INIT GBUFFER normals_gbuff
 	
 	INIT SAMPLER WRAP LINEAR wrapSampler
-
+	
 PIPELINE_INIT_END
 
 PIPELINE_BEGIN
+	
+	BIND GBUFFER OUTPUT color_gbuff
+	BIND GBUFFER OUTPUT normals_gbuff
 	
 	DEPTH_TEST enable
 	BLENDING disable
@@ -17,29 +20,12 @@ PIPELINE_BEGIN
 		BIND BUFFER_HOOK vertex_buff
 		BIND BUFFER_HOOK index_buff
 
-		GENERAL_DATA IN matrix_data
-			MATRIX worldMatrix
-			MATRIX viewMatrix
-			MATRIX projectionMatrix
-			MATRIX OBJSpecificMatrix
-		GENERAL_DATA_END
-		
-		MESH_DATA IN model_mesh_data_layout
-			FLOAT4 position
-			FLOAT3 normal
-			FLOAT2 texcoord
-		MESH_DATA_END
-
 	VS_SHADER_END
 	
 	
 	PS_SHADER_BEGIN
 
-		BIND GBUFFER OUTPUT color_gbuff
-		BIND GBUFFER OUTPUT normals_gbuff
-
 		BIND TEXTURE_HOOK primary_texture
-
 		BIND SAMPLER wrapSampler		
 
 	PS_SHADER_END

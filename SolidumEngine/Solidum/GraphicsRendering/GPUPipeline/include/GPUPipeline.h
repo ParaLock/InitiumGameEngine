@@ -5,8 +5,7 @@
 #include "../../Textures/include/Texture.h"
 #include "../../Textures/include/TextureSampler.h"
 #include "../../Shaders/include/ShaderInputLayout.h"
-#include "../../Shaders/include/ShaderGeneralDataBuffer.h"
-
+#include "../../../EngineUtils/include/DynamicBuffer.h"
 
 enum GPUPipelineElementParentShader {
 	SOL_VS,
@@ -16,6 +15,7 @@ enum GPUPipelineElementParentShader {
 
 enum GPUPipelineElementType {
 	SOL_RENDER_TARGET,
+	SOL_ZBUFFER,
 	SOL_GENERAL_DATA_BUFF,
 	SOL_MESH_DATA_LAYOUT,
 	SOL_SAMPLER,
@@ -41,7 +41,8 @@ enum GPUPipelineElementAttrib {
 enum GPUPipelineSupportedOP {
 	SOL_CLEAR,
 	SOL_DEPTH_TEST,
-	SOL_BLENDING
+	SOL_BLENDING,
+	SOL_SWAPFRAME
 };
 
 class GPUPipelineElement {
@@ -59,7 +60,7 @@ public:
 
 class GPUPipelineOP {
 public:
-	void *pTarget;
+	std::string targetName;
 
 	GPUPipelineElementType targetType;
 
@@ -71,17 +72,14 @@ public:
 class GPUPipeline
 {
 private:
-	int renderTargetResNumCounter = 0;
-	int samplerResNumCounter = 0;
-	int generalShaderDataBufferResNumCounter = 0;
-
-	int notANullPointerValue = -1;
-	int *notANullPointer = &notANullPointerValue;
-
+	int renderTargetCount = 0;
+	int texSamplerCount = 0;
 protected:
+	std::string _name;
+
 	std::map<std::string, GPUPipelineElement*> *_elementList;
+	std::map<std::string, DynamicBuffer*> *_generalDataVarToBuffHash;
 	std::list<GPUPipelineOP*> *_opList;
-	std::map<std::string, ShaderGeneralDataBuffer*> *_generalDataVarToBuffHash;
 
 	bool blendingEnabled;
 	bool depthTestEnabled;
@@ -90,7 +88,7 @@ public:
 	GPUPipeline();
 	~GPUPipeline();
 
-	void attachOP(void *pOpTarget, GPUPipelineSupportedOP opType, GPUPipelineElementType opTargetType, bool executionContext);
+	void attachOP(GPUPipelineSupportedOP opType, std::string targetName, GPUPipelineElementType opTargetType, bool executionContext);
 
 	void setDepthTest(bool enable);
 	void setBlending(bool enable);
@@ -109,7 +107,7 @@ public:
 	void attachRenderTarget(RenderTarget* renderTarget, std::string name, GPUPipelineElementParentShader parentShader, bool isOutput);
 	void attachTextureSampler(TextureSampler *texSampler, std::string name, GPUPipelineElementParentShader parentShader);
 	void attachShaderInputLayout(ShaderInputLayout *inputLayout, std::string name);
-	void attachGeneralShaderDataBuffer(ShaderGeneralDataBuffer* generalBuff, std::string name, GPUPipelineElementParentShader parentShader);
+	void attachGeneralShaderDataBuffer(DynamicBuffer* generalBuff, GPUPipelineElementParentShader parentShader);
 
 	virtual void use();
 	virtual void draw(int numIndices);

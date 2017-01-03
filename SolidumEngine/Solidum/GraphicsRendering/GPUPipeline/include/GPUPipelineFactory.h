@@ -12,8 +12,8 @@
 #include "../../GraphicsBuffers/include/GPUBufferFactory.h"
 
 #include "../../Directx11Rendering/dxGPUPipeline/include/dxGPUPipeline.h"
-
 #include "../../Directx11Rendering/dxShaders/include/dxShaderInputLayout.h"
+
 
 class GPUPipelineFactory
 {

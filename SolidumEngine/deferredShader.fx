@@ -65,6 +65,6 @@ PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 
 	// Store the normal for output to the render target.
 	output.normal = float4(input.normal, 1.0f);
-	
+
 	return output;
 }

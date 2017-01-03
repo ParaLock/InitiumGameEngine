@@ -14,9 +14,13 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 {
 	GPUPipeline *newPipeline;
 
+	std::wstring filePathWStr(pipelineDescFile);
+
+	std::string filepathSTLStr = StringManipulation::ws2s(filePathWStr);
+
 	switch (ActiveAPITypeAccessor::_apiInUse) {
 		case DIRECTX11:
-			newPipeline = new dxGPUPipeline();
+			newPipeline = new dxGPUPipeline(filepathSTLStr);
 			break;
 	}
 
@@ -45,7 +49,6 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 		std::string generalDataContext = "null";
 
 		std::vector<ShaderInputLayout*> inputLayouts;
-		std::vector<ShaderGeneralDataBuffer*> varBuffers;
 
 		for (size_t i = 0; i < line->size(); i++) {
 
@@ -59,34 +62,6 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 
 			if (splitStr.at(0) == "PS_SHADER_END") {
 				shaderContext = GPUPipelineElementParentShader::SOL_NON;
-			}
-
-			if (splitStr.at(0) == "GENERAL_DATA_END") {
-				generalDataContext = "null";
-
-				varBuffers.back()->initMemory();
-
-				newPipeline->attachGeneralShaderDataBuffer(varBuffers.back(), varBuffers.back()->getName(), shaderContext);
-		
-				int debugRef = -1;
-			}
-
-			if (splitStr.at(0) == "MESH_DATA_END") {
-				meshDataLayoutContext = "null";
-
-				inputLayouts.back()->generateInputLayout();
-
-				for (unsigned int i = 0; i < inputLayouts.size(); i++)
-				newPipeline->attachShaderInputLayout(inputLayouts[i], inputLayouts[i]->getName());
-			}
-
-			if (meshDataLayoutContext != "null") {
-
-				inputLayouts.back()->addInput(splitStr.at(0), splitStr.at(1));
-			}
-
-			if (generalDataContext != "null") {
-				varBuffers.back()->addVariable(splitStr.at(1), splitStr.at(0));
 			}
 
 			if (splitStr.at(0) == "VS_SHADER_BEGIN") {
@@ -134,39 +109,6 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 					int debugRef = -1;
 				}
 			}
-
-			if (splitStr.at(0) == "GENERAL_DATA" && splitStr.at(1) == "IN") {
-				generalDataContext = "GENERAL_DATA";
-
-				varBuffers.push_back(new ShaderGeneralDataBuffer(splitStr.at(2)));
-
-				varBuffers.back()->registerVarType("MATRIX", sizeof(float[4][4]));
-				varBuffers.back()->registerVarType("FLOAT", sizeof(float));
-				varBuffers.back()->registerVarType("FLOAT2", sizeof(float[2]));
-				varBuffers.back()->registerVarType("FLOAT3", sizeof(float[3]));
-				varBuffers.back()->registerVarType("FLOAT4", sizeof(float[4]));
-			}
-
-			if (splitStr.at(0) == "MESH_DATA" && splitStr.at(1) == "IN") {
-
-				meshDataLayoutContext = splitStr.at(1);
-
-				switch (ActiveAPITypeAccessor::_apiInUse) {
-					case DIRECTX11:
-						inputLayouts.push_back(new dxShaderInputLayout(splitStr.at(2)));
-					break;
-				}
-			}
-
-			if (splitStr.at(0) == "MESH_DATA" && splitStr.at(1) == "OUT") {
-				meshDataLayoutContext = splitStr.at(1);
-
-				switch (ActiveAPITypeAccessor::_apiInUse) {
-					case DIRECTX11:
-						inputLayouts.push_back(new dxShaderInputLayout(splitStr.at(2)));
-					break;
-				}
-			}
 		
 			
 			if (splitStr.at(0) == "BIND") {
@@ -176,13 +118,15 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 					RenderTarget* renderTarget = (RenderTarget*)GraphicsResourcePoolManagerAccessor::poolManager->
 						getPool("render_target_pool")->getResource(splitStr.at(3));
 
+
+
 					newPipeline->attachRenderTarget(renderTarget, splitStr.at(3), shaderContext, true);	
 				
 				}
 				else if (splitStr.at(1) == "GBUFFER" && splitStr.at(2) == "INPUT") {
 
-					RenderTarget* renderTarget = static_cast<RenderTarget*>(GraphicsResourcePoolManagerAccessor::poolManager->
-						getPool("render_target_pool")->getResource(splitStr.at(3)));
+					RenderTarget* renderTarget = (RenderTarget*)GraphicsResourcePoolManagerAccessor::poolManager->
+						getPool("render_target_pool")->getResource(splitStr.at(3));
 
 					newPipeline->attachRenderTarget(renderTarget, splitStr.at(3), shaderContext, false);
 				}
@@ -210,6 +154,10 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 			if (splitStr.at(0) == "PIPELINE_OP") {
 
 				bool executionContext;
+				GPUPipelineSupportedOP op;
+				GPUPipelineElementType opTargetType;
+
+				std::string targetName = "null";
 
 				if (splitStr.at(1) == "DEFERRED") {
 					executionContext = true;
@@ -218,15 +166,27 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 					executionContext = false;
 				}
 
-				if (splitStr.at(3) == "GBUFFER") {
-					RenderTarget* renderTarget = (RenderTarget*)GraphicsResourcePoolManagerAccessor::poolManager->
-						getPool("render_target_pool")->getResource(splitStr.at(4));
+				if (splitStr.at(2) == "CLEAR") {
+					op = GPUPipelineSupportedOP::SOL_CLEAR;
+				}
 
-					if (splitStr.at(2) == "CLEAR") {
-						newPipeline->attachOP(renderTarget, GPUPipelineSupportedOP::SOL_CLEAR,
-							GPUPipelineElementType::SOL_RENDER_TARGET, executionContext);
-					}		
-				}		
+
+				if (splitStr.at(2) == "SWAPFRAME") {
+
+					op = GPUPipelineSupportedOP::SOL_SWAPFRAME;
+				}
+
+				if (splitStr.at(3) == "GBUFFER") {
+					opTargetType = GPUPipelineElementType::SOL_RENDER_TARGET;
+					targetName = splitStr.at(4);
+				}
+
+				if (splitStr.at(3) == "ZBUFFER") {
+					opTargetType = GPUPipelineElementType::SOL_ZBUFFER;
+				}
+
+				newPipeline->attachOP(op, targetName,
+					opTargetType, executionContext);
 			}
 
 			if (splitStr.at(0) == "DEPTH_TEST") {

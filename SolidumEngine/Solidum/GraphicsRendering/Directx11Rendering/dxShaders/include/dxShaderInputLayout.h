@@ -8,11 +8,13 @@ class dxShaderInputLayout : public ShaderInputLayout
 private:
 	ID3D11InputLayout* _inputLayout;
 public:
-	dxShaderInputLayout(std::string name);
+	dxShaderInputLayout();
 	~dxShaderInputLayout();
 
 	void updateParameter(std::string varName, void *data);
 	void* getParameter(std::string varName);
+
+	void addInput(int type, std::string name, UINT index, BYTE mask);
 
 	void generateInputLayout();
 };

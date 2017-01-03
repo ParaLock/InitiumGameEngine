@@ -19,10 +19,28 @@ dxRenderTarget::dxRenderTarget(int mipLevel, int aaSamples, TEX_FORMAT texFormat
 
 	switch (_texFormat) {
 		case RGBA_32BIT_FLOAT:
+
 			textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+			shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+
+			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			break;
 		case RGB_32BIT_FLOAT:
+
 			textureDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+
+			shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+
+			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+			break;
+		case D24_UNORM_S8_UINT_COUGH_FRAMEBUFFER:
+			
+			shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+
+			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+
+			textureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 			break;
 	}
 
@@ -38,50 +56,61 @@ dxRenderTarget::dxRenderTarget(int mipLevel, int aaSamples, TEX_FORMAT texFormat
 	textureDesc.SampleDesc.Count = _aaSamples;
 
 	renderTargetViewDesc.Format = textureDesc.Format;
-	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 
 	shaderResourceViewDesc.Format = textureDesc.Format;
-	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 	shaderResourceViewDesc.Texture2D.MipLevels = _mipLevel;
 
-	result = dxDev->CreateTexture2D(&textureDesc, NULL, &texture);
-	result = dxDev->CreateRenderTargetView(texture, &renderTargetViewDesc, &renderTarget);
-	dxDev->CreateShaderResourceView(texture, &shaderResourceViewDesc, &shaderView);
+	result = dxDev->CreateTexture2D(&textureDesc, NULL, &_texture);
+	result = dxDev->CreateRenderTargetView(_texture, &renderTargetViewDesc, &_renderTarget);
+	dxDev->CreateShaderResourceView(_texture, &shaderResourceViewDesc, &_shaderView);
 
+}
+
+dxRenderTarget::dxRenderTarget(ID3D11RenderTargetView * rt, ID3D11Texture2D * rtTex)
+{
+	_texture = rtTex;
+	_renderTarget = rt;
+
+	_aaSamples = -1;
+	_mipLevel = -1;
+	_texFormat = -1;
 }
 
 dxRenderTarget::~dxRenderTarget()
 {
-	renderTarget->Release();
-	shaderView->Release();
-	texture->Release();
+	if(_renderTarget != nullptr)
+	_renderTarget->Release();
+	if(_shaderView != nullptr)
+	_shaderView->Release();
+	if(_texture != nullptr)
+	_texture->Release();
 }
 
 void dxRenderTarget::updateParameter(std::string varName, void * data)
 {
 	if (varName == "D3D_TEXTURE") {
-		texture = (ID3D11Texture2D*)data;
+		_texture = (ID3D11Texture2D*)data;
 	}
 	if (varName == "D3D_RENDERTARGET") {
-		renderTarget = (ID3D11RenderTargetView*)data;
+		_renderTarget = (ID3D11RenderTargetView*)data;
 	}
 	if (varName == "D3D_SHADERVIEW") {
-		shaderView = (ID3D11ShaderResourceView*)data;
+		_shaderView = (ID3D11ShaderResourceView*)data;
 	}
 }
 
 void * dxRenderTarget::getParameter(std::string varName)
 {
 	if (varName == "D3D_TEXTURE") {
-		return texture;
+		return _texture;
 	}
 	if (varName == "D3D_RENDERTARGET") {
-		return renderTarget;
+		return _renderTarget;
 	}
 	if (varName == "D3D_SHADERVIEW") {
-		return shaderView;
+		return _shaderView;
 	}
 
 	return nullptr;
@@ -89,5 +118,5 @@ void * dxRenderTarget::getParameter(std::string varName)
 
 void dxRenderTarget::Clear(float R, float G, float B, float A)
 {
-	dxDeviceAccessor::dxEncapsulator->dxDevContext->ClearRenderTargetView(renderTarget, D3DXCOLOR(R, G, B, A));
+	dxDeviceAccessor::dxEncapsulator->dxDevContext->ClearRenderTargetView(_renderTarget, D3DXCOLOR(R, G, B, A));
 }

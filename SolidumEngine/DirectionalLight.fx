@@ -59,6 +59,7 @@ float4 Pshader(PixelInputType input) : SV_TARGET
 	float3 lightDir;
 	float4 lightIntensity;
 	float4 outputColor;
+	float4 test;
 
 	colors = colorTexture.Sample(SampleTypePoint, input.tex);
 	normals = normalTexture.Sample(SampleTypePoint, input.tex);

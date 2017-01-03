@@ -2,6 +2,7 @@
 
 #include "../../../../sysInclude.h"
 #include "../../../Window/include/windowAccessor.h"
+#include "../../../GraphicsResourcePool/include/GraphicsResourcePoolManagerAccessor.h"
 
 #ifndef _DXDEVICE_H
 #define _DXDEVICE_H
@@ -73,6 +74,8 @@ public:
 	ID3D11BlendState *blendDisable;
 
 	void clearDepthStencil();
+	void clearFrameBuffer(float R, float G, float B, float A);
+	
 	void disableDepthStencil();
 	void enableDepthStencil();
 
@@ -82,6 +85,9 @@ public:
 	void setViewport(std::string viewportSelect);
 
 	void Initialize(dxConfigBlock *config);
+
+	ID3D11RenderTargetView* getFrameBufferRenderTarget() { return FrameBufferShaderAccess; }
+	ID3D11Texture2D* getFrameBufferTexture() { return FrameBufferTexture; }
 };
 
 #endif

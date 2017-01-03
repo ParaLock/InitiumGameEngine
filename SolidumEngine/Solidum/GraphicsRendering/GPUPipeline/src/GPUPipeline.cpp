@@ -4,6 +4,7 @@
 
 GPUPipeline::GPUPipeline()
 {
+
 }
 
 
@@ -11,13 +12,13 @@ GPUPipeline::~GPUPipeline()
 {
 }
 
-void GPUPipeline::attachOP(void *pOpTarget, GPUPipelineSupportedOP opType, GPUPipelineElementType opTargetType, bool executionContext)
+void GPUPipeline::attachOP(GPUPipelineSupportedOP opType, std::string targetName, GPUPipelineElementType opTargetType, bool executionContext)
 {
 	GPUPipelineOP *newOP = new GPUPipelineOP;
 
 	newOP->type = opType;
 	newOP->targetType = opTargetType;
-	newOP->pTarget = pOpTarget;
+	newOP->targetName = targetName;
 
 	_opList->push_back(newOP);
 }
@@ -41,7 +42,7 @@ void GPUPipeline::updateCPUGeneralDataVar(std::string varName, void * pData)
 
 	if (itr != _generalDataVarToBuffHash->end()) {
 
-		ShaderGeneralDataBuffer* varsBuff = _generalDataVarToBuffHash->at(varName);
+		DynamicBuffer* varsBuff = _generalDataVarToBuffHash->at(varName);
 
 		varsBuff->updateVar(varName, pData);
 	}
@@ -49,9 +50,9 @@ void GPUPipeline::updateCPUGeneralDataVar(std::string varName, void * pData)
 
 void GPUPipeline::syncGeneralDataVars()
 {
-	ShaderGeneralDataBuffer* previous = nullptr;
+	DynamicBuffer* previous = nullptr;
 
-	std::vector<ShaderGeneralDataBuffer*> activeGeneralDataBuffers;
+	std::vector<DynamicBuffer*> activeGeneralDataBuffers;
 
 	for (auto itr = _generalDataVarToBuffHash->begin(); itr != _generalDataVarToBuffHash->end(); itr++) {
 
@@ -119,13 +120,13 @@ void GPUPipeline::attachRenderTarget(RenderTarget * renderTarget, std::string na
 	newElement->type = GPUPipelineElementType::SOL_RENDER_TARGET;
 	newElement->core = renderTarget;
 	newElement->parentShader = parentShader;
-	newElement->resourceSlot = renderTargetResNumCounter;
+	newElement->resourceSlot = renderTargetCount;
 
 	newElement->isOutput = isOutput;
 
 	_elementList->insert({ name, newElement });
 
-	renderTargetResNumCounter++;
+	renderTargetCount++;
 }
 
 void GPUPipeline::attachTextureSampler(TextureSampler * texSampler, std::string name, GPUPipelineElementParentShader parentShader)
@@ -136,11 +137,11 @@ void GPUPipeline::attachTextureSampler(TextureSampler * texSampler, std::string 
 	newElement->type = GPUPipelineElementType::SOL_SAMPLER;
 	newElement->core = texSampler;
 	newElement->parentShader = parentShader;
-	newElement->resourceSlot = samplerResNumCounter;
+	newElement->resourceSlot = texSamplerCount;
 
 	_elementList->insert({ name, newElement });
 
-	samplerResNumCounter++;
+	texSamplerCount++;
 }
 
 void GPUPipeline::attachTextureHook(std::string name, GPUPipelineElementParentShader parentShader)
@@ -181,7 +182,7 @@ void GPUPipeline::attachShaderInputLayout(ShaderInputLayout * inputLayout, std::
 	_elementList->insert({ name, newElement });
 }
 
-void GPUPipeline::attachGeneralShaderDataBuffer(ShaderGeneralDataBuffer * generalBuff, std::string name, GPUPipelineElementParentShader parentShader)
+void GPUPipeline::attachGeneralShaderDataBuffer(DynamicBuffer *generalBuff, GPUPipelineElementParentShader parentShader)
 {
 	GPUPipelineElement *newElement = new GPUPipelineElement;
 
@@ -191,16 +192,15 @@ void GPUPipeline::attachGeneralShaderDataBuffer(ShaderGeneralDataBuffer * genera
 		_generalDataVarToBuffHash->insert({varNameList[i], generalBuff});
 	}
 
-	newElement->name = name;
+	newElement->name = generalBuff->getName();
+
 	newElement->type = GPUPipelineElementType::SOL_GENERAL_DATA_BUFF;
 	newElement->core = generalBuff;
-	newElement->resourceSlot = 0;//generalShaderDataBufferResNumCounter;
+	newElement->resourceSlot = 0;
 
 	newElement->parentShader = parentShader;
 
-	_elementList->insert({ name, newElement });
-
-	//generalShaderDataBufferResNumCounter++;
+	_elementList->insert({ generalBuff->getName(), newElement });
 }
 
 void GPUPipeline::use()

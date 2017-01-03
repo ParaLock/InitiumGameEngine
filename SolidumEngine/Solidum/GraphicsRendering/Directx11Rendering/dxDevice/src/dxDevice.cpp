@@ -51,6 +51,8 @@ void dxDevice::Initialize(dxConfigBlock *config)
 		InitializeDepthStencilStates();
 		InitializeViewport();
 		InitializeBlendStates();
+
+		setViewport("light");
 }
 
 void dxDevice::InitializeDepthBuffer()
@@ -213,6 +215,11 @@ void dxDevice::InitializeViewport()
 void dxDevice::clearDepthStencil()
 {
 	dxDevContext->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH, 1.0f, 0);
+}
+
+void dxDevice::clearFrameBuffer(float R, float G, float B, float A)
+{
+	dxDevContext->ClearRenderTargetView(FrameBufferShaderAccess, D3DXCOLOR(R, G, B, A));
 }
 
 void dxDevice::disableDepthStencil()
