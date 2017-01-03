@@ -5,12 +5,8 @@
 #include "Solidum\GraphicsRendering\Mesh\include\meshFactory.h"
 #include "Solidum\GraphicsRendering\Mesh\include\meshLoaderOBJ.h"
 #include "Solidum\GraphicsRendering\Camera\include\camera.h"
-
 #include "Solidum\GraphicsRendering\RenderingCore\include\GraphicsRenderer.h"
 #include "Solidum\GraphicsRendering\Shaders\include\ShaderFactory.h"
-
-#include "Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDeviceAccessor.h"
-
 #include "Solidum\GraphicsRendering\Lights\include\Light.h"
 #include "Solidum\GraphicsRendering\Lights\include\LightFactory.h"
 
@@ -76,13 +72,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	D3DXMATRIX LStage_projectionMatrix, LStage_viewMatrix, LStage_worldMatrix;
 
-	float light1Color[4] = { 2.0f, 2.0f, 2.0f, 2.0f };
+	float light1Color[4] = { 2.0f, 7.0f, 2.0f, 2.0f };
 	float light1Pos[3] = { 0.0f, 0.0f, 0.0f };
-	float light1Direction[3] = { 0.0f, 0.0f, 9.0f };
+	float light1Direction[3] = { 0.0f, 6.0f, 9.0f };
 
-	float light2Color[4] = { 2.0f, 2.0f, 9.0f, 2.0f };
+	float light2Color[4] = { 2.0f, 2.0f, 10.0f, 2.0f };
 	float light2Pos[3] = { 0.0f, 0.0f, 0.0f };
-	float light2Direction[3] = { 0.0f, 0.0f, 3.0f };
+	float light2Direction[3] = { 0.0f, -8.0f, 9.0f };
 
 	while (myWindow->running) {
 
@@ -154,7 +150,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		endScene->draw(NULL);
 	}
-
 	myWindow->destroyWindow();
 }
 

@@ -11,6 +11,8 @@
 #include "../../RenderTarget/include/RenderTarget.h"
 #include "../../Directx11Rendering/dxRenderTarget/include/dxRenderTarget.h"
 
+#include "../../Mesh/include/meshFactory.h"
+
 
 class GraphicsRenderer
 {

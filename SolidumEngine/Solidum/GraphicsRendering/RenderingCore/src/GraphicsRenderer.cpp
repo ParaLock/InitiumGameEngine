@@ -42,4 +42,6 @@ GraphicsRenderer::~GraphicsRenderer()
 		delete _graphicsResourcePoolManager;
 	if (_dxManager != nullptr)
 		delete _dxManager;
+
+	meshFactory::destroyLibrary();
 }
