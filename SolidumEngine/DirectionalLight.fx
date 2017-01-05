@@ -1,21 +1,4 @@
-cbuffer MatrixBuffer
-{
-	matrix worldMatrix;
-	matrix viewMatrix;
-	matrix projectionMatrix;
-};
-
-cbuffer LightBuffer
-{
-	float3 lightDirection;
-	float padding1;
-	float3 lightPos;
-	float padding2;
-	float4 ambientColor;
-	float4 lightColor;
-	float3 eyeView;
-	float padding5;
-};
+#include "shaderUniforms.inc"
 
 struct VertexInputType
 {

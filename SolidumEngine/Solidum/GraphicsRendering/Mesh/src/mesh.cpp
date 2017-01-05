@@ -107,14 +107,14 @@ void mesh::draw()
 {
 	if (_pActiveShader != nullptr) {
 
-		_pActiveShader->syncGeneralDataVars();
+		_pActiveShader->updateGPU();
 
 		if(_indexBuff != nullptr && _vertexBuff != nullptr)
-		_pActiveShader->setMeshBuffers(_indexBuff, _vertexBuff, "test");
+		_pActiveShader->setMeshBuffers(_indexBuff, _vertexBuff, "null");
 
 		if(_pActiveTexture != nullptr)
 		_pActiveShader->setTexture(_pActiveTexture);
 
-		_pActiveShader->performRenderPass(numIndices);
+		_pActiveShader->execute(numIndices);
 	}
 }

@@ -19,7 +19,7 @@ PIPELINE_BEGIN
 		
 		BIND BUFFER_HOOK vertex_buff
 		BIND BUFFER_HOOK index_buff
-
+		
 	VS_SHADER_END
 	
 	

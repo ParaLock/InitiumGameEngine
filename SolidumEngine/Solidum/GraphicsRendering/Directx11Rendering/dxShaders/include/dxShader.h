@@ -22,7 +22,6 @@ struct dxConstantBufferLayout {
 class dxShader : public Shader
 {
 private:
-
 	ID3D11VertexShader *vertexShader;
 	ID3D11PixelShader *pixelShader;
 
@@ -33,10 +32,6 @@ public:
 
 	void enumerateResources(GPUPipelineElementParentShader shaderType, ID3D10Blob *shaderCode);
 
-	GPUPipeline* generatePipeline();
-
-	void performRenderPass(int numIndices);
-
-	void updateGPU();
+	void execute(int numIndices);
 };
 

@@ -18,8 +18,8 @@ void Light::attachShader(Shader * newShader)
 void Light::draw()
 {
 	if (_shader != nullptr) {
-		_shader->syncGeneralDataVars();
+		_shader->updateGPU();
 
-		_shader->performRenderPass(6);
+		_shader->execute(6);
 	}
 }

@@ -22,22 +22,38 @@ void Shader::setMeshBuffers(GPUBuffer * indexBuffer, GPUBuffer * vertexBuffer, s
 	_pipelineState->setIndexBuffer(indexBuffer);
 }
 
-void Shader::updateCPUGeneralDataVar(std::string varName, void * pData)
-{
-	_pipelineState->updateCPUGeneralDataVar(varName, pData);
-}
-
-void Shader::syncGeneralDataVars()
-{
-	_pipelineState->syncGeneralDataVars();
-}
-
-void Shader::performRenderPass(int numIndices)
+void Shader::execute(int numIndices)
 {
 	std::cout << "GENERIC SHADER: NO GRAPHICS API DIRECTIVE DETECTED" << std::endl;
+}
+
+void Shader::updateUniform(std::string varName, void * pData)
+{
+	auto itr = _uniformVarNameToBuff->find(varName);
+
+	if (itr != _uniformVarNameToBuff->end()) {
+
+		DynamicBuffer* varsBuff = _uniformVarNameToBuff->at(varName);
+
+		varsBuff->updateVar(varName, pData);
+	}
 }
 
 void Shader::updateGPU()
 {
-	std::cout << "GENERIC SHADER: NO GRAPHICS API DIRECTIVE DETECTED" << std::endl;
+	DynamicBuffer* previous = nullptr;
+
+	std::vector<DynamicBuffer*> activeGeneralDataBuffers;
+
+	for (auto itr = _uniformVarNameToBuff->begin(); itr != _uniformVarNameToBuff->end(); itr++) {
+
+		if (itr->second != previous)
+			activeGeneralDataBuffers.push_back(itr->second);
+
+		previous = itr->second;
+	}
+
+	for (unsigned int i = 0; i < activeGeneralDataBuffers.size(); ++i) {
+		activeGeneralDataBuffers[i]->updateGPU();
+	}
 }

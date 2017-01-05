@@ -4,12 +4,17 @@
 
 GPUPipeline::GPUPipeline()
 {
-
+	_elementList = new std::map<std::string, GPUPipelineElement*>;
+	_uniformToBufferMap = new std::map<std::string, DynamicBuffer*>;
+	_opList = new std::list<GPUPipelineOP*>;
 }
 
 
 GPUPipeline::~GPUPipeline()
 {
+	delete _elementList;
+	delete _uniformToBufferMap;
+	delete _opList;
 }
 
 void GPUPipeline::attachOP(GPUPipelineSupportedOP opType, std::string targetName, GPUPipelineElementType opTargetType, bool executionContext)
@@ -32,39 +37,6 @@ void GPUPipeline::setDepthTest(bool enable)
 void GPUPipeline::setBlending(bool enable)
 {
 	blendingEnabled = enable;
-}
-
-
-void GPUPipeline::updateCPUGeneralDataVar(std::string varName, void * pData)
-{
-	auto itr = _generalDataVarToBuffHash->find(varName);
-
-
-	if (itr != _generalDataVarToBuffHash->end()) {
-
-		DynamicBuffer* varsBuff = _generalDataVarToBuffHash->at(varName);
-
-		varsBuff->updateVar(varName, pData);
-	}
-}
-
-void GPUPipeline::syncGeneralDataVars()
-{
-	DynamicBuffer* previous = nullptr;
-
-	std::vector<DynamicBuffer*> activeGeneralDataBuffers;
-
-	for (auto itr = _generalDataVarToBuffHash->begin(); itr != _generalDataVarToBuffHash->end(); itr++) {
-
-		if (itr->second != previous)
-			activeGeneralDataBuffers.push_back(itr->second);
-
-		previous = itr->second;
-	}
-
-	for (unsigned int i = 0; i < activeGeneralDataBuffers.size(); ++i) {
-		activeGeneralDataBuffers[i]->updateGPU();
-	}
 }
 
 void GPUPipeline::setVertexBuffer(GPUBuffer * newBuff)
@@ -189,7 +161,7 @@ void GPUPipeline::attachGeneralShaderDataBuffer(DynamicBuffer *generalBuff, GPUP
 	std::vector<std::string> varNameList = generalBuff->getVarNameList();
 
 	for (unsigned int i = 0; i < varNameList.size(); ++i) {
-		_generalDataVarToBuffHash->insert({varNameList[i], generalBuff});
+		_uniformToBufferMap->insert({varNameList[i], generalBuff});
 	}
 
 	newElement->name = generalBuff->getName();
@@ -203,12 +175,12 @@ void GPUPipeline::attachGeneralShaderDataBuffer(DynamicBuffer *generalBuff, GPUP
 	_elementList->insert({ generalBuff->getName(), newElement });
 }
 
-void GPUPipeline::use()
+void GPUPipeline::applyState()
 {
 	std::cout << "NO API SPECIFIC PIPELINE BOUND";
 }
 
-void GPUPipeline::draw(int numIndices)
+void GPUPipeline::executePass(int numIndices)
 {
 	std::cout << "NO API SPECIFIC PIPELINE BOUND";
 }

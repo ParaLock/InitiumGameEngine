@@ -5,23 +5,15 @@
 
 dxGPUPipeline::dxGPUPipeline(std::string name)
 {
-	_elementList = new std::map<std::string, GPUPipelineElement*>;
-	_generalDataVarToBuffHash = new std::map<std::string, DynamicBuffer*>;
-	_opList = new std::list<GPUPipelineOP*>;
-
 	_name = name;
-
 }
 
 
 dxGPUPipeline::~dxGPUPipeline()
 {
-	delete _elementList;
-	delete _generalDataVarToBuffHash;
-	delete _opList;
 }
 
-void dxGPUPipeline::use()
+void dxGPUPipeline::applyState()
 {
 	dxDeviceAccessor::dxEncapsulator->dxDevContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -218,7 +210,7 @@ void dxGPUPipeline::processOp(GPUPipelineOP * op)
 	}
 }
 
-void dxGPUPipeline::draw(int numIndices)
+void dxGPUPipeline::executePass(int numIndices)
 {
 	std::list<GPUPipelineOP*> deferredOps;
 

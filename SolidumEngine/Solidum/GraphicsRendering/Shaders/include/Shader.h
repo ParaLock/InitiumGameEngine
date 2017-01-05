@@ -7,6 +7,8 @@
 class Shader
 {
 protected:
+	std::map<std::string, DynamicBuffer*> *_uniformVarNameToBuff;
+
 	GPUPipeline *_pipelineState;
 public:
 	Shader();
@@ -15,11 +17,9 @@ public:
 	void setTexture(Texture *tex);
 	void setMeshBuffers(GPUBuffer *indexBuffer, GPUBuffer *vertexBuffer, std::string meshName);
 
-	void updateCPUGeneralDataVar(std::string varName, void * pData);
-	void syncGeneralDataVars();
+	void updateUniform(std::string varName, void * pData);
+	void updateGPU();
 
-	virtual void performRenderPass(int numIndices);
-
-	virtual void updateGPU();
+	virtual void execute(int numIndices);
 };
 

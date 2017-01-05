@@ -13,6 +13,7 @@ ShaderFactory::~ShaderFactory()
 
 Shader * ShaderFactory::createShader(LPCWSTR shaderFilename, LPCWSTR pipelineFilename)
 {
+
 	Shader* newShader;
 
 	switch (ActiveAPITypeAccessor::_apiInUse) {

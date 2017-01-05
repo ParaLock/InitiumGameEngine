@@ -77,8 +77,8 @@ private:
 protected:
 	std::string _name;
 
+	std::map<std::string, DynamicBuffer*> *_uniformToBufferMap;
 	std::map<std::string, GPUPipelineElement*> *_elementList;
-	std::map<std::string, DynamicBuffer*> *_generalDataVarToBuffHash;
 	std::list<GPUPipelineOP*> *_opList;
 
 	bool blendingEnabled;
@@ -93,9 +93,6 @@ public:
 	void setDepthTest(bool enable);
 	void setBlending(bool enable);
 
-	void updateCPUGeneralDataVar(std::string varName, void *pData);
-	void syncGeneralDataVars();
-
 	void setVertexBuffer(GPUBuffer *newBuff);
 	void setIndexBuffer(GPUBuffer *newBuff);
 	void setPrimaryTexture(Texture *newTex);
@@ -109,7 +106,9 @@ public:
 	void attachShaderInputLayout(ShaderInputLayout *inputLayout, std::string name);
 	void attachGeneralShaderDataBuffer(DynamicBuffer* generalBuff, GPUPipelineElementParentShader parentShader);
 
-	virtual void use();
-	virtual void draw(int numIndices);
+	virtual void applyState();
+	virtual void executePass(int numIndices);
+
+	std::map<std::string, DynamicBuffer*>* getVarToBuffMap() { return _uniformToBufferMap; };
 };
 

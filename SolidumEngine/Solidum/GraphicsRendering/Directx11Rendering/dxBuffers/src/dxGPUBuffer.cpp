@@ -39,6 +39,8 @@ dxGPUBuffer::dxGPUBuffer(size_t size, BUFFER_TYPE type, BUFFER_CPU_ACCESS access
 		break;
 	}
 
+
+
 	bd.ByteWidth = _size;
 
 	bd.Usage = D3D11_USAGE_DYNAMIC;

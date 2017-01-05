@@ -16,7 +16,6 @@ dxShader::dxShader(LPCWSTR shaderFilename, LPCWSTR pipelineFilename)
 		{
 			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 			errorBlob->Release();
-			return;
 		}
 	}
 
@@ -36,7 +35,6 @@ dxShader::dxShader(LPCWSTR shaderFilename, LPCWSTR pipelineFilename)
 		{
 			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 			errorBlob->Release();
-			return;
 		}
 	}
 
@@ -49,6 +47,8 @@ dxShader::dxShader(LPCWSTR shaderFilename, LPCWSTR pipelineFilename)
 	}
 
 	enumerateResources(GPUPipelineElementParentShader::SOL_PS, pixelShaderCode);
+
+	_uniformVarNameToBuff = _pipelineState->getVarToBuffMap();
 }
 
 
@@ -125,22 +125,12 @@ void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3
 	}
 }
 
-GPUPipeline * dxShader::generatePipeline()
-{
-	return nullptr;
-}
-
-void dxShader::performRenderPass(int numIndices)
+void dxShader::execute(int numIndices)
 {
 	dxDeviceAccessor::dxEncapsulator->dxDevContext->VSSetShader(vertexShader, NULL, 0);
 	dxDeviceAccessor::dxEncapsulator->dxDevContext->PSSetShader(pixelShader, NULL, 0);
 
-	_pipelineState->use();
+	_pipelineState->applyState();
 
-	_pipelineState->draw(numIndices);
-}
-
-void dxShader::updateGPU()
-{
-
+	_pipelineState->executePass(numIndices);
 }

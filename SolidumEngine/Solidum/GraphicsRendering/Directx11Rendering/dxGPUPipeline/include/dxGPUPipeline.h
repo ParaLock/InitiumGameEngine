@@ -11,7 +11,7 @@ public:
 	dxGPUPipeline(std::string name);
 	~dxGPUPipeline();
 
-	void use();
-	void draw(int numIndices);
+	void applyState();
+	void executePass(int numIndices);
 };
 

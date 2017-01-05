@@ -44,6 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	Shader* deferredShader = ShaderFactory::createShader(L"deferredShader.fx", L"deferred_shader_pipeline.solPipe");
 	Shader* dirLightShader = ShaderFactory::createShader(L"DirectionalLight.fx", L"directionalLight_shader_pipeline.solPipe");
+	//Shader* specularShader = ShaderFactory::createShader(L"specular_deferred_shader.fx", L"specular_deferred_shader_pipeline.solPipe");
 
 	dirLightShader->setMeshBuffers(orthoWindowMesh->getIndexBuff(), orthoWindowMesh->getVertexBuff(), "window_mesh");
 
@@ -72,19 +73,27 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	D3DXMATRIX LStage_projectionMatrix, LStage_viewMatrix, LStage_worldMatrix;
 
-	float light1Color[4] = { 2.0f, 7.0f, 2.0f, 2.0f };
+	float light1Color[4] = { 0.0f, 7.0f, 0.0f, 0.0f };
 	float light1Pos[3] = { 0.0f, 0.0f, 0.0f };
 	float light1Direction[3] = { 0.0f, 6.0f, 9.0f };
 
-	float light2Color[4] = { 2.0f, 2.0f, 10.0f, 2.0f };
+	float light2Color[4] = { 0.0f, 0.0f, 10.0f, 0.0f };
 	float light2Pos[3] = { 0.0f, 0.0f, 0.0f };
 	float light2Direction[3] = { 0.0f, -8.0f, 9.0f };
+	
+	
+	float specularColor[4] = {3.0f, 3.0f, 3.0f, 3.0f};
+	float specularPower = 9.0f;
+
+	D3DXVECTOR3 cameraViewVector;
 
 	while (myWindow->running) {
 
 		myWindow->pollWin32Events();
 
 		myCam->cameraMouseLook();
+
+		cameraViewVector = myCam->getView();
 
 		if (GetAsyncKeyState('W')) {
 			myCam->cameraMove("forward", 5.0f);
@@ -124,31 +133,40 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		D3DXMatrixTranspose(&LStage_worldMatrix, &LStage_worldMatrix);
 		D3DXMatrixTranspose(&LStage_viewMatrix, &LStage_viewMatrix);
 
-		deferredShader->updateCPUGeneralDataVar("worldMatrix", GStage_worldMatrix);
-		deferredShader->updateCPUGeneralDataVar("viewMatrix", GStage_viewMatrix);
-		deferredShader->updateCPUGeneralDataVar("projectionMatrix", GStage_projectionMatrix);
-		deferredShader->updateCPUGeneralDataVar("OBJSpecificMatrix", GStage_OBJSpecificMatrix);
+		deferredShader->updateUniform("worldMatrix", GStage_worldMatrix);
+		deferredShader->updateUniform("viewMatrix", GStage_viewMatrix);
+		deferredShader->updateUniform("projectionMatrix", GStage_projectionMatrix);
+		deferredShader->updateUniform("OBJSpecificMatrix", GStage_OBJSpecificMatrix);
 
-		dirLightShader->updateCPUGeneralDataVar("worldMatrix", LStage_worldMatrix);
-		dirLightShader->updateCPUGeneralDataVar("viewMatrix", LStage_viewMatrix);
-		dirLightShader->updateCPUGeneralDataVar("projectionMatrix", LStage_projectionMatrix);
+		/*specularShader->updateUniform("worldMatrix", GStage_worldMatrix);
+		specularShader->updateUniform("viewMatrix", GStage_viewMatrix);
+		specularShader->updateUniform("projectionMatrix", GStage_projectionMatrix);
+		specularShader->updateUniform("OBJSpecificMatrix", GStage_OBJSpecificMatrix);
+		specularShader->updateUniform("viewVector", cameraViewVector);
+		specularShader->updateUniform("specularPower", &specularPower);
+		specularShader->updateUniform("specularColor", specularColor);*/
+
+
+		dirLightShader->updateUniform("worldMatrix", LStage_worldMatrix);
+		dirLightShader->updateUniform("viewMatrix", LStage_viewMatrix);
+		dirLightShader->updateUniform("projectionMatrix", LStage_projectionMatrix);
 
 		cubeMesh->draw();
 		hammerMesh->draw();
 
-		dirLightShader->updateCPUGeneralDataVar("lightDirection", light1Direction);
-		dirLightShader->updateCPUGeneralDataVar("lightPos", light1Pos);
-		dirLightShader->updateCPUGeneralDataVar("lightColor", light1Color);
+		dirLightShader->updateUniform("lightDirection", light1Direction);
+		dirLightShader->updateUniform("lightPos", light1Pos);
+		dirLightShader->updateUniform("lightColor", light1Color);
 
 		dirLight1->draw();
 
-		dirLightShader->updateCPUGeneralDataVar("lightDirection", light2Direction);
-		dirLightShader->updateCPUGeneralDataVar("lightPos", light2Pos);
-		dirLightShader->updateCPUGeneralDataVar("lightColor", light2Color);
+		dirLightShader->updateUniform("lightDirection", light2Direction);
+		dirLightShader->updateUniform("lightPos", light2Pos);
+		dirLightShader->updateUniform("lightColor", light2Color);
 
 		dirLight2->draw();
 
-		endScene->draw(NULL);
+		endScene->executePass(NULL);
 	}
 	myWindow->destroyWindow();
 }
