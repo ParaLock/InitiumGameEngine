@@ -11,6 +11,7 @@
 
 #include "../../../../EngineUtils/include/DynamicBuffer.h"
 
+#include "../../../Window/include/windowAccessor.h"
 
 struct dxConstantBufferLayout {
 	D3D11_SHADER_BUFFER_DESC Description;

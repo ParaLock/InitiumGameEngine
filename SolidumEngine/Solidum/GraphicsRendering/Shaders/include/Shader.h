@@ -4,6 +4,12 @@
 #include "../../../GraphicsRendering/GPUPipeline/include/GPUPipeline.h"
 #include "../../GPUPipeline/include/GPUPipelineFactory.h"
 
+#include "../../Lights/include/Light.h"
+#include "../../Material/include/Material.h"
+#include "../../../EngineCore/Transform/include/Transform.h"
+#include "../../Camera/include/camera.h"
+#include "../../Mesh/include/mesh.h"
+
 class Shader
 {
 protected:
@@ -15,7 +21,12 @@ public:
 	~Shader();
 
 	void setTexture(Texture *tex);
-	void setMeshBuffers(GPUBuffer *indexBuffer, GPUBuffer *vertexBuffer, std::string meshName);
+	void setMesh(mesh* newMesh);
+
+	void updateMaterialUniforms(Material* mat);
+	void updateLightUniforms(Light* light);
+	void updateModelUniforms(Transform* transform);
+	void updateCameraUniforms(camera* cam);
 
 	void updateUniform(std::string varName, void * pData);
 	void updateGPU();

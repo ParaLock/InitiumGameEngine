@@ -10,8 +10,9 @@ struct VertexInputType
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
+	float3 worldPos : POSITION0;
 	float3 normal : NORMAL;
-	float2 tex : TEXCOORD;
+	float2 tex : TEXCOORD0;
 };
 
 struct PixelOutputType
@@ -41,6 +42,8 @@ PixelInputType Vshader(VertexInputType input)
 	// Calculate the normal vector against the world matrix only.
 	output.normal = normalize(mul(input.normal, (float3x3)FinalworldMatrix));
 	
+	output.worldPos = mul(input.position, worldMatrix);
+	
 	return output;
 }
 
@@ -51,14 +54,34 @@ PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 {
 	PixelOutputType output;
 
-	float4 ambientLight = { 0.2f, 0.2f, 0.2f, 0.2f };
+	float3 V = normalize(eyePos - input.worldPos);
+	
+	float3 R = reflect( normalize( lightDirection ), normalize( input.normal ) );
+	
+	//float diffuseFactor = dot(input.normal, -lightDirection);
+	
+	//float4 specularColor = float4(0,0,0,0);
+	
+	float4 texColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
+	
+	//if(diffuseFactor > 0) {
+	//
+	//	float3 directionToEye = normalize(eyePos - input.worldPos);
+	//	float3 reflectDirection = normalize(reflect(lightDirection, input.normal));
+	//
+	//	float specularFactor = dot(directionToEye, reflectDirection);
+	//
+	//	specularFactor = pow(specularFactor, specularPower);
+	//
+	//	if(specularFactor > 0) 
+	//	{
+	//		specularColor = lightColor * specularPower * specularFactor;
+	//	}
+	//
+	//}
 
-	// Sample the color from the texture and store it for output to the render target.
-	output.color = shaderTexture.Sample(SampleTypeWrap, input.tex);
-	output.color = saturate(ambientLight * output.color);
-
-	// Store the normal for output to the render target.
 	output.normal = float4(input.normal, 1.0f);
-
+	output.color = specularShininess * lightColor * pow( saturate( dot( R, V ) ), specularPower );
+	
 	return output;
 }

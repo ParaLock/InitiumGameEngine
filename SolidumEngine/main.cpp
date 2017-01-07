@@ -9,7 +9,9 @@
 #include "Solidum\GraphicsRendering\Shaders\include\ShaderFactory.h"
 #include "Solidum\GraphicsRendering\Lights\include\Light.h"
 #include "Solidum\GraphicsRendering\Lights\include\LightFactory.h"
+#include "Solidum\GraphicsRendering\Material\include\Material.h"
 
+#include "Solidum\EngineCore\SolidumObject\Objects\include\SolidumObject.h"
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine,
@@ -33,8 +35,14 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	camera *myCam = new camera(0.1f, 1000.0f);
 
 	GraphicsRenderer* myRenderer = new GraphicsRenderer(SUPPORTED_GRAPHICS_API::DIRECTX11, myWindow);
+	myRenderer->attachPrimaryCamera(myCam);
 
 	GPUPipeline* endScene = GPUPipelineFactory::createPipeline(L"endScene_pipeline.solPipe");
+
+	SolidumObject* cube = new SolidumObject();
+	SolidumObject* hammer = new SolidumObject();
+
+	Material* specMat = new Material(100, 150, Vector4f(3.0f, 3.0f, 3.0f, 1.0f));
 
 	std::shared_ptr<meshLoader> objLdr = std::shared_ptr<meshLoader>(new meshLoaderOBJ());
 
@@ -46,54 +54,40 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Shader* dirLightShader = ShaderFactory::createShader(L"DirectionalLight.fx", L"directionalLight_shader_pipeline.solPipe");
 	//Shader* specularShader = ShaderFactory::createShader(L"specular_deferred_shader.fx", L"specular_deferred_shader_pipeline.solPipe");
 
-	dirLightShader->setMeshBuffers(orthoWindowMesh->getIndexBuff(), orthoWindowMesh->getVertexBuff(), "window_mesh");
-
 	Texture* grassTex = TextureFactory::createTexture();
 	Texture* woodTex = TextureFactory::createTexture();
 
 	grassTex->loadImage(L"grass.png");
 	woodTex->loadImage(L"Wood.png");
 
+	cube->attachMesh(cubeMesh);
+	cube->attachMaterial(specMat);
+	cube->attachShader(deferredShader);
+	cube->attachTexture(grassTex);
+	cube->getTransform()->setPos(Vector3f(0, 0, 0));
+
+	hammer->attachMesh(hammerMesh);
+	hammer->attachShader(deferredShader);
+	hammer->attachTexture(woodTex);
+	hammer->getTransform()->setPos(Vector3f(0, 0, 0));
+
 	Light* dirLight1 = new Light();
-	Light* dirLight2 = new Light();
+
+	dirLightShader->setMesh(orthoWindowMesh);
+
+	dirLight1->setColor(Vector4f(1.5f, 1.0f, 1.0f, 1.0f));
+	dirLight1->setDirection(Vector3f(0.0f, 0.0f, 9.0f));
+	dirLight1->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
 
 	dirLight1->attachShader(dirLightShader);
-	dirLight2->attachShader(dirLightShader);
 
-	cubeMesh->setActiveShader(deferredShader);
-	cubeMesh->setActiveTexture(grassTex);
-
-	hammerMesh->setActiveShader(deferredShader);
-	hammerMesh->setActiveTexture(woodTex);
-
-	D3DXMATRIX OBJSpecificTransform;
-
-	D3DXMATRIX placeHolder, GStage_projectionMatrix, GStage_viewMatrix, GStage_worldMatrix,
-		GStage_OBJSpecificMatrix;
-
-	D3DXMATRIX LStage_projectionMatrix, LStage_viewMatrix, LStage_worldMatrix;
-
-	float light1Color[4] = { 0.0f, 7.0f, 0.0f, 0.0f };
-	float light1Pos[3] = { 0.0f, 0.0f, 0.0f };
-	float light1Direction[3] = { 0.0f, 6.0f, 9.0f };
-
-	float light2Color[4] = { 0.0f, 0.0f, 10.0f, 0.0f };
-	float light2Pos[3] = { 0.0f, 0.0f, 0.0f };
-	float light2Direction[3] = { 0.0f, -8.0f, 9.0f };
-	
-	
-	float specularColor[4] = {3.0f, 3.0f, 3.0f, 3.0f};
-	float specularPower = 9.0f;
-
-	D3DXVECTOR3 cameraViewVector;
+	myRenderer->attachPrimaryLightSource(dirLight1);
 
 	while (myWindow->running) {
 
 		myWindow->pollWin32Events();
 
 		myCam->cameraMouseLook();
-
-		cameraViewVector = myCam->getView();
 
 		if (GetAsyncKeyState('W')) {
 			myCam->cameraMove("forward", 5.0f);
@@ -115,56 +109,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		myCam->Update();
 
-		D3DXMatrixTranslation(&OBJSpecificTransform, 0.0f, 0.0f, 0.0f);
+		myRenderer->renderSolidumObject(hammer);
+		myRenderer->renderSolidumObject(cube);
 
-		GStage_projectionMatrix = myCam->getProjectionMatrix();
-		GStage_viewMatrix = myCam->getViewMatrix();
-		GStage_worldMatrix = myCam->getWorldMatrix();
-		GStage_OBJSpecificMatrix = OBJSpecificTransform;
-
-		D3DXMatrixTranspose(&GStage_worldMatrix, &GStage_worldMatrix);
-		D3DXMatrixTranspose(&GStage_viewMatrix, &GStage_viewMatrix);
-		D3DXMatrixTranspose(&GStage_projectionMatrix, &GStage_projectionMatrix);
-
-		LStage_projectionMatrix = myCam->getOrtho();
-		LStage_viewMatrix = myCam->getStartCamView();
-		LStage_worldMatrix = myCam->getWorldMatrix();
-
-		D3DXMatrixTranspose(&LStage_worldMatrix, &LStage_worldMatrix);
-		D3DXMatrixTranspose(&LStage_viewMatrix, &LStage_viewMatrix);
-
-		deferredShader->updateUniform("worldMatrix", GStage_worldMatrix);
-		deferredShader->updateUniform("viewMatrix", GStage_viewMatrix);
-		deferredShader->updateUniform("projectionMatrix", GStage_projectionMatrix);
-		deferredShader->updateUniform("OBJSpecificMatrix", GStage_OBJSpecificMatrix);
-
-		/*specularShader->updateUniform("worldMatrix", GStage_worldMatrix);
-		specularShader->updateUniform("viewMatrix", GStage_viewMatrix);
-		specularShader->updateUniform("projectionMatrix", GStage_projectionMatrix);
-		specularShader->updateUniform("OBJSpecificMatrix", GStage_OBJSpecificMatrix);
-		specularShader->updateUniform("viewVector", cameraViewVector);
-		specularShader->updateUniform("specularPower", &specularPower);
-		specularShader->updateUniform("specularColor", specularColor);*/
-
-
-		dirLightShader->updateUniform("worldMatrix", LStage_worldMatrix);
-		dirLightShader->updateUniform("viewMatrix", LStage_viewMatrix);
-		dirLightShader->updateUniform("projectionMatrix", LStage_projectionMatrix);
-
-		cubeMesh->draw();
-		hammerMesh->draw();
-
-		dirLightShader->updateUniform("lightDirection", light1Direction);
-		dirLightShader->updateUniform("lightPos", light1Pos);
-		dirLightShader->updateUniform("lightColor", light1Color);
-
-		dirLight1->draw();
-
-		dirLightShader->updateUniform("lightDirection", light2Direction);
-		dirLightShader->updateUniform("lightPos", light2Pos);
-		dirLightShader->updateUniform("lightColor", light2Color);
-
-		dirLight2->draw();
+		myRenderer->renderLight(dirLight1);
 
 		endScene->executePass(NULL);
 	}

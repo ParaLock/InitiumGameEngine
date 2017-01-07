@@ -23,6 +23,12 @@ camera::camera(float near_value, float far_value):
 	D3DXMatrixIdentity(&matProjection);
 	D3DXMatrixIdentity(&worldMatrix);
 
+
+	D3DXMatrixIdentity(&transposedMatProjection);
+	D3DXMatrixIdentity(&transposedMatView);
+	D3DXMatrixIdentity(&transposedWorldMatrix);
+	D3DXMatrixIdentity(&transposedOrthoMatrix);
+
 	D3DXMatrixPerspectiveFovLH(&matProjection,
 		(FLOAT)D3DXToRadian(45),
 		(FLOAT)windowAccessor::screen_width / (FLOAT)windowAccessor::screen_height,

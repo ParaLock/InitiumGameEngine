@@ -25,16 +25,6 @@ mesh::~mesh()
 	delete _indexBuff;
 }
 
-void mesh::setActiveTexture(Texture * newTex)
-{
-	_pActiveTexture = newTex;
-}
-
-void mesh::setActiveShader(Shader * newShader)
-{
-	_pActiveShader = newShader;
-}
-
 
 void mesh::generateOrthoWindowMesh()
 {
@@ -100,21 +90,4 @@ void mesh::generateOrthoWindowMesh()
 
 	numIndices = 6;
 	meshSize = m_vertexCount * sizeof(LIGHT_VERTEX);
-}
-
-
-void mesh::draw()
-{
-	if (_pActiveShader != nullptr) {
-
-		_pActiveShader->updateGPU();
-
-		if(_indexBuff != nullptr && _vertexBuff != nullptr)
-		_pActiveShader->setMeshBuffers(_indexBuff, _vertexBuff, "null");
-
-		if(_pActiveTexture != nullptr)
-		_pActiveShader->setTexture(_pActiveTexture);
-
-		_pActiveShader->execute(numIndices);
-	}
 }

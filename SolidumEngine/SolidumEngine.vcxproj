@@ -19,6 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\EngineUtils\include\Vector2f.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Vector3f.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Vector4f.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Material\include\Material.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\HelperFunctions.h" />
     <ClInclude Include="Solidum\EngineUtils\include\DynamicBuffer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderFactory.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderingCore\include\ActiveAPITypeAccessor.h" />
@@ -64,8 +69,11 @@
     <ClInclude Include="Solidum\EngineUtils\include\StringManipulation.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\Texture.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureSampler.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Vector.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\GraphicsRendering\Material\src\Material.cpp" />
+    <ClCompile Include="Solidum\EngineUtils\src\HelperFunctions.cpp" />
     <ClCompile Include="Solidum\EngineUtils\src\DynamicBuffer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderFactory.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderingCore\src\ActiveAPITypeAccessor.cpp" />

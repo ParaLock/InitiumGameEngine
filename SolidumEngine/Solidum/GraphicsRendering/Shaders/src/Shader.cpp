@@ -16,10 +16,42 @@ void Shader::setTexture(Texture * tex)
 	_pipelineState->setPrimaryTexture(tex);
 }
 
-void Shader::setMeshBuffers(GPUBuffer * indexBuffer, GPUBuffer * vertexBuffer, std::string meshName)
+void Shader::setMesh(mesh * newMesh)
 {
-	_pipelineState->setVertexBuffer(vertexBuffer);
-	_pipelineState->setIndexBuffer(indexBuffer);
+	_pipelineState->setIndexBuffer(newMesh->getIndexBuff());
+	_pipelineState->setVertexBuffer(newMesh->getVertexBuff());
+}
+
+void Shader::updateMaterialUniforms(Material * mat)
+{
+	float specColor = mat->getSpecularPower();
+	float specShininess = mat->getSpecularShininess();
+
+	updateUniform("specularShininess", &specShininess);
+	updateUniform("specularColor", &mat->getSpecularColor());
+	updateUniform("specularPower", &specColor);
+}
+
+void Shader::updateLightUniforms(Light * light)
+{
+	updateUniform("lightDirection", &light->getDirection());
+	updateUniform("lightPos", &light->getPosition());
+	updateUniform("lightColor", &light->getColor());
+}
+
+void Shader::updateModelUniforms(Transform * transform)
+{
+	updateUniform("OBJSpecificMatrix", transform->getTransform());
+}
+
+void Shader::updateCameraUniforms(camera * cam)
+{
+	updateUniform("eyePos", cam->getView());
+	updateUniform("viewMatrix", cam->getTransposedViewMatrix());
+	updateUniform("projectionMatrix", cam->getTransposedProjectionMatrix());
+	updateUniform("worldMatrix", cam->getTransposedWorldMatrix());
+	updateUniform("orthoProjection", cam->getOrtho());
+	updateUniform("camViewStart", cam->getTransposedStartCamView());
 }
 
 void Shader::execute(int numIndices)

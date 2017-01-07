@@ -1,13 +1,13 @@
 #pragma once
 #include "../../../sysInclude.h"
 
-
-
 class Transform
 {
 private:
-	D3DXVECTOR3 pos;
-	D3DXMATRIX objMatrix;
+	Vector3f _pos;
+
+	D3DXMATRIX _transformMatrix;
+	D3DXMATRIX _transposedTransformMatrix;
 
 	Transform *parent = NULL;
 public:
@@ -16,11 +16,11 @@ public:
 
 	void setParent(Transform *newParent) { parent = newParent; };
 
-	void setRotation(float angleOfRot, std::string direction);
-	void setPos(float x, float y, float z);
+	void setRotation(float angleOfRot, std::string _transformMatrix);
+	void setPos(Vector3f pos);
 
-	D3DXMATRIX& getTransform() { return objMatrix; };
+	D3DXMATRIX& getTransform() { return _transformMatrix; };
 
-	D3DXMATRIX& getParentTransform() { if (parent != NULL) return parent->getTransform(); };
+	D3DXMATRIX& getParent() { if (parent != NULL) return parent->getTransform(); };
 };
 

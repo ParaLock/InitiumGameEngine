@@ -107,8 +107,11 @@ void dxShaderInputLayout::generateInputLayout()
 
 		inputLayoutDesc[elementCount].Format = elementFormat;
 
+		std::random_shuffle(elementName.begin(), elementName.end());
+
 		inputElements += "float"; 
 		inputElements = inputElements + ' ' + elementName + " : " + element->_semantic + "; ";
+
 
 		elementCount++;
 	}
@@ -149,6 +152,23 @@ void dxShaderInputLayout::generateInputLayout()
 
 	compileResult = D3DCompile(dumbyShaderStr.c_str(), dumbyShaderStr.size(),
 		NULL, 0, 0, "Vshader", "vs_5_0", D3DCOMPILE_DEBUG, 0, &vertexShaderCode, &compileError);
+
+	if (FAILED(compileResult)) {
+		std::wstring errorMsg = L"INPUT LAYOUT FAKE SHADER COMPILE ERROR: ";
+		errorMsg += L"Fake";
+		errorMsg += L"\n";
+		errorMsg += L"HLSL ERR: ";
+		std::string compileErrStr((char*)compileError->GetBufferPointer());
+		std::wstring tmp;
+		tmp.assign(compileErrStr.begin(), compileErrStr.end());
+		errorMsg += tmp;
+
+
+		MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+
+		OutputDebugStringA((char*)compileError->GetBufferPointer());
+		compileError->Release();
+	}
 
 	vCreateResult = dxDeviceAccessor::dxEncapsulator->dxDev->
 		CreateVertexShader(vertexShaderCode->GetBufferPointer(), vertexShaderCode->GetBufferSize(), NULL, &vertexShader);

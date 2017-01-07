@@ -1,4 +1,4 @@
 ﻿  main.cpp
-c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\main.cpp(20): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\main.cpp(22): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(240): note: see declaration of 'freopen'
   SolidumEngine.vcxproj -> C:\Users\natha\Documents\Visual Studio 2015\Projects\SolidumEngine\Debug\SolidumEngine.exe

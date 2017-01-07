@@ -18,14 +18,13 @@ private:
 	void adjustHeadingPitch(float hRad, float pRad);
 	void UpdateView();
 
-	D3DXMATRIX matRotate, matView, matProjection, orthoMatrix, startCamView;
+	D3DXMATRIX matRotate, matView, matProjection, orthoMatrix, startCamView, worldMatrix;
+	D3DXMATRIX transposedMatView, transposedMatProjection, transposedOrthoMatrix, transposedWorldMatrix, transposedStartCamView;
 
 	HRTimer camTimer;
 
 	const D3DXVECTOR3 dV, dU;
 	D3DXVECTOR3 eye, view, up;
-
-	D3DXMATRIX worldMatrix;
 
 	D3DXVECTOR3 forward, strafeRight;
 	float movementToggles[4];
@@ -45,13 +44,61 @@ public:
 
 	bool lockMouse;
 
-	D3DXMATRIX& getViewMatrix() { return matView; }
-	D3DXMATRIX& getProjectionMatrix() { return matProjection; }
-	D3DXMATRIX& getOrtho() { return orthoMatrix; };
-	D3DXMATRIX& getWorldMatrix() { return worldMatrix; };
+
+
+	D3DXMATRIX& getViewMatrix() { 
+
+		return matView;
+	}
+	D3DXMATRIX& getProjectionMatrix() {
+
+		return matProjection;
+	}
+	D3DXMATRIX& getOrtho() { 
+
+		return orthoMatrix;
+	};
+	D3DXMATRIX& getWorldMatrix() { 
+
+		return worldMatrix;
+	};
+
+	D3DXMATRIX& getTransposedViewMatrix() {
+
+		D3DXMatrixTranspose(&transposedMatView, &matView);
+
+		return transposedMatView;
+	}
+
+	D3DXMATRIX& getTransposedProjectionMatrix() {
+
+		D3DXMatrixTranspose(&transposedMatProjection, &matProjection);
+
+		return transposedMatProjection;
+	}
+	D3DXMATRIX& getTransposedOrtho() {
+
+		D3DXMatrixTranspose(&transposedOrthoMatrix, &orthoMatrix);
+
+		return transposedOrthoMatrix;
+	};
+	D3DXMATRIX& getTransposedWorldMatrix() {
+
+		D3DXMatrixTranspose(&transposedWorldMatrix, &worldMatrix);
+
+		return transposedWorldMatrix;
+	};
+
 	D3DXVECTOR3 getView() { return view; };
 
 	D3DXMATRIX& getStartCamView() { return startCamView; };
+
+	D3DXMATRIX& getTransposedStartCamView() {
+
+		D3DXMatrixTranspose(&transposedStartCamView, &startCamView);
+
+		return transposedStartCamView;
+	};
 
 	void setPositionAndView(float x, float y, float z, float hDeg, float pDeg);
 

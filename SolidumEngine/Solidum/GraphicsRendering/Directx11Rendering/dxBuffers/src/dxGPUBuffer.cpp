@@ -39,13 +39,20 @@ dxGPUBuffer::dxGPUBuffer(size_t size, BUFFER_TYPE type, BUFFER_CPU_ACCESS access
 		break;
 	}
 
+	if (!HelperFunctions::IsDivisble(16, _size)) {
 
+		bd.ByteWidth = _size;
 
-	bd.ByteWidth = _size;
+		bd.Usage = D3D11_USAGE_DYNAMIC;
 
-	bd.Usage = D3D11_USAGE_DYNAMIC;
+		result = dxDev->CreateBuffer(&bd, NULL, &bufferPtr);
+	}
+	else {
+		std::wstring errorMsg = L"DX CBUFFER ERROR: Padding in-correct: ";
 
-	result = dxDev->CreateBuffer(&bd, NULL, &bufferPtr);
+		MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+		return;
+	}
 }
 
 

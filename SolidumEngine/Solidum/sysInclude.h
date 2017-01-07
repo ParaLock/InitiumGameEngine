@@ -23,6 +23,10 @@
 #include <locale>
 #include <codecvt>
 
+#include "EngineUtils\include\Vector4f.h"
+#include "EngineUtils\include\Vector3f.h"
+#include "EngineUtils\include\Vector2f.h"
+
 #include "atlstr.h"
 
 #include <regex>
@@ -39,6 +43,8 @@
 #pragma comment(lib, "D3DCompiler.lib")
 #pragma comment (lib, "dxguid.lib")
 
+#define SSTR( x ) static_cast< std::ostringstream & >( \
+        ( std::ostringstream() << std::dec << x ) ).str()
 
 enum SUPPORTED_GRAPHICS_API {
 	DIRECTX11,

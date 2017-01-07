@@ -14,6 +14,17 @@ dxShader::dxShader(LPCWSTR shaderFilename, LPCWSTR pipelineFilename)
 	{
 		if (errorBlob)
 		{
+			std::wstring errorMsg = L"SHADER COMPILE ERROR: ";
+			errorMsg += shaderFilename;
+			errorMsg += L"\n";
+			errorMsg += L"HLSL ERR: ";
+			std::string compileErrStr((char*)errorBlob->GetBufferPointer());
+			std::wstring tmp;
+			tmp.assign(compileErrStr.begin(), compileErrStr.end());
+			errorMsg += tmp;
+			
+
+			MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
 			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 			errorBlob->Release();
 		}
@@ -22,8 +33,14 @@ dxShader::dxShader(LPCWSTR shaderFilename, LPCWSTR pipelineFilename)
 	result = dxDev->CreateVertexShader(vertexShaderCode->GetBufferPointer(), vertexShaderCode->GetBufferSize(), NULL, &vertexShader);
 	if (FAILED(result))
 	{
+
+		std::wstring errorMsg = L"Vertex SHADER CREATION FAILED: ";
+		errorMsg += shaderFilename;
+		errorMsg += L"\n";
+
+		MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+
 		std::cout << "DX SHADER: VS CREATION FAILED" << std::endl;
-		return;
 	}
 
 	enumerateResources(GPUPipelineElementParentShader::SOL_VS, vertexShaderCode);
@@ -33,6 +50,19 @@ dxShader::dxShader(LPCWSTR shaderFilename, LPCWSTR pipelineFilename)
 	{
 		if (errorBlob)
 		{
+			std::wstring errorMsg = L"SHADER COMPILE ERROR: ";
+			errorMsg += shaderFilename;
+			errorMsg += L"\n";
+			errorMsg += L"HLSL ERR: ";
+			std::string compileErrStr((char*)errorBlob->GetBufferPointer());
+			std::wstring tmp;
+			tmp.assign(compileErrStr.begin(), compileErrStr.end());
+			errorMsg += tmp;
+
+
+			MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+
 			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 			errorBlob->Release();
 		}
@@ -43,7 +73,13 @@ dxShader::dxShader(LPCWSTR shaderFilename, LPCWSTR pipelineFilename)
 	if (FAILED(result))
 	{
 		std::cout << "DX SHADER: PS CREATION FAILED" << std::endl;
-		return;
+
+		std::wstring errorMsg = L"Pixel SHADER CREATION FAILED: ";
+		errorMsg += shaderFilename;
+		errorMsg += L"\n";
+
+		MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+		OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 	}
 
 	enumerateResources(GPUPipelineElementParentShader::SOL_PS, pixelShaderCode);
