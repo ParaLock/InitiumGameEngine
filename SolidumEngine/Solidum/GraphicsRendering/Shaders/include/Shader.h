@@ -20,7 +20,6 @@ public:
 	Shader();
 	~Shader();
 
-	void setTexture(Texture *tex);
 	void setMesh(mesh* newMesh);
 
 	void updateMaterialUniforms(Material* mat);

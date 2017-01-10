@@ -14,19 +14,23 @@ private:
 
 	Vector4f _color;
 
+	int _type;
+
 public:
-	Light();
+	Light(int type);
 	~Light();
 
 	void setDirection(Vector3f dir);
-
 	void setPosition(Vector3f pos);
-
 	void setColor(Vector4f color);
+
+	void setType(int type) { _type = type; };
 
 	Vector3f getDirection() { return _direction; }
 	Vector3f getPosition() { return _pos; }
 	Vector4f getColor() { return _color; }
+
+	int getType() { return _type; };
 
 	Shader* getShader() { return _shader; }
 

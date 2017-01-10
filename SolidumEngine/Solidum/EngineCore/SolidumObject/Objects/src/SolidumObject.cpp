@@ -18,11 +18,6 @@ void SolidumObject::attachMesh(mesh * newMesh)
 	_mesh = newMesh;
 }
 
-void SolidumObject::attachTexture(Texture * newTex)
-{
-	_texture = newTex;
-}
-
 void SolidumObject::attachMaterial(Material * newMat)
 {
 	_mat = newMat;
@@ -41,9 +36,6 @@ void SolidumObject::draw()
 		}
 		if (_mat != nullptr) {
 			_shader->updateMaterialUniforms(_mat);
-		}
-		if (_texture != nullptr) {
-			_shader->setTexture(_texture);
 		}
 		if (_mesh != nullptr) {
 			_shader->setMesh(_mesh);

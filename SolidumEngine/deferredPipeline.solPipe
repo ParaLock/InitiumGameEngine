@@ -1,0 +1,40 @@
+PIPELINE_INIT 
+
+	INIT GBUFFER color_gbuff
+	INIT GBUFFER normals_gbuff
+	INIT GBUFFER position_gbuff
+	INIT GBUFFER specular_gbuff
+	
+	
+	INIT SAMPLER WRAP LINEAR wrapSampler
+	
+PIPELINE_INIT_END
+
+PIPELINE_BEGIN
+	
+	BIND GBUFFER OUTPUT color_gbuff
+	BIND GBUFFER OUTPUT normals_gbuff
+	BIND GBUFFER OUTPUT position_gbuff
+	BIND GBUFFER OUTPUT specular_gbuff
+	
+	DEPTH_TEST enable
+	BLENDING disable
+
+	VS_SHADER_BEGIN
+		
+		BIND BUFFER_HOOK vertex_buffer
+		BIND BUFFER_HOOK index_buffer
+		
+	VS_SHADER_END
+	
+	
+	PS_SHADER_BEGIN
+
+		BIND TEXTURE_HOOK material_color_tex
+		BIND TEXTURE_HOOK material_base_tex
+		
+		BIND SAMPLER wrapSampler		
+
+	PS_SHADER_END
+
+PIPELINE_END

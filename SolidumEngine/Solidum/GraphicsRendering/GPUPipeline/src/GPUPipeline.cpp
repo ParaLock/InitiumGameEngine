@@ -39,46 +39,24 @@ void GPUPipeline::setBlending(bool enable)
 	blendingEnabled = enable;
 }
 
-void GPUPipeline::setVertexBuffer(GPUBuffer * newBuff)
+void GPUPipeline::setBuffer(GPUBuffer * newBuff, std::string name)
 {
-	auto itr = _elementList->find("vertex_buff");
+	auto itr = _elementList->find(name);
 
 	if (itr != _elementList->end()) {
-		GPUPipelineElement *buff = _elementList->at("vertex_buff");
+
+		GPUPipelineElement *buff = _elementList->at(name);
 
 		buff->core = (void*)newBuff;
 	}
 }
 
-void GPUPipeline::setIndexBuffer(GPUBuffer * newBuff)
+void GPUPipeline::setTexture(Texture * newTex, std::string name)
 {
-	auto itr = _elementList->find("index_buff");
+	auto itr = _elementList->find(name);
 
 	if (itr != _elementList->end()) {
-
-		GPUPipelineElement *buff = _elementList->at("index_buff");
-
-		buff->core = (void*)newBuff;
-	}
-}
-
-void GPUPipeline::setPrimaryTexture(Texture * newTex)
-{
-	auto itr = _elementList->find("primary_texture");
-
-	if (itr != _elementList->end()) {
-		GPUPipelineElement *tex = _elementList->at("primary_texture");
-
-		tex->core = (void*)newTex;
-	}
-}
-
-void GPUPipeline::setSecondaryTexture(Texture * newTex)
-{
-	auto itr = _elementList->find("secondary_texture");
-
-	if (itr != _elementList->end()) {
-		GPUPipelineElement *tex = _elementList->at("secondary_texture");
+		GPUPipelineElement *tex = _elementList->at(name);
 
 		tex->core = (void*)newTex;
 	}

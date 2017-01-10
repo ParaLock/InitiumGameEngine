@@ -1,7 +1,8 @@
 #include "../include/Light.h"
 
-Light::Light()
+Light::Light(int type)
 {
+	_type = type;
 }
 
 

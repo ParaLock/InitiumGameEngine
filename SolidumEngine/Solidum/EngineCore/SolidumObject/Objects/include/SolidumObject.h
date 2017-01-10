@@ -16,7 +16,6 @@ class SolidumObject
 {
 private:
 	Transform* _transform = nullptr;
-	Texture* _texture = nullptr;
 	mesh* _mesh = nullptr;
 	Material* _mat = nullptr;
 	Shader* _shader = nullptr;
@@ -25,7 +24,6 @@ public:
 	~SolidumObject();
 
 	void attachMesh(mesh* newMesh);
-	void attachTexture(Texture* newTex);
 	void attachMaterial(Material* newMat);
 	void attachShader(Shader* newShader);
 

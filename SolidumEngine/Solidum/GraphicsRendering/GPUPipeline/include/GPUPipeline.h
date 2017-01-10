@@ -93,10 +93,8 @@ public:
 	void setDepthTest(bool enable);
 	void setBlending(bool enable);
 
-	void setVertexBuffer(GPUBuffer *newBuff);
-	void setIndexBuffer(GPUBuffer *newBuff);
-	void setPrimaryTexture(Texture *newTex);
-	void setSecondaryTexture(Texture *newTex);
+	void setBuffer(GPUBuffer *newBuff, std::string name);
+	void setTexture(Texture *newTex, std::string name);
 
 	void attachTextureHook(std::string name, GPUPipelineElementParentShader parentShader);
 	void attachBufferHook(std::string name, GPUPipelineElementParentShader parentShader);

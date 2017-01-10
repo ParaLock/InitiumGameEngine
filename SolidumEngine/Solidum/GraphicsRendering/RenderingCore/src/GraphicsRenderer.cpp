@@ -46,11 +46,6 @@ GraphicsRenderer::~GraphicsRenderer()
 	meshFactory::destroyLibrary();
 }
 
-void GraphicsRenderer::attachPrimaryLightSource(Light * mainLight)
-{
-	_primaryLightList.push_back(mainLight);
-}
-
 void GraphicsRenderer::attachPrimaryCamera(camera * cam)
 {
 	_primaryCamera = cam;
@@ -63,9 +58,6 @@ void GraphicsRenderer::renderSolidumObject(SolidumObject * obj)
 	if (objShader != nullptr) {
 		if(_primaryCamera != nullptr)
 		objShader->updateCameraUniforms(_primaryCamera);
-
-		if(_primaryLightList.size() != 0)
-		objShader->updateLightUniforms(_primaryLightList.back());
 	}
 
 	obj->draw();

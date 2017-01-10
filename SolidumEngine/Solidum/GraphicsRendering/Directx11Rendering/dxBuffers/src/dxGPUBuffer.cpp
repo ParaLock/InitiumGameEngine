@@ -48,6 +48,7 @@ dxGPUBuffer::dxGPUBuffer(size_t size, BUFFER_TYPE type, BUFFER_CPU_ACCESS access
 		result = dxDev->CreateBuffer(&bd, NULL, &bufferPtr);
 	}
 	else {
+
 		std::wstring errorMsg = L"DX CBUFFER ERROR: Padding in-correct: ";
 
 		MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);

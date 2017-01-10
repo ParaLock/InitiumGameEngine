@@ -42,7 +42,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	SolidumObject* cube = new SolidumObject();
 	SolidumObject* hammer = new SolidumObject();
 
-	Material* specMat = new Material(100, 150, Vector4f(3.0f, 3.0f, 3.0f, 1.0f));
+	Material* metalMaterial = new Material(30.0f, 0.8f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f), 0);
+	Material* woodMaterial = new Material(0.0f, 0.0f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f), 1);
 
 	std::shared_ptr<meshLoader> objLdr = std::shared_ptr<meshLoader>(new meshLoaderOBJ());
 
@@ -50,38 +51,39 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	mesh* cubeMesh = meshFactory::createMesh(L"cube.obj", objLdr, "cube_mesh");
 	mesh* orthoWindowMesh = meshFactory::createMesh(L"gen_ortho_window_mesh", nullptr, "window_mesh");
 
-	Shader* deferredShader = ShaderFactory::createShader(L"deferredShader.fx", L"deferred_shader_pipeline.solPipe");
-	Shader* dirLightShader = ShaderFactory::createShader(L"DirectionalLight.fx", L"directionalLight_shader_pipeline.solPipe");
-	//Shader* specularShader = ShaderFactory::createShader(L"specular_deferred_shader.fx", L"specular_deferred_shader_pipeline.solPipe");
+	Shader* deferredShader = ShaderFactory::createShader(L"deferredShader.hlsl", L"deferredPipeline.solPipe");
+	Shader* dirLightShader = ShaderFactory::createShader(L"deferredLighting.hlsl", L"deferredLightingPipeline.solPipe");
 
 	Texture* grassTex = TextureFactory::createTexture();
 	Texture* woodTex = TextureFactory::createTexture();
+	Texture* metalTex = TextureFactory::createTexture();
 
 	grassTex->loadImage(L"grass.png");
 	woodTex->loadImage(L"Wood.png");
+	metalTex->loadImage(L"metal.png");
+
+	metalMaterial->attachMaterialTexture(metalTex, MATERIAL_TEX::PRIMARY_MATERIAL_TEXTURE);
+	woodMaterial->attachMaterialTexture(woodTex, MATERIAL_TEX::PRIMARY_MATERIAL_TEXTURE);
 
 	cube->attachMesh(cubeMesh);
-	cube->attachMaterial(specMat);
+	cube->attachMaterial(metalMaterial);
 	cube->attachShader(deferredShader);
-	cube->attachTexture(grassTex);
 	cube->getTransform()->setPos(Vector3f(0, 0, 0));
 
 	hammer->attachMesh(hammerMesh);
 	hammer->attachShader(deferredShader);
-	hammer->attachTexture(woodTex);
+	hammer->attachMaterial(woodMaterial);
 	hammer->getTransform()->setPos(Vector3f(0, 0, 0));
 
-	Light* dirLight1 = new Light();
+	Light* dirLight1 = new Light(1);
 
 	dirLightShader->setMesh(orthoWindowMesh);
 
-	dirLight1->setColor(Vector4f(1.5f, 1.0f, 1.0f, 1.0f));
+	dirLight1->setColor(Vector4f(4.5f, 4.5f, 4.5f, 4.5f));
 	dirLight1->setDirection(Vector3f(0.0f, 0.0f, 9.0f));
 	dirLight1->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
 
 	dirLight1->attachShader(dirLightShader);
-
-	myRenderer->attachPrimaryLightSource(dirLight1);
 
 	while (myWindow->running) {
 

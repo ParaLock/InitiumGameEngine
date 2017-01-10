@@ -11,32 +11,43 @@ Shader::~Shader()
 {
 }
 
-void Shader::setTexture(Texture * tex)
-{
-	_pipelineState->setPrimaryTexture(tex);
-}
-
 void Shader::setMesh(mesh * newMesh)
 {
-	_pipelineState->setIndexBuffer(newMesh->getIndexBuff());
-	_pipelineState->setVertexBuffer(newMesh->getVertexBuff());
+	_pipelineState->setBuffer(newMesh->getIndexBuff(), "index_buffer");
+	_pipelineState->setBuffer(newMesh->getVertexBuff(), "vertex_buffer");
 }
 
 void Shader::updateMaterialUniforms(Material * mat)
 {
-	float specColor = mat->getSpecularPower();
-	float specShininess = mat->getSpecularShininess();
+	float specPower = mat->getSpecularPower();
+	float specIntensity= mat->getSpecularIntensity();
+	int matID = mat->getID();
 
-	updateUniform("specularShininess", &specShininess);
+	updateUniform("specularIntensity", &specIntensity);
 	updateUniform("specularColor", &mat->getSpecularColor());
-	updateUniform("specularPower", &specColor);
+	updateUniform("specularPower", &specPower);
+	updateUniform("materialID", &specPower);
+
+	std::map<MATERIAL_TEX, Texture*>& const textures = mat->getTextures();
+
+	for (auto itr = textures.begin(); itr != textures.end(); itr++) {
+		if (itr->first == MATERIAL_TEX::PRIMARY_MATERIAL_TEXTURE) {
+			_pipelineState->setTexture(itr->second, "material_color_tex");
+		}
+		if (itr->first == MATERIAL_TEX::SECONDARY_MATERIAL_TEXTURE) {
+			_pipelineState->setTexture(itr->second, "material_base_tex");
+		}
+	}
 }
 
 void Shader::updateLightUniforms(Light * light)
 {
+	int lightType = light->getType();
+
 	updateUniform("lightDirection", &light->getDirection());
 	updateUniform("lightPos", &light->getPosition());
 	updateUniform("lightColor", &light->getColor());
+	updateUniform("lightType", &lightType);
 }
 
 void Shader::updateModelUniforms(Transform * transform)

@@ -24,7 +24,6 @@
 class GraphicsRenderer
 {
 private:
-	std::list<Light*> _primaryLightList;
 	camera* _primaryCamera;
 
 	SUPPORTED_GRAPHICS_API _apiInUse;
@@ -37,12 +36,7 @@ public:
 	GraphicsRenderer(SUPPORTED_GRAPHICS_API api, window *outputWindow);
 	~GraphicsRenderer();
 
-	void attachPrimaryLightSource(Light* mainLight);
 	void attachPrimaryCamera(camera* cam);
-
-	void createMesh(LPCWSTR meshFilename, std::shared_ptr<meshLoader> ldr, UINT32 meshID);
-	void createShader(LPCWSTR shaderFilename, LPCWSTR pipelineFilename, UINT shaderID);
-	void createLight();
 
 	void renderSolidumObject(SolidumObject* obj);
 	void renderLight(Light* light);

@@ -1,7 +1,7 @@
 cbuffer MatrixBuffer
 {
 	float3 eyePos;
-	float padding;
+	int lightType;
 	matrix worldMatrix;
 	matrix viewMatrix;
 	matrix camViewStart;
@@ -12,8 +12,10 @@ cbuffer MatrixBuffer
 
 cbuffer LightBuffer
 {
+	float3 padding1;
+	int materialID;
 	float3 lightDirection;
-	float specularShininess;
+	float specularIntensity;
 	float3 lightPos;
 	float specularPower;
 	float4 ambientColor;
