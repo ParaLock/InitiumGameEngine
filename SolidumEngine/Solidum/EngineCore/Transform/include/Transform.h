@@ -21,6 +21,13 @@ public:
 
 	D3DXMATRIX& getTransform() { return _transformMatrix; };
 
+	D3DXMATRIX& getTransposedTransform() {
+
+		D3DXMatrixTranspose(&_transposedTransformMatrix, &_transformMatrix);
+
+		return _transposedTransformMatrix;
+	}
+
 	D3DXMATRIX& getParent() { if (parent != NULL) return parent->getTransform(); };
 };
 

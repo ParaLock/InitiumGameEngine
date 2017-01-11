@@ -30,17 +30,17 @@ PixelInputType Vshader(VertexInputType input)
 
 	input.position.w = 1.0f;
 
-	matrix FinalworldMatrix = mul(OBJSpecificMatrix, worldMatrix);
+	matrix FinalworldMatrix = mul(cbuff_OBJSpecificMatrix, cbuff_worldMatrix);
 
-	output.worldPos.xyz = normalize(mul(input.position, worldMatrix)).xyz;
+	output.worldPos.xyz = normalize(mul(input.position, cbuff_worldMatrix)).xyz;
 	
 	output.position = mul(input.position, FinalworldMatrix);
-	output.position = mul(output.position, viewMatrix);
-	output.position = mul(output.position, projectionMatrix);
+	output.position = mul(output.position, cbuff_viewMatrix);
+	output.position = mul(output.position, cbuff_projectionMatrix);
 
 	output.tex = input.tex;
 
-	output.normal = normalize(mul(input.normal, worldMatrix));
+	output.normal = normalize(mul(input.normal, cbuff_worldMatrix));
 	
 	return output;
 }
@@ -57,16 +57,16 @@ PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 	float4 texColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
 	texColor = saturate(ambientLight * texColor);
 	
-	output.color.xyz = texColor.xyz; 
-	output.color.w = materialID;
+	output.color = texColor; 
 	
 	output.normal.xyz = input.normal.xyz;
-	output.normal.w = specularIntensity;
+	output.normal.w = cbuff_specularIntensity;
 	
 	output.position.xyz = input.worldPos.xyz;
-	output.position.w = specularPower;
 	
-	output.specularColor = specularColor;
+	output.position.w = cbuff_specularPower;
+	
+	output.specularColor = cbuff_specularColor;
 	
 	return output;
 }

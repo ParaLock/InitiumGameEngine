@@ -1,6 +1,12 @@
 ﻿  main.cpp
 c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\material\include\material.h(10): warning C4091: 'typedef ': ignored on left of 'MATERIAL_TEX' when no variable is declared
 c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\material\include\material.h(41): warning C4227: anachronism used: qualifiers on reference are ignored
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\main.cpp(136): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\main.cpp(139): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\main.cpp(142): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\main.cpp(145): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\main.cpp(149): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\main.cpp(152): warning C4305: '-=': truncation from 'double' to 'float'
 c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\main.cpp(22): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(240): note: see declaration of 'freopen'
   SolidumEngine.vcxproj -> C:\Users\natha\Documents\Visual Studio 2015\Projects\SolidumEngine\Debug\SolidumEngine.exe

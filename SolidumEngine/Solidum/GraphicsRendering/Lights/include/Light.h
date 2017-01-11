@@ -9,28 +9,50 @@ class Light
 private:
 	Shader* _shader = nullptr;
 
-	Vector3f _direction;
-	Vector3f _pos;
+	struct GenericData {
 
-	Vector4f _color;
+		float _intensity;
+		float _range;
 
-	int _type;
+		Vector3f _direction;
+		Vector3f _pos;
+		Vector4f _color;
+
+	} _GenericData;
+
+	struct Attenuation {
+		float _constant;
+		float _linear;
+		float _exponent;
+
+	} _Attenuation;
+
 
 public:
-	Light(int type);
+	Light();
 	~Light();
 
 	void setDirection(Vector3f dir);
 	void setPosition(Vector3f pos);
 	void setColor(Vector4f color);
 
-	void setType(int type) { _type = type; };
+	void setIntensity(float intensity);
+	void setRange(float range) { _GenericData._range = range; };
+	
+	void setAttenuationConstant(float constant);
+	void setAttenuationLinear(float linear);
+	void setAttenuationExponent(float exponent);
 
-	Vector3f getDirection() { return _direction; }
-	Vector3f getPosition() { return _pos; }
-	Vector4f getColor() { return _color; }
+	Vector3f getDirection() { return _GenericData._direction; }
+	Vector3f getPosition() { return _GenericData._pos; }
+	Vector4f getColor() { return _GenericData._color; }
 
-	int getType() { return _type; };
+	float getIntensity() { return _GenericData._intensity; };
+	float getRange() { return _GenericData._range; }
+
+	float getAttenuationConstant() { return _Attenuation._constant; }
+	float getAttenuationLinear() { return _Attenuation._linear; }
+	float getAttenuationExponent() { return _Attenuation._exponent; }
 
 	Shader* getShader() { return _shader; }
 

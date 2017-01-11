@@ -29,6 +29,7 @@ void Transform::setPos(Vector3f pos)
 {
 	_pos = pos;
 
-	D3DXMatrixTranslation(&_transformMatrix, pos.getX(), pos.getY(), pos.getZ());
+
+	D3DXMatrixTranslation(&_transformMatrix, _pos.getX(), _pos.getY(), _pos.getZ());
 }
 

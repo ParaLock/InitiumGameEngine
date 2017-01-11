@@ -20,7 +20,22 @@ Texture2D specularColorTexture : register(t3);
 
 SamplerState SampleTypePoint : register(s0);
 
-float4 calcDirectionalLight(float4 normal, float4 color) 
+float4 calcLight(float intensity, float3 lightDirection, float3 normal, 
+		float3 lightColor) 
+{						
+	float diffuseFactor = dot(normal, -lightDirection);
+	
+	float4 diffuseColor = float4(0,0,0,0);
+	
+	if(diffuseFactor > 0) 
+	{
+		diffuseColor = float4(lightColor, 1.0) * intensity * diffuseFactor;
+	}
+	
+	return diffuseColor;
+}
+
+float4 calcDirectionalLight(float3 normal, float4 color, float4 lightColor, float3 lightDirection) 
 {
 	float3 lightDir;
 	float4 lightIntensity;
@@ -28,7 +43,7 @@ float4 calcDirectionalLight(float4 normal, float4 color)
 
 	lightDir = normalize(-lightDirection);
 
-	lightIntensity = saturate(dot(normal.xyz, lightDir));
+	lightIntensity = saturate(dot(normal, lightDir));
 
 	lightIntensity *= lightColor;
 
@@ -37,20 +52,38 @@ float4 calcDirectionalLight(float4 normal, float4 color)
 	return outputColor;
 }
 
-float4 calcSpecular(float4 normal, float4 specColor, float3 viewDirection, 
+float4 calcPointLight(float3 LightDirection, float3 normal, float intensity, float4 lightColor, float range, 
+						float AttenConstant, float AttenLinear, float AttenExponent) 
+{
+	float distanceToPoint = length(LightDirection);
+	
+	if(distanceToPoint > range)
+		return float4(0,0,0,0);
+	
+	float4 finalColor = calcLight(intensity, normalize(LightDirection), normal.xyz, lightColor);
+	
+	float attenuation = AttenConstant +
+						AttenLinear * distanceToPoint +
+						AttenExponent * distanceToPoint * distanceToPoint + 
+						0.0001;
+		
+	
+	return finalColor / attenuation; 					
+}
+
+float4 calcSpecular(float3 normal, float4 specColor, float3 viewDirection, float3 lightDirection,
 	float3 worldPos, float specPower, float specIntensity) 
 {
+	float4 finalColor = float4(0,0,0,0);
 
-	float4 finalColor;
-
-	float3 Normal = normalize(normal.xyz);
+	float3 Normal = normalize(normal);
 	float3 ViewDirection = normalize(-viewDirection);
 	float3 LightDirection = normalize(lightDirection - worldPos);
 	
 	float3 V = ViewDirection;
 	
 	float3 R = reflect(Normal, LightDirection); 
-		
+	
 	finalColor = specIntensity * specColor * pow( saturate( dot( R, V ) ), specPower );
 	
 	return finalColor;
@@ -64,44 +97,15 @@ PixelInputType Vshader(VertexInputType input)
 	
 	worldPos = positionTexture[input.tex];
 	
-	output.viewDirection = eyePos.xyz - worldPos.xyz;
+	output.viewDirection = cbuff_eyePos.xyz - worldPos.xyz;
 	
 	input.position.w = 1.0f;
 	
-	output.position = mul(input.position, worldMatrix);
-	output.position = mul(output.position, camViewStart);
-	output.position = mul(output.position, orthoProjection);
+	output.position = mul(input.position, cbuff_worldMatrix);
+	output.position = mul(output.position, cbuff_camViewStart);
+	output.position = mul(output.position, cbuff_orthoProjection);
 
 	output.tex = input.tex;
 
 	return output;
-}
-
-float4 Pshader(PixelInputType input) : SV_TARGET
-{
-	float4 colors;
-	float4 normals;
-	float4 worldPos;
-	float4 specuColor;
-	
-	colors = colorTexture.Sample(SampleTypePoint, input.tex);
-	normals = normalTexture.Sample(SampleTypePoint, input.tex);
-	worldPos = positionTexture.Sample(SampleTypePoint, input.tex);
-	specuColor = specularColorTexture.Sample(SampleTypePoint, input.tex);
-
-	float4 finalColor = colors;
-	
-	float diffuseFactor = dot(normals, -lightDirection);
-	
-	if(diffuseFactor > 0) {
-		
-		if(worldPos.w > 0) 
-		{
-			finalColor += calcSpecular(normals, specuColor, input.viewDirection, worldPos.xyz, worldPos.w, normals.w);
-		}
-		
-		finalColor += calcDirectionalLight(normals, colors);	
-	}
-	
-	return finalColor;
 }

@@ -23,10 +23,10 @@ void Shader::updateMaterialUniforms(Material * mat)
 	float specIntensity= mat->getSpecularIntensity();
 	int matID = mat->getID();
 
-	updateUniform("specularIntensity", &specIntensity);
-	updateUniform("specularColor", &mat->getSpecularColor());
-	updateUniform("specularPower", &specPower);
-	updateUniform("materialID", &specPower);
+	updateUniform("cbuff_specularIntensity", &specIntensity);
+	updateUniform("cbuff_specularColor", &mat->getSpecularColor());
+	updateUniform("cbuff_specularPower", &specPower);
+	updateUniform("cbuff_materialID", &specPower);
 
 	std::map<MATERIAL_TEX, Texture*>& const textures = mat->getTextures();
 
@@ -42,27 +42,35 @@ void Shader::updateMaterialUniforms(Material * mat)
 
 void Shader::updateLightUniforms(Light * light)
 {
-	int lightType = light->getType();
+	float intensity = light->getIntensity();
+	float constant = light->getAttenuationConstant();
+	float linear = light->getAttenuationLinear();
+	float exponent = light->getAttenuationExponent();
+	float range = light->getRange();
 
-	updateUniform("lightDirection", &light->getDirection());
-	updateUniform("lightPos", &light->getPosition());
-	updateUniform("lightColor", &light->getColor());
-	updateUniform("lightType", &lightType);
+	updateUniform("cbuff_lightDirection", &light->getDirection());
+	updateUniform("cbuff_lightPos", &light->getPosition());
+	updateUniform("cbuff_lightColor", &light->getColor());
+	updateUniform("cbuff_lightIntensity", &intensity);
+	updateUniform("cbuff_pointLightRange", &range);
+	updateUniform("cbuff_pointLightConstant", &constant);
+	updateUniform("cbuff_pointLightLinear", &linear);
+	updateUniform("cbuff_pointLightExponent", &exponent);
 }
 
 void Shader::updateModelUniforms(Transform * transform)
 {
-	updateUniform("OBJSpecificMatrix", transform->getTransform());
+	updateUniform("cbuff_OBJSpecificMatrix", transform->getTransposedTransform());
 }
 
 void Shader::updateCameraUniforms(camera * cam)
 {
-	updateUniform("eyePos", cam->getView());
-	updateUniform("viewMatrix", cam->getTransposedViewMatrix());
-	updateUniform("projectionMatrix", cam->getTransposedProjectionMatrix());
-	updateUniform("worldMatrix", cam->getTransposedWorldMatrix());
-	updateUniform("orthoProjection", cam->getOrtho());
-	updateUniform("camViewStart", cam->getTransposedStartCamView());
+	updateUniform("cbuff_eyePos", cam->getView());
+	updateUniform("cbuff_viewMatrix", cam->getTransposedViewMatrix());
+	updateUniform("cbuff_projectionMatrix", cam->getTransposedProjectionMatrix());
+	updateUniform("cbuff_worldMatrix", cam->getTransposedWorldMatrix());
+	updateUniform("cbuff_orthoProjection", cam->getOrtho());
+	updateUniform("cbuff_camViewStart", cam->getTransposedStartCamView());
 }
 
 void Shader::execute(int numIndices)
