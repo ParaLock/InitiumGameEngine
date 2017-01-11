@@ -2,10 +2,12 @@
 
 class Vector3f {
 private:
+
+public:
+
 	float _x;
 	float _y;
 	float _z;
-public:
 
 	Vector3f(float x, float y, float z) {
 		_x = x;

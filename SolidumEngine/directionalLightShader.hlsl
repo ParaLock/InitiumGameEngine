@@ -20,7 +20,7 @@ float4 Pshader(PixelInputType input) : SV_TARGET
 	{
 		if(worldPos.w > 0) 
 		{
-			finalColor += calcSpecular(normals.xyz, specuColor, input.viewDirection, cbuff_lightDirection, 
+			finalColor += calcSpecular(normals.xyz, specuColor, input.viewPosition, cbuff_lightDirection, 
 				worldPos.xyz, worldPos.w, normals.w);
 		}
 		

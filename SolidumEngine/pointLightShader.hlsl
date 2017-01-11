@@ -15,21 +15,24 @@ float4 Pshader(PixelInputType input) : SV_TARGET
 	float4 finalColor = colors;
 		
 	float3 LightDirection = worldPos.xyz - cbuff_lightPos;
-		
+
 	float diffuseFactor = dot(normals.xyz, -LightDirection);
-		
-	if(worldPos.w > 0) 
-	{
-		
-		finalColor += calcSpecular(normals.xyz, specuColor, input.viewDirection, LightDirection, 
-				worldPos.xyz, worldPos.w, normals.w);
-	}
-			
-	finalColor += calcPointLight(LightDirection, normals.xyz, cbuff_lightIntensity, cbuff_lightColor, cbuff_pointLightRange, 
-						cbuff_pointLightConstant, 
-						cbuff_pointLightLinear, 
-						cbuff_pointLightExponent);
-		
 	
+	if(diffuseFactor > 0) 
+	{
+		if(worldPos.w > 0) 
+		{
+		
+			finalColor += calcSpecular(normals.xyz, specuColor, input.viewPosition, LightDirection, 
+					worldPos.xyz, worldPos.w, normals.w);
+		}
+			
+		finalColor += calcPointLight(LightDirection, normals.xyz, cbuff_lightIntensity, cbuff_lightColor, cbuff_pointLightRange, 
+							cbuff_pointLightConstant, 
+							cbuff_pointLightLinear, 
+							cbuff_pointLightExponent);
+	}
+	
+
 	return finalColor;
 }

@@ -43,7 +43,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	SolidumObject* hammer = new SolidumObject();
 	SolidumObject* plane = new SolidumObject();
 
-	Material* metalMaterial = new Material(30.0f, 0.8f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f), 0);
+	Material* metalMaterial = new Material(9.0f, 0.0f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f), 0);
 	Material* woodMaterial = new Material(0.0f, 0.0f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f), 1);
 
 	std::shared_ptr<meshLoader> objLdr = std::shared_ptr<meshLoader>(new meshLoaderOBJ());
@@ -69,13 +69,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	woodMaterial->attachMaterialTexture(woodTex, MATERIAL_TEX::PRIMARY_MATERIAL_TEXTURE);
 
 	cube->attachMesh(cubeMesh);
-	cube->attachMaterial(metalMaterial);
+	cube->attachMaterial(woodMaterial);
 	cube->attachShader(deferredShader);
-	cube->getTransform()->setPos(Vector3f(0, 0, 0));
+	cube->getTransform()->setPos(Vector3f(0, -2.0f, -3.0f));
 
 	hammer->attachMesh(hammerMesh);
 	hammer->attachShader(deferredShader);
-	hammer->attachMaterial(woodMaterial);
+	hammer->attachMaterial(metalMaterial);
 	hammer->getTransform()->setPos(Vector3f(0, 0, 0));
 
 	plane->attachMesh(planeMesh);
@@ -85,6 +85,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	Light* dirLight1 = new Light();
 	Light* pointLight1 = new Light();
+	Light* pointLight2 = new Light();
+	Light* pointLight3 = new Light();
 
 	directionalLightShader->setMesh(orthoWindowMesh);
 	pointLightShader->setMesh(orthoWindowMesh);
@@ -96,22 +98,44 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	dirLight1->attachShader(directionalLightShader);
 
-	pointLight1->setColor(Vector4f(0.5f, 1.5f, 0.5f, 0.5f));
+	pointLight1->setColor(Vector4f(0.5f, 2.5f, 0.5f, 0.5f));
 	pointLight1->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
-	pointLight1->setPosition(Vector3f(0.0f, 3.0f, 1.0f));
-	pointLight1->setIntensity(0.07f);
+	pointLight1->setPosition(Vector3f(-0.1f, 0.01f, 0.5f));
+	pointLight1->setIntensity(0.2f);
 
 	pointLight1->setAttenuationLinear(0);
 	pointLight1->setAttenuationExponent(1);
 	pointLight1->setAttenuationConstant(0);
 
-	pointLight1->setRange(6.0f);
+	pointLight1->setRange(10.5f);
 
 	pointLight1->attachShader(pointLightShader);
 
-	float pointLightX = 3.0f;
-	float pointLightY = 0.0f;
-	float pointLightZ = 0.0f;
+	pointLight2->setColor(Vector4f(0.5f, 0.5f, 2.5f, 0.5f));
+	pointLight2->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
+	pointLight2->setPosition(Vector3f(0.2f, 0.01f, -0.1f));
+	pointLight2->setIntensity(0.2f);
+
+	pointLight2->setAttenuationLinear(0);
+	pointLight2->setAttenuationExponent(1.0f);
+	pointLight2->setAttenuationConstant(0);
+
+	pointLight2->setRange(10.5f);
+
+	pointLight2->attachShader(pointLightShader);
+
+	pointLight3->setColor(Vector4f(3.5f, 0.5f, 0.5f, 0.5f));
+	pointLight3->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
+	pointLight3->setPosition(Vector3f(-0.2f, 0.01f, -0.5f));
+	pointLight3->setIntensity(0.2f);
+
+	pointLight3->setAttenuationLinear(0);
+	pointLight3->setAttenuationExponent(1.0f);
+	pointLight3->setAttenuationConstant(0);
+
+	pointLight3->setRange(10.5f);
+
+	pointLight3->attachShader(pointLightShader);
 
 	while (myWindow->running) {
 
@@ -132,32 +156,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			myCam->cameraMove("right", 5.0f);
 		}
 
-		if (GetAsyncKeyState('1')) {
-			pointLightX += 0.1;
-		}
-		if (GetAsyncKeyState('2')) {
-			pointLightX -= 0.1;
-		}
-		if (GetAsyncKeyState('3')) {
-			pointLightY += 0.1;
-		}
-		if (GetAsyncKeyState('4')) {
-			pointLightY -= 0.1;
-		}
-
-		if (GetAsyncKeyState('5')) {
-			pointLightZ += 0.1;
-		}
-		if (GetAsyncKeyState('6')) {
-			pointLightZ -= 0.1;
-		}
-
 		if (GetAsyncKeyState(VK_ESCAPE)) {
 
 			myWindow->running = false;
 		}
-
-		pointLight1->setPosition(Vector3f(pointLightX, pointLightY, pointLightZ));
 
 		myCam->Update();
 
@@ -165,8 +167,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		myRenderer->renderSolidumObject(cube);
 		myRenderer->renderSolidumObject(plane);
 
-		myRenderer->renderLight(dirLight1);
+		//myRenderer->renderLight(dirLight1);
 		myRenderer->renderLight(pointLight1);
+		myRenderer->renderLight(pointLight2);
+		myRenderer->renderLight(pointLight3);
 
 		endScene->executePass(NULL);
 	}

@@ -10,7 +10,7 @@ struct PixelInputType
 {
 	float4 position : SV_POSITION;
 	float2 tex : TEXCOORD;
-	float3 viewDirection : TEXCOORD1;
+	float3 viewPosition : TEXCOORD1;
 };
 
 Texture2D colorTexture : register(t0);
@@ -60,7 +60,7 @@ float4 calcPointLight(float3 LightDirection, float3 normal, float intensity, flo
 	if(distanceToPoint > range)
 		return float4(0,0,0,0);
 	
-	float4 finalColor = calcLight(intensity, normalize(LightDirection), normal.xyz, lightColor);
+	float4 finalColor = calcLight(intensity, LightDirection, normal.xyz, lightColor);
 	
 	float attenuation = AttenConstant +
 						AttenLinear * distanceToPoint +
@@ -97,12 +97,12 @@ PixelInputType Vshader(VertexInputType input)
 	
 	worldPos = positionTexture[input.tex];
 	
-	output.viewDirection = cbuff_eyePos.xyz - worldPos.xyz;
+	output.viewPosition = cbuff_eyePos.xyz - worldPos.xyz;
 	
 	input.position.w = 1.0f;
 	
-	output.position = mul(input.position, cbuff_worldMatrix);
-	output.position = mul(output.position, cbuff_camViewStart);
+	output.position = mul(output.position, cbuff_worldMatrix);
+	output.position = mul(input.position, cbuff_camViewStart);
 	output.position = mul(output.position, cbuff_orthoProjection);
 
 	output.tex = input.tex;
