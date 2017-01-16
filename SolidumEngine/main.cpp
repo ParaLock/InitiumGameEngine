@@ -2,16 +2,12 @@
 
 #include "Solidum\GraphicsRendering\Window\include\windowAccessor.h"
 #include "Solidum\GraphicsRendering\Window\include\window.h"
-#include "Solidum\GraphicsRendering\Mesh\include\meshFactory.h"
-#include "Solidum\GraphicsRendering\Mesh\include\meshLoaderOBJ.h"
 #include "Solidum\GraphicsRendering\Camera\include\camera.h"
-#include "Solidum\GraphicsRendering\RenderingCore\include\GraphicsRenderer.h"
-#include "Solidum\GraphicsRendering\Shaders\include\ShaderFactory.h"
-#include "Solidum\GraphicsRendering\Lights\include\Light.h"
-#include "Solidum\GraphicsRendering\Lights\include\LightFactory.h"
-#include "Solidum\GraphicsRendering\Material\include\Material.h"
 
-#include "Solidum\EngineCore\SolidumObject\Objects\include\SolidumObject.h"
+#include "Solidum\EngineCore\include\EngineInstance.h"
+
+#include "Solidum\ResourceManagement\include\ResourceManagerPool.h"
+
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine,
@@ -32,38 +28,82 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	window *myWindow = new window(&windowConfig);
 	windowAccessor::initAccessor(myWindow);
 
-	camera *myCam = new camera(0.1f, 1000.0f);
+	EngineInstance *solidum = new EngineInstance(myWindow);
 
-	GraphicsRenderer* myRenderer = new GraphicsRenderer(SUPPORTED_GRAPHICS_API::DIRECTX11, myWindow);
-	myRenderer->attachPrimaryCamera(myCam);
+	ResourceManagerPool* resManagerPool = solidum->getResourceManagerPool();
 
-	GPUPipeline* endScene = GPUPipelineFactory::createPipeline(L"endScene_pipeline.solPipe");
+	GPUPipeline* endscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+		(L"./res/Pipelines/endScene_pipeline.solPipe", resManagerPool), "endscene_pipeline_state")->getCore<GPUPipeline>();
 
-	SolidumObject* cube = new SolidumObject();
-	SolidumObject* hammer = new SolidumObject();
-	SolidumObject* plane = new SolidumObject();
+	GPUPipeline* deferredPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+		(L"./res/Pipelines/deferredPipeline.solPipe", resManagerPool), "deferred_pipeline_state")->getCore<GPUPipeline>();
 
-	Material* metalMaterial = new Material(9.0f, 0.0f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f), 0);
-	Material* woodMaterial = new Material(0.0f, 0.0f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f), 1);
+	GPUPipeline* deferredLightingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+		(L"./res/Pipelines/deferredLightingPipeline.solPipe", resManagerPool), "deferred_lighting_pipeline_state")->getCore<GPUPipeline>();
 
-	std::shared_ptr<meshLoader> objLdr = std::shared_ptr<meshLoader>(new meshLoaderOBJ());
+	mesh* hammerMesh = resManagerPool->getResourceManager("meshManager")->createResource(&meshBuilder
+		(L"./res/Meshes/hammer2.obj", resManagerPool), "hammer_mesh")->getCore<mesh>();
 
-	mesh *hammerMesh = meshFactory::createMesh(L"hammer2.obj", objLdr, "hammer_mesh");
-	mesh* cubeMesh = meshFactory::createMesh(L"cube.obj", objLdr, "cube_mesh");
-	mesh* planeMesh = meshFactory::createMesh(L"plane.obj", objLdr, "plane_mesh");
-	mesh* orthoWindowMesh = meshFactory::createMesh(L"gen_ortho_window_mesh", nullptr, "window_mesh");
+	mesh* cubeMesh = resManagerPool->getResourceManager("meshManager")->createResource(&meshBuilder
+		(L"./res/Meshes/cube.obj", resManagerPool), "cube_mesh")->getCore<mesh>();
+	
+	mesh* planeMesh = resManagerPool->getResourceManager("meshManager")->createResource(&meshBuilder
+		(L"./res/Meshes/plane.obj", resManagerPool), "plane_mesh")->getCore<mesh>();
 
-	Shader* deferredShader = ShaderFactory::createShader(L"deferredShader.hlsl", L"deferredPipeline.solPipe");
-	Shader* directionalLightShader = ShaderFactory::createShader(L"directionalLightShader.hlsl", L"deferredLightingPipeline.solPipe");
-	Shader* pointLightShader = ShaderFactory::createShader(L"pointLightShader.hlsl", L"deferredLightingPipeline.solPipe");
+	mesh* orthoMesh = resManagerPool->getResourceManager("meshManager")->createResource(&meshBuilder
+		(L"gen_ortho_window_mesh", solidum->getResourceManagerPool()), "orthoMesh")->getCore<mesh>();
 
-	Texture* grassTex = TextureFactory::createTexture();
-	Texture* woodTex = TextureFactory::createTexture();
-	Texture* metalTex = TextureFactory::createTexture();
+	Texture* grassTex = resManagerPool->getResourceManager("TextureManager")->createResource(&TextureBuilder
+		(L"./res/Textures/grass.png"), "grass_tex")->getCore<Texture>();
 
-	grassTex->loadImage(L"grass.png");
-	woodTex->loadImage(L"Wood.png");
-	metalTex->loadImage(L"metal.png");
+	Texture* woodTex = resManagerPool->getResourceManager("TextureManager")->createResource(&TextureBuilder
+		(L"./res/Textures/Wood.png"), "wood_tex")->getCore<Texture>();
+
+	Texture* metalTex = resManagerPool->getResourceManager("TextureManager")->createResource(&TextureBuilder
+		(L"./res/Textures/metal.png"), "metal_tex")->getCore<Texture>();
+
+	Shader* deferredShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
+		(L"./res/Shaders/deferredShader.hlsl", resManagerPool), "deferred_geometry_shader")->getCore<Shader>();
+
+	Shader* directionalLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
+		(L"./res/Shaders/directionalLightShader.hlsl", resManagerPool), "directional_light_shader")->getCore<Shader>();
+
+	Shader* pointLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
+		(L"./res/Shaders/pointLightShader.hlsl", resManagerPool), "point_light_shader")->getCore<Shader>();
+
+	Material* metalMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(&MaterialBuilder
+		(0, 9.0f, 0.0f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f)), "metalMaterial")->getCore<Material>();
+
+	Material* woodMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(&MaterialBuilder
+		(1, 0.0f, 0.0f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f)), "woodMaterial")->getCore<Material>();
+
+	SolidumObject* cube = resManagerPool->getResourceManager("SolidumObjectManager")->createResource(&SolidumObjectBuilder
+		(), "solidumCube")->getCore<SolidumObject>();
+
+	SolidumObject* plane = resManagerPool->getResourceManager("SolidumObjectManager")->createResource(&SolidumObjectBuilder
+		(), "solidumPlane")->getCore<SolidumObject>();
+
+	SolidumObject* hammer = resManagerPool->getResourceManager("SolidumObjectManager")->createResource(&SolidumObjectBuilder
+		(), "solidumHammer")->getCore<SolidumObject>();
+
+	Light* dirLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
+		(), "dirLight1")->getCore<Light>();
+
+	Light* pointLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
+		(), "pointLight1")->getCore<Light>();
+
+	Light* pointLight2 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
+		(), "pointLight2")->getCore<Light>();
+
+	Light* pointLight3 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
+		(), "pointLight3")->getCore<Light>();
+
+	deferredShader->attachPipeline(deferredPipeline);
+	directionalLightShader->attachPipeline(deferredLightingPipeline);
+	pointLightShader->attachPipeline(deferredLightingPipeline);
+
+	directionalLightShader->setMesh(orthoMesh);
+	pointLightShader->setMesh(orthoMesh);
 
 	metalMaterial->attachMaterialTexture(metalTex, MATERIAL_TEX::PRIMARY_MATERIAL_TEXTURE);
 	woodMaterial->attachMaterialTexture(woodTex, MATERIAL_TEX::PRIMARY_MATERIAL_TEXTURE);
@@ -83,14 +123,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	plane->attachMaterial(metalMaterial);
 	plane->getTransform()->setPos(Vector3f(0, -3.5, 0));
 
-	Light* dirLight1 = new Light();
-	Light* pointLight1 = new Light();
-	Light* pointLight2 = new Light();
-	Light* pointLight3 = new Light();
-
-	directionalLightShader->setMesh(orthoWindowMesh);
-	pointLightShader->setMesh(orthoWindowMesh);
-
 	dirLight1->setColor(Vector4f(0.5f, 1.5f, 0.5f, 0.5f));
 	dirLight1->setDirection(Vector3f(0.0f, 0.0f, 9.0f));
 	dirLight1->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
@@ -107,7 +139,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	pointLight1->setAttenuationExponent(1);
 	pointLight1->setAttenuationConstant(0);
 
-	pointLight1->setRange(10.5f);
+	pointLight1->setRange(8.5f);
 
 	pointLight1->attachShader(pointLightShader);
 
@@ -120,22 +152,33 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	pointLight2->setAttenuationExponent(1.0f);
 	pointLight2->setAttenuationConstant(0);
 
-	pointLight2->setRange(10.5f);
+	pointLight2->setRange(8.5f);
 
 	pointLight2->attachShader(pointLightShader);
 
 	pointLight3->setColor(Vector4f(3.5f, 0.5f, 0.5f, 0.5f));
 	pointLight3->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
 	pointLight3->setPosition(Vector3f(-0.2f, 0.01f, -0.5f));
-	pointLight3->setIntensity(0.2f);
+	pointLight3->setIntensity(0.1f);
 
 	pointLight3->setAttenuationLinear(0);
-	pointLight3->setAttenuationExponent(1.0f);
+	pointLight3->setAttenuationExponent(1.6f);
 	pointLight3->setAttenuationConstant(0);
 
-	pointLight3->setRange(10.5f);
+	pointLight3->setRange(8.5f);
 
 	pointLight3->attachShader(pointLightShader);
+
+	//solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueLight(dirLight1);
+	solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueLight(pointLight1);
+	solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueLight(pointLight2);
+	solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueLight(pointLight3);
+
+	solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueSoldiumObject(cube);
+	solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueSoldiumObject(hammer);
+	solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueSoldiumObject(plane);
+
+	camera* myCam = solidum->getGraphicsSubsystem()->getPrimaryCamera();
 
 	while (myWindow->running) {
 
@@ -163,16 +206,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		myCam->Update();
 
-		myRenderer->renderSolidumObject(hammer);
-		myRenderer->renderSolidumObject(cube);
-		myRenderer->renderSolidumObject(plane);
+		solidum->getGraphicsSubsystem()->RenderAll();
 
-		//myRenderer->renderLight(dirLight1);
-		myRenderer->renderLight(pointLight1);
-		myRenderer->renderLight(pointLight2);
-		myRenderer->renderLight(pointLight3);
-
-		endScene->executePass(NULL);
+		endscenePipelineState->executePass(NULL);
 	}
 	myWindow->destroyWindow();
 }

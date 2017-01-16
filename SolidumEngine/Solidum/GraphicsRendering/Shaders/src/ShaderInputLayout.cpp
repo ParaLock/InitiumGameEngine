@@ -4,6 +4,7 @@
 
 ShaderInputLayout::ShaderInputLayout()
 {
+
 }
 
 

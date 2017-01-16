@@ -8,7 +8,7 @@ class dxTexture : public Texture
 private:
 	ID3D11ShaderResourceView* texture;
 public:
-	dxTexture();
+	dxTexture(IResourceBuilder* builder);
 	~dxTexture();
 
 	void loadImage(LPCWSTR filename);

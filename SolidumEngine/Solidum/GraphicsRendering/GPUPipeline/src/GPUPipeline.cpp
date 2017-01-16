@@ -17,9 +17,19 @@ GPUPipeline::~GPUPipeline()
 	delete _opList;
 }
 
+void GPUPipeline::reset()
+{
+	depthTestEnabled = false;
+	blendingEnabled = false;
+
+	_uniformToBufferMap->clear();
+	_opList->clear();
+	_elementList->clear();
+}
+
 void GPUPipeline::attachOP(GPUPipelineSupportedOP opType, std::string targetName, GPUPipelineElementType opTargetType, bool executionContext)
 {
-	GPUPipelineOP *newOP = new GPUPipelineOP;
+	GPUPipelineOP* newOP = new GPUPipelineOP();
 
 	newOP->type = opType;
 	newOP->targetType = opTargetType;
@@ -39,118 +49,89 @@ void GPUPipeline::setBlending(bool enable)
 	blendingEnabled = enable;
 }
 
-void GPUPipeline::setBuffer(GPUBuffer * newBuff, std::string name)
+void GPUPipeline::setHookResource(IResource* res, std::string name)
 {
 	auto itr = _elementList->find(name);
 
 	if (itr != _elementList->end()) {
 
-		GPUPipelineElement *buff = _elementList->at(name);
+		GPUPipelineElement* pipeElement = _elementList->at(name);
 
-		buff->core = (void*)newBuff;
+		pipeElement->core = res;
 	}
 }
 
-void GPUPipeline::setTexture(Texture * newTex, std::string name)
+void GPUPipeline::attachTrackedResource(IResource* res, std::string name, GPUPipelineElementType type,
+	GPUPipelineElementParentShader parentShader, bool isOutput, bool isHook)
 {
-	auto itr = _elementList->find(name);
-
-	if (itr != _elementList->end()) {
-		GPUPipelineElement *tex = _elementList->at(name);
-
-		tex->core = (void*)newTex;
-	}
-}
-
-void GPUPipeline::attachRenderTarget(RenderTarget * renderTarget, std::string name, GPUPipelineElementParentShader parentShader, bool isOutput)
-{
-	GPUPipelineElement *newElement = new GPUPipelineElement;
-
-	newElement->name = name;
-	newElement->type = GPUPipelineElementType::SOL_RENDER_TARGET;
-	newElement->core = renderTarget;
-	newElement->parentShader = parentShader;
-	newElement->resourceSlot = renderTargetCount;
+	GPUPipelineElement* newElement = new GPUPipelineElement();
 
 	newElement->isOutput = isOutput;
 
-	_elementList->insert({ name, newElement });
-
-	renderTargetCount++;
-}
-
-void GPUPipeline::attachTextureSampler(TextureSampler * texSampler, std::string name, GPUPipelineElementParentShader parentShader)
-{
-	GPUPipelineElement *newElement = new GPUPipelineElement;
-
 	newElement->name = name;
-	newElement->type = GPUPipelineElementType::SOL_SAMPLER;
-	newElement->core = texSampler;
+	newElement->type = type;
 	newElement->parentShader = parentShader;
-	newElement->resourceSlot = texSamplerCount;
+	newElement->isHook = isHook;
 
-	_elementList->insert({ name, newElement });
+	if (isHook)
+		newElement->core = nullptr;
+	else
+		newElement->core = res;
 
-	texSamplerCount++;
-}
+	if (type == GPUPipelineElementType::SOL_RENDER_TARGET) {
 
-void GPUPipeline::attachTextureHook(std::string name, GPUPipelineElementParentShader parentShader)
-{
-	GPUPipelineElement *newElement = new GPUPipelineElement;
+		newElement->isOutput = isOutput;
 
-	newElement->name = name;
-	newElement->type = GPUPipelineElementType::SOL_TEXTURE_HOOK;
-	newElement->core = nullptr;
-	newElement->parentShader = parentShader;
-	newElement->resourceSlot = 0;
+		newElement->resourceSlot = renderTargetCount;
 
-	_elementList->insert({ name, newElement });
-}
+		renderTargetCount++;
+	}
+	if (type == GPUPipelineElementType::SOL_SAMPLER) {
 
-void GPUPipeline::attachBufferHook(std::string name, GPUPipelineElementParentShader parentShader)
-{
-	GPUPipelineElement *newElement = new GPUPipelineElement;
+		newElement->resourceSlot = texSamplerCount;
 
-	newElement->name = name;
-	newElement->type = GPUPipelineElementType::SOL_BUFFER_HOOK;
-	newElement->core = nullptr;
-	newElement->parentShader = parentShader;
-	newElement->resourceSlot = 0;
-
-	_elementList->insert({ name, newElement });
-}
-
-void GPUPipeline::attachShaderInputLayout(ShaderInputLayout * inputLayout, std::string name)
-{
-	GPUPipelineElement *newElement = new GPUPipelineElement;
-
-	newElement->name = name;
-	newElement->type = GPUPipelineElementType::SOL_MESH_DATA_LAYOUT;
-	newElement->core = inputLayout;
-	newElement->resourceSlot = 0;
-
-	_elementList->insert({ name, newElement });
-}
-
-void GPUPipeline::attachGeneralShaderDataBuffer(DynamicBuffer *generalBuff, GPUPipelineElementParentShader parentShader)
-{
-	GPUPipelineElement *newElement = new GPUPipelineElement;
-
-	std::vector<std::string> varNameList = generalBuff->getVarNameList();
-
-	for (unsigned int i = 0; i < varNameList.size(); ++i) {
-		_uniformToBufferMap->insert({varNameList[i], generalBuff});
+		texSamplerCount++;
 	}
 
-	newElement->name = generalBuff->getName();
+	if (type == GPUPipelineElementType::SOL_GENERAL_DATA_BUFF) {
 
-	newElement->type = GPUPipelineElementType::SOL_GENERAL_DATA_BUFF;
-	newElement->core = generalBuff;
+		DynamicBuffer* generalBuff = res->getCore<DynamicBuffer>();
+
+		std::vector<std::string> varNameList = generalBuff->getVarNameList();
+
+		for (unsigned int i = 0; i < varNameList.size(); ++i) {
+			_uniformToBufferMap->insert({ varNameList[i], generalBuff });
+		}
+	}
+
+	_elementList->insert({ name, newElement });
+}
+
+void GPUPipeline::attachUntrackedResource(IResource* res, GPUPipelineElementType type, GPUPipelineElementParentShader parentShader)
+{
+	GPUPipelineElement* newElement = new GPUPipelineElement();
+
 	newElement->resourceSlot = 0;
-
+	newElement->name = "unTracked";
+	newElement->type = type;
 	newElement->parentShader = parentShader;
+	newElement->core = res;
 
-	_elementList->insert({ generalBuff->getName(), newElement });
+	if (type == GPUPipelineElementType::SOL_GENERAL_DATA_BUFF) {
+
+		DynamicBuffer* generalBuff = res->getCore<DynamicBuffer>();
+
+		std::vector<std::string> varNameList = generalBuff->getVarNameList();
+
+		for (unsigned int i = 0; i < varNameList.size(); ++i) {
+			_uniformToBufferMap->insert({ varNameList[i], generalBuff });
+		}
+
+		_elementList->insert({ generalBuff->getName(), newElement });
+	}
+	else {
+		_elementList->insert({ "", newElement });
+	}
 }
 
 void GPUPipeline::applyState()

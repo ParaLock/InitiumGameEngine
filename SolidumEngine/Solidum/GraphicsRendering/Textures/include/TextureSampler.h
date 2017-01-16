@@ -1,7 +1,26 @@
 #pragma once
 #include "../../../sysInclude.h"
 
-class TextureSampler
+#include "../../ActiveGraphicsAPI.h"
+
+#include "../../../ResourceManagement/include/IResourceBuilder.h"
+
+#include "../../../ResourceManagement/include/IResource.h"
+
+class TextureSamplerBuilder : public IResourceBuilder {
+public:
+	TEX_FILTERS _texFilterType;
+	ANISOTRPHIC_FILTER_LEVELS _anisotropyFilterLevel;
+	TEX_ADDR_MODES _texAddressMode;
+
+	TextureSamplerBuilder(TEX_FILTERS texFilterType, ANISOTRPHIC_FILTER_LEVELS anisotropyFilterLevel, TEX_ADDR_MODES texAddressMode) {
+		_texAddressMode = texAddressMode;
+		_texFilterType = texFilterType;
+		_anisotropyFilterLevel = anisotropyFilterLevel;
+	}
+};
+
+class TextureSampler : public IResource
 {
 public:
 	TextureSampler();

@@ -44,17 +44,19 @@ void DynamicBuffer::updateVar(std::string varName, void * pData)
 void DynamicBuffer::updateGPU()
 {
 	if(_GPUBuff != nullptr)
-		_GPUBuff->Write(_pBuffCPUMem, _lastVarOffset, 0);
+		_GPUBuff->getCore<GPUBuffer>()->Write(_pBuffCPUMem, _lastVarOffset, 0);
 }
 
-void DynamicBuffer::initMemory()
+void DynamicBuffer::initMemory(ResourceManagerPool* resManagerPool)
 {
 	_pBuffCPUMem = new __int8[_lastVarOffset];
 
 	SecureZeroMemory(_pBuffCPUMem, _lastVarOffset);
 
-	if(_hasGPUBuff)
-	_GPUBuff = GPUBufferFactory::createBuffer(_lastVarOffset, BUFFER_TYPE::SHADER_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE);
+	if (_hasGPUBuff) {
+		GPUBufferBuilder buffBuilder(_lastVarOffset, BUFFER_TYPE::SHADER_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE);
+		_GPUBuff = resManagerPool->getResourceManager("GPUBufferManager")->createResource(&buffBuilder, _name)->getCore<GPUBuffer>();
+	}
 }
 
 std::vector<std::string> DynamicBuffer::getVarNameList()

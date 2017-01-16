@@ -1,7 +1,10 @@
 #pragma once
 #include "../../sysInclude.h"
-#include "../../GraphicsRendering/GraphicsBuffers/include/GPUBufferFactory.h"
+#include "../../GraphicsRendering/GraphicsBuffers/include/GPUBuffer.h"
 
+#include "../../ResourceManagement/include/IResource.h"
+
+#include "../../ResourceManagement/include/ResourceManagerPool.h"
 class DynamicBufferMember {
 private:
 	size_t _size;
@@ -20,7 +23,7 @@ public:
 	size_t getEndAddr() { return _endAddr; };
 };
 
-class DynamicBuffer
+class DynamicBuffer : public IResource
 {
 private:
 	std::string _name;
@@ -47,7 +50,7 @@ public:
 
 	void updateGPU();
 
-	void initMemory();
+	void initMemory(ResourceManagerPool* resManagerPool);
 
 	std::string getName() { return _name; };
 	std::vector<std::string> getVarNameList();

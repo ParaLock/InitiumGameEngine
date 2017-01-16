@@ -11,13 +11,13 @@ Shader::~Shader()
 {
 }
 
-void Shader::setMesh(mesh * newMesh)
+void Shader::setMesh(mesh* newMesh)
 {
-	_pipelineState->setBuffer(newMesh->getIndexBuff(), "index_buffer");
-	_pipelineState->setBuffer(newMesh->getVertexBuff(), "vertex_buffer");
+	_pipelineState->setHookResource(newMesh->getIndexBuff(), "index_buffer");
+	_pipelineState->setHookResource(newMesh->getVertexBuff(), "vertex_buffer");
 }
 
-void Shader::updateMaterialUniforms(Material * mat)
+void Shader::updateMaterialUniforms(Material* mat)
 {
 	float specPower = mat->getSpecularPower();
 	float specIntensity= mat->getSpecularIntensity();
@@ -32,15 +32,15 @@ void Shader::updateMaterialUniforms(Material * mat)
 
 	for (auto itr = textures.begin(); itr != textures.end(); itr++) {
 		if (itr->first == MATERIAL_TEX::PRIMARY_MATERIAL_TEXTURE) {
-			_pipelineState->setTexture(itr->second, "material_color_tex");
+			_pipelineState->setHookResource(itr->second, "material_color_tex");
 		}
 		if (itr->first == MATERIAL_TEX::SECONDARY_MATERIAL_TEXTURE) {
-			_pipelineState->setTexture(itr->second, "material_base_tex");
+			_pipelineState->setHookResource(itr->second, "material_base_tex");
 		}
 	}
 }
 
-void Shader::updateLightUniforms(Light * light)
+void Shader::updateLightUniforms(Light* light)
 {
 	float intensity = light->getIntensity();
 	float constant = light->getAttenuationConstant();
@@ -58,12 +58,12 @@ void Shader::updateLightUniforms(Light * light)
 	updateUniform("cbuff_pointLightExponent", &exponent);
 }
 
-void Shader::updateModelUniforms(Transform * transform)
+void Shader::updateModelUniforms(Transform* transform)
 {
 	updateUniform("cbuff_OBJSpecificMatrix", transform->getTransposedTransform());
 }
 
-void Shader::updateCameraUniforms(camera * cam)
+void Shader::updateCameraUniforms(camera* cam)
 {
 	updateUniform("cbuff_eyePos", cam->getView());
 	updateUniform("cbuff_viewMatrix", cam->getTransposedViewMatrix());
@@ -107,4 +107,9 @@ void Shader::updateGPU()
 	for (unsigned int i = 0; i < activeGeneralDataBuffers.size(); ++i) {
 		activeGeneralDataBuffers[i]->updateGPU();
 	}
+}
+
+void Shader::attachPipeline(GPUPipeline* pipe)
+{
+	std::cout << "GENERIC SHADER: NO GRAPHICS API DIRECTIVE DETECTED" << std::endl;
 }

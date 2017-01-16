@@ -3,9 +3,9 @@
 
 
 
-dxGPUPipeline::dxGPUPipeline(std::string name)
+dxGPUPipeline::dxGPUPipeline(ResourceManagerPool* managerPool)
 {
-	_name = name;
+	_resManagerPool = managerPool;
 }
 
 
@@ -21,7 +21,7 @@ void dxGPUPipeline::applyState()
 
 	std::vector<RenderTarget*> outputRTList;
 
-	ShaderInputLayout* currentInputLayout = nullptr;
+	ShaderInputLayout* currentInputLayout;
 
 	ID3D11ShaderResourceView* nullSRV[9] = { nullptr };
 	ID3D11RenderTargetView* nullTV[9] = { nullptr };
@@ -31,10 +31,10 @@ void dxGPUPipeline::applyState()
 	dxDeviceAccessor::dxEncapsulator->dxDevContext->VSSetShaderResources(0, 8, nullSRV);
 	dxDeviceAccessor::dxEncapsulator->dxDevContext->OMSetRenderTargets(8, nullTV, nullDS);
 
-	for (std::map<std::string, GPUPipelineElement*>::iterator itr = 
+	for (std::map<std::string, GPUPipelineElement*>::iterator itr =
 		_elementList->begin(); itr != _elementList->end(); ++itr)
 	{
-		GPUPipelineElement *newElement = itr->second;
+		GPUPipelineElement* newElement = itr->second;
 
 		newElement->type;
 		newElement->parentShader;
@@ -43,7 +43,7 @@ void dxGPUPipeline::applyState()
 
 			if (newElement->type == GPUPipelineElementType::SOL_RENDER_TARGET) {
 
-				RenderTarget *renderTarget = (RenderTarget*)newElement->core;
+				RenderTarget* renderTarget = newElement->core->getCore<RenderTarget>();
 
 				if (newElement->isOutput) {
 					outputRTList.push_back(renderTarget);
@@ -70,7 +70,7 @@ void dxGPUPipeline::applyState()
 
 			if (newElement->type == GPUPipelineElementType::SOL_TEXTURE_HOOK) {
 
-				Texture *tex = (Texture*)newElement->core;
+				Texture* tex = newElement->core->getCore<Texture>();
 
 				ID3D11ShaderResourceView* dxTex =
 					(ID3D11ShaderResourceView*)tex->getParameter("D3D_TEXTURE");
@@ -87,11 +87,11 @@ void dxGPUPipeline::applyState()
 
 			if (newElement->type == GPUPipelineElementType::SOL_SAMPLER) {
 
-				TextureSampler *texSampler = (TextureSampler*)newElement->core;
-	
+				TextureSampler* texSampler = newElement->core->getCore<TextureSampler>();
+
 				ID3D11SamplerState* dxTexSampler =
 					(ID3D11SamplerState*)texSampler->getParameter("D3D_TEXTURESAMPLER");
-	
+
 				if (newElement->parentShader == GPUPipelineElementParentShader::SOL_PS) {
 					dxDeviceAccessor::dxEncapsulator->dxDevContext->PSSetSamplers(newElement->resourceSlot, 1,
 						&dxTexSampler);
@@ -105,7 +105,8 @@ void dxGPUPipeline::applyState()
 
 			if (newElement->type == GPUPipelineElementType::SOL_BUFFER_HOOK) {
 
-				GPUBuffer *gpuBuff = (GPUBuffer*)newElement->core;
+				GPUBuffer* gpuBuff = newElement->core->getCore<GPUBuffer>();
+
 				ID3D11Buffer *gpuBuffPtr = (ID3D11Buffer*)gpuBuff->getParameter("D3D_BUFFER");
 
 				if (gpuBuff->getBuffType() == BUFFER_TYPE::INDEX_BUFF) {
@@ -129,9 +130,10 @@ void dxGPUPipeline::applyState()
 
 			if (newElement->type == GPUPipelineElementType::SOL_GENERAL_DATA_BUFF) {
 
-				DynamicBuffer *shaderBuff = (DynamicBuffer*)newElement->core;
+				DynamicBuffer* shaderBuff = newElement->core->getCore<DynamicBuffer>();
 
-				GPUBuffer *gpuBuff = (GPUBuffer*)shaderBuff->getGPUBuffer();
+				GPUBuffer* gpuBuff = shaderBuff->getGPUBuffer();
+
 				ID3D11Buffer *gpuBuffPtr = (ID3D11Buffer*)gpuBuff->getParameter("D3D_BUFFER");
 
 				if (gpuBuff->getBuffType() == BUFFER_TYPE::SHADER_BUFF) {
@@ -148,14 +150,16 @@ void dxGPUPipeline::applyState()
 
 			if (newElement->type == GPUPipelineElementType::SOL_MESH_DATA_LAYOUT) {
 
-				ShaderInputLayout *inputLayout = (ShaderInputLayout*)newElement->core;
+				ShaderInputLayout* inputLayout = newElement->core->getCore<ShaderInputLayout>();
 
 				currentInputLayout = inputLayout;
 
 				dxDeviceAccessor::dxEncapsulator->dxDevContext->
 					IASetInputLayout((ID3D11InputLayout*)inputLayout->getParameter("D3D_INPUT_LAYOUT"));
 			}
+
 		}
+
 	}
 
 	if (outputRTList.size() > 0) {
@@ -187,15 +191,16 @@ void dxGPUPipeline::applyState()
 	else {
 		dxDeviceAccessor::dxEncapsulator->disableBlending();
 	}
+
 }
 
-void dxGPUPipeline::processOp(GPUPipelineOP * op)
+void dxGPUPipeline::processOp(GPUPipelineOP* op)
 {
 	if (op->type == GPUPipelineSupportedOP::SOL_CLEAR) {
 		if (op->targetType == GPUPipelineElementType::SOL_RENDER_TARGET) {
 
-			RenderTarget *renderTarget = (RenderTarget*)GraphicsResourcePoolManagerAccessor::poolManager->
-				getPool("render_target_pool")->getResource(op->targetName);
+			RenderTarget* renderTarget = _resManagerPool
+				->getResourceManager("RenderTargetManager")->getResource(op->targetName)->getCore<RenderTarget>();
 
 			renderTarget->Clear(0,0,0,0);
 

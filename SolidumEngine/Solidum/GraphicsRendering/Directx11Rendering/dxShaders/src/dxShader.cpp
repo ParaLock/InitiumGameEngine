@@ -1,11 +1,15 @@
 #include "../include/dxShader.h"
 
-dxShader::dxShader(LPCWSTR shaderFilename, LPCWSTR pipelineFilename)
+dxShader::dxShader(IResourceBuilder* builder)
 {
+	ShaderBuilder* realBuilder = static_cast<ShaderBuilder*>(builder);
+
+	LPCWSTR shaderFilename = realBuilder->_filename;
+
+	_resManagerPool = realBuilder->_resManagerPool;
+
 	ID3DBlob* errorBlob = nullptr;
 	HRESULT result;
-
-	_pipelineState = GPUPipelineFactory::createPipeline(pipelineFilename);
 
 	ID3D11Device *dxDev = dxDeviceAccessor::dxEncapsulator->dxDev;
 
@@ -43,8 +47,6 @@ dxShader::dxShader(LPCWSTR shaderFilename, LPCWSTR pipelineFilename)
 		std::cout << "DX SHADER: VS CREATION FAILED" << std::endl;
 	}
 
-	enumerateResources(GPUPipelineElementParentShader::SOL_VS, vertexShaderCode);
-
 	result = D3DX11CompileFromFile(shaderFilename, 0, 0, "Pshader", "ps_5_0", 0, 0, 0, &pixelShaderCode, &errorBlob, 0);
 	if (FAILED(result))
 	{
@@ -81,15 +83,21 @@ dxShader::dxShader(LPCWSTR shaderFilename, LPCWSTR pipelineFilename)
 		MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
 		OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 	}
-
-	enumerateResources(GPUPipelineElementParentShader::SOL_PS, pixelShaderCode);
-
-	_uniformVarNameToBuff = _pipelineState->getVarToBuffMap();
 }
 
 
 dxShader::~dxShader()
 {
+}
+
+void dxShader::attachPipeline(GPUPipeline* pipe)
+{
+	_pipelineState = pipe;
+
+	enumerateResources(GPUPipelineElementParentShader::SOL_VS, vertexShaderCode);
+	enumerateResources(GPUPipelineElementParentShader::SOL_PS, pixelShaderCode);
+	
+	_uniformVarNameToBuff = _pipelineState->getVarToBuffMap();
 }
 
 void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3D10Blob *shaderCode)
@@ -99,7 +107,7 @@ void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3
 		shaderCode->GetBufferSize(), IID_ID3D11ShaderReflection,
 		(void**) &pReflector);
 
-	ShaderInputLayout* newLayout = new dxShaderInputLayout();
+	IResource* newLayout = new dxShaderInputLayout();
 
 	if (!FAILED(hr)) {
 		D3D11_SHADER_DESC desc;
@@ -110,11 +118,13 @@ void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3
 			D3D11_SIGNATURE_PARAMETER_DESC input_desc;
 			pReflector->GetInputParameterDesc(i, &input_desc);
 
-			newLayout->addInput(input_desc.ComponentType, input_desc.SemanticName, input_desc.SemanticIndex, input_desc.Mask);
+			newLayout->getCore<dxShaderInputLayout>()->addInput(input_desc.ComponentType, input_desc.SemanticName, input_desc.SemanticIndex, input_desc.Mask);
 		}
-		newLayout->generateInputLayout();
 
-		_pipelineState->attachShaderInputLayout(newLayout, "");
+		newLayout->getCore<dxShaderInputLayout>()->generateInputLayout();
+
+		_pipelineState->attachUntrackedResource(newLayout,
+			GPUPipelineElementType::SOL_MESH_DATA_LAYOUT, shaderType);
 
 		for (UINT i = 0; i < desc.OutputParameters; i++) {
 
@@ -147,15 +157,16 @@ void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3
 
 			if (BufferLayout.Description.Type == D3D11_CT_CBUFFER) {
 
-				DynamicBuffer *cbuff = new DynamicBuffer(BufferLayout.Description.Name, true);
+				DynamicBuffer* cbuff = new DynamicBuffer(BufferLayout.Description.Name, true);
 
 				for (int q = 0; q < BufferLayout.Variables.size(); q++) {
 					cbuff->addVariable(BufferLayout.Variables.at(q).Name, BufferLayout.Variables.at(q).Size);
 				}
 
-				cbuff->initMemory();
+				cbuff->initMemory(_resManagerPool);
 
-				_pipelineState->attachGeneralShaderDataBuffer(cbuff, shaderType);
+				_pipelineState->attachUntrackedResource(cbuff,
+					GPUPipelineElementType::SOL_GENERAL_DATA_BUFF, shaderType);
 			}
 		}
 	}

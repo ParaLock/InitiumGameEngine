@@ -2,7 +2,6 @@
 
 #include "../../../../sysInclude.h"
 #include "../../../Window/include/windowAccessor.h"
-#include "../../../GraphicsResourcePool/include/GraphicsResourcePoolManagerAccessor.h"
 
 #ifndef _DXDEVICE_H
 #define _DXDEVICE_H

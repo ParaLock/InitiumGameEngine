@@ -9,7 +9,7 @@ class dxGPUBuffer : public GPUBuffer
 private:
 	ID3D11Buffer* bufferPtr;
 public:
-	dxGPUBuffer(size_t size, BUFFER_TYPE type, BUFFER_CPU_ACCESS access);
+	dxGPUBuffer(IResourceBuilder *builder);
 	~dxGPUBuffer();
 
 	void Write(void *pSrc, size_t byteToWrite, size_t offset);
@@ -20,4 +20,5 @@ public:
 
 	void swapInternalBuffer(void *pNewBuff);
 };
+
 

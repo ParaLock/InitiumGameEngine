@@ -1,7 +1,26 @@
 #pragma once
 #include "../../../sysInclude.h"
+#include "../../../ResourceManagement/include/IResourceBuilder.h"
+#include "../../../ResourceManagement/include/IResource.h"
 
-class RenderTarget
+#include "../../../ResourceManagement/include/IResourceManager.h"
+
+#include "../../ActiveGraphicsAPI.h"
+
+class RenderTargetBuilder : public IResourceBuilder {
+public:
+	int _mipLevel;
+	int _aaSamples;
+	TEX_FORMAT _texFormat;
+
+	RenderTargetBuilder(int mipLevel, int aaSamples, TEX_FORMAT texFormat) {
+		_mipLevel = mipLevel;
+		_aaSamples = aaSamples;
+		_texFormat = texFormat;
+	}
+};
+
+class RenderTarget : public IResource
 {
 protected:
 

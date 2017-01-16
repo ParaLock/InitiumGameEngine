@@ -3,6 +3,8 @@
 #include "../../../../sysInclude.h"
 #include "../../dxDevice/include/dxDeviceAccessor.h"
 
+#include "../../../GraphicsCore/include/GraphicsCoreAccessor.h"
+
 #include "../../../../EngineUtils/include/StringManipulation.h"
 
 #include "../../../GPUPipeline/include/GPUPipeline.h"
@@ -28,8 +30,10 @@ private:
 
 	ID3D10Blob *vertexShaderCode, *pixelShaderCode;
 public:
-	dxShader(LPCWSTR shaderFilename, LPCWSTR pipelineFilename);
+	dxShader(IResourceBuilder* builder);
 	~dxShader();
+
+	void attachPipeline(GPUPipeline* pipe);
 
 	void enumerateResources(GPUPipelineElementParentShader shaderType, ID3D10Blob *shaderCode);
 

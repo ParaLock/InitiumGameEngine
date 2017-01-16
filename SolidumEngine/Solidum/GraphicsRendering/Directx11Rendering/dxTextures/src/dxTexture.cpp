@@ -1,7 +1,10 @@
 #include "../include/dxTexture.h"
 
-dxTexture::dxTexture() 
+dxTexture::dxTexture(IResourceBuilder* builder)
 {
+	TextureBuilder* realBuilder = static_cast<TextureBuilder*>(builder);
+
+	loadImage(realBuilder->_filename);
 }
 
 dxTexture::~dxTexture()

@@ -14,7 +14,7 @@ private:
 	ID3D11RenderTargetView* _renderTarget = nullptr;
 
 public:
-	dxRenderTarget(int mipLevel, int aaSamples, TEX_FORMAT texFormat);
+	dxRenderTarget(IResourceBuilder *builder);
 	dxRenderTarget(ID3D11RenderTargetView* rt, ID3D11Texture2D* rtTex);
 
 	~dxRenderTarget();

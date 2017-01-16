@@ -2,32 +2,48 @@
 
 
 
-mesh::mesh(LPCWSTR fileName, std::shared_ptr<meshLoader> ldr)
+mesh::mesh(IResourceBuilder *builder)
 {
+	meshBuilder* realBuilder = static_cast<meshBuilder*>(builder);
+
+	LPCWSTR fileName = realBuilder->_filename;
+
 	if (fileName == L"gen_ortho_window_mesh") {
-		generateOrthoWindowMesh();
+		generateOrthoWindowMesh(realBuilder);
 	}
 	else {
+		std::shared_ptr<meshLoader> pMeshLoader;
 
-		ldr->loadMesh(fileName, this);
+		std::string stlStr = CW2A(fileName);
 
-		_indexBuff = GPUBufferFactory::createBuffer(indicesSize, BUFFER_TYPE::INDEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE);
-		_vertexBuff = GPUBufferFactory::createBuffer(meshSize, BUFFER_TYPE::VERTEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE);
+		std::vector<std::string> splitFilename = StringManipulation::split(&stlStr, '.');
 
-		_indexBuff->Write(meshIndices, indicesSize, 0);
-		_vertexBuff->Write(meshVertices, meshSize, 0);
+		pMeshLoader = std::shared_ptr<meshLoaderOBJ>(new meshLoaderOBJ());
+		
+
+		pMeshLoader->loadMesh(fileName, this);
+
+		IResourceBuilder* indexBuffBuilder = new GPUBufferBuilder(indicesSize, BUFFER_TYPE::INDEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE);
+		IResourceBuilder* vertexBuffBuilder = new GPUBufferBuilder(meshSize, BUFFER_TYPE::VERTEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE);
+
+		_indexBuff = realBuilder->_managerPool->getResourceManager("GPUBufferManager")
+			->createResource(indexBuffBuilder, stlStr + "index_buffer")->getCore<GPUBuffer>();
+
+		_vertexBuff = realBuilder->_managerPool->getResourceManager("GPUBufferManager")
+			->createResource(vertexBuffBuilder, stlStr + "vertex_buffer")->getCore<GPUBuffer>();
+
+		_indexBuff->getCore<GPUBuffer>()->Write(meshIndices, indicesSize, 0);
+		_vertexBuff->getCore<GPUBuffer>()->Write(meshVertices, meshSize, 0);
 	}
 }
 
 mesh::~mesh()
 {
-	delete _indexBuff;
-	delete _indexBuff;
 }
 
-
-void mesh::generateOrthoWindowMesh()
+void mesh::generateOrthoWindowMesh(meshBuilder* builder)
 {
+
 	int screen_width = windowAccessor::screen_width;
 	int screen_height = windowAccessor::screen_height;
 
@@ -76,14 +92,24 @@ void mesh::generateOrthoWindowMesh()
 		indices[i] = i;
 	}
 
-	_indexBuff = GPUBufferFactory::createBuffer(m_indexCount * sizeof(unsigned long), BUFFER_TYPE::INDEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE);
-	_vertexBuff = GPUBufferFactory::createBuffer(m_vertexCount * sizeof(LIGHT_VERTEX), BUFFER_TYPE::VERTEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE);
+	GPUBufferBuilder indexBuffBuilder(m_indexCount * sizeof(unsigned long), BUFFER_TYPE::INDEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE);
+    GPUBufferBuilder vertexBuffBuilder(m_vertexCount * sizeof(LIGHT_VERTEX), BUFFER_TYPE::VERTEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE);
 
-	_indexBuff->Write(indices, m_indexCount * sizeof(unsigned long), 0);
-	_vertexBuff->Write(vertices, m_vertexCount * sizeof(LIGHT_VERTEX), 0);
+	std::string stlStr = CW2A(builder->_filename);
+
+	_indexBuff = builder->_managerPool->getResourceManager("GPUBufferManager")
+		->createResource(&indexBuffBuilder, stlStr + "index_buffer")->getCore<GPUBuffer>();
+
+	_vertexBuff = builder->_managerPool->getResourceManager("GPUBufferManager")
+		->createResource(&vertexBuffBuilder, stlStr + "vertex_buffer")->getCore<GPUBuffer>();
+
+
+	_indexBuff->getCore<GPUBuffer>()->Write(indices, m_indexCount * sizeof(unsigned long), 0);
+	_vertexBuff->getCore<GPUBuffer>()->Write(vertices, m_vertexCount * sizeof(LIGHT_VERTEX), 0);
 
 	delete[] vertices;
 	vertices = 0;
+
 
 	delete[] indices;
 	indices = 0;

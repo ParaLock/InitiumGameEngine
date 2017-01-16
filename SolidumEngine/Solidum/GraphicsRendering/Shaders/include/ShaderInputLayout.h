@@ -1,6 +1,8 @@
 #pragma once
 #include "../../../sysInclude.h"
 
+#include "../../../ResourceManagement/include/IResource.h"
+
 class ShaderInputLayoutElement {
 public:
 	ShaderInputLayoutElement(std::string semantic, int type, UINT index, BYTE mask) {
@@ -18,7 +20,7 @@ public:
 	int _type;
 };
 
-class ShaderInputLayout
+class ShaderInputLayout : public IResource
 {
 protected:
 	std::list<ShaderInputLayoutElement*> *_inputLayoutElementList;

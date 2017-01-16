@@ -46,11 +46,6 @@
 #define SSTR( x ) static_cast< std::ostringstream & >( \
         ( std::ostringstream() << std::dec << x ) ).str()
 
-enum SUPPORTED_GRAPHICS_API {
-	DIRECTX11,
-	UNKNOWN
-};
-
 enum TEX_FILTERS {
 	TEX_FILTER_ANISOTROPHIC,
 	TEX_FILTER_LINEAR,

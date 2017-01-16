@@ -7,6 +7,21 @@
 #include "../../Shaders/include/ShaderInputLayout.h"
 #include "../../../EngineUtils/include/DynamicBuffer.h"
 
+#include "../../../ResourceManagement/include/IResourceManager.h"
+#include "../../../ResourceManagement/include/ResourceManagerPool.h"
+#include "../../../ResourceManagement/include/IResource.h"
+
+class GPUPipelineBuilder : public IResourceBuilder {
+public:
+	LPCWSTR _filename;
+	ResourceManagerPool* _pResManagerPool;
+
+	GPUPipelineBuilder(LPCWSTR filename, ResourceManagerPool* pResFactoryPool) {
+		_filename = filename;
+		_pResManagerPool = pResFactoryPool;
+	}
+};
+
 enum GPUPipelineElementParentShader {
 	SOL_VS,
 	SOL_PS,
@@ -50,12 +65,12 @@ public:
 	std::string name;
 	GPUPipelineElementType type;
 	GPUPipelineElementParentShader parentShader;
-	std::string resourcePoolID;
+
+	IResource* core;
 
 	int resourceSlot;
 	bool isOutput;
-
-	void * core;
+	bool isHook;
 };
 
 class GPUPipelineOP {
@@ -69,13 +84,14 @@ public:
 	bool deferred;
 };
 
-class GPUPipeline
+class GPUPipeline : public IResource
 {
 private:
 	int renderTargetCount = 0;
 	int texSamplerCount = 0;
 protected:
-	std::string _name;
+
+	ResourceManagerPool* _resManagerPool;
 
 	std::map<std::string, DynamicBuffer*> *_uniformToBufferMap;
 	std::map<std::string, GPUPipelineElement*> *_elementList;
@@ -88,21 +104,19 @@ public:
 	GPUPipeline();
 	~GPUPipeline();
 
+	void reset();
+
 	void attachOP(GPUPipelineSupportedOP opType, std::string targetName, GPUPipelineElementType opTargetType, bool executionContext);
 
 	void setDepthTest(bool enable);
 	void setBlending(bool enable);
 
-	void setBuffer(GPUBuffer *newBuff, std::string name);
-	void setTexture(Texture *newTex, std::string name);
+	void setHookResource(IResource* res, std::string name);
 
-	void attachTextureHook(std::string name, GPUPipelineElementParentShader parentShader);
-	void attachBufferHook(std::string name, GPUPipelineElementParentShader parentShader);
+	void attachTrackedResource(IResource* res, std::string name, GPUPipelineElementType type,
+		GPUPipelineElementParentShader parentShader, bool isOutput, bool isHook);
 
-	void attachRenderTarget(RenderTarget* renderTarget, std::string name, GPUPipelineElementParentShader parentShader, bool isOutput);
-	void attachTextureSampler(TextureSampler *texSampler, std::string name, GPUPipelineElementParentShader parentShader);
-	void attachShaderInputLayout(ShaderInputLayout *inputLayout, std::string name);
-	void attachGeneralShaderDataBuffer(DynamicBuffer* generalBuff, GPUPipelineElementParentShader parentShader);
+	void attachUntrackedResource(IResource* res, GPUPipelineElementType type, GPUPipelineElementParentShader parentShader);
 
 	virtual void applyState();
 	virtual void executePass(int numIndices);

@@ -2,9 +2,20 @@
 #include "../../../sysInclude.h"
 #include "../../Directx11Rendering/dxDevice/include/dxDeviceAccessor.h"
 
+#include "../../../ResourceManagement/include/IResource.h"
+
+#include "../../../ResourceManagement/include/IResourceBuilder.h"
+
 class Shader;
 
-class Light
+class LightBuilder : public IResourceBuilder {
+public:
+	LightBuilder() {
+
+	}
+};
+
+class Light : public IResource
 {
 private:
 	Shader* _shader = nullptr;
@@ -29,7 +40,7 @@ private:
 
 
 public:
-	Light();
+	Light(IResourceBuilder* builder);
 	~Light();
 
 	void setDirection(Vector3f dir);

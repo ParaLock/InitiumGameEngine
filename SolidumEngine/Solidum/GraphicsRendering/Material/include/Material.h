@@ -1,28 +1,46 @@
 #pragma once
 
 #include "../../../sysInclude.h"
-
 #include "../../Textures/include/Texture.h"
+#include "../../../ResourceManagement/include/IResource.h"
+#include "../../../ResourceManagement/include/IResourceBuilder.h"
 
-typedef enum MATERIAL_TEX {
+class MaterialBuilder : public IResourceBuilder {
+public:
+	int _ID;
+
+	float _specIntensity;
+	float _specPower; 
+
+	Vector4f _specColor; 
+
+	MaterialBuilder(int ID, float specIntensity, float specPower, Vector4f specColor) {
+		_ID = ID;
+		_specIntensity = specIntensity;
+		_specPower = specPower;
+		_specColor = specColor;
+	}
+};
+
+enum MATERIAL_TEX {
 	PRIMARY_MATERIAL_TEXTURE,
 	SECONDARY_MATERIAL_TEXTURE
 };
 
-class Material
+class Material : public IResource
 {
 private:
-
 	int _ID;
 
 	float _specularIntensity;
 	float _specularPower;
+
 	Vector4f _specularColor;
 
 	std::map<MATERIAL_TEX, Texture*> _textures;
 
 public:
-	Material(float specIntensity, float specPower, Vector4f specColor, int ID);
+	Material(IResourceBuilder* builder);
 	~Material();
 
 	void attachMaterialTexture(Texture* tex, MATERIAL_TEX texType);
@@ -38,6 +56,6 @@ public:
 
 	int getID() { return _ID; }
 
-	std::map<MATERIAL_TEX, Texture*>& const getTextures() { return _textures; };
+	std::map<MATERIAL_TEX, Texture*>& getTextures() { return _textures; };
 };
 

@@ -2,11 +2,13 @@
 
 
 
-dxGPUBuffer::dxGPUBuffer(size_t size, BUFFER_TYPE type, BUFFER_CPU_ACCESS access)
+dxGPUBuffer::dxGPUBuffer(IResourceBuilder *builder)
 {
-	_size = size;
-	_type = type;
-	_access = access;
+	GPUBufferBuilder *realBuilder = static_cast<GPUBufferBuilder*>(builder);
+
+	_size = realBuilder->_size;
+	_type = realBuilder->_type;
+	_access = realBuilder->_access;
 
 	ID3D11Device *dxDev = dxDeviceAccessor::dxEncapsulator->dxDev;
 

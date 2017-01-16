@@ -2,8 +2,14 @@
 
 
 
-dxTextureSampleState::dxTextureSampleState(TEX_FILTERS texFilterType, ANISOTRPHIC_FILTER_LEVELS anisotropyFilterLevel, TEX_ADDR_MODES texAddressMode)
+dxTextureSampleState::dxTextureSampleState(IResourceBuilder *builder)
 {
+	TextureSamplerBuilder* realBuilder = static_cast<TextureSamplerBuilder*>(builder);
+
+	TEX_FILTERS texFilterType = realBuilder->_texFilterType;
+	ANISOTRPHIC_FILTER_LEVELS anisotropyFilterLevel = realBuilder->_anisotropyFilterLevel;
+	TEX_ADDR_MODES texAddressMode = realBuilder->_texAddressMode;
+
 	ID3D11Device *dxDev = dxDeviceAccessor::dxEncapsulator->dxDev;
 
 	D3D11_SAMPLER_DESC samplerStateDesc;

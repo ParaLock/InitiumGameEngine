@@ -1,7 +1,21 @@
 #pragma once
 #include "../../../sysInclude.h"
+#include "../../../GraphicsRendering/ActiveGraphicsAPI.h"
 
-class Texture
+#include "../../../ResourceManagement/include/IResourceBuilder.h"
+
+#include "../../../ResourceManagement/include/IResource.h"
+
+class TextureBuilder : public IResourceBuilder {
+public:
+	LPCWSTR _filename;
+
+	TextureBuilder(LPCWSTR filename) {
+		_filename = filename;
+	}
+};
+
+class Texture : public IResource
 {
 public:
 	Texture();

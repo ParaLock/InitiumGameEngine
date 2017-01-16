@@ -10,21 +10,23 @@ GPUPipelineFactory::~GPUPipelineFactory()
 {
 }
 
-GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
+GPUPipeline * GPUPipelineFactory::createPipeline(IResourceBuilder* builder)
 {
+	GPUPipelineBuilder* realBuilder = static_cast<GPUPipelineBuilder*>(builder);
+
 	GPUPipeline *newPipeline;
 
-	std::wstring filePathWStr(pipelineDescFile);
+	std::wstring filePathWStr(realBuilder->_filename);
 
 	std::string filepathSTLStr = StringManipulation::ws2s(filePathWStr);
 
-	switch (ActiveAPITypeAccessor::_apiInUse) {
+	switch (ActiveGraphicsAPI::getCurrentAPI()) {
 		case DIRECTX11:
-			newPipeline = new dxGPUPipeline(filepathSTLStr);
+			newPipeline = new dxGPUPipeline(realBuilder->_pResManagerPool);
 			break;
 	}
 
-	std::ifstream file(pipelineDescFile);
+	std::ifstream file(realBuilder->_filename);
 
 	std::vector<std::string*> *line = new std::vector<std::string*>;
 
@@ -75,12 +77,8 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 			if (splitStr.at(0) == "INIT") {
 				if (splitStr.at(1) == "GBUFFER") {
 
-					GraphicsResourcePoolManagerAccessor::poolManager->getPool("render_target_pool")->addResource(
-						RenderTargetFactory::createRenderTarget(1, 1, TEX_FORMAT::RGBA_32BIT_FLOAT),
-						splitStr.at(2), true);	
-
-					int debugRef = -1;
-
+					realBuilder->_pResManagerPool->getResourceManager("RenderTargetManager")->createResource(
+						&RenderTargetBuilder(1, 1, TEX_FORMAT::RGBA_32BIT_FLOAT), splitStr.at(2));
 				}
 
 				if (splitStr.at(1) == "SAMPLER") {
@@ -102,11 +100,9 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 						filterType = TEX_FILTERS::TEX_FILTER_POINT;
 					}
 
-					GraphicsResourcePoolManagerAccessor::poolManager->getPool("texture_sampler_pool")->addResource(
-						TextureSamplerFactory::createTextureSampler(filterType, ANISOTRPHIC_FILTER_LEVELS::NO_ANISOTROPHIC_FILTERING, addrMode),
-						splitStr.at(4), true);
-
-					int debugRef = -1;
+					realBuilder->_pResManagerPool->getResourceManager("TextureSamplerManager")->createResource(&TextureSamplerBuilder(
+							filterType, ANISOTRPHIC_FILTER_LEVELS::NO_ANISOTROPHIC_FILTERING, addrMode), 
+								splitStr.at(4));
 				}
 			}
 		
@@ -115,39 +111,32 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 
 				if (splitStr.at(1) == "GBUFFER" && splitStr.at(2) == "OUTPUT") {
 
-					RenderTarget* renderTarget = (RenderTarget*)GraphicsResourcePoolManagerAccessor::poolManager->
-						getPool("render_target_pool")->getResource(splitStr.at(3));
 
-
-
-					newPipeline->attachRenderTarget(renderTarget, splitStr.at(3), shaderContext, true);	
+					newPipeline->attachTrackedResource(realBuilder->_pResManagerPool->getResourceManager("RenderTargetManager")->getResource(splitStr.at(3)),
+						splitStr.at(3), GPUPipelineElementType::SOL_RENDER_TARGET, shaderContext, true, false);
 				
 				}
 				else if (splitStr.at(1) == "GBUFFER" && splitStr.at(2) == "INPUT") {
 
-					RenderTarget* renderTarget = (RenderTarget*)GraphicsResourcePoolManagerAccessor::poolManager->
-						getPool("render_target_pool")->getResource(splitStr.at(3));
-
-					newPipeline->attachRenderTarget(renderTarget, splitStr.at(3), shaderContext, false);
+					newPipeline->attachTrackedResource(realBuilder->_pResManagerPool->getResourceManager("RenderTargetManager")->getResource(splitStr.at(3)),
+						splitStr.at(3), GPUPipelineElementType::SOL_RENDER_TARGET, shaderContext, false, false);
 				}
 				if (splitStr.at(1) == "TEXTURE_HOOK") {
 
-					newPipeline->attachTextureHook(splitStr.at(2), shaderContext);
+					newPipeline->attachTrackedResource(nullptr, 
+						splitStr.at(2), GPUPipelineElementType::SOL_TEXTURE_HOOK, shaderContext, false, true);
 				}
 
 				if (splitStr.at(1) == "BUFFER_HOOK") {
 
-					newPipeline->attachBufferHook(splitStr.at(2), shaderContext);
-				
-
-					int debugRef = -1;
+					newPipeline->attachTrackedResource(nullptr,
+						splitStr.at(2), GPUPipelineElementType::SOL_BUFFER_HOOK, shaderContext, false, true);
 				}
 
 				if (splitStr.at(1) == "SAMPLER") {
 
-					TextureSampler* texSampler = (TextureSampler*)GraphicsResourcePoolManagerAccessor::poolManager->
-						getPool("texture_sampler_pool")->getResource(splitStr.at(2));
-					newPipeline->attachTextureSampler(texSampler, splitStr.at(2), shaderContext);
+					newPipeline->attachTrackedResource(realBuilder->_pResManagerPool->getResourceManager("TextureSamplerManager")->getResource(splitStr.at(2)),
+						splitStr.at(2), GPUPipelineElementType::SOL_SAMPLER, shaderContext, false, false);
 				}
 			}
 
@@ -177,6 +166,7 @@ GPUPipeline * GPUPipelineFactory::createPipeline(LPCWSTR pipelineDescFile)
 				}
 
 				if (splitStr.at(3) == "GBUFFER") {
+
 					opTargetType = GPUPipelineElementType::SOL_RENDER_TARGET;
 					targetName = splitStr.at(4);
 				}

@@ -1,10 +1,12 @@
 #include "../include/dxRenderTarget.h"
 
-dxRenderTarget::dxRenderTarget(int mipLevel, int aaSamples, TEX_FORMAT texFormat) 
+dxRenderTarget::dxRenderTarget(IResourceBuilder *builder)
 {
-	_aaSamples = aaSamples;
-	_mipLevel = mipLevel;
-	_texFormat = texFormat;
+	RenderTargetBuilder* realBuilder = static_cast<RenderTargetBuilder*>(builder);
+
+	_aaSamples = realBuilder->_aaSamples;
+	_mipLevel = realBuilder->_mipLevel;
+	_texFormat = realBuilder->_texFormat;
 
 	ID3D11Device *dxDev = dxDeviceAccessor::dxEncapsulator->dxDev;
 
