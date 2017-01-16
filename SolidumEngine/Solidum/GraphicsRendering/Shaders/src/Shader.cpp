@@ -17,6 +17,11 @@ void Shader::setMesh(mesh* newMesh)
 	_pipelineState->setHookResource(newMesh->getVertexBuff(), "vertex_buffer");
 }
 
+void Shader::setModelTexture(Texture * tex)
+{
+	_pipelineState->setHookResource(tex, "model_tex");
+}
+
 void Shader::updateMaterialUniforms(Material* mat)
 {
 	float specPower = mat->getSpecularPower();
@@ -40,7 +45,7 @@ void Shader::updateMaterialUniforms(Material* mat)
 	}
 }
 
-void Shader::updateLightUniforms(Light* light)
+void Shader::updateLightUniforms(ILight* light)
 {
 	float intensity = light->getIntensity();
 	float constant = light->getAttenuationConstant();

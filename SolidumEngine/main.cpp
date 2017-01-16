@@ -105,22 +105,22 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	directionalLightShader->setMesh(orthoMesh);
 	pointLightShader->setMesh(orthoMesh);
 
-	metalMaterial->attachMaterialTexture(metalTex, MATERIAL_TEX::PRIMARY_MATERIAL_TEXTURE);
-	woodMaterial->attachMaterialTexture(woodTex, MATERIAL_TEX::PRIMARY_MATERIAL_TEXTURE);
-
 	cube->attachMesh(cubeMesh);
 	cube->attachMaterial(woodMaterial);
 	cube->attachShader(deferredShader);
+	cube->attachTexture(woodTex);
 	cube->getTransform()->setPos(Vector3f(0, -2.0f, -3.0f));
 
 	hammer->attachMesh(hammerMesh);
 	hammer->attachShader(deferredShader);
 	hammer->attachMaterial(metalMaterial);
+	hammer->attachTexture(metalTex);
 	hammer->getTransform()->setPos(Vector3f(0, 0, 0));
 
 	plane->attachMesh(planeMesh);
 	plane->attachShader(deferredShader);
 	plane->attachMaterial(metalMaterial);
+	plane->attachTexture(metalTex);
 	plane->getTransform()->setPos(Vector3f(0, -3.5, 0));
 
 	dirLight1->setColor(Vector4f(0.5f, 1.5f, 0.5f, 0.5f));

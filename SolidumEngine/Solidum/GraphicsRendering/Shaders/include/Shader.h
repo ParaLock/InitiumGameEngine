@@ -6,7 +6,7 @@
 
 #include "../../../ResourceManagement/include/IResourceBuilder.h"
 
-#include "../../Lights/include/Light.h"
+#include "../../Lights/include/ILight.h"
 #include "../../Material/include/Material.h"
 #include "../../Transform/include/Transform.h"
 #include "../../Camera/include/camera.h"
@@ -39,8 +39,10 @@ public:
 
 	void setMesh(mesh* newMesh);
 
+	void setModelTexture(Texture* tex);
+
 	void updateMaterialUniforms(Material* mat);
-	void updateLightUniforms(Light* light);
+	void updateLightUniforms(ILight* light);
 	void updateModelUniforms(Transform* transform);
 	void updateCameraUniforms(camera* cam);
 

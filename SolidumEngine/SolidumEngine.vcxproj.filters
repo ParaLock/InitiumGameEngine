@@ -60,6 +60,7 @@
     <ClInclude Include="Solidum\ResourceManagement\include\ResourceManagerPool.h" />
     <ClInclude Include="Solidum\resourceManagerInclude.h" />
     <ClInclude Include="Solidum\GraphicsRendering\SolidumObject\Objects\include\SolidumObjectManager.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Lights\include\ILight.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -115,5 +116,6 @@
     <ClCompile Include="Solidum\ResourceManagement\src\ResourceManagerPool.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\ActiveGraphicsAPI.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\SolidumObject\Objects\src\SolidumObjectManager.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Lights\src\ILight.cpp" />
   </ItemGroup>
 </Project>

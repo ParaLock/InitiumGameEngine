@@ -27,6 +27,11 @@ void SolidumObject::attachShader(Shader* newShader)
 	_shader = newShader;
 }
 
+void SolidumObject::attachTexture(Texture * tex)
+{
+	_tex = tex;
+}
+
 void SolidumObject::draw()
 {
 	if (_shader != nullptr) {
@@ -38,6 +43,10 @@ void SolidumObject::draw()
 		}
 		if (_mesh != nullptr) {
 			_shader->setMesh(_mesh);
+		}
+
+		if (_tex != nullptr) {
+			_shader->setModelTexture(_tex);
 		}
 
 		_shader->updateGPU();

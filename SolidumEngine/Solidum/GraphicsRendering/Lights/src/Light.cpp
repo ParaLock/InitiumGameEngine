@@ -9,6 +9,15 @@ Light::~Light()
 {
 }
 
+void Light::draw()
+{
+	_shader->updateLightUniforms(this);
+
+	_shader->updateGPU();
+
+	_shader->execute(6);
+}
+
 void Light::setDirection(Vector3f dir) {
 
 	_GenericData._direction = dir;

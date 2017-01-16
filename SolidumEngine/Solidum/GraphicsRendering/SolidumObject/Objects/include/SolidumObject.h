@@ -28,6 +28,7 @@ private:
 	mesh* _mesh = nullptr;
 	Material* _mat = nullptr;
 	Shader* _shader = nullptr;
+	Texture* _tex = nullptr;
 public:
 	SolidumObject(IResourceBuilder* builder);
 	~SolidumObject();
@@ -35,6 +36,7 @@ public:
 	void attachMesh(mesh* newMesh);
 	void attachMaterial(Material* newMat);
 	void attachShader(Shader* newShader);
+	void attachTexture(Texture* tex);
 
 	Transform* getTransform() { return _transform; }
 

@@ -1,12 +1,16 @@
 #pragma once
 #include "../../../sysInclude.h"
+#include "../../Camera/include/camera.h"
+
 #include "../../Directx11Rendering/dxDevice/include/dxDeviceAccessor.h"
 
 #include "../../../ResourceManagement/include/IResource.h"
 
 #include "../../../ResourceManagement/include/IResourceBuilder.h"
 
-class Shader;
+#include "../../Shaders/include/Shader.h"
+
+#include "ILight.h"
 
 class LightBuilder : public IResourceBuilder {
 public:
@@ -15,7 +19,7 @@ public:
 	}
 };
 
-class Light : public IResource
+class Light : public IResource, public ILight
 {
 private:
 	Shader* _shader = nullptr;
@@ -42,6 +46,8 @@ private:
 public:
 	Light(IResourceBuilder* builder);
 	~Light();
+
+	void draw();
 
 	void setDirection(Vector3f dir);
 	void setPosition(Vector3f pos);

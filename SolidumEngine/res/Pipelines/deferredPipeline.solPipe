@@ -30,6 +30,7 @@ PIPELINE_BEGIN
 	
 	PS_SHADER_BEGIN
 
+		BIND TEXTURE_HOOK model_tex
 		BIND TEXTURE_HOOK material_color_tex
 		BIND TEXTURE_HOOK material_base_tex
 		

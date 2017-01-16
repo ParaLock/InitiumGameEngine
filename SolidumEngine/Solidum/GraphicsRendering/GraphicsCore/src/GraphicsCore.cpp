@@ -55,9 +55,6 @@ void GraphicsCore::RenderAll()
 	for (auto itr = objectList.begin(); itr != objectList.end(); itr++) {
 		SolidumObject* currentObj = *itr;
 
-		currentObj->getShader()->updateCameraUniforms(_primaryCamera);
-
-
 		currentObj->draw();
 	}
 
@@ -66,13 +63,8 @@ void GraphicsCore::RenderAll()
 	for (auto itr = lightsList.begin(); itr != lightsList.end(); itr++) {
 		Light* currentLight = *itr;
 
-		currentLight->getShader()->updateLightUniforms(currentLight);
+		currentLight->draw();
 
-		currentLight->getShader()->updateCameraUniforms(_primaryCamera);
-
-		currentLight->getShader()->updateGPU();
-
-		currentLight->getShader()->execute(6);
 	}
 }
 
