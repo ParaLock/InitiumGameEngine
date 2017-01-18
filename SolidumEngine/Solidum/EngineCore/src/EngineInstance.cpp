@@ -18,8 +18,6 @@ EngineInstance::EngineInstance(window* renderWindow)
 	_resManagers->registerResourceManager(new LightManager(), "LightManager");
 
 	_graphicsCore = new GraphicsCore(DIRECTX11, renderWindow, _resManagers);
-
-	//initResourceManagers(_resManagers);
 }
 
 

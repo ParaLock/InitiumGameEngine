@@ -38,11 +38,7 @@
     <ClInclude Include="Solidum\EngineUtils\include\Vector4f.h" />
     <ClInclude Include="Solidum\EngineCore\include\EngineInstance.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Transform\include\Transform.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\SolidumObject\Controllers\include\IController.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\SolidumObject\Controllers\include\movementController.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\SolidumObject\Objects\include\SolidumObject.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCore\include\GraphicsCore.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCore\include\GraphicsCoreAccessor.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderQueue\include\RenderQueue.h" />
     <ClInclude Include="Solidum\GraphicsRendering\ActiveGraphicsAPI.h" />
     <ClInclude Include="Solidum\ResourceManagement\include\IResource.h" />
@@ -59,8 +55,11 @@
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureSamplerManager.h" />
     <ClInclude Include="Solidum\ResourceManagement\include\ResourceManagerPool.h" />
     <ClInclude Include="Solidum\resourceManagerInclude.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\SolidumObject\Objects\include\SolidumObjectManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Lights\include\ILight.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\SolidumObject\Controllers\include\IController.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\SolidumObject\Controllers\include\movementController.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\SolidumObject\Objects\include\SolidumObject.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\SolidumObject\Objects\include\SolidumObjectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -95,11 +94,7 @@
     <ClCompile Include="Solidum\GraphicsRendering\Material\src\Material.cpp" />
     <ClCompile Include="Solidum\EngineCore\src\EngineInstance.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Transform\src\Transform.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\SolidumObject\Controllers\src\IController.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\SolidumObject\Controllers\src\movementController.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\SolidumObject\Objects\src\SolidumObject.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCore\src\GraphicsCore.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCore\src\GraphicsCoreAccessor.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderQueue\src\RenderQueue.cpp" />
     <ClCompile Include="Solidum\ResourceManagement\src\IResource.cpp" />
     <ClCompile Include="Solidum\ResourceManagement\src\IResourceManager.cpp" />
@@ -115,7 +110,10 @@
     <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureSamplerManager.cpp" />
     <ClCompile Include="Solidum\ResourceManagement\src\ResourceManagerPool.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\ActiveGraphicsAPI.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\SolidumObject\Objects\src\SolidumObjectManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Lights\src\ILight.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\SolidumObject\Controllers\src\IController.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\SolidumObject\Controllers\src\movementController.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\SolidumObject\Objects\src\SolidumObject.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\SolidumObject\Objects\src\SolidumObjectManager.cpp" />
   </ItemGroup>
 </Project>

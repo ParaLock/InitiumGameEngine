@@ -5,6 +5,7 @@
 #include "../../ResourceManagement/include/IResource.h"
 
 #include "../../ResourceManagement/include/ResourceManagerPool.h"
+
 class DynamicBufferMember {
 private:
 	size_t _size;

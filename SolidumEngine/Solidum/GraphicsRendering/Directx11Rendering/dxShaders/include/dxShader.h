@@ -3,8 +3,6 @@
 #include "../../../../sysInclude.h"
 #include "../../dxDevice/include/dxDeviceAccessor.h"
 
-#include "../../../GraphicsCore/include/GraphicsCoreAccessor.h"
-
 #include "../../../../EngineUtils/include/StringManipulation.h"
 
 #include "../../../GPUPipeline/include/GPUPipeline.h"

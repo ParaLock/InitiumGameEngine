@@ -112,31 +112,31 @@ GPUPipeline * GPUPipelineFactory::createPipeline(IResourceBuilder* builder)
 				if (splitStr.at(1) == "GBUFFER" && splitStr.at(2) == "OUTPUT") {
 
 
-					newPipeline->attachTrackedResource(realBuilder->_pResManagerPool->getResourceManager("RenderTargetManager")->getResource(splitStr.at(3)),
-						splitStr.at(3), GPUPipelineElementType::SOL_RENDER_TARGET, shaderContext, true, false);
+					newPipeline->attachResource(realBuilder->_pResManagerPool->getResourceManager("RenderTargetManager")->getResource(splitStr.at(3)),
+						splitStr.at(3), GPUPipelineElementType::SOL_RENDER_TARGET, shaderContext, true);
 				
 				}
 				else if (splitStr.at(1) == "GBUFFER" && splitStr.at(2) == "INPUT") {
 
-					newPipeline->attachTrackedResource(realBuilder->_pResManagerPool->getResourceManager("RenderTargetManager")->getResource(splitStr.at(3)),
-						splitStr.at(3), GPUPipelineElementType::SOL_RENDER_TARGET, shaderContext, false, false);
+					newPipeline->attachResource(realBuilder->_pResManagerPool->getResourceManager("RenderTargetManager")->getResource(splitStr.at(3)),
+						splitStr.at(3), GPUPipelineElementType::SOL_RENDER_TARGET, shaderContext, false);
 				}
 				if (splitStr.at(1) == "TEXTURE_HOOK") {
 
-					newPipeline->attachTrackedResource(nullptr, 
-						splitStr.at(2), GPUPipelineElementType::SOL_TEXTURE_HOOK, shaderContext, false, true);
+					newPipeline->attachResource(nullptr, 
+						splitStr.at(2), GPUPipelineElementType::SOL_TEXTURE_HOOK, shaderContext, false);
 				}
 
 				if (splitStr.at(1) == "BUFFER_HOOK") {
 
-					newPipeline->attachTrackedResource(nullptr,
-						splitStr.at(2), GPUPipelineElementType::SOL_BUFFER_HOOK, shaderContext, false, true);
+					newPipeline->attachResource(nullptr,
+						splitStr.at(2), GPUPipelineElementType::SOL_BUFFER_HOOK, shaderContext, false);
 				}
 
 				if (splitStr.at(1) == "SAMPLER") {
 
-					newPipeline->attachTrackedResource(realBuilder->_pResManagerPool->getResourceManager("TextureSamplerManager")->getResource(splitStr.at(2)),
-						splitStr.at(2), GPUPipelineElementType::SOL_SAMPLER, shaderContext, false, false);
+					newPipeline->attachResource(realBuilder->_pResManagerPool->getResourceManager("TextureSamplerManager")->getResource(splitStr.at(2)),
+						splitStr.at(2), GPUPipelineElementType::SOL_SAMPLER, shaderContext, false);
 				}
 			}
 

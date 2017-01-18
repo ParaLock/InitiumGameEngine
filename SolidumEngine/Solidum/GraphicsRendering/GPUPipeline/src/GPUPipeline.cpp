@@ -61,8 +61,8 @@ void GPUPipeline::setHookResource(IResource* res, std::string name)
 	}
 }
 
-void GPUPipeline::attachTrackedResource(IResource* res, std::string name, GPUPipelineElementType type,
-	GPUPipelineElementParentShader parentShader, bool isOutput, bool isHook)
+void GPUPipeline::attachResource(IResource* res, std::string name, GPUPipelineElementType type,
+	GPUPipelineElementParentShader parentShader, bool isOutput)
 {
 	GPUPipelineElement* newElement = new GPUPipelineElement();
 
@@ -71,16 +71,12 @@ void GPUPipeline::attachTrackedResource(IResource* res, std::string name, GPUPip
 	newElement->name = name;
 	newElement->type = type;
 	newElement->parentShader = parentShader;
-	newElement->isHook = isHook;
 
-	if (isHook)
-		newElement->core = nullptr;
-	else
-		newElement->core = res;
+	newElement->core = res;
+
+	newElement->resourceSlot = 0;
 
 	if (type == GPUPipelineElementType::SOL_RENDER_TARGET) {
-
-		newElement->isOutput = isOutput;
 
 		newElement->resourceSlot = renderTargetCount;
 
@@ -107,32 +103,6 @@ void GPUPipeline::attachTrackedResource(IResource* res, std::string name, GPUPip
 	_elementList->insert({ name, newElement });
 }
 
-void GPUPipeline::attachUntrackedResource(IResource* res, GPUPipelineElementType type, GPUPipelineElementParentShader parentShader)
-{
-	GPUPipelineElement* newElement = new GPUPipelineElement();
-
-	newElement->resourceSlot = 0;
-	newElement->name = "unTracked";
-	newElement->type = type;
-	newElement->parentShader = parentShader;
-	newElement->core = res;
-
-	if (type == GPUPipelineElementType::SOL_GENERAL_DATA_BUFF) {
-
-		DynamicBuffer* generalBuff = res->getCore<DynamicBuffer>();
-
-		std::vector<std::string> varNameList = generalBuff->getVarNameList();
-
-		for (unsigned int i = 0; i < varNameList.size(); ++i) {
-			_uniformToBufferMap->insert({ varNameList[i], generalBuff });
-		}
-
-		_elementList->insert({ generalBuff->getName(), newElement });
-	}
-	else {
-		_elementList->insert({ "", newElement });
-	}
-}
 
 void GPUPipeline::applyState()
 {

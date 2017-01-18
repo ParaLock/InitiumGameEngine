@@ -70,7 +70,6 @@ public:
 
 	int resourceSlot;
 	bool isOutput;
-	bool isHook;
 };
 
 class GPUPipelineOP {
@@ -78,7 +77,6 @@ public:
 	std::string targetName;
 
 	GPUPipelineElementType targetType;
-
 	GPUPipelineSupportedOP type;
 
 	bool deferred;
@@ -113,10 +111,9 @@ public:
 
 	void setHookResource(IResource* res, std::string name);
 
-	void attachTrackedResource(IResource* res, std::string name, GPUPipelineElementType type,
-		GPUPipelineElementParentShader parentShader, bool isOutput, bool isHook);
+	void attachResource(IResource* res, std::string name, GPUPipelineElementType type,
+		GPUPipelineElementParentShader parentShader, bool isOutput);
 
-	void attachUntrackedResource(IResource* res, GPUPipelineElementType type, GPUPipelineElementParentShader parentShader);
 
 	virtual void applyState();
 	virtual void executePass(int numIndices);

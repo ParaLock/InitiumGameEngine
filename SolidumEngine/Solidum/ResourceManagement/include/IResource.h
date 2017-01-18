@@ -4,6 +4,7 @@
 class IResource
 {
 private:
+protected:
 public:
 	IResource();
 	virtual ~IResource();
@@ -17,8 +18,6 @@ public:
 			return dynamic_cast<T*>(this);
 		}
 		else {
-
-
 			std::cout << "Resource Cast To Core Type failed!" << " " << "RESOURCE NAME:" << std::endl;
 		
 			return nullptr;

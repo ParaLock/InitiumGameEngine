@@ -123,8 +123,8 @@ void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3
 
 		newLayout->getCore<dxShaderInputLayout>()->generateInputLayout();
 
-		_pipelineState->attachUntrackedResource(newLayout,
-			GPUPipelineElementType::SOL_MESH_DATA_LAYOUT, shaderType);
+		_pipelineState->attachResource(newLayout, "unnamed",
+			GPUPipelineElementType::SOL_MESH_DATA_LAYOUT, shaderType, false);
 
 		for (UINT i = 0; i < desc.OutputParameters; i++) {
 
@@ -165,8 +165,8 @@ void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3
 
 				cbuff->initMemory(_resManagerPool);
 
-				_pipelineState->attachUntrackedResource(cbuff,
-					GPUPipelineElementType::SOL_GENERAL_DATA_BUFF, shaderType);
+				_pipelineState->attachResource(cbuff, BufferLayout.Description.Name,
+					GPUPipelineElementType::SOL_GENERAL_DATA_BUFF, shaderType, false);
 			}
 		}
 	}

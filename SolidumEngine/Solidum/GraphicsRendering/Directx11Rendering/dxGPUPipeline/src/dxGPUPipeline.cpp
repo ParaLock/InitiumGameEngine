@@ -36,6 +36,7 @@ void dxGPUPipeline::applyState()
 	{
 		GPUPipelineElement* newElement = itr->second;
 
+		newElement->name;
 		newElement->type;
 		newElement->parentShader;
 
@@ -49,8 +50,6 @@ void dxGPUPipeline::applyState()
 					outputRTList.push_back(renderTarget);
 				}
 				else {
-
-					newElement->name;
 
 					ID3D11ShaderResourceView* tmpRT = (ID3D11ShaderResourceView*)renderTarget->getParameter("D3D_SHADERVIEW");
 

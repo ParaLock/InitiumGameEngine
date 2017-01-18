@@ -10,6 +10,12 @@ ResourceManagerPool::ResourceManagerPool()
 
 ResourceManagerPool::~ResourceManagerPool()
 {
+	for (auto itr = _managerPool->begin(); itr != _managerPool->end(); itr++) {
+		IResourceManager* manager = itr->second;
+
+		delete manager;
+	}
+
 	delete _managerPool;
 }
 

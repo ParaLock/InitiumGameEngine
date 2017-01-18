@@ -7,6 +7,12 @@ IResourceManager::IResourceManager()
 
 IResourceManager::~IResourceManager()
 {
+	for (auto itr = _activeResources->begin(); itr != _activeResources->end(); itr++) {
+		IResource* res = itr->second;
+
+		delete res;
+	}
+
 	delete _activeResources;
 }
 
