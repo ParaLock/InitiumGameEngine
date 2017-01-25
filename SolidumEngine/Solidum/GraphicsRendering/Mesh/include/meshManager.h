@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../sysInclude.h"
 
-#include "../../../ResourceManagement/include/IResourceManager.h"
+#include "../../../ResourceFramework/include/IResourceManager.h"
 
 #include "mesh.h"
 

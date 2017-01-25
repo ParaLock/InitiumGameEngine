@@ -7,7 +7,7 @@
 
 #include "GPUBuffer.h"
 
-#include "../../../ResourceManagement/include/IResourceManager.h"
+#include "../../../ResourceFramework/include/IResourceManager.h"
 
 class GPUBufferManager : public IResourceManager
 {

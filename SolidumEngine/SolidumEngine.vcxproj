@@ -19,9 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\EventFramework\include\EventHub.h" />
+    <ClInclude Include="Solidum\EntityFramework\Components\include\GraphicsComponent.h" />
+    <ClInclude Include="Solidum\EntityFramework\Components\include\MoveComponent.h" />
+    <ClInclude Include="Solidum\EventFramework\include\EntityEvent.h" />
+    <ClInclude Include="Solidum\EventFramework\include\RenderEvent.h" />
+    <ClInclude Include="Solidum\EventFramework\include\InputEvent.h" />
+    <ClInclude Include="Solidum\InputHandling\include\InputHandler.h" />
+    <ClInclude Include="Solidum\InputHandling\include\InputManager.h" />
+    <ClInclude Include="Solidum\EventFramework\include\EventFrameworkCore.h" />
+    <ClInclude Include="Solidum\EventFramework\include\IEvent.h" />
+    <ClInclude Include="Solidum\EventFramework\include\IEventPublisher.h" />
+    <ClInclude Include="Solidum\EventFramework\include\IEventListener.h" />
+    <ClInclude Include="Solidum\EntityFramework\Components\include\IComponent.h" />
+    <ClInclude Include="Solidum\EntityFramework\Entity\include\Entity.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Lights\include\ILight.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\SolidumObject\Objects\include\SolidumObjectManager.h" />
-    <ClInclude Include="Solidum\ResourceManagement\include\ResourceManagerPool.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\ResourceManagerPool.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Material\include\MaterialManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Lights\include\LightManager.h" />
@@ -29,9 +42,9 @@
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsBuffers\include\GPUBufferManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderTarget\include\RenderTargetManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Mesh\include\meshManager.h" />
-    <ClInclude Include="Solidum\ResourceManagement\include\IResourceBuilder.h" />
-    <ClInclude Include="Solidum\ResourceManagement\include\IResourceManager.h" />
-    <ClInclude Include="Solidum\ResourceManagement\include\IResource.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\IResourceBuilder.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\IResourceManager.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\IResource.h" />
     <ClInclude Include="Solidum\GraphicsRendering\ActiveGraphicsAPI.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderQueue\include\RenderQueue.h" />
     <ClInclude Include="Solidum\EngineCore\include\EngineInstance.h" />
@@ -39,8 +52,8 @@
     <ClInclude Include="Solidum\EngineUtils\include\Vector3f.h" />
     <ClInclude Include="Solidum\EngineUtils\include\Vector4f.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Material\include\Material.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\HelperFunctions.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\DynamicBuffer.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\MiscHelperFunctions.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\DynamicStruct.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\Shader.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderInputLayout.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxShaders\include\dxShaderInputLayout.h" />
@@ -52,9 +65,6 @@
     <ClInclude Include="Solidum\GraphicsRendering\GPUPipeline\include\GPUPipelineFactory.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GPUPipeline\include\GPUPipeline.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxShaders\include\dxShader.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\SolidumObject\Controllers\include\IController.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\SolidumObject\Controllers\include\movementController.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\SolidumObject\Objects\include\SolidumObject.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Lights\include\Light.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxRenderTarget\include\dxRenderTarget.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDevice.h" />
@@ -78,12 +88,29 @@
     <ClInclude Include="Solidum\EngineUtils\include\Vector.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureSamplerManager.h" />
+    <ClInclude Include="Solidum\WorldSimulation\include\World.h" />
+    <ClInclude Include="Solidum\WorldSimulation\include\WorldNode.h" />
+    <ClInclude Include="Solidum\WorldSimulation\include\WorldManager.h" />
+    <ClInclude Include="Solidum\WorldSimulation\include\WorldCell.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\EventFramework\src\EventHub.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Components\src\GraphicsComponent.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Components\src\MoveComponent.cpp" />
+    <ClCompile Include="Solidum\EventFramework\src\EntityEvent.cpp" />
+    <ClCompile Include="Solidum\EventFramework\src\RenderEvent.cpp" />
+    <ClCompile Include="Solidum\EventFramework\src\InputEvent.cpp" />
+    <ClCompile Include="Solidum\InputHandling\src\InputHandler.cpp" />
+    <ClCompile Include="Solidum\InputHandling\src\InputManager.cpp" />
+    <ClCompile Include="Solidum\EventFramework\src\EventFrameworkCore.cpp" />
+    <ClCompile Include="Solidum\EventFramework\src\IEvent.cpp" />
+    <ClCompile Include="Solidum\EventFramework\src\IEventPublisher.cpp" />
+    <ClCompile Include="Solidum\EventFramework\src\IEventListener.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Components\src\IComponent.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Entity\src\Entity.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Lights\src\ILight.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\SolidumObject\Objects\src\SolidumObjectManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\ActiveGraphicsAPI.cpp" />
-    <ClCompile Include="Solidum\ResourceManagement\src\ResourceManagerPool.cpp" />
+    <ClCompile Include="Solidum\ResourceFramework\src\ResourceManagerPool.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Material\src\MaterialManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Lights\src\LightManager.cpp" />
@@ -91,14 +118,14 @@
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsBuffers\src\GPUBufferManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderTarget\src\RenderTargetManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Mesh\src\meshManager.cpp" />
-    <ClCompile Include="Solidum\ResourceManagement\src\IResourceBuilder.cpp" />
-    <ClCompile Include="Solidum\ResourceManagement\src\IResourceManager.cpp" />
-    <ClCompile Include="Solidum\ResourceManagement\src\IResource.cpp" />
+    <ClCompile Include="Solidum\ResourceFramework\src\IResourceBuilder.cpp" />
+    <ClCompile Include="Solidum\ResourceFramework\src\IResourceManager.cpp" />
+    <ClCompile Include="Solidum\ResourceFramework\src\IResource.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderQueue\src\RenderQueue.cpp" />
     <ClCompile Include="Solidum\EngineCore\src\EngineInstance.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Material\src\Material.cpp" />
-    <ClCompile Include="Solidum\EngineUtils\src\HelperFunctions.cpp" />
-    <ClCompile Include="Solidum\EngineUtils\src\DynamicBuffer.cpp" />
+    <ClCompile Include="Solidum\EngineUtils\src\MiscHelperFunctions.cpp" />
+    <ClCompile Include="Solidum\EngineUtils\src\DynamicStruct.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\Shader.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderInputLayout.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxShaders\src\dxShaderInputLayout.cpp" />
@@ -110,9 +137,6 @@
     <ClCompile Include="Solidum\GraphicsRendering\GPUPipeline\src\GPUPipelineFactory.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GPUPipeline\src\GPUPipeline.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxShaders\src\dxShader.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\SolidumObject\Controllers\src\IController.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\SolidumObject\Controllers\src\movementController.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\SolidumObject\Objects\src\SolidumObject.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Lights\src\Light.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxRenderTarget\src\dxRenderTarget.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\src\dxDevice.cpp" />
@@ -133,6 +157,10 @@
     <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureSampler.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureSamplerManager.cpp" />
+    <ClCompile Include="Solidum\WorldSimulation\src\World.cpp" />
+    <ClCompile Include="Solidum\WorldSimulation\src\WorldNode.cpp" />
+    <ClCompile Include="Solidum\WorldSimulation\src\WorldManager.cpp" />
+    <ClCompile Include="Solidum\WorldSimulation\src\WorldCell.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{936972AA-1079-49FC-BABD-6CCFB9EE4B9A}</ProjectGuid>

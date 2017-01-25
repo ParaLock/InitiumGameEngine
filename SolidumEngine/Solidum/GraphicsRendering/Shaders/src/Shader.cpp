@@ -65,7 +65,7 @@ void Shader::updateLightUniforms(ILight* light)
 
 void Shader::updateModelUniforms(Transform* transform)
 {
-	updateUniform("cbuff_OBJSpecificMatrix", transform->getTransposedTransform());
+	updateUniform("cbuff_OBJSpecificMatrix", transform->getTransposedTransformMatrix());
 }
 
 void Shader::updateCameraUniforms(camera* cam)
@@ -89,7 +89,7 @@ void Shader::updateUniform(std::string varName, void * pData)
 
 	if (itr != _uniformVarNameToBuff->end()) {
 
-		DynamicBuffer* varsBuff = _uniformVarNameToBuff->at(varName);
+		DynamicStruct* varsBuff = _uniformVarNameToBuff->at(varName);
 
 		varsBuff->updateVar(varName, pData);
 	}
@@ -97,9 +97,9 @@ void Shader::updateUniform(std::string varName, void * pData)
 
 void Shader::updateGPU()
 {
-	DynamicBuffer* previous = nullptr;
+	DynamicStruct* previous = nullptr;
 
-	std::vector<DynamicBuffer*> activeGeneralDataBuffers;
+	std::vector<DynamicStruct*> activeGeneralDataBuffers;
 
 	for (auto itr = _uniformVarNameToBuff->begin(); itr != _uniformVarNameToBuff->end(); itr++) {
 

@@ -129,7 +129,7 @@ void dxGPUPipeline::applyState()
 
 			if (newElement->type == GPUPipelineElementType::SOL_GENERAL_DATA_BUFF) {
 
-				DynamicBuffer* shaderBuff = newElement->core->getCore<DynamicBuffer>();
+				DynamicStruct* shaderBuff = newElement->core->getCore<DynamicStruct>();
 
 				GPUBuffer* gpuBuff = shaderBuff->getGPUBuffer();
 

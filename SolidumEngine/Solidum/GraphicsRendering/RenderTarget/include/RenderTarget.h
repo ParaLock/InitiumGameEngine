@@ -1,9 +1,9 @@
 #pragma once
 #include "../../../sysInclude.h"
-#include "../../../ResourceManagement/include/IResourceBuilder.h"
-#include "../../../ResourceManagement/include/IResource.h"
+#include "../../../ResourceFramework/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/IResource.h"
 
-#include "../../../ResourceManagement/include/IResourceManager.h"
+#include "../../../ResourceFramework/include/IResourceManager.h"
 
 #include "../../ActiveGraphicsAPI.h"
 

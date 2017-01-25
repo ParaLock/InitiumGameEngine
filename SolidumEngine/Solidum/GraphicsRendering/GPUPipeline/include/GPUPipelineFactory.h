@@ -4,7 +4,7 @@
 #include "../../Directx11Rendering/dxGPUPipeline/include/dxGPUPipeline.h"
 #include "../../Directx11Rendering/dxShaders/include/dxShaderInputLayout.h"
 
-#include "../../../ResourceManagement/include/IResourceManager.h"
+#include "../../../ResourceFramework/include/IResourceManager.h"
 
 #include "GPUPipeline.h"
 

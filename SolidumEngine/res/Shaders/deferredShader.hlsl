@@ -32,15 +32,16 @@ PixelInputType Vshader(VertexInputType input)
 
 	matrix FinalworldMatrix = mul(cbuff_OBJSpecificMatrix, cbuff_worldMatrix);
 
-	output.worldPos.xyz = normalize(mul(input.position, cbuff_worldMatrix)).xyz;
-	
 	output.position = mul(input.position, FinalworldMatrix);
+	
+	output.worldPos = output.position;
+	
 	output.position = mul(output.position, cbuff_viewMatrix);
 	output.position = mul(output.position, cbuff_projectionMatrix);
 
 	output.tex = input.tex;
 
-	output.normal = normalize(mul(input.normal, cbuff_worldMatrix));
+	output.normal = normalize(mul(input.normal, (float3x3)cbuff_worldMatrix));
 	
 	return output;
 }

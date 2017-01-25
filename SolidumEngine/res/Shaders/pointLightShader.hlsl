@@ -15,7 +15,7 @@ float4 Pshader(PixelInputType input) : SV_TARGET
 	float4 finalColor = colors;
 		
 	float3 LightDirection = worldPos.xyz - cbuff_lightPos;
-
+	
 	float diffuseFactor = dot(normals.xyz, -LightDirection);
 	
 	if(diffuseFactor > 0) 

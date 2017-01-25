@@ -2,8 +2,8 @@
 
 #include "../../../sysInclude.h"
 #include "../../Textures/include/Texture.h"
-#include "../../../ResourceManagement/include/IResource.h"
-#include "../../../ResourceManagement/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/IResourceBuilder.h"
 
 class MaterialBuilder : public IResourceBuilder {
 public:

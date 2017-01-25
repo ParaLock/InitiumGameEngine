@@ -3,9 +3,9 @@
 
 #include "../../ActiveGraphicsAPI.h"
 
-#include "../../../ResourceManagement/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/IResourceBuilder.h"
 
-#include "../../../ResourceManagement/include/IResource.h"
+#include "../../../ResourceFramework/include/IResource.h"
 
 class TextureSamplerBuilder : public IResourceBuilder {
 public:

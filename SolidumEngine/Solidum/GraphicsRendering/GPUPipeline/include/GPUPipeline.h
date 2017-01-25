@@ -5,11 +5,11 @@
 #include "../../Textures/include/Texture.h"
 #include "../../Textures/include/TextureSampler.h"
 #include "../../Shaders/include/ShaderInputLayout.h"
-#include "../../../EngineUtils/include/DynamicBuffer.h"
+#include "../../../EngineUtils/include/DynamicStruct.h"
 
-#include "../../../ResourceManagement/include/IResourceManager.h"
-#include "../../../ResourceManagement/include/ResourceManagerPool.h"
-#include "../../../ResourceManagement/include/IResource.h"
+#include "../../../ResourceFramework/include/IResourceManager.h"
+#include "../../../ResourceFramework/include/ResourceManagerPool.h"
+#include "../../../ResourceFramework/include/IResource.h"
 
 class GPUPipelineBuilder : public IResourceBuilder {
 public:
@@ -91,7 +91,7 @@ protected:
 
 	ResourceManagerPool* _resManagerPool;
 
-	std::map<std::string, DynamicBuffer*> *_uniformToBufferMap;
+	std::map<std::string, DynamicStruct*> *_uniformToBufferMap;
 	std::map<std::string, GPUPipelineElement*> *_elementList;
 	std::list<GPUPipelineOP*> *_opList;
 
@@ -118,6 +118,6 @@ public:
 	virtual void applyState();
 	virtual void executePass(int numIndices);
 
-	std::map<std::string, DynamicBuffer*>* getVarToBuffMap() { return _uniformToBufferMap; };
+	std::map<std::string, DynamicStruct*>* getVarToBuffMap() { return _uniformToBufferMap; };
 };
 

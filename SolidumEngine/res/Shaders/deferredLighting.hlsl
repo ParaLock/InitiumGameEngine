@@ -55,18 +55,21 @@ float4 calcDirectionalLight(float3 normal, float4 color, float4 lightColor, floa
 float4 calcPointLight(float3 LightDirection, float3 normal, float intensity, float4 lightColor, float range, 
 						float AttenConstant, float AttenLinear, float AttenExponent) 
 {
-	float distanceToPoint = length(LightDirection);
+	float3 lightDirection = LightDirection;
+
+	float distanceToPoint = length(lightDirection);
 	
 	if(distanceToPoint > range)
 		return float4(0,0,0,0);
 	
-	float4 finalColor = calcLight(intensity, LightDirection, normal.xyz, lightColor);
+	lightDirection = normalize(lightDirection);
+	
+	float4 finalColor = calcLight(intensity, lightDirection, normal.xyz, lightColor);
 	
 	float attenuation = AttenConstant +
 						AttenLinear * distanceToPoint +
 						AttenExponent * distanceToPoint * distanceToPoint + 
 						0.0001;
-		
 	
 	return finalColor / attenuation; 					
 }

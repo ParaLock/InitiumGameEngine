@@ -157,7 +157,7 @@ void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3
 
 			if (BufferLayout.Description.Type == D3D11_CT_CBUFFER) {
 
-				DynamicBuffer* cbuff = new DynamicBuffer(BufferLayout.Description.Name, true);
+				DynamicStruct* cbuff = new DynamicStruct(BufferLayout.Description.Name, true);
 
 				for (int q = 0; q < BufferLayout.Variables.size(); q++) {
 					cbuff->addVariable(BufferLayout.Variables.at(q).Name, BufferLayout.Variables.at(q).Size);

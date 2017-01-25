@@ -20,6 +20,8 @@
 #include <algorithm>
 #include <iterator>
 
+#include <functional>
+
 #include <locale>
 #include <codecvt>
 
@@ -79,6 +81,16 @@ enum BUFFER_CPU_ACCESS {
 	CPU_ACCESS_WRITE,
 	CPU_ACCESS_READ,
 	CPU_ACCESS_READWRITE
+};
+
+enum KEY_MAP {
+	Q, W, E, R, T, Y, U, I, O, P, A,
+	S, D, F, G, H, J, K, L, z, X, V,
+	B, N, M,
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT,
 };
 
 struct VERTEX { D3DXVECTOR3 Pos; D3DXVECTOR3 Normal; D3DXVECTOR2 TexCoords; };

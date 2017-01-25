@@ -6,11 +6,18 @@
 #include "../../Window/include/windowAccessor.h"
 #include "Timer.h"
 
+#include "../../../EventFramework/include/IEventListener.h"
+#include "../../../EventFramework/include/IEventPublisher.h"
+
+#include "../../../EventFramework/include/EventFrameworkCore.h"
+
+#include "../../../EventFramework/include/InputEvent.h"
+
 #define TWO_PI 6.283185307179586476925286766559
 #define DEG_TO_RAD 0.01745329251994329576923690768489
 #define M_PI    3.14159265358979323846264338327950288
 
-class camera
+class camera : public IEventListener, public IEventPublisher
 {
 private:
 	float heading, pitch;
@@ -44,7 +51,7 @@ public:
 
 	bool lockMouse;
 
-
+	void onEvent(IEvent* evt);
 
 	D3DXMATRIX& getViewMatrix() { 
 
@@ -102,7 +109,7 @@ public:
 
 	void setPositionAndView(float x, float y, float z, float hDeg, float pDeg);
 
-	void cameraMouseLook();
+	void cameraMouseLook(unsigned long posX, unsigned long posY);
 
 	void cameraMove(std::string direction, float speed);
 

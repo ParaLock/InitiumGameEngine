@@ -6,7 +6,14 @@
 
 #include "Solidum\EngineCore\include\EngineInstance.h"
 
-#include "Solidum\ResourceManagement\include\ResourceManagerPool.h"
+#include "Solidum\ResourceFramework\include\ResourceManagerPool.h"
+
+#include "Solidum\EntityFramework\Components\include\MoveComponent.h"
+#include "Solidum\EntityFramework\Components\include\GraphicsComponent.h"
+
+#include "Solidum\InputHandling\include\InputHandler.h"
+
+#include "Solidum\EntityFramework\Entity\include\Entity.h"
 
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -72,19 +79,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		(L"./res/Shaders/pointLightShader.hlsl", resManagerPool), "point_light_shader")->getCore<Shader>();
 
 	Material* metalMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(&MaterialBuilder
-		(0, 9.0f, 0.0f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f)), "metalMaterial")->getCore<Material>();
+		(0, 0.5f, 0.0f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f)), "metalMaterial")->getCore<Material>();
 
 	Material* woodMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(&MaterialBuilder
 		(1, 0.0f, 0.0f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f)), "woodMaterial")->getCore<Material>();
-
-	SolidumObject* cube = resManagerPool->getResourceManager("SolidumObjectManager")->createResource(&SolidumObjectBuilder
-		(), "solidumCube")->getCore<SolidumObject>();
-
-	SolidumObject* plane = resManagerPool->getResourceManager("SolidumObjectManager")->createResource(&SolidumObjectBuilder
-		(), "solidumPlane")->getCore<SolidumObject>();
-
-	SolidumObject* hammer = resManagerPool->getResourceManager("SolidumObjectManager")->createResource(&SolidumObjectBuilder
-		(), "solidumHammer")->getCore<SolidumObject>();
 
 	Light* dirLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
 		(), "dirLight1")->getCore<Light>();
@@ -105,108 +103,100 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	directionalLightShader->setMesh(orthoMesh);
 	pointLightShader->setMesh(orthoMesh);
 
-	cube->attachMesh(cubeMesh);
-	cube->attachMaterial(woodMaterial);
-	cube->attachShader(deferredShader);
-	cube->attachTexture(woodTex);
-	cube->getTransform()->setPos(Vector3f(0, -2.0f, -3.0f));
-
-	hammer->attachMesh(hammerMesh);
-	hammer->attachShader(deferredShader);
-	hammer->attachMaterial(metalMaterial);
-	hammer->attachTexture(metalTex);
-	hammer->getTransform()->setPos(Vector3f(0, 0, 0));
-
-	plane->attachMesh(planeMesh);
-	plane->attachShader(deferredShader);
-	plane->attachMaterial(metalMaterial);
-	plane->attachTexture(metalTex);
-	plane->getTransform()->setPos(Vector3f(0, -3.5, 0));
-
 	dirLight1->setColor(Vector4f(0.5f, 1.5f, 0.5f, 0.5f));
 	dirLight1->setDirection(Vector3f(0.0f, 0.0f, 9.0f));
 	dirLight1->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
 	dirLight1->setIntensity(0.0f);
 
-	dirLight1->attachShader(directionalLightShader);
-
 	pointLight1->setColor(Vector4f(0.5f, 2.5f, 0.5f, 0.5f));
 	pointLight1->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
-	pointLight1->setPosition(Vector3f(-0.1f, 0.01f, 0.5f));
-	pointLight1->setIntensity(0.2f);
+	pointLight1->setPosition(Vector3f(-6.0f, 0.01f, 0.5f));
+	pointLight1->setIntensity(5.0f);
 
 	pointLight1->setAttenuationLinear(0);
 	pointLight1->setAttenuationExponent(1);
 	pointLight1->setAttenuationConstant(0);
 
-	pointLight1->setRange(8.5f);
-
-	pointLight1->attachShader(pointLightShader);
+	pointLight1->setRange(20.5f);
 
 	pointLight2->setColor(Vector4f(0.5f, 0.5f, 2.5f, 0.5f));
 	pointLight2->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
-	pointLight2->setPosition(Vector3f(0.2f, 0.01f, -0.1f));
-	pointLight2->setIntensity(0.2f);
+	pointLight2->setPosition(Vector3f(0.2f, 0.01f, -5.0f));
+	pointLight2->setIntensity(5.0f);
 
 	pointLight2->setAttenuationLinear(0);
-	pointLight2->setAttenuationExponent(1.0f);
+	pointLight2->setAttenuationExponent(1);
 	pointLight2->setAttenuationConstant(0);
 
-	pointLight2->setRange(8.5f);
+	pointLight2->setRange(20.5f);
 
-	pointLight2->attachShader(pointLightShader);
-
-	pointLight3->setColor(Vector4f(3.5f, 0.5f, 0.5f, 0.5f));
+	pointLight3->setColor(Vector4f(2.5f, 0.5f, 0.5f, 0.5f));
 	pointLight3->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
-	pointLight3->setPosition(Vector3f(-0.2f, 0.01f, -0.5f));
-	pointLight3->setIntensity(0.1f);
+	pointLight3->setPosition(Vector3f(-0.2f, 0.01f, 8.0f));
+	pointLight3->setIntensity(5.0f);
 
 	pointLight3->setAttenuationLinear(0);
-	pointLight3->setAttenuationExponent(1.6f);
+	pointLight3->setAttenuationExponent(1);
 	pointLight3->setAttenuationConstant(0);
 
-	pointLight3->setRange(8.5f);
+	pointLight3->setRange(20.5f);
 
-	pointLight3->attachShader(pointLightShader);
+	Entity* hammer = new Entity();
 
-	//solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueLight(dirLight1);
-	solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueLight(pointLight1);
-	solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueLight(pointLight2);
-	solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueLight(pointLight3);
+	hammer->addComponent(new MoveComponent(Vector3f(0, 0, 0), 0.5, true, hammer->getTransform()));
+	hammer->addComponent(new GraphicsComponent("hammer_mesh", "metal_tex", "metalMaterial", "deferred_geometry_shader", "null", hammer->getTransform()));
 
-	solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueSoldiumObject(cube);
-	solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueSoldiumObject(hammer);
-	solidum->getGraphicsSubsystem()->getRenderQueue()->enqueueSoldiumObject(plane);
+	Entity* cube = new Entity();
+
+	cube->addComponent(new MoveComponent(Vector3f(0, -2.0f, -3.0f), 0.5, true, cube->getTransform()));
+	cube->addComponent(new GraphicsComponent("cube_mesh", "wood_tex", "woodMaterial", "deferred_geometry_shader", "null", cube->getTransform()));
+
+	Entity* plane = new Entity();
+
+	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, plane->getTransform()));
+	plane->addComponent(new GraphicsComponent("plane_mesh", "metal_tex", "metalMaterial", "deferred_geometry_shader", "null", plane->getTransform()));
+
+	Entity* dirLightEntity = new Entity();
+
+	dirLightEntity->addComponent(new GraphicsComponent("orthoMesh", "null", "null", "directional_light_shader", "dirLight1", dirLightEntity->getTransform()));
+
+	Entity* pointLight1Entity = new Entity();
+
+	pointLight1Entity->addComponent(new GraphicsComponent("orthoMesh", "null", "null", "point_light_shader", "pointLight1", nullptr));
+
+	Entity* pointLight2Entity = new Entity();
+
+	pointLight2Entity->addComponent(new GraphicsComponent("orthoMesh", "null", "null", "point_light_shader", "pointLight2", nullptr));
+
+	Entity* pointLight3Entity = new Entity();
+
+	pointLight3Entity->addComponent(new GraphicsComponent("orthoMesh", "null", "null", "point_light_shader", "pointLight3", nullptr));
 
 	camera* myCam = solidum->getGraphicsSubsystem()->getPrimaryCamera();
+
+	InputHandler* inputHandler = resManagerPool->getResourceManager("InputHandlerManager")->
+		getResource("InputHandler")->getCore<InputHandler>();
 
 	while (myWindow->running) {
 
 		myWindow->pollWin32Events();
-
-		myCam->cameraMouseLook();
-
-		if (GetAsyncKeyState('W')) {
-			myCam->cameraMove("forward", 5.0f);
-		}
-		if (GetAsyncKeyState('S')) {
-			myCam->cameraMove("backward", 5.0f);
-		}
-		if (GetAsyncKeyState('A')) {
-			myCam->cameraMove("left", 5.0f);
-		}
-		if (GetAsyncKeyState('D')) {
-			myCam->cameraMove("right", 5.0f);
-		}
 
 		if (GetAsyncKeyState(VK_ESCAPE)) {
 
 			myWindow->running = false;
 		}
 
+		inputHandler->update();
+
 		myCam->Update();
 
-		solidum->getGraphicsSubsystem()->RenderAll();
+		cube->update();
+		hammer->update();
+		plane->update();
+
+		pointLight1Entity->update();
+		pointLight2Entity->update();
+		pointLight3Entity->update();
 
 		endscenePipelineState->executePass(NULL);
 	}

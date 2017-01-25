@@ -8,13 +8,13 @@
 
 #include "../../../EngineUtils/include/StringManipulation.h"
 
-#include "../../../ResourceManagement/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/IResourceBuilder.h"
 
-#include "../../../ResourceManagement/include/IResource.h"
+#include "../../../ResourceFramework/include/IResource.h"
 
-#include "../../../ResourceManagement/include/IResourceManager.h"
+#include "../../../ResourceFramework/include/IResourceManager.h"
 
-#include "../../../ResourceManagement/include/ResourceManagerPool.h"
+#include "../../../ResourceFramework/include/ResourceManagerPool.h"
 
 #include "../../Mesh/include/mesh.h"
 

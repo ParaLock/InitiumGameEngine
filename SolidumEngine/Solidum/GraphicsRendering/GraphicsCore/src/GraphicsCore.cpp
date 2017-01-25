@@ -4,6 +4,8 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 {
 	ActiveGraphicsAPI::setCurrentAPI(api);
 
+	EventFrameworkCore::getInstance()->getGlobalEventHub("ComponentEventHub")->subscribeListener(this);
+
 	_renderQueue = new RenderQueue();
 	_primaryCamera = new camera(0.1f, 1000.0f);
 	_resManagerPool = resManagerPool;
@@ -39,7 +41,28 @@ GraphicsCore::~GraphicsCore()
 		delete _renderQueue;
 }
 
-void GraphicsCore::RenderAll()
+void GraphicsCore::onEvent(IEvent * evt)
+{
+	RenderEvent* renderEvt;
+
+	switch (evt->getType())
+	{
+		case EVENT_TYPE::RENDER_EVENT:
+			renderEvt = evt->getEvent<RenderEvent>();
+
+			Render(renderEvt->getMeshID(), renderEvt->getTexID(), 
+				renderEvt->getMatID(), renderEvt->getShaderID(), renderEvt->getLightID(), renderEvt->getTransform());
+
+			break;
+	default:
+		break;
+	}
+
+	delete evt;
+}
+
+void GraphicsCore::Render(std::string meshID, std::string texID, 
+	std::string matID, std::string shaderID, std::string lightID, Transform* transform)
 {
 	auto* allActiveShaders = _resManagerPool->getResourceManager("ShaderManager")->getResourceMap();
 
@@ -50,22 +73,47 @@ void GraphicsCore::RenderAll()
 		pShader->updateCameraUniforms(_primaryCamera);
 	}
 
-	std::list<SolidumObject*>& objectList = _renderQueue->getSolidumObjectQueue();
+	mesh* Mesh;
+	Shader* shader;
+	Texture* tex;
+	Material* mat;
+	Light* light;
 
-	for (auto itr = objectList.begin(); itr != objectList.end(); itr++) {
-		SolidumObject* currentObj = *itr;
+	if (shaderID != "null") {
 
-		currentObj->draw();
-	}
+		shader = _resManagerPool->getResourceManager("ShaderManager")->getResource(shaderID)->getCore<Shader>();
 
-	std::list<Light*>& lightsList = _renderQueue->getLightQueue();
+		if (meshID != "null") {
+			Mesh = _resManagerPool->getResourceManager("meshManager")->getResource(meshID)->getCore<mesh>();
+			shader->setMesh(Mesh);
+		}
+		if (texID != "null") {
+			tex = _resManagerPool->getResourceManager("TextureManager")->getResource(texID)->getCore<Texture>();
+			shader->setModelTexture(tex);
+		}
+		if (matID != "null") {
+			mat = _resManagerPool->getResourceManager("MaterialManager")->getResource(matID)->getCore<Material>();
+			shader->updateMaterialUniforms(mat);
+		}
 
-	for (auto itr = lightsList.begin(); itr != lightsList.end(); itr++) {
-		Light* currentLight = *itr;
+		if (lightID != "null") {
+			light = _resManagerPool->getResourceManager("LightManager")->getResource(lightID)->getCore<Light>();
+			shader->updateLightUniforms(light);
+		}
 
-		currentLight->draw();
+		if (transform != nullptr) {
+			shader->updateModelUniforms(transform);
+		}
 
-	}
+		shader->updateGPU();
+
+		if (meshID != "null") {
+			shader->execute(Mesh->numIndices);
+		}
+		else {
+			shader->execute(NULL);
+		}
+	}	
 }
 
 void GraphicsCore::attachPrimaryCamera(camera* cam)

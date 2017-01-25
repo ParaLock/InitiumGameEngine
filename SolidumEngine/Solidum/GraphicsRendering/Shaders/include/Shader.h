@@ -4,7 +4,7 @@
 #include "../../../GraphicsRendering/GPUPipeline/include/GPUPipeline.h"
 #include "../../GPUPipeline/include/GPUPipelineFactory.h"
 
-#include "../../../ResourceManagement/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/IResourceBuilder.h"
 
 #include "../../Lights/include/ILight.h"
 #include "../../Material/include/Material.h"
@@ -12,7 +12,7 @@
 #include "../../Camera/include/camera.h"
 #include "../../Mesh/include/mesh.h"
 
-#include "../../../ResourceManagement/include/IResource.h"
+#include "../../../ResourceFramework/include/IResource.h"
 
 class ShaderBuilder : public IResourceBuilder {
 public:
@@ -28,7 +28,7 @@ public:
 class Shader : public IResource
 {
 protected:
-	std::map<std::string, DynamicBuffer*> *_uniformVarNameToBuff;
+	std::map<std::string, DynamicStruct*> *_uniformVarNameToBuff;
 
 	GPUPipeline* _pipelineState = nullptr;
 

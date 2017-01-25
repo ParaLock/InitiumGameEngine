@@ -22,7 +22,8 @@ IResource* ShaderManager::createResource(IResourceBuilder * builder, std::string
 	}
 
 	if (newResource != nullptr) {
-		_activeResources->insert({ name, newResource });
+
+		addResource(newResource, name);
 
 		return newResource;
 	}

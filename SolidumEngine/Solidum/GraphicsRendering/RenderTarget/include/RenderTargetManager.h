@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../ResourceManagement/include/IResourceManager.h"
+#include "../../../ResourceFramework/include/IResourceManager.h"
 
 #include "../../ActiveGraphicsAPI.h"
 

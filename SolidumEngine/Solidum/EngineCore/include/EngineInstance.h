@@ -7,13 +7,15 @@
 
 #include "../../resourceManagerInclude.h"
 
+#include "../../EventFramework/include/EventFrameworkCore.h"
+
 class EngineInstance
 {
 private:
 	window* _currentWindow;
 	GraphicsCore *_graphicsCore;
-
 	ResourceManagerPool* _resManagers;
+	EventFrameworkCore* _eventFrameworkCore;
 public:
 	EngineInstance(window* renderWindow);
 	~EngineInstance();
@@ -22,8 +24,7 @@ public:
 
 	void stopEngine();
 
-	void loadScene(LPCWSTR sceneFilename);
-
+	EventFrameworkCore* getEventFrameworkCore() { return _eventFrameworkCore; };
 	GraphicsCore* getGraphicsSubsystem() { return _graphicsCore; };
 	ResourceManagerPool* getResourceManagerPool() { return _resManagers; }
 };

@@ -12,6 +12,8 @@ camera::camera(float near_value, float far_value):
 	pitch(0)
 {
 
+	EventFrameworkCore::getInstance()->getGlobalEventHub("InputEventHub")->subscribeListener(this);
+
 	movementToggles[0] = 0;
 	movementToggles[1] = 0;
 	movementToggles[2] = 0;
@@ -46,6 +48,40 @@ camera::camera(float near_value, float far_value):
 
 camera::~camera()
 {
+}
+
+void camera::onEvent(IEvent * evt)
+{
+	switch (evt->getType())
+	{
+
+		case EVENT_TYPE::INPUT_EVENT: {
+			auto mousePos = evt->getEvent<InputEvent>()->getMousePos();
+			auto keysPressed = evt->getEvent<InputEvent>()->getPressedKeys();
+
+			cameraMouseLook(mousePos.first, mousePos.second);
+
+			for (auto itr = keysPressed.begin(); itr != keysPressed.end(); itr++) {
+				switch (*itr) {
+				case KEY_MAP::W:
+					cameraMove("forward", 5.0f);
+					break;
+				case KEY_MAP::A:
+					cameraMove("left", 5.0f);
+					break;
+				case KEY_MAP::S:
+					cameraMove("backward", 5.0f);
+					break;
+				case KEY_MAP::D:
+					cameraMove("right", 5.0f);
+					break;
+				}
+			}
+			break;
+		}
+		default:
+			break;
+	}
 }
 
 void camera::setCamStartView()
@@ -128,8 +164,10 @@ void camera::cameraMove(std::string direction, float speed)
 
 int appLaunchMouseDebounceCount = 0;
 
-void camera::cameraMouseLook()
+void camera::cameraMouseLook(unsigned long posX, unsigned long posY)
 {
+
+
 	GetCursorPos(&mousePos);
 
 	if (lockMouse != true) {
@@ -141,88 +179,86 @@ void camera::cameraMouseLook()
 
 	SetFocus(windowAccessor::hWnd);
 
-	if (ScreenToClient(windowAccessor::hWnd, &mousePos))
-	{
-		if (appLaunchMouseDebounceCount > 20) {
+	if (appLaunchMouseDebounceCount > 20) {
 
-			mouseMoveDiff = 0.0f;
+		mouseMoveDiff = 0.0f;
 
-			if (mouseOldPosX > mousePos.x) {
-				mouseMoveDiff = ((mouseOldPosX - mousePos.x) / 90);
+		if (mouseOldPosX > posX) {
+			mouseMoveDiff = ((mouseOldPosX - posX) / 90);
 
-				if (mouseOldPosX - mousePos.x > 30)
-					mouseMoveDiff = 0.0f;
+			if (mouseOldPosX - posX > 30)
+				mouseMoveDiff = 0.0f;
 
-				if (mouseMoveDiff < 0) {
-					mouseMoveDiff = 0.0f;
-				}
-				cameraMove("lookright", mouseMoveDiff);
+			if (mouseMoveDiff < 0) {
+				mouseMoveDiff = 0.0f;
 			}
-
-			if (mouseOldPosX < mousePos.x) {
-				mouseMoveDiff = ((mousePos.x - mouseOldPosX) / 90);
-
-
-				if (mousePos.x - mouseOldPosX > 30)
-					mouseMoveDiff = 0.0f;
-
-				if (mouseMoveDiff < 0) {
-					mouseMoveDiff = 0.0f;
-				}
-				cameraMove("lookleft", mouseMoveDiff);
-			}
-
-			if (mouseOldPosY > mousePos.y) {
-				mouseMoveDiff = ((mouseOldPosY - mousePos.y) / 90);
-
-				if (mouseOldPosY - mousePos.y > 30)
-					mouseMoveDiff = 0.0f;
-
-				if (mouseMoveDiff < 0) {
-					mouseMoveDiff = 0.0f;
-				}
-				cameraMove("lookup", mouseMoveDiff);
-			}
-
-			if (mouseOldPosY < mousePos.y) {
-				mouseMoveDiff = ((mousePos.y - mouseOldPosY) / 90);
-
-				if (mousePos.y - mouseOldPosY > 30)
-					mouseMoveDiff = 0.0f;
-
-				if (mouseMoveDiff < 0) {
-					mouseMoveDiff = 0.0f;
-				}
-				cameraMove("lookdown", mouseMoveDiff);
-			}
+			cameraMove("lookright", mouseMoveDiff);
 		}
-		appLaunchMouseDebounceCount++;
 
+		if (mouseOldPosX < posX) {
+			mouseMoveDiff = ((posX - mouseOldPosX) / 90);
+
+
+			if (posX - mouseOldPosX > 30)
+				mouseMoveDiff = 0.0f;
+
+			if (mouseMoveDiff < 0) {
+				mouseMoveDiff = 0.0f;
+			}
+			cameraMove("lookleft", mouseMoveDiff);
+		}
+
+		if (mouseOldPosY > posY) {
+			mouseMoveDiff = ((mouseOldPosY - posY) / 90);
+
+			if (mouseOldPosY - posY > 30)
+				mouseMoveDiff = 0.0f;
+
+			if (mouseMoveDiff < 0) {
+				mouseMoveDiff = 0.0f;
+			}
+			cameraMove("lookup", mouseMoveDiff);
+		}
+
+		if (mouseOldPosY < posY) {
+			mouseMoveDiff = ((posY - mouseOldPosY) / 90);
+
+			if (posY - mouseOldPosY > 30)
+				mouseMoveDiff = 0.0f;
+
+			if (mouseMoveDiff < 0) {
+				mouseMoveDiff = 0.0f;
+			}
+			cameraMove("lookdown", mouseMoveDiff);
+		}
 	}
+	appLaunchMouseDebounceCount++;
+
+	
 		if (lockMouse == true) {
 
-			if (mousePos.x < 0)
+			if (posX < 0)
 				SetCursorPos((windowAccessor::screen_width / 2) + 300, (windowAccessor::screen_height / 2) + 300);
 
-			if (mousePos.x >= windowAccessor::screen_width)
+			if (posX >= windowAccessor::screen_width)
 				SetCursorPos((windowAccessor::screen_width / 2) + 300, (windowAccessor::screen_height / 2) + 300);
 
-			if (mousePos.y < 0)
+			if (posY < 0)
 				SetCursorPos((windowAccessor::screen_width / 2) + 300, (windowAccessor::screen_height / 2) + 300);
 
-			if (mousePos.y >= windowAccessor::screen_height)
+			if (posY >= windowAccessor::screen_height)
 				SetCursorPos((windowAccessor::screen_width / 2) + 300, (windowAccessor::screen_height / 2) + 300);
 
-			if (mousePos.x == 0 && mousePos.y == 0)
+			if (posX == 0 && posY == 0)
 				SetCursorPos((windowAccessor::screen_width / 2) + 300, (windowAccessor::screen_height / 2) + 300);
 
-			if (mousePos.y >= windowAccessor::screen_height&& mousePos.x >= windowAccessor::screen_width)
+			if (posY >= windowAccessor::screen_height&& posX >= windowAccessor::screen_width)
 				SetCursorPos((windowAccessor::screen_width / 2) + 300, (windowAccessor::screen_height / 2) + 300);
 
 		}
 
-		mouseOldPosX = mousePos.x;
-		mouseOldPosY = mousePos.y;
+		mouseOldPosX = posX;
+		mouseOldPosY = posY;
 	}
 }
 

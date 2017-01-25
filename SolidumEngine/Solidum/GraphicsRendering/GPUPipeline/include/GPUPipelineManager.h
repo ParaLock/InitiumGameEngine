@@ -7,7 +7,7 @@
 
 #include "GPUPipeline.h"
 
-#include "../../../ResourceManagement/include/IResourceManager.h"
+#include "../../../ResourceFramework/include/IResourceManager.h"
 
 class GPUPipelineManager : public IResourceManager
 {

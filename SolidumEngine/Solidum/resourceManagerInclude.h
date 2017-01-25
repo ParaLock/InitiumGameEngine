@@ -6,5 +6,5 @@
 #include "../Solidum/GraphicsRendering/Mesh/include/meshManager.h"
 #include "../Solidum/GraphicsRendering/GraphicsBuffers/include/GPUBufferManager.h"
 #include "../Solidum/GraphicsRendering/Material/include/MaterialManager.h"
-#include "../Solidum/GraphicsRendering/SolidumObject/Objects/include/SolidumObjectManager.h"
 #include "../Solidum/GraphicsRendering/Lights/include/LightManager.h"
+#include "InputHandling\include\InputManager.h"

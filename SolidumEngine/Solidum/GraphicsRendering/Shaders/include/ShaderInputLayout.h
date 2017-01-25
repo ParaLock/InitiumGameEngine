@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../sysInclude.h"
 
-#include "../../../ResourceManagement/include/IResource.h"
+#include "../../../ResourceFramework/include/IResource.h"
 
 class ShaderInputLayoutElement {
 public:

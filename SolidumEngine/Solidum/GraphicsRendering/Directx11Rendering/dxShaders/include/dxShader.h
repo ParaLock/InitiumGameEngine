@@ -9,7 +9,7 @@
 
 #include "../../../Shaders/include/Shader.h"
 
-#include "../../../../EngineUtils/include/DynamicBuffer.h"
+#include "../../../../EngineUtils/include/DynamicStruct.h"
 
 #include "../../../Window/include/windowAccessor.h"
 

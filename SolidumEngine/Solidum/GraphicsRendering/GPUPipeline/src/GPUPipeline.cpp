@@ -5,7 +5,7 @@
 GPUPipeline::GPUPipeline()
 {
 	_elementList = new std::map<std::string, GPUPipelineElement*>;
-	_uniformToBufferMap = new std::map<std::string, DynamicBuffer*>;
+	_uniformToBufferMap = new std::map<std::string, DynamicStruct*>;
 	_opList = new std::list<GPUPipelineOP*>;
 }
 
@@ -91,7 +91,7 @@ void GPUPipeline::attachResource(IResource* res, std::string name, GPUPipelineEl
 
 	if (type == GPUPipelineElementType::SOL_GENERAL_DATA_BUFF) {
 
-		DynamicBuffer* generalBuff = res->getCore<DynamicBuffer>();
+		DynamicStruct* generalBuff = res->getCore<DynamicStruct>();
 
 		std::vector<std::string> varNameList = generalBuff->getVarNameList();
 
