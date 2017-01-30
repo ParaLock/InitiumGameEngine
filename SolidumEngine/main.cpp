@@ -99,6 +99,19 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Light* pointLight3 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
 		(), "pointLight3")->getCore<Light>();
 
+	KEY_FUNCTION_MAP* moveKeyConfig1 = new KEY_FUNCTION_MAP;
+	KEY_FUNCTION_MAP* moveKeyConfig2 = new KEY_FUNCTION_MAP;
+
+	moveKeyConfig1->insert({ KEY_MAP::UP, MOVE_FUNCTION::MOVE_UP});
+	moveKeyConfig1->insert({ KEY_MAP::DOWN, MOVE_FUNCTION::MOVE_DOWN });
+	moveKeyConfig1->insert({ KEY_MAP::LEFT, MOVE_FUNCTION::MOVE_LEFT });
+	moveKeyConfig1->insert({ KEY_MAP::RIGHT, MOVE_FUNCTION::MOVE_RIGHT });
+
+	moveKeyConfig2->insert({ KEY_MAP::I, MOVE_FUNCTION::MOVE_UP });
+	moveKeyConfig2->insert({ KEY_MAP::K, MOVE_FUNCTION::MOVE_DOWN });
+	moveKeyConfig2->insert({ KEY_MAP::J, MOVE_FUNCTION::MOVE_LEFT });
+	moveKeyConfig2->insert({ KEY_MAP::L, MOVE_FUNCTION::MOVE_RIGHT });
+
 	//** RESOURCE INIT DONE **//
 
 	Entity* ROOT_ENTITY = new Entity();
@@ -157,17 +170,17 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	Entity* hammer = new Entity();
 
-	hammer->addComponent(new MoveComponent(Vector3f(0, 0, 0), 0.5, true));
+	hammer->addComponent(new MoveComponent(Vector3f(0, 0, 0), 0.5, true, moveKeyConfig1));
 	hammer->addComponent(new MeshComponent(hammerMesh, metalTex, metalMaterial, deferredShader));
 
 	Entity* cube = new Entity();
 
-	//cube->addComponent(new MoveComponent(Vector3f(0, -2.0f, -3.0f), 0.5, false));
+	cube->addComponent(new MoveComponent(Vector3f(0, 5.0f, -3.0f), 0.5, false, moveKeyConfig1));
 	cube->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, deferredShader));
 
 	Entity* plane = new Entity();
 
-	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false));
+	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, moveKeyConfig1));
 	plane->addComponent(new MeshComponent(planeMesh, metalTex, metalMaterial, deferredShader));
 
 	Entity* dirLightEntity = new Entity();
@@ -176,18 +189,18 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	Entity* pointLight1Entity = new Entity();
 
-	//pointLight1Entity->addComponent(new MoveComponent(Vector3f(7.0f, 0.01f, 0.5f), 0.5, false));
+	pointLight1Entity->addComponent(new MoveComponent(Vector3f(4.0f, 0.01f, -1.8f), 0.5, true, moveKeyConfig2));
 	pointLight1Entity->addComponent(new LightComponent(pointLight1));
 
 	Entity* pointLight2Entity = new Entity();
 
-	pointLight2Entity->addComponent(new MoveComponent(Vector3f(0.2f, 0.01f, -5.0f), 0.5, false));
+	pointLight2Entity->addComponent(new MoveComponent(Vector3f(0.2f, 0.01f, -5.0f), 0.5, false, moveKeyConfig1));
 	pointLight2Entity->addComponent(new LightComponent(pointLight2));
 
 	Entity* pointLight3Entity = new Entity();
 
 	pointLight3Entity->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, deferredShader));
-	pointLight3Entity->addComponent(new MoveComponent(Vector3f(-0.2f, 0.01f, 8.0f), 0.5, false));
+	pointLight3Entity->addComponent(new MoveComponent(Vector3f(-0.2f, 0.01f, 8.0f), 0.5, false, moveKeyConfig1));
 	pointLight3Entity->addComponent(new LightComponent(pointLight3));
 
 	camera* myCam = solidum->getGraphicsSubsystem()->getPrimaryCamera();

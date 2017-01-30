@@ -1,7 +1,7 @@
 #include "../include/MoveComponent.h"
 
 
-MoveComponent::MoveComponent(Vector3f startPos, float movementSpeed, bool keyboardControl)
+MoveComponent::MoveComponent(Vector3f startPos, float movementSpeed, bool keyboardControl, KEY_FUNCTION_MAP* keyMap)
 {
 	_type = COMPONENT_TYPE::MOVE_COMPONENT;
 
@@ -12,6 +12,8 @@ MoveComponent::MoveComponent(Vector3f startPos, float movementSpeed, bool keyboa
 
 	_vPos = startPos;
 	_movementSpeed = movementSpeed;
+
+	_keyFuncMap = keyMap;
 }
 
 MoveComponent::~MoveComponent()
@@ -20,8 +22,13 @@ MoveComponent::~MoveComponent()
 
 void MoveComponent::update()
 {
-	if (_parent != nullptr) {
+	if (_parent->getParent() != nullptr) {
 
+		Vector3f finalPos = Vector3f::add(_vPos, _parent->getParent()->getTransform()->getPos());
+		_parent->getTransform()->setPos(finalPos);
+
+	}
+	else {
 		_parent->getTransform()->setPos(_vPos);
 	}
 }
@@ -36,20 +43,34 @@ void MoveComponent::onEvent(IEvent * evt)
 		auto keysPressed = evt->getEvent<InputEvent>()->getPressedKeys();
 
 		for (auto itr = keysPressed.begin(); itr != keysPressed.end(); itr++) {
-			switch (*itr) {
-			case KEY_MAP::UP:
-				_vPos._y += _movementSpeed;
-				break;
-			case KEY_MAP::DOWN:
-				_vPos._y -= _movementSpeed;
-				break;
-			case KEY_MAP::LEFT:
-				_vPos._x += _movementSpeed;
-				break;
-			case KEY_MAP::RIGHT:
-				_vPos._x -= _movementSpeed;
-				break;
-			}
+			auto keyfuncItr = _keyFuncMap->find(*itr);
+
+			if (keyfuncItr != _keyFuncMap->end()) {
+
+				switch (_keyFuncMap->at(*itr)) {
+				case MOVE_FUNCTION::MOVE_BACKWARD:
+					_vPos._z -= _movementSpeed;
+					break;
+				case MOVE_FUNCTION::MOVE_FORWARD:
+					_vPos._z += _movementSpeed;
+					break;
+				case MOVE_FUNCTION::MOVE_DOWN:
+					_vPos._y -= _movementSpeed;
+					break;
+				case MOVE_FUNCTION::MOVE_UP:
+					_vPos._y += _movementSpeed;
+					break;
+				case MOVE_FUNCTION::MOVE_LEFT:
+					_vPos._x += _movementSpeed;
+					break;
+				case MOVE_FUNCTION::MOVE_RIGHT:
+					_vPos._x -= _movementSpeed;
+					break;
+				default:
+					break;
+				}
+
+			}			
 		}
 		break;
 	}

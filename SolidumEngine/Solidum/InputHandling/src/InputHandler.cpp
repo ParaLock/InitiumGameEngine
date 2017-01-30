@@ -38,6 +38,19 @@ std::list<KEY_MAP> InputHandler::getPressedKeys()
 		pressedKeyList.push_back(KEY_MAP::D);
 	}
 
+	if (GetAsyncKeyState('I')) {
+		pressedKeyList.push_back(KEY_MAP::I);
+	}
+	if (GetAsyncKeyState('L')) {
+		pressedKeyList.push_back(KEY_MAP::L);
+	}
+	if (GetAsyncKeyState('K')) {
+		pressedKeyList.push_back(KEY_MAP::K);
+	}
+	if (GetAsyncKeyState('J')) {
+		pressedKeyList.push_back(KEY_MAP::J);
+	}
+	
 	if (GetAsyncKeyState(VK_UP)) {
 		pressedKeyList.push_back(KEY_MAP::UP);
 	}
