@@ -9,7 +9,8 @@
 #include "Solidum\ResourceFramework\include\ResourceManagerPool.h"
 
 #include "Solidum\EntityFramework\Components\include\MoveComponent.h"
-#include "Solidum\EntityFramework\Components\include\GraphicsComponent.h"
+#include "Solidum\EntityFramework\Components\include\LightComponent.h"
+#include "Solidum\EntityFramework\Components\include\MeshComponent.h"
 
 #include "Solidum\InputHandling\include\InputHandler.h"
 
@@ -38,6 +39,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	EngineInstance *solidum = new EngineInstance(myWindow);
 
 	ResourceManagerPool* resManagerPool = solidum->getResourceManagerPool();
+
+	//** RESOURCE INITIALIZATION **//
 
 	GPUPipeline* endscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
 		(L"./res/Pipelines/endScene_pipeline.solPipe", resManagerPool), "endscene_pipeline_state")->getCore<GPUPipeline>();
@@ -96,12 +99,14 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Light* pointLight3 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
 		(), "pointLight3")->getCore<Light>();
 
+	//** RESOURCE INIT DONE **//
+
+	Entity* ROOT_ENTITY = new Entity();
+
 	deferredShader->attachPipeline(deferredPipeline);
 	directionalLightShader->attachPipeline(deferredLightingPipeline);
 	pointLightShader->attachPipeline(deferredLightingPipeline);
 
-	directionalLightShader->setMesh(orthoMesh);
-	pointLightShader->setMesh(orthoMesh);
 
 	dirLight1->setColor(Vector4f(0.5f, 1.5f, 0.5f, 0.5f));
 	dirLight1->setDirection(Vector3f(0.0f, 0.0f, 9.0f));
@@ -110,7 +115,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	pointLight1->setColor(Vector4f(0.5f, 2.5f, 0.5f, 0.5f));
 	pointLight1->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
-	pointLight1->setPosition(Vector3f(-6.0f, 0.01f, 0.5f));
+	pointLight1->setPosition(Vector3f(4,4,4));
 	pointLight1->setIntensity(5.0f);
 
 	pointLight1->setAttenuationLinear(0);
@@ -121,7 +126,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	pointLight2->setColor(Vector4f(0.5f, 0.5f, 2.5f, 0.5f));
 	pointLight2->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
-	pointLight2->setPosition(Vector3f(0.2f, 0.01f, -5.0f));
+	pointLight2->setPosition(Vector3f(9.0f, 9.0f, 9.0f));
 	pointLight2->setIntensity(5.0f);
 
 	pointLight2->setAttenuationLinear(0);
@@ -132,7 +137,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	pointLight3->setColor(Vector4f(2.5f, 0.5f, 0.5f, 0.5f));
 	pointLight3->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
-	pointLight3->setPosition(Vector3f(-0.2f, 0.01f, 8.0f));
+	pointLight3->setPosition(Vector3f(0, 0, 0));
 	pointLight3->setIntensity(5.0f);
 
 	pointLight3->setAttenuationLinear(0);
@@ -141,41 +146,57 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	pointLight3->setRange(20.5f);
 
+	pointLight1->attachShader(pointLightShader);
+	pointLight2->attachShader(pointLightShader);
+	pointLight3->attachShader(pointLightShader);
+
+	dirLight1->attachShader(directionalLightShader);
+
+	pointLightShader->setMesh(orthoMesh);
+	directionalLightShader->setMesh(orthoMesh);
+
 	Entity* hammer = new Entity();
 
-	hammer->addComponent(new MoveComponent(Vector3f(0, 0, 0), 0.5, true, hammer->getTransform()));
-	hammer->addComponent(new GraphicsComponent("hammer_mesh", "metal_tex", "metalMaterial", "deferred_geometry_shader", "null", hammer->getTransform()));
+	hammer->addComponent(new MoveComponent(Vector3f(0, 0, 0), 0.5, true));
+	hammer->addComponent(new MeshComponent(hammerMesh, metalTex, metalMaterial, deferredShader));
 
 	Entity* cube = new Entity();
 
-	cube->addComponent(new MoveComponent(Vector3f(0, -2.0f, -3.0f), 0.5, true, cube->getTransform()));
-	cube->addComponent(new GraphicsComponent("cube_mesh", "wood_tex", "woodMaterial", "deferred_geometry_shader", "null", cube->getTransform()));
+	//cube->addComponent(new MoveComponent(Vector3f(0, -2.0f, -3.0f), 0.5, false));
+	cube->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, deferredShader));
 
 	Entity* plane = new Entity();
 
-	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, plane->getTransform()));
-	plane->addComponent(new GraphicsComponent("plane_mesh", "metal_tex", "metalMaterial", "deferred_geometry_shader", "null", plane->getTransform()));
+	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false));
+	plane->addComponent(new MeshComponent(planeMesh, metalTex, metalMaterial, deferredShader));
 
 	Entity* dirLightEntity = new Entity();
 
-	dirLightEntity->addComponent(new GraphicsComponent("orthoMesh", "null", "null", "directional_light_shader", "dirLight1", dirLightEntity->getTransform()));
+	dirLightEntity->addComponent(new LightComponent(dirLight1));
 
 	Entity* pointLight1Entity = new Entity();
 
-	pointLight1Entity->addComponent(new GraphicsComponent("orthoMesh", "null", "null", "point_light_shader", "pointLight1", nullptr));
+	//pointLight1Entity->addComponent(new MoveComponent(Vector3f(7.0f, 0.01f, 0.5f), 0.5, false));
+	pointLight1Entity->addComponent(new LightComponent(pointLight1));
 
 	Entity* pointLight2Entity = new Entity();
 
-	pointLight2Entity->addComponent(new GraphicsComponent("orthoMesh", "null", "null", "point_light_shader", "pointLight2", nullptr));
+	pointLight2Entity->addComponent(new MoveComponent(Vector3f(0.2f, 0.01f, -5.0f), 0.5, false));
+	pointLight2Entity->addComponent(new LightComponent(pointLight2));
 
 	Entity* pointLight3Entity = new Entity();
 
-	pointLight3Entity->addComponent(new GraphicsComponent("orthoMesh", "null", "null", "point_light_shader", "pointLight3", nullptr));
+	pointLight3Entity->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, deferredShader));
+	pointLight3Entity->addComponent(new MoveComponent(Vector3f(-0.2f, 0.01f, 8.0f), 0.5, false));
+	pointLight3Entity->addComponent(new LightComponent(pointLight3));
 
 	camera* myCam = solidum->getGraphicsSubsystem()->getPrimaryCamera();
 
 	InputHandler* inputHandler = resManagerPool->getResourceManager("InputHandlerManager")->
 		getResource("InputHandler")->getCore<InputHandler>();
+
+	hammer->addChild(pointLight1Entity);
+	hammer->addChild(cube);
 
 	while (myWindow->running) {
 
@@ -190,13 +211,16 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		myCam->Update();
 
-		cube->update();
 		hammer->update();
+
+		cube->update();
 		plane->update();
 
 		pointLight1Entity->update();
 		pointLight2Entity->update();
 		pointLight3Entity->update();
+
+		solidum->getGraphicsSubsystem()->RenderAll();
 
 		endscenePipelineState->executePass(NULL);
 	}

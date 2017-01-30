@@ -41,17 +41,65 @@ GraphicsCore::~GraphicsCore()
 		delete _renderQueue;
 }
 
+void GraphicsCore::RenderAll()
+{
+	RENDER_QUEUE renderQueue = _renderQueue->getRenderQueue();
+
+	for (auto itr = renderQueue.begin(); itr != renderQueue.end(); itr++) {
+		RenderOP* op = *itr;
+
+		op->setCamera(_primaryCamera);
+
+		if (op->getShader() != nullptr) {
+			Shader* shader = op->getShader();
+
+			if (op->getLight() != nullptr) {
+
+				shader->updateLightUniforms(op->getLight());
+
+				if (op->getCamera() != nullptr)
+					shader->updateCameraUniforms(op->getCamera());
+
+				shader->updateGPU();
+				shader->execute(6);
+			}
+			else if (op->getMesh() != nullptr) {
+
+				if (op->getMesh() != nullptr) {
+					shader->setMesh(op->getMesh());
+
+					if(op->getTransform() != nullptr)
+					shader->updateModelUniforms(op->getTransform());
+				}
+
+				if (op->getTexture() != nullptr)
+					shader->setModelTexture(op->getTexture());
+
+				if (op->getMaterial() != nullptr)
+					shader->updateMaterialUniforms(op->getMaterial());
+
+				if (op->getCamera() != nullptr)
+					shader->updateCameraUniforms(op->getCamera());
+
+
+
+				shader->updateGPU();
+				shader->execute(op->getMesh()->numIndices);
+			}
+		}
+	}
+}
+
 void GraphicsCore::onEvent(IEvent * evt)
 {
 	RenderEvent* renderEvt;
 
 	switch (evt->getType())
 	{
-		case EVENT_TYPE::RENDER_EVENT:
+		case EVENT_TYPE::RENDER_EVENT_QUEUE_OP:
 			renderEvt = evt->getEvent<RenderEvent>();
 
-			Render(renderEvt->getMeshID(), renderEvt->getTexID(), 
-				renderEvt->getMatID(), renderEvt->getShaderID(), renderEvt->getLightID(), renderEvt->getTransform());
+			_renderQueue->queueRenderOP(renderEvt->getRenderOP());
 
 			break;
 	default:
@@ -59,61 +107,6 @@ void GraphicsCore::onEvent(IEvent * evt)
 	}
 
 	delete evt;
-}
-
-void GraphicsCore::Render(std::string meshID, std::string texID, 
-	std::string matID, std::string shaderID, std::string lightID, Transform* transform)
-{
-	auto* allActiveShaders = _resManagerPool->getResourceManager("ShaderManager")->getResourceMap();
-
-	for (auto itr = allActiveShaders->begin(); itr != allActiveShaders->end(); itr++) {
-
-		Shader *pShader = itr->second->getCore<Shader>();
-
-		pShader->updateCameraUniforms(_primaryCamera);
-	}
-
-	mesh* Mesh;
-	Shader* shader;
-	Texture* tex;
-	Material* mat;
-	Light* light;
-
-	if (shaderID != "null") {
-
-		shader = _resManagerPool->getResourceManager("ShaderManager")->getResource(shaderID)->getCore<Shader>();
-
-		if (meshID != "null") {
-			Mesh = _resManagerPool->getResourceManager("meshManager")->getResource(meshID)->getCore<mesh>();
-			shader->setMesh(Mesh);
-		}
-		if (texID != "null") {
-			tex = _resManagerPool->getResourceManager("TextureManager")->getResource(texID)->getCore<Texture>();
-			shader->setModelTexture(tex);
-		}
-		if (matID != "null") {
-			mat = _resManagerPool->getResourceManager("MaterialManager")->getResource(matID)->getCore<Material>();
-			shader->updateMaterialUniforms(mat);
-		}
-
-		if (lightID != "null") {
-			light = _resManagerPool->getResourceManager("LightManager")->getResource(lightID)->getCore<Light>();
-			shader->updateLightUniforms(light);
-		}
-
-		if (transform != nullptr) {
-			shader->updateModelUniforms(transform);
-		}
-
-		shader->updateGPU();
-
-		if (meshID != "null") {
-			shader->execute(Mesh->numIndices);
-		}
-		else {
-			shader->execute(NULL);
-		}
-	}	
 }
 
 void GraphicsCore::attachPrimaryCamera(camera* cam)

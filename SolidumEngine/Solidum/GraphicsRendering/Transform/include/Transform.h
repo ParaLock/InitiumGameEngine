@@ -15,6 +15,8 @@ public:
 	void setRotation(float angleOfRot, std::string direction);
 	void setPos(Vector3f pos);
 
+	void setTransformMatrix(D3DXMATRIX& matrix) { _transformMatrix = matrix; }
+
 	D3DXMATRIX& getTransformMatrix() { return _transformMatrix; };
 
 	D3DXMATRIX& getTransposedTransformMatrix() {
@@ -23,5 +25,7 @@ public:
 
 		return _transposedTransformMatrix;
 	}
+
+	Vector3f getPos() { return _pos; }
 };
 

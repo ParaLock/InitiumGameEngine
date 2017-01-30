@@ -1,7 +1,7 @@
 #include "../include/MoveComponent.h"
 
 
-MoveComponent::MoveComponent(Vector3f startPos, float movementSpeed, bool keyboardControl, Transform* parentTransform)
+MoveComponent::MoveComponent(Vector3f startPos, float movementSpeed, bool keyboardControl)
 {
 	_type = COMPONENT_TYPE::MOVE_COMPONENT;
 
@@ -12,8 +12,6 @@ MoveComponent::MoveComponent(Vector3f startPos, float movementSpeed, bool keyboa
 
 	_vPos = startPos;
 	_movementSpeed = movementSpeed;
-
-	_transform = parentTransform;
 }
 
 MoveComponent::~MoveComponent()
@@ -22,11 +20,15 @@ MoveComponent::~MoveComponent()
 
 void MoveComponent::update()
 {
-	_transform->setPos(_vPos);
+	if (_parent != nullptr) {
+
+		_parent->getTransform()->setPos(_vPos);
+	}
 }
 
 void MoveComponent::onEvent(IEvent * evt)
 {
+
 	switch (evt->getType())
 	{
 	case EVENT_TYPE::INPUT_EVENT: {

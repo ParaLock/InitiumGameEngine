@@ -23,6 +23,8 @@
 
 #include "../../../EventFramework/include/RenderEvent.h"
 
+#include "../../RenderOP/include/RenderOP.h"
+
 #include "../../../EventFramework/include/EventFrameworkCore.h"
 
 class GraphicsCore : public IEventListener, public IEventPublisher
@@ -38,9 +40,9 @@ public:
 	GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool);
 	~GraphicsCore();
 
-	void onEvent(IEvent* evt);
+	void RenderAll();
 
-	void Render(std::string meshID, std::string texID, std::string matID, std::string shaderID, std::string lightID, Transform* transform);
+	void onEvent(IEvent* evt);
 
 	void attachPrimaryCamera(camera* cam);
 

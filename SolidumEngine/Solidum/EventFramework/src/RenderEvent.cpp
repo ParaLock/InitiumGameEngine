@@ -2,9 +2,9 @@
 
 
 
-RenderEvent::RenderEvent()
+RenderEvent::RenderEvent(EVENT_TYPE type)
 {
-	setType(EVENT_TYPE::RENDER_EVENT);
+	setType(type);
 }
 
 

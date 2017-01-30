@@ -5,6 +5,10 @@
 Transform::Transform()
 {
 	D3DXMatrixIdentity(&_transformMatrix);
+
+	_pos._x = 0;
+	_pos._y = 0;
+	_pos._z = 0;
 }
 
 

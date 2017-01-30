@@ -18,6 +18,18 @@ public:
 
 	}
 
+	static inline Vector4f add(Vector4f vec1, Vector4f vec2) {
+
+		Vector4f finalVec;
+
+		finalVec._x = vec1._x + vec2._x;
+		finalVec._y = vec1._y + vec2._y;
+		finalVec._z = vec1._z + vec2._z;
+		finalVec._w = vec1._w + vec2._w;
+
+		return finalVec;
+	};
+
 	void setX(float x) { _x = x; };
 	void setY(float y) { _y = y; };
 	void setZ(float z) { _z = z; };

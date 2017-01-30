@@ -19,8 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\EntityFramework\Components\include\Component.h" />
+    <ClInclude Include="Solidum\EntityFramework\Entity\include\IEntity.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderOP\include\RenderOP.h" />
+    <ClInclude Include="Solidum\EntityFramework\Components\include\LightComponent.h" />
+    <ClInclude Include="Solidum\EntityFramework\Components\include\MeshComponent.h" />
     <ClInclude Include="Solidum\EventFramework\include\EventHub.h" />
-    <ClInclude Include="Solidum\EntityFramework\Components\include\GraphicsComponent.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\MoveComponent.h" />
     <ClInclude Include="Solidum\EventFramework\include\EntityEvent.h" />
     <ClInclude Include="Solidum\EventFramework\include\RenderEvent.h" />
@@ -94,8 +98,12 @@
     <ClInclude Include="Solidum\WorldSimulation\include\WorldCell.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\EntityFramework\Components\src\Component.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Entity\src\IEntity.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderOP\src\RenderOP.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Components\src\LightComponent.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Components\src\MeshComponent.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\EventHub.cpp" />
-    <ClCompile Include="Solidum\EntityFramework\Components\src\GraphicsComponent.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\MoveComponent.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\EntityEvent.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\RenderEvent.cpp" />

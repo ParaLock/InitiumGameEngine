@@ -47,8 +47,6 @@ public:
 	Light(IResourceBuilder* builder);
 	~Light();
 
-	void draw();
-
 	void setDirection(Vector3f dir);
 	void setPosition(Vector3f pos);
 	void setColor(Vector4f color);
