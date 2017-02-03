@@ -69,7 +69,9 @@ std::list<KEY_MAP> InputHandler::getPressedKeys()
 
 void InputHandler::update()
 {
-	InputEvent* inputEvent = new InputEvent();
+	EVENT_PTR inputEventPtr = std::make_shared<InputEvent>();
+
+	InputEvent *inputEvent = inputEventPtr->getEvent<InputEvent>();
 
 	std::list<KEY_MAP> keys = getPressedKeys();
 
@@ -82,5 +84,5 @@ void InputHandler::update()
 	inputEvent->setMousePos(mousePos);
 
 	EventFrameworkCore::getInstance()->
-		getGlobalEventHub("InputEventHub")->publishEvent(inputEvent);
+		getGlobalEventHub("InputEventHub")->publishEvent(inputEventPtr);
 }

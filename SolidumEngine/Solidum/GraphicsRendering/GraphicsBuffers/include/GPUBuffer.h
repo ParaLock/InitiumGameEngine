@@ -29,13 +29,16 @@ public:
 	GPUBuffer();
 	~GPUBuffer();
 
-	virtual void Write(void *pSrc, size_t byteToWrite, size_t offset);
-	virtual void Read(void *pDest, size_t byteToRead, size_t offset);
+	virtual void load(IResourceBuilder* builder) = 0;
+	virtual void unload() = 0;
 
-	virtual void updateParameter(std::string varName, void *data);
-	virtual void* getParameter(std::string varName);
+	virtual void Write(void *pSrc, size_t byteToWrite, size_t offset) = 0;
+	virtual void Read(void *pDest, size_t byteToRead, size_t offset) = 0;
 
-	virtual void swapInternalBuffer(void *pNewBuff);
+	virtual void updateParameter(std::string varName, void *data) = 0;
+	virtual void* getParameter(std::string varName) = 0;
+
+	virtual void swapInternalBuffer(void *pNewBuff) = 0;
 
 	BUFFER_TYPE getBuffType() { return _type; };
 };

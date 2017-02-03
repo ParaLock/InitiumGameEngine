@@ -30,7 +30,7 @@ public:
 		else {
 			std::cout << "Event Cast To Type failed!" << std::endl;
 
-			return nullptr;
+			throw "BAD CAST";
 		}
 	}
 };

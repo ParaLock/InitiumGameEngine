@@ -18,7 +18,7 @@ void EventHub::subscribeListener(IEventListener * listener)
 	_listeners->push_back(listener);
 }
 
-void EventHub::publishEvent(IEvent * evt)
+void EventHub::publishEvent(EVENT_PTR evt)
 {
 	for (auto itr = _listeners->begin(); itr != _listeners->end(); itr++) {
 			

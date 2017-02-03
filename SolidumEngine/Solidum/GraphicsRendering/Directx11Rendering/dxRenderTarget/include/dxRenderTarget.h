@@ -14,10 +14,12 @@ private:
 	ID3D11RenderTargetView* _renderTarget = nullptr;
 
 public:
-	dxRenderTarget(IResourceBuilder *builder);
-	dxRenderTarget(ID3D11RenderTargetView* rt, ID3D11Texture2D* rtTex);
-
+	dxRenderTarget();
+	dxRenderTarget(ID3D11RenderTargetView * rt, ID3D11Texture2D * rtTex);
 	~dxRenderTarget();
+
+	void load(IResourceBuilder *builder);
+	void unload();
 
 	void updateParameter(std::string varName, void *data);
 	void* getParameter(std::string varName);

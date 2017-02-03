@@ -51,7 +51,7 @@ public:
 
 	bool lockMouse;
 
-	void onEvent(IEvent* evt);
+	void onEvent(EVENT_PTR evt);
 
 	D3DXMATRIX& getViewMatrix() { 
 

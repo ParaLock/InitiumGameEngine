@@ -50,14 +50,14 @@ camera::~camera()
 {
 }
 
-void camera::onEvent(IEvent * evt)
+void camera::onEvent(EVENT_PTR evt)
 {
-	switch (evt->getType())
+	switch (evt.get()->getType())
 	{
 
 		case EVENT_TYPE::INPUT_EVENT: {
-			auto mousePos = evt->getEvent<InputEvent>()->getMousePos();
-			auto keysPressed = evt->getEvent<InputEvent>()->getPressedKeys();
+			auto mousePos = evt.get()->getEvent<InputEvent>()->getMousePos();
+			auto keysPressed = evt.get()->getEvent<InputEvent>()->getPressedKeys();
 
 			cameraMouseLook(mousePos.first, mousePos.second);
 

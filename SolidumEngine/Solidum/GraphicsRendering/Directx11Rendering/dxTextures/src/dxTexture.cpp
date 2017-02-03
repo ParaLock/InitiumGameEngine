@@ -1,15 +1,27 @@
 #include "../include/dxTexture.h"
 
-dxTexture::dxTexture(IResourceBuilder* builder)
+dxTexture::dxTexture()
 {
-	TextureBuilder* realBuilder = static_cast<TextureBuilder*>(builder);
 
-	loadImage(realBuilder->_filename);
 }
 
 dxTexture::~dxTexture()
 {
 	texture->Release();
+}
+
+void dxTexture::load(IResourceBuilder * builder)
+{
+	TextureBuilder* realBuilder = static_cast<TextureBuilder*>(builder);
+
+	loadImage(realBuilder->_filename);
+
+	isLoaded = true;
+}
+
+void dxTexture::unload()
+{
+	isLoaded = false;
 }
 
 void dxTexture::loadImage(LPCWSTR filename)

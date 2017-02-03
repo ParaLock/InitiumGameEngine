@@ -17,6 +17,9 @@ public:
 	InputHandler();
 	~InputHandler();
 
+	void load(IResourceBuilder* builder) { isLoaded = true; }
+	void unload() { isLoaded = false; }
+
 	std::pair<unsigned long, unsigned long> getMousePos();
 	std::list<KEY_MAP> getPressedKeys();
 

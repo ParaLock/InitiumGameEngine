@@ -11,25 +11,26 @@ GPUBufferManager::~GPUBufferManager()
 {
 }
 
-IResource* GPUBufferManager::createResource(IResourceBuilder * builder, std::string name)
+IResource* GPUBufferManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
 {
 
 	IResource* newResource = nullptr;
+
 	switch (ActiveGraphicsAPI::getCurrentAPI()) {
 	case SUPPORTED_GRAPHICS_API::DIRECTX11:
 
-		newResource = new dxGPUBuffer(builder);
-
-		int ref12 = -1;
+		newResource = new dxGPUBuffer();
 		break;
 	}
 
-	if (newResource != nullptr) {
+	if (loadAsync) {
 
-		_activeResources->insert({ name, newResource });
-
-		return newResource;
+	}
+	else {
+		newResource->load(builder);
 	}
 
-	return nullptr;
+	_activeResources->insert({ name, newResource });
+
+	return newResource;
 }

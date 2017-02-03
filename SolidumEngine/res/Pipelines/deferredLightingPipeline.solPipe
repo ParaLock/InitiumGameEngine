@@ -22,6 +22,7 @@ PIPELINE_BEGIN
 		BIND GBUFFER INPUT normals_gbuff
 		BIND GBUFFER INPUT position_gbuff
 		BIND GBUFFER INPUT specular_gbuff
+		BIND GBUFFER INPUT shadow_gbuff
 		
 		BIND GBUFFER OUTPUT framebuffer
 		

@@ -24,7 +24,7 @@ EngineInstance::EngineInstance(window* renderWindow)
 	_resManagers->registerResourceManager(new LightManager(), "LightManager");
 	_resManagers->registerResourceManager(new InputManager(), "InputHandlerManager");
 
-	_resManagers->getResourceManager("InputHandlerManager")->createResource(nullptr, "InputHandler");
+	_resManagers->getResourceManager("InputHandlerManager")->createResource(nullptr, "InputHandler", false);
 
 	_graphicsCore = new GraphicsCore(DIRECTX11, renderWindow, _resManagers);
 }

@@ -2,7 +2,6 @@
 #include "../../../sysInclude.h"
 #include "../../../GraphicsRendering/GraphicsBuffers/include/GPUBuffer.h"
 #include "../../../GraphicsRendering/GPUPipeline/include/GPUPipeline.h"
-#include "../../GPUPipeline/include/GPUPipelineFactory.h"
 
 #include "../../../ResourceFramework/include/IResourceBuilder.h"
 
@@ -28,7 +27,7 @@ public:
 class Shader : public IResource
 {
 protected:
-	std::map<std::string, DynamicStruct*> *_uniformVarNameToBuff;
+	std::map<std::string, DynamicStruct*> *_constantBufferMemberNameMap;
 
 	GPUPipeline* _pipelineState = nullptr;
 
@@ -36,6 +35,9 @@ protected:
 public:
 	Shader();
 	~Shader();
+
+	virtual void load(IResourceBuilder* builder) = 0;
+	virtual void unload() = 0;
 
 	void setMesh(mesh* newMesh);
 
@@ -49,7 +51,7 @@ public:
 	void updateUniform(std::string varName, void * pData);
 	void updateGPU();
 
-	virtual void attachPipeline(GPUPipeline* pipe);
+	virtual void attachPipeline(GPUPipeline* pipe) = 0;
 
 	virtual void execute(int numIndices);
 };

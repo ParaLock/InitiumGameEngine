@@ -3,7 +3,7 @@
 
 #include "../../ActiveGraphicsAPI.h"
 
-#include "../include/GPUPipelineFactory.h"
+#include "../../Directx11Rendering/dxGPUPipeline/include/dxGPUPipeline.h"
 
 #include "GPUPipeline.h"
 
@@ -15,6 +15,6 @@ public:
 	GPUPipelineManager();
 	~GPUPipelineManager();
 
-	IResource* createResource(IResourceBuilder* builder, std::string name);
+	IResource* createResource(IResourceBuilder* builder, std::string name, bool loadAsync);
 };
 

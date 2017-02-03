@@ -39,7 +39,6 @@
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxTextures\include\dxTexture.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxTextures\include\dxTextureSampleState.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GPUPipeline\include\GPUPipeline.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\GPUPipeline\include\GPUPipelineFactory.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GPUPipeline\include\GPUPipelineManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsBuffers\include\GPUBuffer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsBuffers\include\GPUBufferManager.h" />
@@ -78,6 +77,9 @@
     <ClInclude Include="Solidum\EntityFramework\Entity\include\IEntity.h" />
     <ClInclude Include="Solidum\EntityFramework\Entity\include\Entity.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\Component.h" />
+    <ClInclude Include="Solidum\ThreadingFramework\include\SolidumThread.h" />
+    <ClInclude Include="Solidum\ThreadingFramework\include\SolidumThreadPool.h" />
+    <ClInclude Include="Solidum\ThreadingFramework\include\SolidumThreadManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -112,7 +114,6 @@
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxTextures\src\dxTexture.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxTextures\src\dxTextureSampleState.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GPUPipeline\src\GPUPipeline.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GPUPipeline\src\GPUPipelineFactory.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GPUPipeline\src\GPUPipelineManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsBuffers\src\GPUBuffer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsBuffers\src\GPUBufferManager.cpp" />
@@ -151,5 +152,8 @@
     <ClCompile Include="Solidum\GraphicsRendering\RenderOP\src\RenderOP.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Entity\src\IEntity.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\Component.cpp" />
+    <ClCompile Include="Solidum\ThreadingFramework\src\SolidumThread.cpp" />
+    <ClCompile Include="Solidum\ThreadingFramework\src\SolidumThreadPool.cpp" />
+    <ClCompile Include="Solidum\ThreadingFramework\src\SolidumThreadManager.cpp" />
   </ItemGroup>
 </Project>

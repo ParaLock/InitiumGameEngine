@@ -11,11 +11,18 @@ MaterialManager::~MaterialManager()
 {
 }
 
-IResource* MaterialManager::createResource(IResourceBuilder * builder, std::string name)
+IResource* MaterialManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
 {
-	IResource* newMesh = new Material(builder);
+	IResource* newMat = new Material();
 
-	_activeResources->insert({ name, newMesh });
+	if (loadAsync) {
 
-	return newMesh;
+	}
+	else {
+		newMat->load(builder);
+	}
+
+	_activeResources->insert({ name, newMat });
+
+	return newMat;
 }

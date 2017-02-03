@@ -43,61 +43,66 @@ GraphicsCore::~GraphicsCore()
 
 void GraphicsCore::RenderAll()
 {
-	RENDER_QUEUE renderQueue = _renderQueue->getRenderQueue();
+	using std::placeholders::_1;
 
-	for (auto itr = renderQueue.begin(); itr != renderQueue.end(); itr++) {
-		RenderOP* op = *itr;
+	std::function<void(RenderOP)> callback = std::bind(&GraphicsCore::Render, this, _1);
 
-		op->setCamera(_primaryCamera);
+	_renderQueue->processQueuedItems(callback);
+}
 
-		if (op->getShader() != nullptr) {
-			Shader* shader = op->getShader();
+void GraphicsCore::Render(RenderOP renderOP)
+{
+	RenderOP op = renderOP;
 
-			if (op->getLight() != nullptr) {
+	op.setCamera(_primaryCamera);
 
-				shader->updateLightUniforms(op->getLight());
+	if (op.getShader() != nullptr) {
+		Shader* shader = op.getShader();
 
-				if (op->getCamera() != nullptr)
-					shader->updateCameraUniforms(op->getCamera());
+		if (op.getLight() != nullptr) {
 
-				shader->updateGPU();
-				shader->execute(6);
+			shader->updateLightUniforms(op.getLight());
+
+			if (op.getCamera() != nullptr)
+				shader->updateCameraUniforms(op.getCamera());
+
+			shader->updateGPU();
+			shader->execute(6);
+		}
+		else if (op.getMesh() != nullptr) {
+
+			if (op.getMesh() != nullptr) {
+				shader->setMesh(op.getMesh());
+
+				if (op.getTransform() != nullptr)
+					shader->updateModelUniforms(op.getTransform());
 			}
-			else if (op->getMesh() != nullptr) {
 
-				if (op->getMesh() != nullptr) {
-					shader->setMesh(op->getMesh());
+			if (op.getTexture() != nullptr)
+				shader->setModelTexture(op.getTexture());
 
-					if(op->getTransform() != nullptr)
-					shader->updateModelUniforms(op->getTransform());
-				}
+			if (op.getMaterial() != nullptr)
+				shader->updateMaterialUniforms(op.getMaterial());
 
-				if (op->getTexture() != nullptr)
-					shader->setModelTexture(op->getTexture());
-
-				if (op->getMaterial() != nullptr)
-					shader->updateMaterialUniforms(op->getMaterial());
-
-				if (op->getCamera() != nullptr)
-					shader->updateCameraUniforms(op->getCamera());
+			if (op.getCamera() != nullptr)
+				shader->updateCameraUniforms(op.getCamera());
 
 
 
-				shader->updateGPU();
-				shader->execute(op->getMesh()->numIndices);
-			}
+			shader->updateGPU();
+			shader->execute(op.getMesh()->numIndices);
 		}
 	}
 }
 
-void GraphicsCore::onEvent(IEvent * evt)
+void GraphicsCore::onEvent(EVENT_PTR evt)
 {
 	RenderEvent* renderEvt;
 
-	switch (evt->getType())
+	switch (evt.get()->getType())
 	{
 		case EVENT_TYPE::RENDER_EVENT_QUEUE_OP:
-			renderEvt = evt->getEvent<RenderEvent>();
+			renderEvt = evt.get()->getEvent<RenderEvent>();
 
 			_renderQueue->queueRenderOP(renderEvt->getRenderOP());
 
@@ -105,8 +110,6 @@ void GraphicsCore::onEvent(IEvent * evt)
 	default:
 		break;
 	}
-
-	delete evt;
 }
 
 void GraphicsCore::attachPrimaryCamera(camera* cam)

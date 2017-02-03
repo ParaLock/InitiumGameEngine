@@ -2,9 +2,17 @@
 
 
 
-mesh::mesh(IResourceBuilder *builder)
+mesh::mesh()
 {
-	meshBuilder* realBuilder = static_cast<meshBuilder*>(builder);
+}
+
+mesh::~mesh()
+{
+}
+
+void mesh::load(IResourceBuilder *builder)
+{
+	meshBuilder *realBuilder = static_cast<meshBuilder*>(builder);
 
 	LPCWSTR fileName = realBuilder->_filename;
 
@@ -19,7 +27,7 @@ mesh::mesh(IResourceBuilder *builder)
 		std::vector<std::string> splitFilename = StringManipulation::split(&stlStr, '.');
 
 		pMeshLoader = std::shared_ptr<meshLoaderOBJ>(new meshLoaderOBJ());
-		
+
 
 		pMeshLoader->loadMesh(fileName, this);
 
@@ -27,19 +35,22 @@ mesh::mesh(IResourceBuilder *builder)
 		IResourceBuilder* vertexBuffBuilder = new GPUBufferBuilder(meshSize, BUFFER_TYPE::VERTEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE);
 
 		_indexBuff = realBuilder->_managerPool->getResourceManager("GPUBufferManager")
-			->createResource(indexBuffBuilder, stlStr + "index_buffer")->getCore<GPUBuffer>();
+			->createResource(indexBuffBuilder, stlStr + "index_buffer", false)->getCore<GPUBuffer>();
 
 		_vertexBuff = realBuilder->_managerPool->getResourceManager("GPUBufferManager")
-			->createResource(vertexBuffBuilder, stlStr + "vertex_buffer")->getCore<GPUBuffer>();
+			->createResource(vertexBuffBuilder, stlStr + "vertex_buffer", false)->getCore<GPUBuffer>();
 
 		_indexBuff->getCore<GPUBuffer>()->Write(meshIndices, indicesSize, 0);
 		_vertexBuff->getCore<GPUBuffer>()->Write(meshVertices, meshSize, 0);
 	}
+
+	isLoaded = true;
 }
 
-mesh::~mesh()
+void mesh::unload()
 {
 }
+
 
 void mesh::generateOrthoWindowMesh(meshBuilder* builder)
 {
@@ -98,10 +109,10 @@ void mesh::generateOrthoWindowMesh(meshBuilder* builder)
 	std::string stlStr = CW2A(builder->_filename);
 
 	_indexBuff = builder->_managerPool->getResourceManager("GPUBufferManager")
-		->createResource(&indexBuffBuilder, stlStr + "index_buffer")->getCore<GPUBuffer>();
+		->createResource(&indexBuffBuilder, stlStr + "index_buffer", false)->getCore<GPUBuffer>();
 
 	_vertexBuff = builder->_managerPool->getResourceManager("GPUBufferManager")
-		->createResource(&vertexBuffBuilder, stlStr + "vertex_buffer")->getCore<GPUBuffer>();
+		->createResource(&vertexBuffBuilder, stlStr + "vertex_buffer", false)->getCore<GPUBuffer>();
 
 
 	_indexBuff->getCore<GPUBuffer>()->Write(indices, m_indexCount * sizeof(unsigned long), 0);

@@ -2,13 +2,10 @@
 
 
 
-DynamicStruct::DynamicStruct(std::string name, bool hasGPUBuff)
+DynamicStruct::DynamicStruct()
 {
 	_typeSizeMap = new std::map<std::string, size_t>;
 	_variableMap = new std::map<std::string, DynamicStructMember*>;
-
-	_name = name;
-	_hasGPUBuff = hasGPUBuff;
 }
 
 
@@ -16,6 +13,21 @@ DynamicStruct::~DynamicStruct()
 {
 	delete _typeSizeMap;
 	delete _variableMap;
+}
+
+void DynamicStruct::load(IResourceBuilder * builder)
+{
+	DynamicStructBuilder* realBuilder = static_cast<DynamicStructBuilder*>(builder);
+
+	_name = realBuilder->_name;
+	_hasGPUBuff = realBuilder->_hasGPUBuff;
+
+	isLoaded = true;
+}
+
+void DynamicStruct::unload()
+{
+	isLoaded = false;
 }
 
 void DynamicStruct::updateVar(std::string varName, void * pData)
@@ -55,7 +67,7 @@ void DynamicStruct::initMemory(ResourceManagerPool* resManagerPool)
 
 	if (_hasGPUBuff) {
 		GPUBufferBuilder buffBuilder(_lastVarOffset, BUFFER_TYPE::SHADER_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE);
-		_GPUBuff = resManagerPool->getResourceManager("GPUBufferManager")->createResource(&buffBuilder, _name)->getCore<GPUBuffer>();
+		_GPUBuff = resManagerPool->getResourceManager("GPUBufferManager")->createResource(&buffBuilder, _name, false)->getCore<GPUBuffer>();
 	}
 }
 

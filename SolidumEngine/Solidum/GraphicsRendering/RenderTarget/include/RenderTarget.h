@@ -32,9 +32,12 @@ public:
 	RenderTarget();
 	~RenderTarget();
 
-	virtual void updateParameter(std::string varName, void *data);
-	virtual void* getParameter(std::string varName);
+	virtual void load(IResourceBuilder* builder) = 0;
+	virtual void unload() = 0;
 
-	virtual void Clear(float R, float G, float B, float A);
+	virtual void updateParameter(std::string varName, void *data) = 0;
+	virtual void* getParameter(std::string varName) = 0;
+
+	virtual void Clear(float R, float G, float B, float A) = 0;
 };
 

@@ -4,7 +4,9 @@
 
 #include "../../RenderOP/include/RenderOP.h"
 
-typedef std::list<RenderOP*> RENDER_QUEUE;
+typedef std::list<RenderOP> RENDER_QUEUE;
+
+class GraphicsCore;
 
 class RenderQueue
 {
@@ -15,9 +17,10 @@ public:
 	RenderQueue();
 	~RenderQueue();
 
-	void queueRenderOP(RenderOP* renderOP);
-	void dequeueRenderOP(RenderOP* renderOP);
+	void queueRenderOP(RenderOP renderOP);
+	//void dequeueRenderOP(RenderOP renderOP);
 
-	RENDER_QUEUE getRenderQueue();
+	void processQueuedItems(std::function<void(RenderOP)> callback);
+
 };
 

@@ -26,7 +26,7 @@ public:
 	virtual COMPONENT_TYPE getType() = 0;
 
 	virtual void update() = 0;
-	virtual void onEvent(IEvent* evt) = 0;
+	virtual void onEvent(EVENT_PTR evt) = 0;
 
 	virtual void setParent(IEntity* parent) = 0;
 	virtual IEntity* getParent() = 0;

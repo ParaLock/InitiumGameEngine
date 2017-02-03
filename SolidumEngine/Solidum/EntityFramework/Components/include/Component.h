@@ -24,7 +24,7 @@ public:
 	COMPONENT_TYPE getType() { return _type; }
 
 	virtual void update() = 0;
-	virtual void onEvent(IEvent* evt) = 0;
+	virtual void onEvent(EVENT_PTR evt) = 0;
 
 	void setParent(IEntity* parent) { _parent = parent; };
 	IEntity* getParent() { return _parent; }

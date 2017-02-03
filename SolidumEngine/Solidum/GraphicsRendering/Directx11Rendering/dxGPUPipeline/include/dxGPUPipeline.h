@@ -7,7 +7,7 @@ class dxGPUPipeline : public GPUPipeline
 private:
 	void processOp(GPUPipelineOP* op);
 public:
-	dxGPUPipeline(ResourceManagerPool* managerPool);
+	dxGPUPipeline();
 	~dxGPUPipeline();
 
 	void applyState();

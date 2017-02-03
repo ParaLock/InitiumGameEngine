@@ -13,6 +13,8 @@
 
 #include "../../../Window/include/windowAccessor.h"
 
+#include "dxShaderInputLayout.h"
+
 struct dxConstantBufferLayout {
 	D3D11_SHADER_BUFFER_DESC Description;
 	std::vector<D3D11_SHADER_VARIABLE_DESC> Variables;
@@ -28,8 +30,11 @@ private:
 
 	ID3D10Blob *vertexShaderCode, *pixelShaderCode;
 public:
-	dxShader(IResourceBuilder* builder);
+	dxShader();
 	~dxShader();
+
+	void load(IResourceBuilder* builder);
+	void unload();
 
 	void attachPipeline(GPUPipeline* pipe);
 

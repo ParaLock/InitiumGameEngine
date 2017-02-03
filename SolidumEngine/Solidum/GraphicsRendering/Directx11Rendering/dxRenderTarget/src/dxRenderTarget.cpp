@@ -1,6 +1,30 @@
 #include "../include/dxRenderTarget.h"
 
-dxRenderTarget::dxRenderTarget(IResourceBuilder *builder)
+dxRenderTarget::dxRenderTarget()
+{
+}
+
+dxRenderTarget::dxRenderTarget(ID3D11RenderTargetView * rt, ID3D11Texture2D * rtTex)
+{
+	_texture = rtTex;
+	_renderTarget = rt;
+
+	_aaSamples = -1;
+	_mipLevel = -1;
+	_texFormat = -1;
+}
+
+dxRenderTarget::~dxRenderTarget()
+{
+	if(_renderTarget != nullptr)
+	_renderTarget->Release();
+	if(_shaderView != nullptr)
+	_shaderView->Release();
+	if(_texture != nullptr)
+	_texture->Release();
+}
+
+void dxRenderTarget::load(IResourceBuilder * builder)
 {
 	RenderTargetBuilder* realBuilder = static_cast<RenderTargetBuilder*>(builder);
 
@@ -20,30 +44,30 @@ dxRenderTarget::dxRenderTarget(IResourceBuilder *builder)
 	ZeroMemory(&shaderResourceViewDesc, sizeof(shaderResourceViewDesc));
 
 	switch (_texFormat) {
-		case RGBA_32BIT_FLOAT:
+	case RGBA_32BIT_FLOAT:
 
-			textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
-			shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 
-			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-			break;
-		case RGB_32BIT_FLOAT:
+		renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		break;
+	case RGB_32BIT_FLOAT:
 
-			textureDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+		textureDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
 
-			shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 
-			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-			break;
-		case D24_UNORM_S8_UINT_COUGH_FRAMEBUFFER:
-			
-			shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		break;
+	case D24_UNORM_S8_UINT_COUGH_FRAMEBUFFER:
 
-			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 
-			textureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-			break;
+		renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+
+		textureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		break;
 	}
 
 	textureDesc.Width = windowAccessor::screen_width;
@@ -68,26 +92,12 @@ dxRenderTarget::dxRenderTarget(IResourceBuilder *builder)
 	result = dxDev->CreateRenderTargetView(_texture, &renderTargetViewDesc, &_renderTarget);
 	dxDev->CreateShaderResourceView(_texture, &shaderResourceViewDesc, &_shaderView);
 
+	isLoaded = true;
 }
 
-dxRenderTarget::dxRenderTarget(ID3D11RenderTargetView * rt, ID3D11Texture2D * rtTex)
+void dxRenderTarget::unload()
 {
-	_texture = rtTex;
-	_renderTarget = rt;
-
-	_aaSamples = -1;
-	_mipLevel = -1;
-	_texFormat = -1;
-}
-
-dxRenderTarget::~dxRenderTarget()
-{
-	if(_renderTarget != nullptr)
-	_renderTarget->Release();
-	if(_shaderView != nullptr)
-	_shaderView->Release();
-	if(_texture != nullptr)
-	_texture->Release();
+	isLoaded = false;
 }
 
 void dxRenderTarget::updateParameter(std::string varName, void * data)

@@ -13,6 +13,6 @@ public:
 
 	void subscribeListener(IEventListener* listener);
 
-	void publishEvent(IEvent* evt);
+	void publishEvent(EVENT_PTR evt);
 };
 

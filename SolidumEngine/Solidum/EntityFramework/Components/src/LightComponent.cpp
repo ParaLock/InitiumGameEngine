@@ -4,19 +4,10 @@
 
 LightComponent::LightComponent(ILight* light)
 {
-	RenderEvent* renderEvt = new RenderEvent(EVENT_TYPE::RENDER_EVENT_QUEUE_OP);
-
-	_op = new RenderOP();
-
-	_op->setLight(light);
-	_op->setShader(light->getShader());
-
-	renderEvt->setRenderOP(_op);
+	_op.setLight(light);
+	_op.setShader(light->getShader());
 
 	_parentTransformDirty = true;
-
-	EventFrameworkCore::getInstance()->
-		getGlobalEventHub("ComponentEventHub")->publishEvent(renderEvt);
 }
 
 
@@ -30,15 +21,21 @@ void LightComponent::update()
 
 		if (_parentTransformDirty) {
 			_parentTransformDirty = false;
-			_parent->getTransform()->setPos(_op->getLight()->getPosition());
+			_parent->getTransform()->setPos(_op.getLight()->getPosition());
 		}
 
-		_op->getLight()->setPosition(_parent->getTransform()->getPos());
-		
+		_op.getLight()->setPosition(_parent->getTransform()->getPos());
 	}
 
+
+	EVENT_PTR renderEvt = std::make_shared<RenderEvent>(EVENT_TYPE::RENDER_EVENT_QUEUE_OP);
+
+	renderEvt.get()->getEvent<RenderEvent>()->setRenderOP(_op);
+
+	EventFrameworkCore::getInstance()->
+		getGlobalEventHub("ComponentEventHub")->publishEvent(renderEvt);
 }
 
-void LightComponent::onEvent(IEvent * evt)
+void LightComponent::onEvent(EVENT_PTR evt)
 {
 }

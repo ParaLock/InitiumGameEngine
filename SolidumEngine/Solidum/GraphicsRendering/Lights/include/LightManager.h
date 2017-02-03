@@ -11,6 +11,6 @@ public:
 	LightManager();
 	~LightManager();
 
-	IResource* createResource(IResourceBuilder* builder, std::string name);
+	IResource* createResource(IResourceBuilder* builder, std::string name, bool loadAsync);
 };
 

@@ -2,7 +2,18 @@
 
 
 
-dxTextureSampleState::dxTextureSampleState(IResourceBuilder *builder)
+dxTextureSampleState::dxTextureSampleState()
+{
+
+}
+
+
+dxTextureSampleState::~dxTextureSampleState()
+{
+	sampleState->Release();
+}
+
+void dxTextureSampleState::load(IResourceBuilder * builder)
 {
 	TextureSamplerBuilder* realBuilder = static_cast<TextureSamplerBuilder*>(builder);
 
@@ -69,12 +80,13 @@ dxTextureSampleState::dxTextureSampleState(IResourceBuilder *builder)
 	samplerStateDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	dxDev->CreateSamplerState(&samplerStateDesc, &sampleState);
+
+	isLoaded = true;
 }
 
-
-dxTextureSampleState::~dxTextureSampleState()
+void dxTextureSampleState::unload()
 {
-	sampleState->Release();
+	isLoaded = false;
 }
 
 void dxTextureSampleState::updateParameter(std::string varName, void * data)

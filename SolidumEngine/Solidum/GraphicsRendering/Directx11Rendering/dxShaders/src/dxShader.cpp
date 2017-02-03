@@ -1,6 +1,15 @@
 #include "../include/dxShader.h"
 
-dxShader::dxShader(IResourceBuilder* builder)
+dxShader::dxShader()
+{
+}
+
+
+dxShader::~dxShader()
+{
+}
+
+void dxShader::load(IResourceBuilder * builder)
 {
 	ShaderBuilder* realBuilder = static_cast<ShaderBuilder*>(builder);
 
@@ -26,7 +35,7 @@ dxShader::dxShader(IResourceBuilder* builder)
 			std::wstring tmp;
 			tmp.assign(compileErrStr.begin(), compileErrStr.end());
 			errorMsg += tmp;
-			
+
 
 			MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
 			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
@@ -83,11 +92,13 @@ dxShader::dxShader(IResourceBuilder* builder)
 		MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
 		OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 	}
+
+	isLoaded = true;
 }
 
-
-dxShader::~dxShader()
+void dxShader::unload()
 {
+	isLoaded = false;
 }
 
 void dxShader::attachPipeline(GPUPipeline* pipe)
@@ -97,7 +108,7 @@ void dxShader::attachPipeline(GPUPipeline* pipe)
 	enumerateResources(GPUPipelineElementParentShader::SOL_VS, vertexShaderCode);
 	enumerateResources(GPUPipelineElementParentShader::SOL_PS, pixelShaderCode);
 	
-	_uniformVarNameToBuff = _pipelineState->getVarToBuffMap();
+	_constantBufferMemberNameMap = _pipelineState->getVarToBuffMap();
 }
 
 void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3D10Blob *shaderCode)
@@ -157,7 +168,11 @@ void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3
 
 			if (BufferLayout.Description.Type == D3D11_CT_CBUFFER) {
 
-				DynamicStruct* cbuff = new DynamicStruct(BufferLayout.Description.Name, true);
+				DynamicStructBuilder cbuffBuilder(BufferLayout.Description.Name, true);
+
+				DynamicStruct* cbuff = new DynamicStruct();
+
+				cbuff->load(&cbuffBuilder);
 
 				for (int q = 0; q < BufferLayout.Variables.size(); q++) {
 					cbuff->addVariable(BufferLayout.Variables.at(q).Name, BufferLayout.Variables.at(q).Size);

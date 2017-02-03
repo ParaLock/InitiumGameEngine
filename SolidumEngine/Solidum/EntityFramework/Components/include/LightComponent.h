@@ -7,7 +7,7 @@
 class LightComponent : public Component
 {
 private:
-	RenderOP* _op;
+	RenderOP _op;
 
 	bool _parentTransformDirty = false;
 public:
@@ -15,7 +15,7 @@ public:
 	~LightComponent();
 
 	void update();
-	void onEvent(IEvent* evt);
+	void onEvent(EVENT_PTR evt);
 
 };
 

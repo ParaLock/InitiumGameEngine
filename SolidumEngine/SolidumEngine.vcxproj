@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\ThreadingFramework\include\SolidumThreadManager.h" />
+    <ClInclude Include="Solidum\ThreadingFramework\include\SolidumThreadPool.h" />
+    <ClInclude Include="Solidum\ThreadingFramework\include\SolidumThread.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\Component.h" />
     <ClInclude Include="Solidum\EntityFramework\Entity\include\IEntity.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderOP\include\RenderOP.h" />
@@ -66,7 +69,6 @@
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxBuffers\include\dxGPUBuffer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCore\include\GraphicsCore.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderTarget\include\RenderTarget.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\GPUPipeline\include\GPUPipelineFactory.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GPUPipeline\include\GPUPipeline.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxShaders\include\dxShader.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Lights\include\Light.h" />
@@ -98,6 +100,9 @@
     <ClInclude Include="Solidum\WorldSimulation\include\WorldCell.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\ThreadingFramework\src\SolidumThreadManager.cpp" />
+    <ClCompile Include="Solidum\ThreadingFramework\src\SolidumThreadPool.cpp" />
+    <ClCompile Include="Solidum\ThreadingFramework\src\SolidumThread.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\Component.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Entity\src\IEntity.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderOP\src\RenderOP.cpp" />
@@ -142,7 +147,6 @@
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxBuffers\src\dxGPUBuffer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCore\src\GraphicsCore.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderTarget\src\RenderTarget.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GPUPipeline\src\GPUPipelineFactory.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GPUPipeline\src\GPUPipeline.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxShaders\src\dxShader.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Lights\src\Light.cpp" />

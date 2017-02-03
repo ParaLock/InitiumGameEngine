@@ -13,6 +13,6 @@ public:
 	InputManager();
 	~InputManager();
 
-	IResource* createResource(IResourceBuilder * builder, std::string name);
+	IResource* createResource(IResourceBuilder * builder, std::string name, bool loadAsync);
 };
 

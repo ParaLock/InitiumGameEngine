@@ -3,9 +3,8 @@
 
 
 
-dxGPUPipeline::dxGPUPipeline(ResourceManagerPool* managerPool)
+dxGPUPipeline::dxGPUPipeline()
 {
-	_resManagerPool = managerPool;
 }
 
 

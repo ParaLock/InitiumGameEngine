@@ -6,12 +6,12 @@
 class MeshComponent : public Component
 {
 private:
-	RenderOP* _op;
+	RenderOP _op;
 public:
 	MeshComponent(mesh* mesh, Texture* tex, Material* mat, Shader* shader);
 	~MeshComponent();
 
 	void update();
-	void onEvent(IEvent* evt);
+	void onEvent(EVENT_PTR evt);
 };
 

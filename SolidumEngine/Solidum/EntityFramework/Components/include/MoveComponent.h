@@ -36,6 +36,6 @@ public:
 
 	void update();
 
-	void onEvent(IEvent* evt);
+	void onEvent(EVENT_PTR evt);
 };
 

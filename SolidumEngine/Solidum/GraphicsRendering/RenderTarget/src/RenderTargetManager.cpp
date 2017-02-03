@@ -11,14 +11,21 @@ RenderTargetManager::~RenderTargetManager()
 {
 }
 
-IResource* RenderTargetManager::createResource(IResourceBuilder * builder, std::string name)
+IResource* RenderTargetManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
 {
 	IResource* newResource = nullptr;
 
 	switch (ActiveGraphicsAPI::getCurrentAPI()) {
 	case SUPPORTED_GRAPHICS_API::DIRECTX11:
-		newResource = new dxRenderTarget(builder);
+		newResource = new dxRenderTarget();
 		break;
+	}
+
+	if (loadAsync) {
+
+	}
+	else {
+		newResource->load(builder);
 	}
 
 	if (newResource != nullptr) {

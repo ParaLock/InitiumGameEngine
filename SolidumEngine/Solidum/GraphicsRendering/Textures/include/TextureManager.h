@@ -16,6 +16,6 @@ public:
 	TextureManager();
 	~TextureManager();
 
-	virtual IResource* createResource(IResourceBuilder* builder, std::string name);
+	virtual IResource* createResource(IResourceBuilder* builder, std::string name, bool loadAsync);
 };
 

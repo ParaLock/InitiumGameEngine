@@ -44,8 +44,11 @@ private:
 
 
 public:
-	Light(IResourceBuilder* builder);
+	Light();
 	~Light();
+
+	void load(IResourceBuilder* builder);
+	void unload();
 
 	void setDirection(Vector3f dir);
 	void setPosition(Vector3f pos);

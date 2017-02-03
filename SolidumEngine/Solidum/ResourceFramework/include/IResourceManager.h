@@ -12,7 +12,7 @@ public:
 	IResourceManager();
 	~IResourceManager();
 
-	virtual IResource* createResource(IResourceBuilder* builder, std::string name) = 0;
+	virtual IResource* createResource(IResourceBuilder* builder, std::string name, bool loadAsync) = 0;
 
 	void addResource(IResource* res, std::string name);
 

@@ -3,18 +3,10 @@
 
 MeshComponent::MeshComponent(mesh* mesh, Texture* tex, Material* mat, Shader* shader)
 {
-	RenderEvent* renderEvt = new RenderEvent(EVENT_TYPE::RENDER_EVENT_QUEUE_OP);
-	_op = new RenderOP();
-
-	_op->setMesh(mesh);
-	_op->setMaterial(mat);
-	_op->setTexture(tex);
-	_op->setShader(shader);
-
-	renderEvt->setRenderOP(_op);
-
-	EventFrameworkCore::getInstance()->
-		getGlobalEventHub("ComponentEventHub")->publishEvent(renderEvt);
+	_op.setMesh(mesh);
+	_op.setMaterial(mat);
+	_op.setTexture(tex);
+	_op.setShader(shader);
 }
 
 MeshComponent::~MeshComponent()
@@ -24,9 +16,16 @@ MeshComponent::~MeshComponent()
 void MeshComponent::update()
 {
 	if (_parent != nullptr)
-		_op->setTransform(_parent->getTransform());
+		_op.setTransform(_parent->getTransform());
+
+	EVENT_PTR renderEvt = std::make_shared<RenderEvent>(EVENT_TYPE::RENDER_EVENT_QUEUE_OP);
+
+	renderEvt.get()->getEvent<RenderEvent>()->setRenderOP(_op);
+
+	EventFrameworkCore::getInstance()->
+		getGlobalEventHub("ComponentEventHub")->publishEvent(renderEvt);
 }
 
-void MeshComponent::onEvent(IEvent * evt)
+void MeshComponent::onEvent(EVENT_PTR evt)
 {
 }

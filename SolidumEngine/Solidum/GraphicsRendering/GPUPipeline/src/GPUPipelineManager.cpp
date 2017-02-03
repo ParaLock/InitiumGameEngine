@@ -11,17 +11,25 @@ GPUPipelineManager::~GPUPipelineManager()
 {
 }
 
-IResource* GPUPipelineManager::createResource(IResourceBuilder * builder, std::string name)
+IResource* GPUPipelineManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
 {
 	IResource* newResource = nullptr;
 
-	newResource = GPUPipelineFactory::createPipeline(builder);
+	switch (ActiveGraphicsAPI::getCurrentAPI()) {
+	case SUPPORTED_GRAPHICS_API::DIRECTX11:
 
-	if (newResource != nullptr) {
-		_activeResources->insert({ name, newResource });
-
-		return newResource;
+		newResource = new dxGPUPipeline();
+		break;
 	}
 
-	return nullptr;
+	if (loadAsync) {
+
+	}
+	else {
+		newResource->load(builder);
+	}
+
+	_activeResources->insert({ name, newResource });
+
+	return newResource;
 }

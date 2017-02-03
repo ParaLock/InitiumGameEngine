@@ -11,6 +11,7 @@ struct PixelInputType
 {
 	float4 position : SV_POSITION;
 	float3 normal : NORMAL;
+	float4 depthPosition : TEXCOORD2;
 	float4 worldPos : TEXCOORD1;
 	float2 tex : TEXCOORD;
 };
@@ -21,6 +22,7 @@ struct PixelOutputType
 	float4 normal : SV_Target1;
 	float4 position : SV_Target2;
 	float4 specularColor : SV_Target3;
+	float4 shadow : SV_Target4;
 };
 
 
@@ -38,7 +40,9 @@ PixelInputType Vshader(VertexInputType input)
 	
 	output.position = mul(output.position, cbuff_viewMatrix);
 	output.position = mul(output.position, cbuff_projectionMatrix);
-
+	
+	output.depthPosition = output.position;
+	
 	output.tex = input.tex;
 
 	output.normal = mul(input.normal, FinalworldMatrix);
@@ -58,6 +62,14 @@ PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 	float4 texColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
 	texColor = saturate(ambientLight * texColor);
 	
+	float depthValue;
+	
+	depthValue = input.depthPosition.z / input.depthPosition.w;
+	
+	output.shadow.w = depthValue;
+	
+	output.shadow.xyz = cbuff_lightPos.xyz - input.worldPos.xyz;
+	
 	output.color = texColor; 
 	
 	output.normal.xyz = input.normal.xyz;
@@ -68,6 +80,7 @@ PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 	output.position.w = cbuff_specularPower;
 	
 	output.specularColor = cbuff_specularColor;
+
 	
 	return output;
 }

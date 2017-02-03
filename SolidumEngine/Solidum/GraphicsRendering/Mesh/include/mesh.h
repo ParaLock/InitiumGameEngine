@@ -39,8 +39,11 @@ private:
 
 	void generateOrthoWindowMesh(meshBuilder* builder);
 public:
-	mesh(IResourceBuilder *builder);
+	mesh();
 	~mesh();
+
+	void load(IResourceBuilder *builder);
+	void unload();
 
 	int meshSize;
 	int indicesSize;

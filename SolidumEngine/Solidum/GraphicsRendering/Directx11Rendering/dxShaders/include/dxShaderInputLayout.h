@@ -3,6 +3,8 @@
 #include "../../../Shaders/include/ShaderInputLayout.h"
 #include "../../dxDevice/include/dxDeviceAccessor.h"
 
+class IResourceBuilder;
+
 class dxShaderInputLayout : public ShaderInputLayout
 {
 private:

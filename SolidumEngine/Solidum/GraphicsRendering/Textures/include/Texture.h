@@ -21,6 +21,9 @@ public:
 	Texture();
 	~Texture();
 
+	virtual void load(IResourceBuilder* builder) = 0;
+	virtual void unload() = 0;
+
 	virtual void loadImage(LPCWSTR filename);
 
 	virtual void updateParameter(std::string varName, void *data);

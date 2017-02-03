@@ -2,7 +2,16 @@
 
 
 
-dxGPUBuffer::dxGPUBuffer(IResourceBuilder *builder)
+dxGPUBuffer::dxGPUBuffer()
+{
+}
+
+
+dxGPUBuffer::~dxGPUBuffer()
+{
+}
+
+void dxGPUBuffer::load(IResourceBuilder * builder)
 {
 	GPUBufferBuilder *realBuilder = static_cast<GPUBufferBuilder*>(builder);
 
@@ -18,26 +27,26 @@ dxGPUBuffer::dxGPUBuffer(IResourceBuilder *builder)
 	ZeroMemory(&bd, sizeof(bd));
 
 	switch (_access) {
-		case CPU_ACCESS_READ:
-			bd.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-			break;
-		case CPU_ACCESS_WRITE:
-			bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-			break;
-		case CPU_ACCESS_READWRITE:
-			bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
-			break;
+	case CPU_ACCESS_READ:
+		bd.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		break;
+	case CPU_ACCESS_WRITE:
+		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		break;
+	case CPU_ACCESS_READWRITE:
+		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+		break;
 	}
 
 	switch (_type) {
-		case VERTEX_BUFF:
-			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	case VERTEX_BUFF:
+		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		break;
-		case INDEX_BUFF:
-			bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	case INDEX_BUFF:
+		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		break;
-		case SHADER_BUFF:
-			bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	case SHADER_BUFF:
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		break;
 	}
 
@@ -56,11 +65,13 @@ dxGPUBuffer::dxGPUBuffer(IResourceBuilder *builder)
 		MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
 		return;
 	}
+
+	isLoaded = true;
 }
 
-
-dxGPUBuffer::~dxGPUBuffer()
+void dxGPUBuffer::unload()
 {
+	isLoaded = false;
 }
 
 void dxGPUBuffer::Write(void *pSrc, size_t byteToWrite, size_t offset)
@@ -111,7 +122,7 @@ void * dxGPUBuffer::getParameter(std::string varName)
 
 void dxGPUBuffer::swapInternalBuffer(void * pNewBuff)
 {
-	//TEST FUNCTION... I know it sucks.
+	//TEST FUNCTION... I know, it sucks.
 	ID3D11Buffer* newBuff = (ID3D11Buffer*)pNewBuff;
 
 	bufferPtr = newBuff;

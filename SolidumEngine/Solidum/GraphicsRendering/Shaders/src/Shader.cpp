@@ -85,11 +85,11 @@ void Shader::execute(int numIndices)
 
 void Shader::updateUniform(std::string varName, void * pData)
 {
-	auto itr = _uniformVarNameToBuff->find(varName);
+	auto itr = _constantBufferMemberNameMap->find(varName);
 
-	if (itr != _uniformVarNameToBuff->end()) {
+	if (itr != _constantBufferMemberNameMap->end()) {
 
-		DynamicStruct* varsBuff = _uniformVarNameToBuff->at(varName);
+		DynamicStruct* varsBuff = _constantBufferMemberNameMap->at(varName);
 
 		varsBuff->updateVar(varName, pData);
 	}
@@ -101,7 +101,7 @@ void Shader::updateGPU()
 
 	std::vector<DynamicStruct*> activeGeneralDataBuffers;
 
-	for (auto itr = _uniformVarNameToBuff->begin(); itr != _uniformVarNameToBuff->end(); itr++) {
+	for (auto itr = _constantBufferMemberNameMap->begin(); itr != _constantBufferMemberNameMap->end(); itr++) {
 
 		if (itr->second != previous)
 			activeGeneralDataBuffers.push_back(itr->second);
@@ -112,9 +112,4 @@ void Shader::updateGPU()
 	for (unsigned int i = 0; i < activeGeneralDataBuffers.size(); ++i) {
 		activeGeneralDataBuffers[i]->updateGPU();
 	}
-}
-
-void Shader::attachPipeline(GPUPipeline* pipe)
-{
-	std::cout << "GENERIC SHADER: NO GRAPHICS API DIRECTIVE DETECTED" << std::endl;
 }

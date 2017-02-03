@@ -15,28 +15,29 @@ RenderQueue::~RenderQueue()
 	delete _queuedModels;
 }
 
-void RenderQueue::queueRenderOP(RenderOP * renderOP)
+void RenderQueue::queueRenderOP(RenderOP renderOP)
 {
-	if(renderOP->getMesh() != nullptr)
+	if(renderOP.getMesh() != nullptr)
 		_queuedModels->push_back(renderOP);
-	if (renderOP->getLight() != nullptr)
+	if (renderOP.getLight() != nullptr)
 		_queuedLights->push_back(renderOP);
 }
 
-void RenderQueue::dequeueRenderOP(RenderOP * renderOP)
+void RenderQueue::processQueuedItems(std::function<void(RenderOP)> callback)
 {
-}
+	auto mItr = _queuedModels->begin();
+	auto lItr = _queuedLights->begin();
 
-RENDER_QUEUE RenderQueue::getRenderQueue()
-{
-	RENDER_QUEUE sortedQueue;
+	while(mItr != _queuedModels->end()) {
+		callback(*mItr);
 
-	for (auto itr = _queuedModels->begin(); itr != _queuedModels->end(); itr++) {
-		sortedQueue.push_back(*itr);
-	}
-	for (auto itr = _queuedLights->begin(); itr != _queuedLights->end(); itr++) {
-		sortedQueue.push_back(*itr);
+		mItr = _queuedModels->erase(mItr);
 	}
 
-	return sortedQueue;
+	while(lItr != _queuedLights->end()) {
+		callback(*lItr);
+
+		lItr = _queuedLights->erase(lItr);
+	}
 }
+

@@ -9,6 +9,6 @@ public:
 	IEventListener();
 	~IEventListener();
 
-	virtual void onEvent(IEvent* evt) = 0;
+	virtual void onEvent(EVENT_PTR evt) = 0;
 };
 

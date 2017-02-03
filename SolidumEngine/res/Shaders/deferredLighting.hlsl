@@ -17,6 +17,7 @@ Texture2D colorTexture : register(t0);
 Texture2D normalTexture : register(t1);
 Texture2D positionTexture : register(t2);
 Texture2D specularColorTexture : register(t3);
+Texture2D shadowTexture : register(t4);
 
 SamplerState SampleTypePoint : register(s0);
 

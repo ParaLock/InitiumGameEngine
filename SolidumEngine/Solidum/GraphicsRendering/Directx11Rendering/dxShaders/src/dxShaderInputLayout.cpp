@@ -19,6 +19,7 @@ dxShaderInputLayout::~dxShaderInputLayout()
 	delete _inputLayoutElementList;
 }
 
+
 void dxShaderInputLayout::updateParameter(std::string varName, void * data)
 {
 	if (varName == "D3D_INPUT_LAYOUT") {

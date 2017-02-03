@@ -9,13 +9,15 @@
 class RenderEvent : public IEvent
 {
 private:
-	RenderOP* _op;
+	RenderOP _op;
 public:
 	RenderEvent(EVENT_TYPE type);
+	RenderEvent() {};
+
 	~RenderEvent();
 
-	void setRenderOP(RenderOP* op) { _op = op; }
+	void setRenderOP(RenderOP op) { _op = op; }
 
-	RenderOP* getRenderOP() { return _op; }
+	RenderOP getRenderOP() { return _op; }
 };
 

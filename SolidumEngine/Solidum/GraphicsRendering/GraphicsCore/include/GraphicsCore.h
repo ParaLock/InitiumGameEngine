@@ -42,7 +42,9 @@ public:
 
 	void RenderAll();
 
-	void onEvent(IEvent* evt);
+	void Render(RenderOP renderOP);
+
+	void onEvent(EVENT_PTR evt);
 
 	void attachPrimaryCamera(camera* cam);
 

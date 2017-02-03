@@ -11,14 +11,21 @@ TextureSamplerManager::~TextureSamplerManager()
 {
 }
 
-IResource* TextureSamplerManager::createResource(IResourceBuilder * builder, std::string name)
+IResource* TextureSamplerManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
 {
 	IResource* newResource = nullptr;
 
 	switch (ActiveGraphicsAPI::getCurrentAPI()) {
 	case SUPPORTED_GRAPHICS_API::DIRECTX11:
-		newResource = new dxTextureSampleState(builder);
+		newResource = new dxTextureSampleState();
 		break;
+	}
+
+	if (loadAsync) {
+		
+	}
+	else {
+		newResource->load(builder);
 	}
 
 	if (newResource != nullptr) {

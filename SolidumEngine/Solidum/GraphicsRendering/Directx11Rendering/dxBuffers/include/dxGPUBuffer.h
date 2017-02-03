@@ -9,8 +9,11 @@ class dxGPUBuffer : public GPUBuffer
 private:
 	ID3D11Buffer* bufferPtr;
 public:
-	dxGPUBuffer(IResourceBuilder *builder);
+	dxGPUBuffer();
 	~dxGPUBuffer();
+
+	void load(IResourceBuilder *builder);
+	void unload();
 
 	void Write(void *pSrc, size_t byteToWrite, size_t offset);
 	void Read(void *pDest, size_t byteToRead, size_t offset);

@@ -11,6 +11,8 @@
 #include "../../../ResourceFramework/include/ResourceManagerPool.h"
 #include "../../../ResourceFramework/include/IResource.h"
 
+#include "../../../EngineUtils/include/StringManipulation.h"
+
 class GPUPipelineBuilder : public IResourceBuilder {
 public:
 	LPCWSTR _filename;
@@ -91,7 +93,7 @@ protected:
 
 	ResourceManagerPool* _resManagerPool;
 
-	std::map<std::string, DynamicStruct*> *_uniformToBufferMap;
+	std::map<std::string, DynamicStruct*> *_constantBufferMemberNameMap;
 	std::map<std::string, GPUPipelineElement*> *_elementList;
 	std::list<GPUPipelineOP*> *_opList;
 
@@ -101,6 +103,9 @@ protected:
 public:
 	GPUPipeline();
 	~GPUPipeline();
+
+	virtual void load(IResourceBuilder* builder);
+	virtual void unload();
 
 	void reset();
 
@@ -118,6 +123,6 @@ public:
 	virtual void applyState() = 0;
 	virtual void executePass(int numIndices) = 0;
 
-	std::map<std::string, DynamicStruct*>* getVarToBuffMap() { return _uniformToBufferMap; };
+	std::map<std::string, DynamicStruct*>* getVarToBuffMap() { return _constantBufferMemberNameMap; };
 };
 

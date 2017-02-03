@@ -33,14 +33,13 @@ void MoveComponent::update()
 	}
 }
 
-void MoveComponent::onEvent(IEvent * evt)
+void MoveComponent::onEvent(EVENT_PTR evt)
 {
-
-	switch (evt->getType())
+	switch (evt.get()->getEvent<InputEvent>()->getType())
 	{
 	case EVENT_TYPE::INPUT_EVENT: {
-		auto mousePos = evt->getEvent<InputEvent>()->getMousePos();
-		auto keysPressed = evt->getEvent<InputEvent>()->getPressedKeys();
+		auto mousePos = evt.get()->getEvent<InputEvent>()->getMousePos();
+		auto keysPressed = evt.get()->getEvent<InputEvent>()->getPressedKeys();
 
 		for (auto itr = keysPressed.begin(); itr != keysPressed.end(); itr++) {
 			auto keyfuncItr = _keyFuncMap->find(*itr);

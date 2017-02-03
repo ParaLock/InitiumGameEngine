@@ -1,12 +1,22 @@
 #include "../include/Light.h"
 
-Light::Light(IResourceBuilder* builder)
+Light::Light()
 {
 }
 
 
 Light::~Light()
 {
+}
+
+void Light::load(IResourceBuilder * builder)
+{
+	isLoaded = true;
+}
+
+void Light::unload()
+{
+	isLoaded = false;
 }
 
 void Light::setDirection(Vector3f dir) {

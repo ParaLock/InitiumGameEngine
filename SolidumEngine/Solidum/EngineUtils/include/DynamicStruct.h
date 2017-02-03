@@ -4,7 +4,22 @@
 
 #include "../../ResourceFramework/include/IResource.h"
 
+#include "../../ResourceFramework/include/IResourceBuilder.h"
+
 #include "../../ResourceFramework/include/ResourceManagerPool.h"
+
+class DynamicStructBuilder : public IResourceBuilder {
+private:
+public:
+	std::string _name;
+	bool _hasGPUBuff;
+
+	DynamicStructBuilder(std::string name, bool hasGPUBuff) {
+		_name = name;
+		_hasGPUBuff = hasGPUBuff;
+	}
+
+};
 
 class DynamicStructMember {
 private:
@@ -42,8 +57,11 @@ private:
 	GPUBuffer* _GPUBuff = nullptr;
 
 public:
-	DynamicStruct(std::string name, bool hasGPUBuff);
+	DynamicStruct();
 	~DynamicStruct();
+
+	void load(IResourceBuilder* builder);
+	void unload();
 
 	void addVariable(std::string varName, size_t varSize);
 

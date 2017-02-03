@@ -1,6 +1,14 @@
 #include "../include/Material.h"
 
-Material::Material(IResourceBuilder* builder)
+Material::Material()
+{
+}
+
+Material::~Material()
+{
+}
+
+void Material::load(IResourceBuilder * builder)
 {
 	MaterialBuilder* realBuilder = static_cast<MaterialBuilder*>(builder);
 
@@ -8,10 +16,13 @@ Material::Material(IResourceBuilder* builder)
 	this->_specularPower = realBuilder->_specPower;
 	this->_specularColor = realBuilder->_specColor;
 	this->_ID = realBuilder->_ID;
+
+	isLoaded = true;
 }
 
-Material::~Material()
+void Material::unload()
 {
+	isLoaded = false;
 }
 
 void Material::attachMaterialTexture(Texture* tex, MATERIAL_TEX texType)

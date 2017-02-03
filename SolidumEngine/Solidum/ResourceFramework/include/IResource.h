@@ -1,13 +1,20 @@
 #pragma once
 #include "../../sysInclude.h"
 
+#include "IResourceBuilder.h"
+
 class IResource
 {
 private:
 protected:
+	volatile bool isLoaded = false;
 public:
 	IResource();
 	virtual ~IResource();
+
+	virtual void load(IResourceBuilder *builder) = 0;
+
+	virtual void unload() = 0;
 
 	template<typename T>
 	T* getCore() {

@@ -22,6 +22,8 @@
 
 #include <functional>
 
+#include <thread>
+
 #include <locale>
 #include <codecvt>
 
@@ -92,6 +94,10 @@ enum KEY_MAP {
 	LEFT,
 	RIGHT,
 };
+
+class IEvent;
+
+typedef std::shared_ptr<IEvent> EVENT_PTR;
 
 struct VERTEX { D3DXVECTOR3 Pos; D3DXVECTOR3 Normal; D3DXVECTOR2 TexCoords; };
 struct LIGHT_VERTEX { D3DXVECTOR3 position; D3DXVECTOR2 texture; };

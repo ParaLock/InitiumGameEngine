@@ -32,6 +32,9 @@ public:
 	ShaderInputLayout();
 	~ShaderInputLayout();
 
+	void load(IResourceBuilder* builder) { isLoaded = true; };
+	void unload() { isLoaded = false; };
+
 	virtual void addInput(int type, std::string name, UINT index, BYTE mask) = 0;
 
 	virtual void updateParameter(std::string varName, void *data) = 0;

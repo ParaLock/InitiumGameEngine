@@ -40,8 +40,11 @@ private:
 	std::map<MATERIAL_TEX, Texture*> _textures;
 
 public:
-	Material(IResourceBuilder* builder);
+	Material();
 	~Material();
+
+	void load(IResourceBuilder* builder);
+	void unload();
 
 	void attachMaterialTexture(Texture* tex, MATERIAL_TEX texType);
 
