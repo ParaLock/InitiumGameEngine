@@ -10,7 +10,7 @@ struct PixelInputType
 {
 	float4 position : SV_POSITION;
 	float2 tex : TEXCOORD;
-	float3 viewPosition : TEXCOORD1;
+	float3 viewPos : TEXCOORD1;
 };
 
 Texture2D colorTexture : register(t0);
@@ -20,87 +20,49 @@ Texture2D specularColorTexture : register(t3);
 
 SamplerState SampleTypePoint : register(s0);
 
-float4 calcLight(float intensity, float3 lightDirection, float3 normal, 
-		float3 lightColor) 
+float4 calcLight(BaseLightData light, MaterialData mat, CoreData coreData) 
 {						
-	float diffuseFactor = dot(normal, -lightDirection);
+	float diffuseFactor = dot(coreData.normal.xyz, -light.lightDirection);
 	
 	float4 diffuseColor = float4(0,0,0,0);
+	float4 specularColor = float4(0,0,0,0);
 	
 	if(diffuseFactor > 0) 
 	{
-		diffuseColor = float4(lightColor, 1.0) * intensity * diffuseFactor;
+		diffuseColor = float4(light.lightColor, 1.0) * light.intensity * diffuseFactor;
+		
+		float3 V = normalize(coreData.viewPos - coreData.worldPos);	
+		float3 R = reflect(normalize(normalize(light.lightDirection)), normalize(coreData.normal.xyz)); 
+	
+		specularColor = mat.specularIntensity * float4(light.lightColor, 1) 
+			* pow( saturate( dot( R, V ) ), mat.specularPower );
 	}
 	
-	return diffuseColor;
+	return diffuseColor + specularColor;
 }
 
-float4 calcDirectionalLight(float3 normal, float4 color, float4 lightColor, float3 lightDirection) 
+float4 calcPointLight(PointLightData light, MaterialData mat, CoreData core) 
 {
-	float3 lightDir;
-	float4 lightIntensity;
-	float4 outputColor;
+	light.baseLight.lightDirection = normalize(light.baseLight.lightDirection);
 
-	lightDir = normalize(-lightDirection);
-
-	lightIntensity = saturate(dot(normal, lightDir));
-
-	lightIntensity *= lightColor;
-
-	outputColor = color * lightIntensity;
-
-	return outputColor;
-}
-
-float4 calcPointLight(float3 LightDirection, float3 normal, float intensity, float4 lightColor, float range, 
-						float AttenConstant, float AttenLinear, float AttenExponent) 
-{
-	float3 lightDirection = LightDirection;
-
-	float distanceToPoint = length(lightDirection);
+	float4 finalColor = calcLight(light.baseLight, mat, core);
 	
-	if(distanceToPoint > range)
-		return float4(0,0,0,0);
-	
-	lightDirection = normalize(lightDirection);
-	
-	float4 finalColor = calcLight(intensity, lightDirection, normal.xyz, lightColor);
-	
-	float attenuation = AttenConstant +
-						AttenLinear * distanceToPoint +
-						AttenExponent * distanceToPoint * distanceToPoint + 
+	float attenuation = light.AttenConstant +
+						light.AttenLinear * light.distanceToPoint +
+						light.AttenExponent * light.distanceToPoint * light.distanceToPoint + 
 						0.0001;
 	
 	return finalColor / attenuation; 					
 }
 
-float4 calcSpecular(float3 normal, float4 specColor, float3 viewDirection, float3 lightDirection,
-	float3 worldPos, float specPower, float specIntensity) 
-{
-	float4 finalColor = float4(0,0,0,0);
-
-	float3 Normal = normalize(normal);
-	float3 ViewDirection = normalize(-viewDirection);
-	float3 LightDirection = normalize(lightDirection - worldPos);
-	
-	float3 V = ViewDirection;
-	
-	float3 R = reflect(Normal, LightDirection); 
-	
-	finalColor = specIntensity * specColor * pow( saturate( dot( R, V ) ), specPower );
-	
-	return finalColor;
-}
 
 PixelInputType Vshader(VertexInputType input)
 {
 	PixelInputType output;
 
-	float4 worldPos;
+	float4 worldPos = positionTexture[input.tex];
 	
-	worldPos = positionTexture[input.tex];
-	
-	output.viewPosition = cbuff_eyePos.xyz - worldPos.xyz;
+	output.viewPos = cbuff_eyePos.xyz - worldPos.xyz;
 	
 	input.position.w = 1.0f;
 	

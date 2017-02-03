@@ -115,8 +115,8 @@ public:
 		GPUPipelineElementParentShader parentShader, bool isOutput);
 
 
-	virtual void applyState();
-	virtual void executePass(int numIndices);
+	virtual void applyState() = 0;
+	virtual void executePass(int numIndices) = 0;
 
 	std::map<std::string, DynamicStruct*>* getVarToBuffMap() { return _uniformToBufferMap; };
 };

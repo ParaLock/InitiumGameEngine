@@ -14,19 +14,24 @@ float4 Pshader(PixelInputType input) : SV_TARGET
 
 	float4 finalColor = colors;
 	
-	float diffuseFactor = dot(normals.xyz, -cbuff_lightDirection);
-		
-	if(diffuseFactor > 0) 
-	{
-		if(worldPos.w > 0) 
-		{
-			finalColor += calcSpecular(normals.xyz, specuColor, input.viewPosition, cbuff_lightDirection, 
-				worldPos.xyz, worldPos.w, normals.w);
-		}
-		
-		finalColor += calcDirectionalLight(normals.xyz, colors, cbuff_lightColor, cbuff_lightDirection);	
+	BaseLightData light;
 	
-	}	
-		
+	light.intensity = cbuff_lightIntensity;
+	light.lightPos = cbuff_lightPos;
+	light.lightDirection = cbuff_lightDirection;
+	light.lightColor = cbuff_lightColor;
+	
+	MaterialData mat;
+	
+	mat.specularPower = worldPos.w;
+	mat.specularIntensity = normals.w;
+	CoreData core;
+	
+	core.viewPos = input.viewPos;
+	core.worldPos = worldPos.xyz;
+	core.normal = normals.xyz;
+
+	finalColor += calcLight(light, mat, core);
+	
 	return finalColor;
 }

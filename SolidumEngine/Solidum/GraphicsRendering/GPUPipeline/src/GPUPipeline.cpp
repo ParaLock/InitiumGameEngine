@@ -102,15 +102,3 @@ void GPUPipeline::attachResource(IResource* res, std::string name, GPUPipelineEl
 
 	_elementList->insert({ name, newElement });
 }
-
-
-void GPUPipeline::applyState()
-{
-	std::cout << "NO API SPECIFIC PIPELINE BOUND";
-}
-
-void GPUPipeline::executePass(int numIndices)
-{
-	std::cout << "NO API SPECIFIC PIPELINE BOUND";
-}
-

@@ -27,3 +27,36 @@ cbuffer LightBuffer
 	float cbuff_pointLightRange;
 	float3 padding2;
 };
+
+struct CoreData 
+{
+	float3 viewPos;
+	float3 worldPos;
+	float3 normal;
+};
+
+struct MaterialData 
+{
+	float specularPower;
+	float specularIntensity;
+};
+
+struct BaseLightData 
+{
+	float intensity;
+	float3 lightPos;
+	float3 lightDirection;
+	float3 lightColor;
+};
+
+struct PointLightData 
+{
+	BaseLightData baseLight;
+
+	float distanceToPoint;
+	
+	float AttenConstant;
+	float AttenLinear;
+	float AttenExponent;
+};
+

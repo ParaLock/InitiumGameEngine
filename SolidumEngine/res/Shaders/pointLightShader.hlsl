@@ -11,28 +11,42 @@ float4 Pshader(PixelInputType input) : SV_TARGET
 	normals = normalTexture.Sample(SampleTypePoint, input.tex);
 	worldPos = positionTexture.Sample(SampleTypePoint, input.tex);
 	specuColor = specularColorTexture.Sample(SampleTypePoint, input.tex);
-
+	
 	float4 finalColor = colors;
-		
+	
 	float3 LightDirection = worldPos.xyz - cbuff_lightPos;
+	float distanceToPoint = length(LightDirection);
 	
-	float diffuseFactor = dot(normals.xyz, -LightDirection);
-	
-	if(diffuseFactor > 0) 
-	{
-		if(worldPos.w > 0) 
-		{
-		
-			finalColor += calcSpecular(normals.xyz, specuColor, input.viewPosition, LightDirection, 
-					worldPos.xyz, worldPos.w, normals.w);
-		}
+	if(distanceToPoint > cbuff_pointLightRange)
+		return float4(0,0,0,0);
 			
-		finalColor += calcPointLight(LightDirection, normals.xyz, cbuff_lightIntensity, cbuff_lightColor, cbuff_pointLightRange, 
-							cbuff_pointLightConstant, 
-							cbuff_pointLightLinear, 
-							cbuff_pointLightExponent);
-	}
+	LightDirection = normalize(LightDirection);		
 	
-
+	PointLightData pointLight;
+	
+	pointLight.distanceToPoint = distanceToPoint;
+	
+	pointLight.AttenConstant = cbuff_pointLightConstant;
+	pointLight.AttenLinear = cbuff_pointLightLinear;
+	pointLight.AttenExponent = cbuff_pointLightExponent;
+	
+	pointLight.baseLight.intensity = cbuff_lightIntensity;
+	pointLight.baseLight.lightPos = cbuff_lightPos;
+	pointLight.baseLight.lightDirection = LightDirection;
+	pointLight.baseLight.lightColor = cbuff_lightColor;
+	
+	MaterialData mat;
+	
+	mat.specularPower = worldPos.w;
+	mat.specularIntensity = normals.w;
+	
+	CoreData core;
+	
+	core.viewPos = input.viewPos;
+	core.worldPos = worldPos.xyz;
+	core.normal = normals.xyz;
+	
+	finalColor += calcPointLight(pointLight, mat, core);
+	
 	return finalColor;
 }

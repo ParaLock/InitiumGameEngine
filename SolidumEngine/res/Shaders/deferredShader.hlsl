@@ -41,7 +41,7 @@ PixelInputType Vshader(VertexInputType input)
 
 	output.tex = input.tex;
 
-	output.normal = normalize(mul(input.normal, (float3x3)cbuff_worldMatrix));
+	output.normal = mul(input.normal, FinalworldMatrix);
 	
 	return output;
 }

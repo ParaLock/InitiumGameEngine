@@ -82,10 +82,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		(L"./res/Shaders/pointLightShader.hlsl", resManagerPool), "point_light_shader")->getCore<Shader>();
 
 	Material* metalMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(&MaterialBuilder
-		(0, 0.5f, 0.0f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f)), "metalMaterial")->getCore<Material>();
+		(0, 5.5f, 20.0f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f)), "metalMaterial")->getCore<Material>();
 
 	Material* woodMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(&MaterialBuilder
-		(1, 0.0f, 0.0f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f)), "woodMaterial")->getCore<Material>();
+		(1, 0.002f, 0.002f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f)), "woodMaterial")->getCore<Material>();
 
 	Light* dirLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
 		(), "dirLight1")->getCore<Light>();
@@ -121,7 +121,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	pointLightShader->attachPipeline(deferredLightingPipeline);
 
 
-	dirLight1->setColor(Vector4f(0.5f, 1.5f, 0.5f, 0.5f));
+	dirLight1->setColor(Vector4f(1.5f, 2.5f, 1.5f, 1.5f));
 	dirLight1->setDirection(Vector3f(0.0f, 0.0f, 9.0f));
 	dirLight1->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
 	dirLight1->setIntensity(0.0f);
@@ -135,7 +135,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	pointLight1->setAttenuationExponent(1);
 	pointLight1->setAttenuationConstant(0);
 
-	pointLight1->setRange(20.5f);
+	pointLight1->setRange(60.5f);
 
 	pointLight2->setColor(Vector4f(0.5f, 0.5f, 2.5f, 0.5f));
 	pointLight2->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
@@ -146,7 +146,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	pointLight2->setAttenuationExponent(1);
 	pointLight2->setAttenuationConstant(0);
 
-	pointLight2->setRange(20.5f);
+	pointLight2->setRange(60.5f);
 
 	pointLight3->setColor(Vector4f(2.5f, 0.5f, 0.5f, 0.5f));
 	pointLight3->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
@@ -157,7 +157,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	pointLight3->setAttenuationExponent(1);
 	pointLight3->setAttenuationConstant(0);
 
-	pointLight3->setRange(20.5f);
+	pointLight3->setRange(60.5f);
 
 	pointLight1->attachShader(pointLightShader);
 	pointLight2->attachShader(pointLightShader);
@@ -185,7 +185,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	Entity* dirLightEntity = new Entity();
 
-	dirLightEntity->addComponent(new LightComponent(dirLight1));
+	//dirLightEntity->addComponent(new LightComponent(dirLight1));
 
 	Entity* pointLight1Entity = new Entity();
 
@@ -211,6 +211,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	hammer->addChild(pointLight1Entity);
 	hammer->addChild(cube);
 
+	ROOT_ENTITY->addChild(hammer);
+	ROOT_ENTITY->addChild(plane);
+	ROOT_ENTITY->addChild(pointLight2Entity);
+	ROOT_ENTITY->addChild(pointLight3Entity);
+	//ROOT_ENTITY->addChild(dirLightEntity);
+
 	while (myWindow->running) {
 
 		myWindow->pollWin32Events();
@@ -224,14 +230,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		myCam->Update();
 
-		hammer->update();
-
-		cube->update();
-		plane->update();
-
-		pointLight1Entity->update();
-		pointLight2Entity->update();
-		pointLight3Entity->update();
+		ROOT_ENTITY->update();
 
 		solidum->getGraphicsSubsystem()->RenderAll();
 
