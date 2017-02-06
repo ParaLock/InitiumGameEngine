@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Solidum\ThreadingFramework\include\SolidumThreadManager.h" />
-    <ClInclude Include="Solidum\ThreadingFramework\include\SolidumThreadPool.h" />
-    <ClInclude Include="Solidum\ThreadingFramework\include\SolidumThread.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderProcess\include\RenderProcessManager.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderDataStream\include\RenderDataBatch.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderDataStream\include\RenderDataStream.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderProcess\include\RenderPass.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\Component.h" />
     <ClInclude Include="Solidum\EntityFramework\Entity\include\IEntity.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\RenderOP\include\RenderOP.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\LightComponent.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\MeshComponent.h" />
     <ClInclude Include="Solidum\EventFramework\include\EventHub.h" />
@@ -53,7 +53,6 @@
     <ClInclude Include="Solidum\ResourceFramework\include\IResourceManager.h" />
     <ClInclude Include="Solidum\ResourceFramework\include\IResource.h" />
     <ClInclude Include="Solidum\GraphicsRendering\ActiveGraphicsAPI.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\RenderQueue\include\RenderQueue.h" />
     <ClInclude Include="Solidum\EngineCore\include\EngineInstance.h" />
     <ClInclude Include="Solidum\EngineUtils\include\Vector2f.h" />
     <ClInclude Include="Solidum\EngineUtils\include\Vector3f.h" />
@@ -98,14 +97,15 @@
     <ClInclude Include="Solidum\WorldSimulation\include\WorldNode.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldManager.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldCell.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderProcess\include\RenderProcess.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Solidum\ThreadingFramework\src\SolidumThreadManager.cpp" />
-    <ClCompile Include="Solidum\ThreadingFramework\src\SolidumThreadPool.cpp" />
-    <ClCompile Include="Solidum\ThreadingFramework\src\SolidumThread.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderProcess\src\RenderProcessManager.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderDataStream\src\RenderDataBatch.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderDataStream\src\RenderDataStream.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderProcess\src\RenderPass.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\Component.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Entity\src\IEntity.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\RenderOP\src\RenderOP.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\LightComponent.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\MeshComponent.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\EventHub.cpp" />
@@ -134,7 +134,6 @@
     <ClCompile Include="Solidum\ResourceFramework\src\IResourceBuilder.cpp" />
     <ClCompile Include="Solidum\ResourceFramework\src\IResourceManager.cpp" />
     <ClCompile Include="Solidum\ResourceFramework\src\IResource.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\RenderQueue\src\RenderQueue.cpp" />
     <ClCompile Include="Solidum\EngineCore\src\EngineInstance.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Material\src\Material.cpp" />
     <ClCompile Include="Solidum\EngineUtils\src\MiscHelperFunctions.cpp" />
@@ -173,6 +172,7 @@
     <ClCompile Include="Solidum\WorldSimulation\src\WorldNode.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldManager.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldCell.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderProcess\src\RenderProcess.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{936972AA-1079-49FC-BABD-6CCFB9EE4B9A}</ProjectGuid>

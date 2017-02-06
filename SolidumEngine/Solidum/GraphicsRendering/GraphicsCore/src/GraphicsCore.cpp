@@ -6,7 +6,6 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 
 	EventFrameworkCore::getInstance()->getGlobalEventHub("ComponentEventHub")->subscribeListener(this);
 
-	_renderQueue = new RenderQueue();
 	_primaryCamera = new camera(0.1f, 1000.0f);
 	_resManagerPool = resManagerPool;
 
@@ -25,7 +24,7 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 		dxDeviceAccessor::initAccessor(_dxManager);
 
 		RenderTarget* frameBufferRT = new dxRenderTarget(
-			dxDeviceAccessor::dxEncapsulator->getFrameBufferRenderTarget(), 
+			dxDeviceAccessor::dxEncapsulator->getFrameBufferRenderTarget(),
 			dxDeviceAccessor::dxEncapsulator->getFrameBufferTexture());
 
 		resManagerPool->getResourceManager("RenderTargetManager")->addResource(frameBufferRT, "framebuffer");
@@ -37,60 +36,28 @@ GraphicsCore::~GraphicsCore()
 {
 	if (_dxManager != nullptr)
 		delete _dxManager;
-	if (_renderQueue != nullptr)
-		delete _renderQueue;
 }
 
 void GraphicsCore::RenderAll()
 {
-	using std::placeholders::_1;
+	std::map<std::string, IResource*> *allActiveRenderProcesses = _resManagerPool->
+		getResourceManager("RenderProcessManager")->getResourceMap();
 
-	std::function<void(RenderOP)> callback = std::bind(&GraphicsCore::Render, this, _1);
+	for (auto itr = allActiveRenderProcesses->begin(); itr != allActiveRenderProcesses->end(); itr++) {
 
-	_renderQueue->processQueuedItems(callback);
-}
+		if (itr->second->getLoadStatus()) {
+			RenderProcess* rendProc = itr->second->getCore<RenderProcess>();
 
-void GraphicsCore::Render(RenderOP renderOP)
-{
-	RenderOP op = renderOP;
+			std::list<RenderDataStream*>* streams = rendProc->getRegisteredStreams();
 
-	op.setCamera(_primaryCamera);
+			for (auto streamItr = streams->begin(); streamItr != streams->end(); streamItr++) {
 
-	if (op.getShader() != nullptr) {
-		Shader* shader = op.getShader();
+				RenderDataStream* stream = *streamItr;
 
-		if (op.getLight() != nullptr) {
-
-			shader->updateLightUniforms(op.getLight());
-
-			if (op.getCamera() != nullptr)
-				shader->updateCameraUniforms(op.getCamera());
-
-			shader->updateGPU();
-			shader->execute(6);
-		}
-		else if (op.getMesh() != nullptr) {
-
-			if (op.getMesh() != nullptr) {
-				shader->setMesh(op.getMesh());
-
-				if (op.getTransform() != nullptr)
-					shader->updateModelUniforms(op.getTransform());
+				stream->insertData((IResource*)_primaryCamera, STREAM_DATA_TYPE::CAMERA);
 			}
 
-			if (op.getTexture() != nullptr)
-				shader->setModelTexture(op.getTexture());
-
-			if (op.getMaterial() != nullptr)
-				shader->updateMaterialUniforms(op.getMaterial());
-
-			if (op.getCamera() != nullptr)
-				shader->updateCameraUniforms(op.getCamera());
-
-
-
-			shader->updateGPU();
-			shader->execute(op.getMesh()->numIndices);
+			rendProc->execute();
 		}
 	}
 }
@@ -98,13 +65,17 @@ void GraphicsCore::Render(RenderOP renderOP)
 void GraphicsCore::onEvent(EVENT_PTR evt)
 {
 	RenderEvent* renderEvt;
+	RenderProcess *rendProc;
 
 	switch (evt.get()->getType())
 	{
-		case EVENT_TYPE::RENDER_EVENT_QUEUE_OP:
-			renderEvt = evt.get()->getEvent<RenderEvent>();
+		case EVENT_TYPE::RENDER_EVENT_REGISTER_STREAM:
+			renderEvt = evt->getEvent<RenderEvent>();
 
-			_renderQueue->queueRenderOP(renderEvt->getRenderOP());
+			rendProc = _resManagerPool->getResourceManager("RenderProcessManager")->
+				getResource(renderEvt->getRendProcID())->getCore<RenderProcess>();
+
+			rendProc->registerDataStream(renderEvt->getStream());
 
 			break;
 	default:
@@ -116,4 +87,3 @@ void GraphicsCore::attachPrimaryCamera(camera* cam)
 {
 	_primaryCamera = cam;
 }
-

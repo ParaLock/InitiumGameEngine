@@ -4,8 +4,6 @@
 
 #include "../../../EventFramework/include/RenderEvent.h"
 
-#include "../../../GraphicsRendering/RenderOP/include/RenderOP.h"
-
 #include "IComponent.h"
 
 #include "../../Entity/include/IEntity.h"

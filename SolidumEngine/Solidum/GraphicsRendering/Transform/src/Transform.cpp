@@ -9,11 +9,14 @@ Transform::Transform()
 	_pos._x = 0;
 	_pos._y = 0;
 	_pos._z = 0;
+
+	isLoaded = true;
 }
 
 
 Transform::~Transform()
 {
+	isLoaded = false;
 }
 
 void Transform::setRotation(float angleOfRot, std::string direction) {

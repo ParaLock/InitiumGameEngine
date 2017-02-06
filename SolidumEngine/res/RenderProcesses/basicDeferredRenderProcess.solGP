@@ -1,0 +1,8 @@
+RENDER_PROCESS textured_single_material_mesh_render_deferred
+
+	PASS geo_pass1
+		SHADER deferred_geometry_shader
+		PIPELINE deferred_geometry_pipeline_state
+	END_PASS
+	
+RENDER_PROCESS_END

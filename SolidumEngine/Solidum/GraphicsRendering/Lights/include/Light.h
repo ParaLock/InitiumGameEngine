@@ -8,8 +8,6 @@
 
 #include "../../../ResourceFramework/include/IResourceBuilder.h"
 
-#include "../../Shaders/include/Shader.h"
-
 #include "ILight.h"
 
 class LightBuilder : public IResourceBuilder {

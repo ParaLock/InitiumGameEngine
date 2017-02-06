@@ -2,12 +2,21 @@
 
 
 
-LightComponent::LightComponent(ILight* light)
+LightComponent::LightComponent(Light* light, mesh* mesh, std::string renderProcessName)
 {
-	_op.setLight(light);
-	_op.setShader(light->getShader());
-
 	_parentTransformDirty = true;
+
+	_light = light;
+	_mesh = mesh;
+
+	_graphicsStream = new RenderDataStream();
+
+	EVENT_PTR regEvt = std::make_shared<RenderEvent>(EVENT_TYPE::RENDER_EVENT_REGISTER_STREAM);
+	
+	regEvt->getEvent<RenderEvent>()->setData(_graphicsStream, renderProcessName);
+
+	EventFrameworkCore::getInstance()->
+		getGlobalEventHub("ComponentEventHub")->publishEvent(regEvt);
 }
 
 
@@ -21,19 +30,16 @@ void LightComponent::update()
 
 		if (_parentTransformDirty) {
 			_parentTransformDirty = false;
-			_parent->getTransform()->setPos(_op.getLight()->getPosition());
+			_parent->getTransform()->setPos(_light->getPosition());
 		}
 
-		_op.getLight()->setPosition(_parent->getTransform()->getPos());
+		_light->setPosition(_parent->getTransform()->getPos());
 	}
 
-
-	EVENT_PTR renderEvt = std::make_shared<RenderEvent>(EVENT_TYPE::RENDER_EVENT_QUEUE_OP);
-
-	renderEvt.get()->getEvent<RenderEvent>()->setRenderOP(_op);
-
-	EventFrameworkCore::getInstance()->
-		getGlobalEventHub("ComponentEventHub")->publishEvent(renderEvt);
+	_graphicsStream->insertData((IResource*)_light, STREAM_DATA_TYPE::LIGHT);
+	_graphicsStream->insertData((IResource*)_parent->getTransform(), STREAM_DATA_TYPE::TRANSFORM);
+	_graphicsStream->insertData((IResource*)_mesh, STREAM_DATA_TYPE::MESH);
+	
 }
 
 void LightComponent::onEvent(EVENT_PTR evt)

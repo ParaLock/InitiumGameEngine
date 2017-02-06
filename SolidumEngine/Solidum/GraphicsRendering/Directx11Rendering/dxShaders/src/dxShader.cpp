@@ -103,12 +103,15 @@ void dxShader::unload()
 
 void dxShader::attachPipeline(GPUPipeline* pipe)
 {
-	_pipelineState = pipe;
+	if (pipe != _pipelineState) {
 
-	enumerateResources(GPUPipelineElementParentShader::SOL_VS, vertexShaderCode);
-	enumerateResources(GPUPipelineElementParentShader::SOL_PS, pixelShaderCode);
-	
-	_constantBufferMemberNameMap = _pipelineState->getVarToBuffMap();
+		_pipelineState = pipe;
+
+		enumerateResources(GPUPipelineElementParentShader::SOL_VS, vertexShaderCode);
+		enumerateResources(GPUPipelineElementParentShader::SOL_PS, pixelShaderCode);
+
+		_constantBufferMemberNameMap = _pipelineState->getVarToBuffMap();
+	}
 }
 
 void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3D10Blob *shaderCode)

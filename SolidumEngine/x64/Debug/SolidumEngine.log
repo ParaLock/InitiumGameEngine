@@ -1,4 +1,11 @@
-﻿  main.cpp
-c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\main.cpp(26): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(240): note: see declaration of 'freopen'
+﻿  Transform.cpp
+  RenderPass.cpp
+  camera.cpp
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(109): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(246): warning C4018: '>=': signed/unsigned mismatch
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(252): warning C4018: '>=': signed/unsigned mismatch
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(258): warning C4018: '>=': signed/unsigned mismatch
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(263): warning C4244: '=': conversion from 'unsigned long' to 'float', possible loss of data
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(264): warning C4244: '=': conversion from 'unsigned long' to 'float', possible loss of data
+  Generating Code...
   SolidumEngine.vcxproj -> C:\Users\natha\Documents\Visual Studio 2015\Projects\SolidumEngine\x64\Debug\SolidumEngine.exe

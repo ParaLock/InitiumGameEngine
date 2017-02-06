@@ -52,7 +52,6 @@
     <ClInclude Include="Solidum\GraphicsRendering\Mesh\include\meshLoader.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Mesh\include\meshLoaderOBJ.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Mesh\include\meshManager.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\RenderQueue\include\RenderQueue.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderTarget\include\RenderTarget.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderTarget\include\RenderTargetManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\Shader.h" />
@@ -73,13 +72,14 @@
     <ClInclude Include="Solidum\EventFramework\include\EventHub.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\MeshComponent.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\LightComponent.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\RenderOP\include\RenderOP.h" />
     <ClInclude Include="Solidum\EntityFramework\Entity\include\IEntity.h" />
     <ClInclude Include="Solidum\EntityFramework\Entity\include\Entity.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\Component.h" />
-    <ClInclude Include="Solidum\ThreadingFramework\include\SolidumThread.h" />
-    <ClInclude Include="Solidum\ThreadingFramework\include\SolidumThreadPool.h" />
-    <ClInclude Include="Solidum\ThreadingFramework\include\SolidumThreadManager.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderDataStream\include\RenderDataStream.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderDataStream\include\RenderDataBatch.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderProcess\include\RenderPass.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderProcess\include\RenderProcess.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderProcess\include\RenderProcessManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -127,7 +127,6 @@
     <ClCompile Include="Solidum\GraphicsRendering\Mesh\src\meshLoader.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Mesh\src\meshLoaderOBJ.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Mesh\src\meshManager.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\RenderQueue\src\RenderQueue.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderTarget\src\RenderTarget.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderTarget\src\RenderTargetManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\Shader.cpp" />
@@ -149,11 +148,12 @@
     <ClCompile Include="Solidum\EventFramework\src\EventHub.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\MeshComponent.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\LightComponent.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\RenderOP\src\RenderOP.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Entity\src\IEntity.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\Component.cpp" />
-    <ClCompile Include="Solidum\ThreadingFramework\src\SolidumThread.cpp" />
-    <ClCompile Include="Solidum\ThreadingFramework\src\SolidumThreadPool.cpp" />
-    <ClCompile Include="Solidum\ThreadingFramework\src\SolidumThreadManager.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderDataStream\src\RenderDataStream.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderDataStream\src\RenderDataBatch.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderProcess\src\RenderPass.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderProcess\src\RenderProcess.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderProcess\src\RenderProcessManager.cpp" />
   </ItemGroup>
 </Project>

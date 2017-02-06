@@ -1,7 +1,11 @@
 #pragma once
 #include "../../../sysInclude.h"
 
-class Transform
+#include "../../../ResourceFramework/include/IResource.h"
+
+#include "../../../ResourceFramework/include/IResourceBuilder.h"
+
+class Transform : public IResource
 {
 private:
 	Vector3f _pos;
@@ -11,6 +15,9 @@ private:
 public:
 	Transform();
 	~Transform();
+
+	void load(IResourceBuilder* builder) { isLoaded = true; };
+	void unload() { isLoaded = false; };
 
 	void setRotation(float angleOfRot, std::string direction);
 	void setPos(Vector3f pos);

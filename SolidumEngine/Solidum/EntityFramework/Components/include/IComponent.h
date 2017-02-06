@@ -6,8 +6,6 @@
 
 #include "../../../EventFramework/include/RenderEvent.h"
 
-#include "../../../GraphicsRendering/RenderOP/include/RenderOP.h"
-
 #include "../../Entity/include/IEntity.h"
 
 enum COMPONENT_TYPE {

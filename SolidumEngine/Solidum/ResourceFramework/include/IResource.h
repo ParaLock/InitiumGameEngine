@@ -16,18 +16,20 @@ public:
 
 	virtual void unload() = 0;
 
+	bool getLoadStatus() { return isLoaded; };
+
 	template<typename T>
 	T* getCore() {
-
-		int debugPoint = -1;
 
 		if (dynamic_cast<T*>(this) != NULL) {
 			return dynamic_cast<T*>(this);
 		}
 		else {
-			std::cout << "Resource Cast To Core Type failed!" << " " << "RESOURCE NAME:" << std::endl;
+			std::cout << "Resource Cast To Core Type failed!" << " " << "RESOURCE TYPE:" << typeid(T).name() << std::endl;
 		
-			return nullptr;
+			throw "BAD CAST";
+
+			//return nullptr;
 		}
 	}
 };

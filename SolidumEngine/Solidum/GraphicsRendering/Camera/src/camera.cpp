@@ -44,10 +44,13 @@ camera::camera(float near_value, float far_value):
 
 	setCamStartView();
 
+	isLoaded = true;
+
 }
 
 camera::~camera()
 {
+	isLoaded = false;
 }
 
 void camera::onEvent(EVENT_PTR evt)

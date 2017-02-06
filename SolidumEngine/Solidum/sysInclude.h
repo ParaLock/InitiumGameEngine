@@ -85,6 +85,16 @@ enum BUFFER_CPU_ACCESS {
 	CPU_ACCESS_READWRITE
 };
 
+
+enum STREAM_DATA_TYPE {
+	TEXTURE,
+	MESH,
+	TRANSFORM,
+	MATERIAL,
+	LIGHT,
+	CAMERA
+};
+
 enum KEY_MAP {
 	Q, W, E, R, T, Y, U, I, O, P, A,
 	S, D, F, G, H, J, K, L, z, X, V,

@@ -6,6 +6,8 @@
 #include "../../Window/include/windowAccessor.h"
 #include "Timer.h"
 
+#include "../../../ResourceFramework/include/IResource.h"
+
 #include "../../../EventFramework/include/IEventListener.h"
 #include "../../../EventFramework/include/IEventPublisher.h"
 
@@ -17,13 +19,18 @@
 #define DEG_TO_RAD 0.01745329251994329576923690768489
 #define M_PI    3.14159265358979323846264338327950288
 
-class camera : public IEventListener, public IEventPublisher
+class IResourceBuilder;
+
+class camera : public IEventListener, public IEventPublisher, public IResource
 {
 private:
 	float heading, pitch;
 
 	void adjustHeadingPitch(float hRad, float pRad);
 	void UpdateView();
+
+	void load(IResourceBuilder* builder) { isLoaded = true; };
+	void unload() { isLoaded = false; };
 
 	D3DXMATRIX matRotate, matView, matProjection, orthoMatrix, startCamView, worldMatrix;
 	D3DXMATRIX transposedMatView, transposedMatProjection, transposedOrthoMatrix, transposedWorldMatrix, transposedStartCamView;
