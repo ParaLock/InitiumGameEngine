@@ -43,9 +43,12 @@ void GraphicsCore::RenderAll()
 	std::map<std::string, IResource*> *allActiveRenderProcesses = _resManagerPool->
 		getResourceManager("RenderProcessManager")->getResourceMap();
 
+	std::list<RenderProcess*> deferredProcesses;
+
 	for (auto itr = allActiveRenderProcesses->begin(); itr != allActiveRenderProcesses->end(); itr++) {
 
 		if (itr->second->getLoadStatus()) {
+
 			RenderProcess* rendProc = itr->second->getCore<RenderProcess>();
 
 			std::list<RenderDataStream*>* streams = rendProc->getRegisteredStreams();
@@ -57,8 +60,19 @@ void GraphicsCore::RenderAll()
 				stream->insertData((IResource*)_primaryCamera, STREAM_DATA_TYPE::CAMERA);
 			}
 
+			if (rendProc->getDeferredFlag()) {
+
+				deferredProcesses.push_back(rendProc); continue;
+			}	
+
 			rendProc->execute();
 		}
+	}
+
+	for (auto defProcItr = deferredProcesses.begin(); defProcItr != deferredProcesses.end(); defProcItr++) {
+		RenderProcess* defRendProc = *defProcItr;
+
+		defRendProc->execute();
 	}
 }
 

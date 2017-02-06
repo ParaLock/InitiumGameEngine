@@ -37,6 +37,8 @@ private:
 
 	ResourceManagerPool* _resManagerPool;
 
+	bool isDeferred = false;
+
 public:
 	RenderProcess();
 	~RenderProcess();
@@ -45,6 +47,10 @@ public:
 	void unload();
 
 	void registerDataStream(RenderDataStream* stream);
+
+	void setDeferredFlag(bool deferred) { isDeferred = deferred; };
+
+	bool getDeferredFlag() { return isDeferred; }
 
 	std::list<RenderDataStream*>* getRegisteredStreams() { return _registeredStreams; }
 

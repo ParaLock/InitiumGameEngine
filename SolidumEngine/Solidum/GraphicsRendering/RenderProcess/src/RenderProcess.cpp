@@ -52,7 +52,24 @@ void RenderProcess::load(IResourceBuilder * builder)
 	{
 		std::vector<std::string> tokens = StringManipulation::split(line->at(i), ' ');
 	
+		if (tokens.at(0) == "RENDER_PROCESS") {
+			if (tokens.size() < 3) {
+
+				isDeferred = false;
+			}
+			else {
+
+				if (tokens.at(1) == "[DEFERRED]") {
+
+					isDeferred = true;
+
+					currentPass.setName(tokens.at(2));
+				}
+			}
+		}
+
 		if (tokens.at(0) == "PASS") {
+
 			currentPass.setName(tokens.at(1));
 		}
 

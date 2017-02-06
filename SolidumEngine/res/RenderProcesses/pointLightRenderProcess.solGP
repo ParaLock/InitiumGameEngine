@@ -1,5 +1,5 @@
-RENDER_PROCESS point_light_render_deferred
-
+RENDER_PROCESS [DEFERRED] point_light_render_deferred
+	
 	PASS light_pass1
 		SHADER point_light_shader
 		PIPELINE deferred_lighting_pipeline_state

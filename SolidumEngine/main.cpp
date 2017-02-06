@@ -51,6 +51,18 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	GPUPipeline* deferredLightingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
 		(L"./res/Pipelines/deferredLightingPipeline.solPipe", resManagerPool), "deferred_lighting_pipeline_state", false)->getCore<GPUPipeline>();
 
+	Light* dirLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
+		(), "dirLight1", false)->getCore<Light>();
+
+	Light* pointLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
+		(), "pointLight1", false)->getCore<Light>();
+
+	Light* pointLight2 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
+		(), "pointLight2", false)->getCore<Light>();
+
+	Light* pointLight3 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
+		(), "pointLight3", false)->getCore<Light>();
+
 	mesh* hammerMesh = resManagerPool->getResourceManager("meshManager")->createResource(&meshBuilder
 		(L"./res/Meshes/hammer2.obj", resManagerPool), "hammer_mesh", false)->getCore<mesh>();
 
@@ -90,23 +102,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Material* woodMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(&MaterialBuilder
 		(1, 0.002f, 0.002f, Vector4f(1.0f, 1.0f, 1.0f, 1.0f)), "woodMaterial", false)->getCore<Material>();
 
-	Light* dirLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
-		(), "dirLight1", false)->getCore<Light>();
-
-	Light* pointLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
-		(), "pointLight1", false)->getCore<Light>();
-
-	Light* pointLight2 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
-		(), "pointLight2", false)->getCore<Light>();
-
-	Light* pointLight3 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
-		(), "pointLight3", false)->getCore<Light>();
+	RenderProcess* pointLightDeferredTechnique = resManagerPool->getResourceManager("RenderProcessManager")->createResource(&RenderProcessBuilder
+		(L"./res/RenderProcesses/pointLightRenderProcess.solGP", resManagerPool), "pointLightDeferredTechnique", false)->getCore<RenderProcess>();
 
 	RenderProcess* basicDeferredTechnique = resManagerPool->getResourceManager("RenderProcessManager")->createResource(&RenderProcessBuilder
 		(L"./res/RenderProcesses/basicDeferredRenderProcess.solGP", resManagerPool), "basicDeferredTechnique", false)->getCore<RenderProcess>();
-
-	RenderProcess* pointLightDeferredTechnique = resManagerPool->getResourceManager("RenderProcessManager")->createResource(&RenderProcessBuilder
-		(L"./res/RenderProcesses/pointLightRenderProcess.solGP", resManagerPool), "pointLightDeferredTechnique", false)->getCore<RenderProcess>();
 
 	KEY_FUNCTION_MAP* moveKeyConfig1 = new KEY_FUNCTION_MAP;
 	KEY_FUNCTION_MAP* moveKeyConfig2 = new KEY_FUNCTION_MAP;
@@ -177,21 +177,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	pointLightShader->setMesh(orthoMesh);
 	directionalLightShader->setMesh(orthoMesh);
 
-	Entity* hammer = new Entity();
-
-	hammer->addComponent(new MoveComponent(Vector3f(0, 0, 0), 0.5, true, moveKeyConfig1));
-	hammer->addComponent(new MeshComponent(hammerMesh, metalTex, metalMaterial, "basicDeferredTechnique"));
-
-	Entity* cube = new Entity();
-
-	cube->addComponent(new MoveComponent(Vector3f(0, 5.0f, -3.0f), 0.5, false, moveKeyConfig1));
-	cube->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, "basicDeferredTechnique"));
-
-	Entity* plane = new Entity();
-
-	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, moveKeyConfig1));
-	plane->addComponent(new MeshComponent(planeMesh, metalTex, metalMaterial, "basicDeferredTechnique"));
-
 	Entity* dirLightEntity = new Entity();
 
 	dirLightEntity->addComponent(new LightComponent(dirLight1, orthoMesh, "pointLightDeferredTechnique"));
@@ -212,6 +197,23 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	pointLight3Entity->addComponent(new MoveComponent(Vector3f(-0.2f, 0.01f, 8.0f), 0.5, false, moveKeyConfig1));
 	pointLight3Entity->addComponent(new LightComponent(pointLight3, orthoMesh, "pointLightDeferredTechnique"));
 
+	Entity* hammer = new Entity();
+
+	hammer->addComponent(new MoveComponent(Vector3f(0, 0, 0), 0.5, true, moveKeyConfig1));
+	hammer->addComponent(new MeshComponent(hammerMesh, metalTex, metalMaterial, "basicDeferredTechnique"));
+
+	Entity* cube = new Entity();
+
+	cube->addComponent(new MoveComponent(Vector3f(0, 5.0f, -3.0f), 0.5, false, moveKeyConfig1));
+	cube->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, "basicDeferredTechnique"));
+
+	Entity* plane = new Entity();
+
+	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, moveKeyConfig1));
+	plane->addComponent(new MeshComponent(planeMesh, metalTex, metalMaterial, "basicDeferredTechnique"));
+
+
+
 	camera* myCam = solidum->getGraphicsSubsystem()->getPrimaryCamera();
 
 	InputHandler* inputHandler = resManagerPool->getResourceManager("InputHandlerManager")->
@@ -220,10 +222,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	hammer->addChild(pointLight1Entity);
 	hammer->addChild(cube);
 
-	ROOT_ENTITY->addChild(hammer);
-	ROOT_ENTITY->addChild(plane);
 	ROOT_ENTITY->addChild(pointLight2Entity);
 	ROOT_ENTITY->addChild(pointLight3Entity);
+	ROOT_ENTITY->addChild(hammer);
+	ROOT_ENTITY->addChild(plane);
 	//ROOT_ENTITY->addChild(dirLightEntity);
 
 	while (myWindow->running) {

@@ -1,11 +1,2 @@
-﻿  Transform.cpp
-  RenderPass.cpp
-  camera.cpp
-c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(109): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(246): warning C4018: '>=': signed/unsigned mismatch
-c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(252): warning C4018: '>=': signed/unsigned mismatch
-c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(258): warning C4018: '>=': signed/unsigned mismatch
-c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(263): warning C4244: '=': conversion from 'unsigned long' to 'float', possible loss of data
-c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(264): warning C4244: '=': conversion from 'unsigned long' to 'float', possible loss of data
-  Generating Code...
+﻿  GraphicsCore.cpp
   SolidumEngine.vcxproj -> C:\Users\natha\Documents\Visual Studio 2015\Projects\SolidumEngine\x64\Debug\SolidumEngine.exe
