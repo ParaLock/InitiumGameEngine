@@ -3,17 +3,12 @@
   <ItemGroup>
     <ClInclude Include="Solidum\sysInclude.h" />
     <ClInclude Include="Solidum\EngineUtils\include\StringManipulation.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\Vector.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\Vector2f.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\Vector3f.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\Vector4f.h" />
     <ClInclude Include="Solidum\EngineCore\include\EngineInstance.h" />
     <ClInclude Include="Solidum\resourceManagerInclude.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\World.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldNode.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldManager.h" />
     <ClInclude Include="Solidum\EngineUtils\include\DynamicStruct.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\MiscHelperFunctions.h" />
     <ClInclude Include="Solidum\EventFramework\include\IEventListener.h" />
     <ClInclude Include="Solidum\EventFramework\include\IEventPublisher.h" />
     <ClInclude Include="Solidum\EventFramework\include\EventFrameworkCore.h" />
@@ -80,16 +75,20 @@
     <ClInclude Include="Solidum\GraphicsRendering\RenderProcess\include\RenderPass.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderProcess\include\RenderProcess.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderProcess\include\RenderProcessManager.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Vector4.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Vector2.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Vector3.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Matrix4x4.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Matrix3x3.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\MiscMath.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Quaternion.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Solidum\EngineUtils\src\StringManipulation.cpp" />
     <ClCompile Include="Solidum\EngineCore\src\EngineInstance.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\World.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldNode.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldManager.cpp" />
-    <ClCompile Include="Solidum\EngineUtils\src\DynamicStruct.cpp" />
-    <ClCompile Include="Solidum\EngineUtils\src\MiscHelperFunctions.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\IEventListener.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\IEventPublisher.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\EventFrameworkCore.cpp" />
@@ -155,5 +154,7 @@
     <ClCompile Include="Solidum\GraphicsRendering\RenderProcess\src\RenderPass.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderProcess\src\RenderProcess.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderProcess\src\RenderProcessManager.cpp" />
+    <ClCompile Include="Solidum\EngineUtils\src\DynamicStruct.cpp" />
+    <ClCompile Include="Solidum\EngineUtils\src\StringManipulation.cpp" />
   </ItemGroup>
 </Project>

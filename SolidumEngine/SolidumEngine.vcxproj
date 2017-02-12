@@ -19,6 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\EngineUtils\include\Matrix3x3.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Matrix4x4.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\MiscMath.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Quaternion.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Vector2.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Vector3.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Vector4.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderProcess\include\RenderProcessManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderDataStream\include\RenderDataBatch.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderDataStream\include\RenderDataStream.h" />
@@ -54,11 +61,7 @@
     <ClInclude Include="Solidum\ResourceFramework\include\IResource.h" />
     <ClInclude Include="Solidum\GraphicsRendering\ActiveGraphicsAPI.h" />
     <ClInclude Include="Solidum\EngineCore\include\EngineInstance.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\Vector2f.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\Vector3f.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\Vector4f.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Material\include\Material.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\MiscHelperFunctions.h" />
     <ClInclude Include="Solidum\EngineUtils\include\DynamicStruct.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\Shader.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderInputLayout.h" />
@@ -90,7 +93,6 @@
     <ClInclude Include="Solidum\EngineUtils\include\StringManipulation.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\Texture.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureSampler.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\Vector.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureSamplerManager.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\World.h" />
@@ -136,7 +138,6 @@
     <ClCompile Include="Solidum\ResourceFramework\src\IResource.cpp" />
     <ClCompile Include="Solidum\EngineCore\src\EngineInstance.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Material\src\Material.cpp" />
-    <ClCompile Include="Solidum\EngineUtils\src\MiscHelperFunctions.cpp" />
     <ClCompile Include="Solidum\EngineUtils\src\DynamicStruct.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\Shader.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderInputLayout.cpp" />

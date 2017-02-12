@@ -11,7 +11,7 @@
 #include "../../GraphicsRendering/Window/include/windowAccessor.h"
 
 
-class InputHandler : public IResource, public IEventPublisher
+class InputHandler : public IResource, public IEventPublisher, public IEventListener
 {
 public:
 	InputHandler();
@@ -22,6 +22,8 @@ public:
 
 	std::pair<unsigned long, unsigned long> getMousePos();
 	std::list<KEY_MAP> getPressedKeys();
+
+	void onEvent(EVENT_PTR evt);
 
 	void update();
 };

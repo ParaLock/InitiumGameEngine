@@ -4,8 +4,8 @@
 
 #include "../../../GraphicsRendering/Transform/include/Transform.h"
 
-#include "../../../EngineUtils/include/Vector2f.h"
-#include "../../../EngineUtils/include/Vector3f.h"
+#include "../../../EngineUtils/include/Vector2.h"
+#include "../../../EngineUtils/include/Vector3.h"
 
 #include "Component.h"
 

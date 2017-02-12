@@ -22,6 +22,10 @@ public:
 	virtual float getAttenuationLinear() = 0;
 	virtual float getAttenuationExponent() = 0;
 
-	virtual Shader* getShader() = 0;
+	virtual Matrix4f getViewMatrix() = 0;
+	virtual Matrix4f getProjectionMatrix() = 0;
+
+	virtual bool getIsShadowCaster() = 0;
+	virtual void setIsShadowCaster(bool isShaderCaster) = 0;
 };
 

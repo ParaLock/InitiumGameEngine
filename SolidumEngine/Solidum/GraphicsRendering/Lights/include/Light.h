@@ -20,7 +20,11 @@ public:
 class Light : public IResource, public ILight
 {
 private:
-	Shader* _shader = nullptr;
+
+	Matrix4f _viewMatrix, _projectionMatrix;
+	
+	bool _isShadowCaster = false;
+	bool _lightViewMatDirty = false;
 
 	struct GenericData {
 
@@ -70,9 +74,10 @@ public:
 	float getAttenuationLinear() { return _Attenuation._linear; }
 	float getAttenuationExponent() { return _Attenuation._exponent; }
 
-	Shader* getShader() { return _shader; }
+	Matrix4f getViewMatrix();
+	Matrix4f getProjectionMatrix();
 
-	void attachShader(Shader* newShader);
-
+	bool getIsShadowCaster() { return _isShadowCaster; };
+	void setIsShadowCaster(bool isShaderCaster) { _isShadowCaster = isShaderCaster; };
 };
 

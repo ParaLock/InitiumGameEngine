@@ -50,7 +50,7 @@ void dxGPUBuffer::load(IResourceBuilder * builder)
 		break;
 	}
 
-	if (!MiscHelperFunctions::IsDivisble(16, _size)) {
+	if (!(16 % _size) == 0) {
 
 		bd.ByteWidth = _size;
 

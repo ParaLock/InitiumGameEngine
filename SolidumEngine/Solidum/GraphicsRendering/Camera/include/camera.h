@@ -15,112 +15,85 @@
 
 #include "../../../EventFramework/include/InputEvent.h"
 
+#include "../../../EngineUtils/include/Matrix3x3.h"
+#include "../../../EngineUtils/include/Matrix4x4.h"
+
+#include "../../../EngineUtils/include/Vector4.h"
+#include "../../../EngineUtils/include/Vector3.h"
+#include "../../../EngineUtils/include/Vector2.h"
+
 #define TWO_PI 6.283185307179586476925286766559
 #define DEG_TO_RAD 0.01745329251994329576923690768489
 #define M_PI    3.14159265358979323846264338327950288
 
+#define SMOOTHING_FACTOR 100
+
 class IResourceBuilder;
+
+enum CAMERA_MOVE {
+	CAM_RIGHT,
+	CAM_LEFT,
+	CAM_UP,
+	CAM_DOWN,
+
+	CAM_FORWARD,
+	CAM_BACKWARD,
+
+	CAM_LOOK_RIGHT,
+	CAM_LOOK_LEFT,
+	CAM_LOOK_UP,
+	CAM_LOOK_DOWN
+};
 
 class camera : public IEventListener, public IEventPublisher, public IResource
 {
 private:
-	float heading, pitch;
+	float _movementStore[4];
 
-	void adjustHeadingPitch(float hRad, float pRad);
-	void UpdateView();
+	float _yaw = 0, _pitch = 0;
+
+	float screen_width = 0, screen_height = 0;
+
+	float _eyevec = 0.0f;
+
+	bool _mouseLocked = false;
+
+	Vector2i _screenCenter;
+
+	HRTimer camTimer;
+
+	Matrix4f _projectionMatrix, _orthoProjectionMatrix, _viewMatrix, _startViewMatrix, _worldMatrix, _matRotate;
+
+	Vector3f _eye, _view, _up, _forward, _strafeRight;
+
+	const Vector3f _dV, _dU;
+
+	Vector2f _previousMousePos;
 
 	void load(IResourceBuilder* builder) { isLoaded = true; };
 	void unload() { isLoaded = false; };
 
-	D3DXMATRIX matRotate, matView, matProjection, orthoMatrix, startCamView, worldMatrix;
-	D3DXMATRIX transposedMatView, transposedMatProjection, transposedOrthoMatrix, transposedWorldMatrix, transposedStartCamView;
-
-	HRTimer camTimer;
-
-	const D3DXVECTOR3 dV, dU;
-	D3DXVECTOR3 eye, view, up;
-
-	D3DXVECTOR3 forward, strafeRight;
-	float movementToggles[4];
-
-	POINT mousePos;
-
-	float mouseOldPosX;
-	float mouseOldPosY;
-	float mouseMoveDiff;
-
-	void setCamStartView();
-
 public:
 	camera(float near_value, float far_value);
-
 	~camera();
-
-	bool lockMouse;
 
 	void onEvent(EVENT_PTR evt);
 
-	D3DXMATRIX& getViewMatrix() { 
+	void adjustYawAndPitch(float yaw, float pitch);
 
-		return matView;
-	}
-	D3DXMATRIX& getProjectionMatrix() {
+	void updateLook(float mouseX, float mouseY);
 
-		return matProjection;
-	}
-	D3DXMATRIX& getOrtho() { 
+	void move(CAMERA_MOVE direction, float speed);
 
-		return orthoMatrix;
-	};
-	D3DXMATRIX& getWorldMatrix() { 
+	void update();
 
-		return worldMatrix;
-	};
+	Matrix4f getWorldMatrix() { return _worldMatrix; };
+	Matrix4f getViewMatrix() { return _viewMatrix; };
+	Matrix4f getProjectionMatrix() { return _projectionMatrix; };
+	Matrix4f getStartViewMatrix() { return _startViewMatrix; };
+	Matrix4f getOrthoProjectionMatrix() { return _orthoProjectionMatrix; }
 
-	D3DXMATRIX& getTransposedViewMatrix() {
-
-		D3DXMatrixTranspose(&transposedMatView, &matView);
-
-		return transposedMatView;
-	}
-
-	D3DXMATRIX& getTransposedProjectionMatrix() {
-
-		D3DXMatrixTranspose(&transposedMatProjection, &matProjection);
-
-		return transposedMatProjection;
-	}
-	D3DXMATRIX& getTransposedOrtho() {
-
-		D3DXMatrixTranspose(&transposedOrthoMatrix, &orthoMatrix);
-
-		return transposedOrthoMatrix;
-	};
-	D3DXMATRIX& getTransposedWorldMatrix() {
-
-		D3DXMatrixTranspose(&transposedWorldMatrix, &worldMatrix);
-
-		return transposedWorldMatrix;
-	};
-
-	D3DXVECTOR3 getView() { return view; };
-
-	D3DXMATRIX& getStartCamView() { return startCamView; };
-
-	D3DXMATRIX& getTransposedStartCamView() {
-
-		D3DXMatrixTranspose(&transposedStartCamView, &startCamView);
-
-		return transposedStartCamView;
-	};
-
-	void setPositionAndView(float x, float y, float z, float hDeg, float pDeg);
-
-	void cameraMouseLook(unsigned long posX, unsigned long posY);
-
-	void cameraMove(std::string direction, float speed);
-
-	void Update();
+	Vector3f getPos() { return _eye; }
 };
 
 #endif

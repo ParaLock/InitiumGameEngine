@@ -27,17 +27,20 @@
 #include <locale>
 #include <codecvt>
 
-#include "EngineUtils\include\Vector4f.h"
-#include "EngineUtils\include\Vector3f.h"
-#include "EngineUtils\include\Vector2f.h"
+#include "../Solidum/EngineUtils/include/MiscMath.h"
+
+#include "../Solidum/EngineUtils/include/Matrix3x3.h"
+#include "../Solidum/EngineUtils/include/Matrix4x4.h"
+
+#include "../Solidum/EngineUtils/include/Vector2.h"
+#include "../Solidum/EngineUtils/include/Vector3.h"
+#include "../Solidum/EngineUtils/include/Vector4.h"
 
 #include "atlstr.h"
 
 #include <regex>
 
 #include <stdlib.h>
-
-#include "DirectXMath.h"
 
 #include "D3Dcompiler.h"
 

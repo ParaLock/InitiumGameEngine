@@ -1,2 +1,7 @@
-﻿  GraphicsCore.cpp
+﻿  camera.cpp
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(43): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(44): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(46): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(65): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(147): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
   SolidumEngine.vcxproj -> C:\Users\natha\Documents\Visual Studio 2015\Projects\SolidumEngine\x64\Debug\SolidumEngine.exe

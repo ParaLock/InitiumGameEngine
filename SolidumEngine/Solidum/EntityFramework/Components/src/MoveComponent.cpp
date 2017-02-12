@@ -24,7 +24,7 @@ void MoveComponent::update()
 {
 	if (_parent->getParent() != nullptr) {
 
-		Vector3f finalPos = Vector3f::add(_vPos, _parent->getParent()->getTransform()->getPos());
+		Vector3f finalPos = _vPos + _parent->getParent()->getTransform()->getPos();
 		_parent->getTransform()->setPos(finalPos);
 
 	}
@@ -48,22 +48,22 @@ void MoveComponent::onEvent(EVENT_PTR evt)
 
 				switch (_keyFuncMap->at(*itr)) {
 				case MOVE_FUNCTION::MOVE_BACKWARD:
-					_vPos._z -= _movementSpeed;
+					_vPos[2] -= _movementSpeed;
 					break;
 				case MOVE_FUNCTION::MOVE_FORWARD:
-					_vPos._z += _movementSpeed;
+					_vPos[2] += _movementSpeed;
 					break;
 				case MOVE_FUNCTION::MOVE_DOWN:
-					_vPos._y -= _movementSpeed;
+					_vPos[1] -= _movementSpeed;
 					break;
 				case MOVE_FUNCTION::MOVE_UP:
-					_vPos._y += _movementSpeed;
+					_vPos[1] += _movementSpeed;
 					break;
 				case MOVE_FUNCTION::MOVE_LEFT:
-					_vPos._x += _movementSpeed;
+					_vPos[0] += _movementSpeed;
 					break;
 				case MOVE_FUNCTION::MOVE_RIGHT:
-					_vPos._x -= _movementSpeed;
+					_vPos[0] -= _movementSpeed;
 					break;
 				default:
 					break;

@@ -1,7 +1,6 @@
 #pragma once
 #include "../../../../sysInclude.h"
 #include "../../dxDevice/include/dxDeviceAccessor.h"
-#include "../../../../EngineUtils/include/MiscHelperFunctions.h"
 #include "../../../GraphicsBuffers/include/GPUBuffer.h"
 
 class dxGPUBuffer : public GPUBuffer

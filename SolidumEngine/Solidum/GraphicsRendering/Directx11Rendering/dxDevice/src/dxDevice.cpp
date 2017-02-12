@@ -44,7 +44,7 @@ void dxDevice::Initialize(dxConfigBlock *config)
 		&dxDevContext
 		);
 
-		assert(result == S_OK && "dx device creation failed");
+		//assert(result == S_OK && "dx device creation failed");
 
 		InitializeFrameBuffer();
 		InitializeDepthBuffer();

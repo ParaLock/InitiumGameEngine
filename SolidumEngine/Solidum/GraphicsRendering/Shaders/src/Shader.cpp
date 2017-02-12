@@ -65,17 +65,17 @@ void Shader::updateLightUniforms(ILight* light)
 
 void Shader::updateModelUniforms(Transform* transform)
 {
-	updateUniform("cbuff_OBJSpecificMatrix", transform->getTransposedTransformMatrix());
+	updateUniform("cbuff_OBJSpecificMatrix", &Matrix4f::transpose(transform->getMatrix()));
 }
 
 void Shader::updateCameraUniforms(camera* cam)
 {
-	updateUniform("cbuff_eyePos", cam->getView());
-	updateUniform("cbuff_viewMatrix", cam->getTransposedViewMatrix());
-	updateUniform("cbuff_projectionMatrix", cam->getTransposedProjectionMatrix());
-	updateUniform("cbuff_worldMatrix", cam->getTransposedWorldMatrix());
-	updateUniform("cbuff_orthoProjection", cam->getOrtho());
-	updateUniform("cbuff_camViewStart", cam->getTransposedStartCamView());
+	updateUniform("cbuff_eyePos", &cam->getPos());
+	updateUniform("cbuff_viewMatrix", &Matrix4f::transpose(cam->getViewMatrix()));
+	updateUniform("cbuff_projectionMatrix", &Matrix4f::transpose(cam->getProjectionMatrix()));
+	updateUniform("cbuff_worldMatrix", &Matrix4f::transpose(cam->getWorldMatrix()));
+	updateUniform("cbuff_orthoProjection", &cam->getOrthoProjectionMatrix());
+	updateUniform("cbuff_camViewStart", &Matrix4f::transpose(cam->getStartViewMatrix()));
 }
 
 void Shader::execute(int numIndices)

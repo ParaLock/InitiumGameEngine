@@ -1,56 +1,69 @@
 #include "../include/camera.h"
 
-camera::camera(float near_value, float far_value):
-	dV(D3DXVECTOR3(0, 0, 1)),
-	dU(D3DXVECTOR3(0, 1, 0)),
-	eye(D3DXVECTOR3(0, 0, 0)),
-	view(D3DXVECTOR3(0, 0, 1)),
-	up(D3DXVECTOR3(0, 1, 0)),
-	forward(D3DXVECTOR3(0, 0, 1)),
-	strafeRight(D3DXVECTOR3(1, 0, 0)),
-	heading(0),
-	pitch(0)
+camera::camera(float near_value, float far_value) :
+	_dV(Vector3f(0, 0, 1)),
+	_dU(Vector3f(0, 1, 0)),
+	_up(Vector3f(0, 1, 0)),
+	_forward(Vector3f(0, 0, 1)),
+	_view(Vector3f(0, 0, 1)),
+	_eye(Vector3f(0, 0, 0)),
+	_strafeRight(Vector3f(1, 0, 0)),
+	_yaw(0),
+	_pitch(0)
 {
-
 	EventFrameworkCore::getInstance()->getGlobalEventHub("InputEventHub")->subscribeListener(this);
 
-	movementToggles[0] = 0;
-	movementToggles[1] = 0;
-	movementToggles[2] = 0;
-	movementToggles[3] = 0;
+	_viewMatrix = Matrix4f::get_identity();
+	_projectionMatrix = Matrix4f::get_identity();
+	_worldMatrix = Matrix4f::get_identity();
 
-	lockMouse = true;
+	float aspect = (float)windowAccessor::screen_width / (float)windowAccessor::screen_height;
+	
+	screen_width = (float)windowAccessor::screen_width;
+	screen_height = (float)windowAccessor::screen_height;
 
-	D3DXMatrixIdentity(&matView);
-	D3DXMatrixIdentity(&matProjection);
-	D3DXMatrixIdentity(&worldMatrix);
+	float left, right, top, bottom;
 
+	_projectionMatrix = Matrix4f::get_perspective(45, aspect, near_value, far_value);
 
-	D3DXMatrixIdentity(&transposedMatProjection);
-	D3DXMatrixIdentity(&transposedMatView);
-	D3DXMatrixIdentity(&transposedWorldMatrix);
-	D3DXMatrixIdentity(&transposedOrthoMatrix);
+	left = (float)((screen_width / 2) * -1);
+	right = left + (float)screen_width;
+	top = (float)(screen_height / 2);
+	bottom = top - (float)screen_height;
 
-	D3DXMatrixPerspectiveFovLH(&matProjection,
-		(FLOAT)D3DXToRadian(45),
-		(FLOAT)windowAccessor::screen_width / (FLOAT)windowAccessor::screen_height,
-		near_value,
-		far_value);
+	_orthoProjectionMatrix = Matrix4f::get_orthographic(left, right, bottom, top, near_value, far_value);
 
-	mouseOldPosX = 0;
-	mouseOldPosY = 0;
+	_movementStore[0] = 0;
+	_movementStore[1] = 0;
+	_movementStore[2] = 0;
+	_movementStore[3] = 0;
 
-	D3DXMatrixOrthoLH(&orthoMatrix, (float)windowAccessor::screen_width, (float)windowAccessor::screen_height, near_value, far_value);
+	_startViewMatrix = _viewMatrix;
 
-	setCamStartView();
+	_screenCenter[0] = (screen_width / 2);
+	_screenCenter[1] = (screen_height / 2);
+
+	_previousMousePos = Vector2f(_screenCenter[0], _screenCenter[1]);
+
+	POINT pt = { (LONG)_screenCenter[0], (LONG)_screenCenter[1] };
+	ClientToScreen(windowAccessor::hWnd, &pt);
+	SetCursorPos(pt.x, pt.y);
+
+	_mouseLocked = true;
+
+	ShowCursor(false);
 
 	isLoaded = true;
-
 }
 
 camera::~camera()
 {
 	isLoaded = false;
+}
+
+float toRadians(float input) {
+	float halfC = M_PI / 180;
+	return input * halfC;
 }
 
 void camera::onEvent(EVENT_PTR evt)
@@ -62,21 +75,21 @@ void camera::onEvent(EVENT_PTR evt)
 			auto mousePos = evt.get()->getEvent<InputEvent>()->getMousePos();
 			auto keysPressed = evt.get()->getEvent<InputEvent>()->getPressedKeys();
 
-			cameraMouseLook(mousePos.first, mousePos.second);
+			updateLook((float)mousePos.first, (float)mousePos.second);
 
 			for (auto itr = keysPressed.begin(); itr != keysPressed.end(); itr++) {
 				switch (*itr) {
 				case KEY_MAP::W:
-					cameraMove("forward", 5.0f);
+					move(CAMERA_MOVE::CAM_FORWARD, 5.0f);
 					break;
 				case KEY_MAP::A:
-					cameraMove("left", 5.0f);
+					move(CAMERA_MOVE::CAM_LEFT, 5.0f);
 					break;
 				case KEY_MAP::S:
-					cameraMove("backward", 5.0f);
+					move(CAMERA_MOVE::CAM_BACKWARD, 5.0f);
 					break;
 				case KEY_MAP::D:
-					cameraMove("right", 5.0f);
+					move(CAMERA_MOVE::CAM_RIGHT, 5.0f);
 					break;
 				}
 			}
@@ -87,216 +100,148 @@ void camera::onEvent(EVENT_PTR evt)
 	}
 }
 
-void camera::setCamStartView()
+void camera::adjustYawAndPitch(float yaw, float pitch)
 {
-	D3DXMatrixRotationYawPitchRoll(&matRotate, heading, pitch, 0);
+	_yaw += yaw;
+	_pitch += pitch;
 
-	D3DXVec3TransformCoord(&view, &dV, &matRotate);
-	D3DXVec3TransformCoord(&up, &dU, &matRotate);
+	if (_yaw > TWO_PI) _yaw -= (float)TWO_PI;
+	else if (_yaw < 0) _yaw = (float)TWO_PI + _yaw;
 
-	D3DXVec3Normalize(&forward, &view);
-	D3DXVec3Cross(&strafeRight, &up, &view);
-	D3DXVec3Normalize(&strafeRight, &strafeRight);
-
-	view = eye + view;
-
-	D3DXMatrixLookAtLH(&matView, &eye, &view, &up);
-
-	this->startCamView = matView;
+	if (_pitch > TWO_PI) _pitch -= (float)TWO_PI;
+	else if (_pitch < 0) _pitch = (float)TWO_PI + _pitch;
 }
 
-float toRadians(float input) {
-	float halfC = M_PI / 180;
-	return input * halfC;
-}
-
-void camera::setPositionAndView(float x, float y, float z, float hDeg, float pDeg)
+void camera::updateLook(float mouseX, float mouseY)
 {
-	eye.x = x;
-	eye.y = y;
-	eye.z = z;
+	float mX = mouseX;
+	float mY = mouseY;
 
-	heading = hDeg * (float)DEG_TO_RAD;
-	pitch = pDeg * (float)DEG_TO_RAD;
-
-	UpdateView();
-}
-
-void camera::adjustHeadingPitch(float hRad, float pRad)
-{
-	heading += hRad;
-	pitch += pRad;
-
-	if (heading > TWO_PI) heading -= (float)TWO_PI;
-	else if (heading < 0) heading = (float)TWO_PI + heading;
-
-	if (pitch > TWO_PI) pitch -= (float)TWO_PI;
-	else if (pitch < 0) pitch = (float)TWO_PI + pitch;
-
-}
-
-void camera::cameraMove(std::string direction, float speed)
-{
-	if (direction == "right")
-		movementToggles[3] += speed;
-
-	if (direction == "left")
-		movementToggles[2] -= speed;
-
-	if (direction == "forward") {
-		movementToggles[0] += speed;
-	}
-
-	if (direction == "backward") {
-		movementToggles[1] -= speed;
-	}
-	if (direction == "lookup") {
-		adjustHeadingPitch(0.0f, speed * -1.0f);
-	}
-	if (direction == "lookdown") {
-	    adjustHeadingPitch(0.0f, speed * 1.0f);
-	}
-	if (direction == "lookright") {
-		adjustHeadingPitch(speed * -1.0f, 0.0f);
-	}
-	if (direction == "lookleft") {
-		adjustHeadingPitch(speed * 1.0f, 0.0f);
-	}
-
-}
-
-int appLaunchMouseDebounceCount = 0;
-
-void camera::cameraMouseLook(unsigned long posX, unsigned long posY)
-{
-
-
-	GetCursorPos(&mousePos);
-
-	if (lockMouse != true) {
-		ShowCursor(true);
-	}
-	else {
-		ShowCursor(false);
+	static float mouseDiff = 0.0f;
 	
+	bool mousePosReset = false;
 
-	SetFocus(windowAccessor::hWnd);
+	if (_mouseLocked == true) {
 
-	if (appLaunchMouseDebounceCount > 20) {
+		if (mX < 0) 
+			mousePosReset = true;
 
-		mouseMoveDiff = 0.0f;
+		if (mX >= screen_width) 
+			mousePosReset = true;
 
-		if (mouseOldPosX > posX) {
-			mouseMoveDiff = ((mouseOldPosX - posX) / 90);
+		if (mY < 0) 
+			mousePosReset = true;
 
-			if (mouseOldPosX - posX > 30)
-				mouseMoveDiff = 0.0f;
+		if (mY >= screen_height) 
+			mousePosReset = true;
 
-			if (mouseMoveDiff < 0) {
-				mouseMoveDiff = 0.0f;
-			}
-			cameraMove("lookright", mouseMoveDiff);
-		}
+		if (mX == 0 && mY == 0) 
+			mousePosReset = true;	
 
-		if (mouseOldPosX < posX) {
-			mouseMoveDiff = ((posX - mouseOldPosX) / 90);
+		if (mY >= screen_height && mX >= screen_width) 
+			mousePosReset = true;
+		
 
+		if (mousePosReset) {
 
-			if (posX - mouseOldPosX > 30)
-				mouseMoveDiff = 0.0f;
+			_previousMousePos = Vector2f(_screenCenter[0], _screenCenter[1]);
 
-			if (mouseMoveDiff < 0) {
-				mouseMoveDiff = 0.0f;
-			}
-			cameraMove("lookleft", mouseMoveDiff);
-		}
+			POINT pt = { (LONG)_screenCenter[0], (LONG)_screenCenter[1] };
+			ClientToScreen(windowAccessor::hWnd, &pt);
+			SetCursorPos(pt.x, pt.y);
 
-		if (mouseOldPosY > posY) {
-			mouseMoveDiff = ((mouseOldPosY - posY) / 90);
-
-			if (mouseOldPosY - posY > 30)
-				mouseMoveDiff = 0.0f;
-
-			if (mouseMoveDiff < 0) {
-				mouseMoveDiff = 0.0f;
-			}
-			cameraMove("lookup", mouseMoveDiff);
-		}
-
-		if (mouseOldPosY < posY) {
-			mouseMoveDiff = ((posY - mouseOldPosY) / 90);
-
-			if (posY - mouseOldPosY > 30)
-				mouseMoveDiff = 0.0f;
-
-			if (mouseMoveDiff < 0) {
-				mouseMoveDiff = 0.0f;
-			}
-			cameraMove("lookdown", mouseMoveDiff);
+			return;
 		}
 	}
-	appLaunchMouseDebounceCount++;
 
-	
-		if (lockMouse == true) {
+	if (_previousMousePos.getX() > mX) {
 
-			if (posX < 0)
-				SetCursorPos((windowAccessor::screen_width / 2) + 300, (windowAccessor::screen_height / 2) + 300);
+		mouseDiff = (_previousMousePos.getX() - mX) / SMOOTHING_FACTOR;
 
-			if (posX >= windowAccessor::screen_width)
-				SetCursorPos((windowAccessor::screen_width / 2) + 300, (windowAccessor::screen_height / 2) + 300);
+		move(CAMERA_MOVE::CAM_LOOK_RIGHT, mouseDiff);
+	}
 
-			if (posY < 0)
-				SetCursorPos((windowAccessor::screen_width / 2) + 300, (windowAccessor::screen_height / 2) + 300);
+	if (_previousMousePos.getX() < mX) {
 
-			if (posY >= windowAccessor::screen_height)
-				SetCursorPos((windowAccessor::screen_width / 2) + 300, (windowAccessor::screen_height / 2) + 300);
+		mouseDiff = (mX - _previousMousePos.getX()) / SMOOTHING_FACTOR;
 
-			if (posX == 0 && posY == 0)
-				SetCursorPos((windowAccessor::screen_width / 2) + 300, (windowAccessor::screen_height / 2) + 300);
+		move(CAMERA_MOVE::CAM_LOOK_LEFT, mouseDiff);
+	}
 
-			if (posY >= windowAccessor::screen_height&& posX >= windowAccessor::screen_width)
-				SetCursorPos((windowAccessor::screen_width / 2) + 300, (windowAccessor::screen_height / 2) + 300);
+	if (_previousMousePos.getY() > mY) {
 
-		}
+		mouseDiff = (_previousMousePos.getY() - mY) / SMOOTHING_FACTOR;
 
-		mouseOldPosX = posX;
-		mouseOldPosY = posY;
+		move(CAMERA_MOVE::CAM_LOOK_UP, mouseDiff);
+	}
+
+	if (_previousMousePos.getY() < mY) {
+
+		mouseDiff = (mY - _previousMousePos.getY()) / SMOOTHING_FACTOR;
+
+		move(CAMERA_MOVE::CAM_LOOK_DOWN, mouseDiff);
+	}
+
+
+	_previousMousePos[0] = mX;
+	_previousMousePos[1] = mY;
+}
+
+void camera::move(CAMERA_MOVE direction, float speed)
+{
+	switch (direction) {
+	case CAMERA_MOVE::CAM_LOOK_DOWN:
+		adjustYawAndPitch(0.0f, speed * 1.0f);
+		break;
+	case CAMERA_MOVE::CAM_LOOK_UP:
+		adjustYawAndPitch(0.0f, speed * -1.0f);
+		break;
+	case CAMERA_MOVE::CAM_LOOK_LEFT:
+		adjustYawAndPitch(speed * 1.0f, 0.0f);
+		break;
+	case CAMERA_MOVE::CAM_LOOK_RIGHT:
+		adjustYawAndPitch(speed * -1.0f, 0.0f);
+		break;
+
+	case CAMERA_MOVE::CAM_FORWARD:
+		_movementStore[0] += speed;
+		break;
+	case CAMERA_MOVE::CAM_BACKWARD:
+		_movementStore[1] -= speed;
+		break;
+	case CAMERA_MOVE::CAM_LEFT:
+		_movementStore[2] -= speed;
+		break;
+	case CAMERA_MOVE::CAM_RIGHT:
+		_movementStore[3] += speed;
+		break;
 	}
 }
 
-void camera::Update()
+void camera::update()
 {
 	float t = (float)camTimer.getElapsedTimeSeconds();
 
-	eye += t * (movementToggles[0] + movementToggles[1]) * 1.5f * forward +
-		t * (movementToggles[2] + movementToggles[3]) * 1.5f * strafeRight;
+	_eye += _forward * t * (_movementStore[0] + _movementStore[1]) * 1.5f +
+		_strafeRight * t * (_movementStore[2] + _movementStore[3]) * 1.5f;
 
-	UpdateView();
+	_matRotate = Matrix4f::get_rot_of_YawPitchRoll(0, _pitch, _yaw);
+	_view = Matrix4f::transform(_dV, _matRotate);
+	_up = Matrix4f::transform(_dU, _matRotate);
+
+	_forward = Vector3f::normalize(_view);
+
+	_strafeRight = Vector3f::normalize(Vector3f::cross_product(_up, _view));
+
+	_view = _eye + _view;
+
+	_viewMatrix = Matrix4f::get_lookAt(_eye, _view, _up);
 
 	camTimer.reset();
 
-	movementToggles[0] = 0;
-	movementToggles[1] = 0;
-	movementToggles[2] = 0;
-	movementToggles[3] = 0;
-}
-
-
-void camera::UpdateView()
-{
-	D3DXMatrixRotationYawPitchRoll(&matRotate, heading, pitch, 0);
-
-	D3DXVec3TransformCoord(&view, &dV, &matRotate);
-	D3DXVec3TransformCoord(&up, &dU, &matRotate);
-
-	D3DXVec3Normalize(&forward, &view);
-	D3DXVec3Cross(&strafeRight, &up, &view);
-	D3DXVec3Normalize(&strafeRight, &strafeRight);
-
-	view = eye + view;
-
-	D3DXMatrixLookAtLH(&matView, &eye, &view, &up);
-
+	_movementStore[0] = 0;
+	_movementStore[1] = 0;
+	_movementStore[2] = 0;
+	_movementStore[3] = 0;
 }
 

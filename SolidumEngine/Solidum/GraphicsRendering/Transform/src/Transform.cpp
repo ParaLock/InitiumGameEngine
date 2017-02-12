@@ -4,11 +4,11 @@
 
 Transform::Transform()
 {
-	D3DXMatrixIdentity(&_transformMatrix);
+	_transformMatrix = Matrix4f::get_identity();
 
-	_pos._x = 0;
-	_pos._y = 0;
-	_pos._z = 0;
+	_pos[0] = 0;
+	_pos[1] = 0;
+	_pos[2] = 0;
 
 	isLoaded = true;
 }
@@ -19,16 +19,14 @@ Transform::~Transform()
 	isLoaded = false;
 }
 
-void Transform::setRotation(float angleOfRot, std::string direction) {
+void Transform::setRotation(float angleOfRot, ROT_DIR direction) {
 
-	if (direction == "x") {
-		D3DXMatrixRotationX(&_transformMatrix, angleOfRot);
-	}
-	if (direction == "y") {
-		D3DXMatrixRotationY(&_transformMatrix, angleOfRot);
-	}
-	if (direction == "z") {
-		D3DXMatrixRotationZ(&_transformMatrix, angleOfRot);
+	switch (direction)
+	{
+	case ROT_DIR::ROT_DOWN:
+		break;
+	default:
+		break;
 	}
 }
 
@@ -36,7 +34,7 @@ void Transform::setPos(Vector3f pos)
 {
 	_pos = pos;
 
+	_transformMatrix = Matrix4f::get_translation(pos);
 
-	D3DXMatrixTranslation(&_transformMatrix, _pos.getX(), _pos.getY(), _pos.getZ());
 }
 

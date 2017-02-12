@@ -4,6 +4,7 @@
 
 InputHandler::InputHandler()
 {
+	EventFrameworkCore::getInstance()->getGlobalEventHub("CameraEventHub")->subscribeListener(this);
 }
 
 
@@ -65,6 +66,10 @@ std::list<KEY_MAP> InputHandler::getPressedKeys()
 	}
 
 	return pressedKeyList;
+}
+
+void InputHandler::onEvent(EVENT_PTR evt)
+{
 }
 
 void InputHandler::update()

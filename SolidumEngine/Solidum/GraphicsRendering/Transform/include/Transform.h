@@ -5,13 +5,23 @@
 
 #include "../../../ResourceFramework/include/IResourceBuilder.h"
 
+#include "../../../EngineUtils/include/quaternion.h"
+
+enum ROT_DIR {
+	ROT_LEFT,
+	ROT_RIGHT,
+	ROT_UP,
+	ROT_DOWN
+};
+
 class Transform : public IResource
 {
 private:
 	Vector3f _pos;
 
-	D3DXMATRIX _transformMatrix;
-	D3DXMATRIX _transposedTransformMatrix;
+	Quaternion<float> _quaternion;
+
+	Matrix4f _transformMatrix;
 public:
 	Transform();
 	~Transform();
@@ -19,19 +29,10 @@ public:
 	void load(IResourceBuilder* builder) { isLoaded = true; };
 	void unload() { isLoaded = false; };
 
-	void setRotation(float angleOfRot, std::string direction);
+	void setRotation(float angleOfRot, ROT_DIR direction);
 	void setPos(Vector3f pos);
-
-	void setTransformMatrix(D3DXMATRIX& matrix) { _transformMatrix = matrix; }
-
-	D3DXMATRIX& getTransformMatrix() { return _transformMatrix; };
-
-	D3DXMATRIX& getTransposedTransformMatrix() {
-
-		D3DXMatrixTranspose(&_transposedTransformMatrix, &_transformMatrix);
-
-		return _transposedTransformMatrix;
-	}
+	
+	Matrix4f getMatrix() { return _transformMatrix; };
 
 	Vector3f getPos() { return _pos; }
 };

@@ -125,11 +125,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	Entity* ROOT_ENTITY = new Entity();
 
-	deferredShader->attachPipeline(deferredPipeline);
-	directionalLightShader->attachPipeline(deferredLightingPipeline);
-	pointLightShader->attachPipeline(deferredLightingPipeline);
-
-
 	dirLight1->setColor(Vector4f(1.5f, 2.5f, 1.5f, 1.5f));
 	dirLight1->setDirection(Vector3f(0.0f, 0.0f, 9.0f));
 	dirLight1->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
@@ -168,15 +163,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	pointLight3->setRange(60.5f);
 
-	pointLight1->attachShader(pointLightShader);
-	pointLight2->attachShader(pointLightShader);
-	pointLight3->attachShader(pointLightShader);
-
-	dirLight1->attachShader(directionalLightShader);
-
-	pointLightShader->setMesh(orthoMesh);
-	directionalLightShader->setMesh(orthoMesh);
-
 	Entity* dirLightEntity = new Entity();
 
 	dirLightEntity->addComponent(new LightComponent(dirLight1, orthoMesh, "pointLightDeferredTechnique"));
@@ -212,8 +198,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, moveKeyConfig1));
 	plane->addComponent(new MeshComponent(planeMesh, metalTex, metalMaterial, "basicDeferredTechnique"));
 
-
-
 	camera* myCam = solidum->getGraphicsSubsystem()->getPrimaryCamera();
 
 	InputHandler* inputHandler = resManagerPool->getResourceManager("InputHandlerManager")->
@@ -239,7 +223,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		inputHandler->update();
 
-		myCam->Update();
+		myCam->update();
 
 		ROOT_ENTITY->update();
 
