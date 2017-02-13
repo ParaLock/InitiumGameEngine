@@ -25,10 +25,14 @@ void Light::unload()
 
 void Light::setDirection(Vector3f dir) {
 
+	_lightViewMatDirty = true;
+
 	_GenericData._direction = dir;
 }
 
 void Light::setPosition(Vector3f pos) {
+
+	_lightViewMatDirty = true;
 
 	_GenericData._pos = pos;
 }

@@ -60,19 +60,21 @@ void dxDevice::InitializeDepthBuffer()
 	HRESULT result;
 	D3D11_TEXTURE2D_DESC descDepth;
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+	D3D11_SHADER_RESOURCE_VIEW_DESC sr_desc;
 
 	ZeroMemory(&descDepth, sizeof(descDepth));
 	ZeroMemory(&descDSV, sizeof(descDSV));
+	ZeroMemory(&sr_desc, sizeof(sr_desc));
 
 	descDepth.Width = windowAccessor::screen_width;
 	descDepth.Height = windowAccessor::screen_height;
 	descDepth.MipLevels = 1;
 	descDepth.ArraySize = 1;
-	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDepth.Format = DXGI_FORMAT_R24G8_TYPELESS;
 	descDepth.SampleDesc.Count = 1;
 	descDepth.SampleDesc.Quality = 0;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 	descDepth.CPUAccessFlags = 0;
 	descDepth.MiscFlags = 0;
 
@@ -80,9 +82,14 @@ void dxDevice::InitializeDepthBuffer()
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSV.Texture2D.MipSlice = 0;
 
-	result = dxDev->CreateTexture2D(&descDepth, NULL, &depthTexture);
+	sr_desc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	sr_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	sr_desc.Texture2D.MostDetailedMip = 0;
+	sr_desc.Texture2D.MipLevels = -1;
 
+	result = dxDev->CreateTexture2D(&descDepth, NULL, &depthTexture);
 	result = dxDev->CreateDepthStencilView(depthTexture, &descDSV, &depthStencil);
+	result = dxDev->CreateShaderResourceView(depthTexture, &sr_desc, &depthShaderView);
 }
 
 void dxDevice::InitializeFrameBuffer()

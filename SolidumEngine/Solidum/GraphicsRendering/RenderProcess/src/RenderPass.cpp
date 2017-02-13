@@ -18,7 +18,7 @@ void RenderPass::execute(RenderDataStream* stream)
 
 	while (stream->dataAvalible()) {
 
-		RenderDataBatch dataBatch = stream->getNext();
+		RenderDataBatch dataBatch = stream->readNext();
 	
 		IResource* data = dataBatch.getData();
 
@@ -66,4 +66,6 @@ void RenderPass::execute(RenderDataStream* stream)
 
 	_shader->updateGPU();
 	_shader->execute(indexCount);
+
+	stream->resetStreamIndex();
 }

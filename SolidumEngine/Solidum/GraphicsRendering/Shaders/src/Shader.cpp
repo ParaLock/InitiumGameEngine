@@ -31,7 +31,6 @@ void Shader::updateMaterialUniforms(Material* mat)
 	updateUniform("cbuff_specularIntensity", &specIntensity);
 	updateUniform("cbuff_specularColor", &mat->getSpecularColor());
 	updateUniform("cbuff_specularPower", &specPower);
-	updateUniform("cbuff_materialID", &specPower);
 
 	std::map<MATERIAL_TEX, Texture*>& const textures = mat->getTextures();
 
@@ -52,6 +51,9 @@ void Shader::updateLightUniforms(ILight* light)
 	float linear = light->getAttenuationLinear();
 	float exponent = light->getAttenuationExponent();
 	float range = light->getRange();
+
+	updateUniform("cbuff_lightViewMatrix", &Matrix4f::transpose(light->getViewMatrix()));
+	updateUniform("cbuff_lightProjectionMatrix", &Matrix4f::transpose(light->getProjectionMatrix()));
 
 	updateUniform("cbuff_lightDirection", &light->getDirection());
 	updateUniform("cbuff_lightPos", &light->getPosition());

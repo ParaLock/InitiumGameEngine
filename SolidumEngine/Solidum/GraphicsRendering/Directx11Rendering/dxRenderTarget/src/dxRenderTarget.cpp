@@ -6,8 +6,20 @@ dxRenderTarget::dxRenderTarget()
 
 dxRenderTarget::dxRenderTarget(ID3D11RenderTargetView * rt, ID3D11Texture2D * rtTex)
 {
+	//Yup.... This constructer is a hack xD
 	_texture = rtTex;
 	_renderTarget = rt;
+
+	_aaSamples = -1;
+	_mipLevel = -1;
+	_texFormat = -1;
+}
+
+dxRenderTarget::dxRenderTarget(ID3D11ShaderResourceView * sv, ID3D11Texture2D * svTex)
+{
+	//And again.... I promise to fix this in the future... (4 years later)
+	_texture = svTex;
+	_shaderView = sv;
 
 	_aaSamples = -1;
 	_mipLevel = -1;

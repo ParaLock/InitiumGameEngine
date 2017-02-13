@@ -36,9 +36,9 @@ void LightComponent::update()
 		_light->setPosition(_parent->getTransform()->getPos());
 	}
 
-	_graphicsStream->insertData((IResource*)_light, STREAM_DATA_TYPE::LIGHT);
-	_graphicsStream->insertData((IResource*)_parent->getTransform(), STREAM_DATA_TYPE::TRANSFORM);
-	_graphicsStream->insertData((IResource*)_mesh, STREAM_DATA_TYPE::MESH);
+	_graphicsStream->writeNext((IResource*)_light, STREAM_DATA_TYPE::LIGHT);
+	_graphicsStream->writeNext((IResource*)_parent->getTransform(), STREAM_DATA_TYPE::TRANSFORM);
+	_graphicsStream->writeNext((IResource*)_mesh, STREAM_DATA_TYPE::MESH);
 	
 }
 

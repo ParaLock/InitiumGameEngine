@@ -46,9 +46,11 @@ private:
 
 	void InitializeViewport();
 
-	ID3D11Texture2D* FrameBufferTexture;
+	ID3D11Texture2D* FrameBufferTexture = nullptr;
 	
-	ID3D11Texture2D* depthTexture;
+	ID3D11Texture2D* depthTexture = nullptr;
+
+	ID3D11ShaderResourceView* depthShaderView = nullptr;
 
 	dxConfigBlock devConfig;
 
@@ -87,6 +89,10 @@ public:
 
 	ID3D11RenderTargetView* getFrameBufferRenderTarget() { return FrameBufferShaderAccess; }
 	ID3D11Texture2D* getFrameBufferTexture() { return FrameBufferTexture; }
+
+	ID3D11ShaderResourceView* getDepthBufferShaderView() { return depthShaderView; }
+	ID3D11Texture2D* getDepthBufferTexture() { return depthTexture; }
+
 };
 
 #endif

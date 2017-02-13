@@ -12,6 +12,7 @@ struct PixelInputType
 	float4 position : SV_POSITION;
 	float3 normal : NORMAL;
 	float4 depthPosition : TEXCOORD2;
+	float4 lightViewPosition : TEXCOORD3;
 	float4 worldPos : TEXCOORD1;
 	float2 tex : TEXCOORD;
 };
@@ -22,7 +23,7 @@ struct PixelOutputType
 	float4 normal : SV_Target1;
 	float4 position : SV_Target2;
 	float4 specularColor : SV_Target3;
-	float4 shadow : SV_Target4;
+	float4 shadowMap : SV_Target4;
 };
 
 
@@ -40,6 +41,10 @@ PixelInputType Vshader(VertexInputType input)
 	
 	output.position = mul(output.position, cbuff_viewMatrix);
 	output.position = mul(output.position, cbuff_projectionMatrix);
+	
+	output.lightViewPosition = mul(input.position, FinalworldMatrix);
+    output.lightViewPosition = mul(output.lightViewPosition, cbuff_lightViewMatrix);
+    output.lightViewPosition = mul(output.lightViewPosition, cbuff_lightProjectionMatrix);
 	
 	output.depthPosition = output.position;
 	
@@ -62,13 +67,11 @@ PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 	float4 texColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
 	texColor = saturate(ambientLight * texColor);
 	
-	float depthValue;
+	float depthValue = input.depthPosition.z / input.depthPosition.w;
 	
-	depthValue = input.depthPosition.z / input.depthPosition.w;
+	output.shadowMap.xyz = input.lightViewPosition.xyz;
 	
-	output.shadow.w = depthValue;
-	
-	output.shadow.xyz = cbuff_lightPos.xyz - input.worldPos.xyz;
+	output.shadowMap.w = depthValue;
 	
 	output.color = texColor; 
 	

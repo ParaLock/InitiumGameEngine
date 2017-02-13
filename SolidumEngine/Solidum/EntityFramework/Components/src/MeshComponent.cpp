@@ -27,11 +27,11 @@ void MeshComponent::update()
 		_transform = _parent->getTransform();
 
 	if(_transform != nullptr)
-		_graphicsStream->insertData((IResource*)_parent->getTransform(), STREAM_DATA_TYPE::TRANSFORM);
+		_graphicsStream->writeNext((IResource*)_parent->getTransform(), STREAM_DATA_TYPE::TRANSFORM);
 
-	_graphicsStream->insertData((IResource*)_mat, STREAM_DATA_TYPE::MATERIAL);
-	_graphicsStream->insertData((IResource*)_mesh, STREAM_DATA_TYPE::MESH);
-	_graphicsStream->insertData((IResource*)_tex, STREAM_DATA_TYPE::TEXTURE);
+	_graphicsStream->writeNext((IResource*)_mat, STREAM_DATA_TYPE::MATERIAL);
+	_graphicsStream->writeNext((IResource*)_mesh, STREAM_DATA_TYPE::MESH);
+	_graphicsStream->writeNext((IResource*)_tex, STREAM_DATA_TYPE::TEXTURE);
 }
 
 void MeshComponent::onEvent(EVENT_PTR evt)

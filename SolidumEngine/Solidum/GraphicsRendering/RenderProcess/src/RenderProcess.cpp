@@ -117,8 +117,11 @@ void RenderProcess::execute()
 
 		for (auto passItr = _passes->begin(); passItr != _passes->end(); passItr++) {
 
-
 			passItr->execute(*streamItr);
 		}
+
+		RenderDataStream* stream = *streamItr;
+
+		stream->flushStream();
 	}
 }

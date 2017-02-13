@@ -1,7 +1,35 @@
-﻿  camera.cpp
-c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(43): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(44): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(46): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
-c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(65): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\camera\src\camera.cpp(147): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+﻿  GraphicsCore.cpp
+  dxRenderTarget.cpp
+  Generating Code...
+  Compiling...
+  RenderTargetManager.cpp
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  main.cpp
+  TextureSamplerManager.cpp
+  TextureManager.cpp
+  ShaderManager.cpp
+  Shader.cpp
+  RenderProcessManager.cpp
+  RenderProcess.cpp
+  RenderPass.cpp
+  meshManager.cpp
+  meshLoaderOBJ.cpp
+  mesh.cpp
+  LightManager.cpp
+  Light.cpp
+  GPUBufferManager.cpp
+  GPUPipelineManager.cpp
+  dxTextureSampleState.cpp
+  dxTexture.cpp
+  dxShaderInputLayout.cpp
+  dxShader.cpp
+  dxGPUPipeline.cpp
+  dxDeviceManager.cpp
+  dxDeviceAccessor.cpp
+  dxDevice.cpp
+  dxGPUBuffer.cpp
+  MeshComponent.cpp
+  LightComponent.cpp
+  EngineInstance.cpp
   SolidumEngine.vcxproj -> C:\Users\natha\Documents\Visual Studio 2015\Projects\SolidumEngine\x64\Debug\SolidumEngine.exe

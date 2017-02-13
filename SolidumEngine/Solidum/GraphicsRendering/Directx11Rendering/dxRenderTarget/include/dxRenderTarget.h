@@ -15,7 +15,10 @@ private:
 
 public:
 	dxRenderTarget();
+
 	dxRenderTarget(ID3D11RenderTargetView * rt, ID3D11Texture2D * rtTex);
+	dxRenderTarget(ID3D11ShaderResourceView * sv, ID3D11Texture2D * svTex);
+
 	~dxRenderTarget();
 
 	void load(IResourceBuilder *builder);

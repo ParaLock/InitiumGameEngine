@@ -28,6 +28,12 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 			dxDeviceAccessor::dxEncapsulator->getFrameBufferTexture());
 
 		resManagerPool->getResourceManager("RenderTargetManager")->addResource(frameBufferRT, "framebuffer");
+
+		RenderTarget* depthBufferRT = new dxRenderTarget(
+			dxDeviceAccessor::dxEncapsulator->getDepthBufferShaderView(),
+			dxDeviceAccessor::dxEncapsulator->getDepthBufferTexture());
+
+		resManagerPool->getResourceManager("RenderTargetManager")->addResource(frameBufferRT, "depth_buffer");
 	}
 }
 
@@ -57,7 +63,7 @@ void GraphicsCore::RenderAll()
 
 				RenderDataStream* stream = *streamItr;
 
-				stream->insertData((IResource*)_primaryCamera, STREAM_DATA_TYPE::CAMERA);
+				stream->writeNext((IResource*)_primaryCamera, STREAM_DATA_TYPE::CAMERA);
 			}
 
 			if (rendProc->getDeferredFlag()) {

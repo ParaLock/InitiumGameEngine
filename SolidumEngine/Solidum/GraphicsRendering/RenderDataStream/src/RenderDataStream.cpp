@@ -4,7 +4,7 @@
 
 RenderDataStream::RenderDataStream()
 {
-	_stream = new std::list<RenderDataBatch>;
+	_stream = new std::vector<RenderDataBatch>;
 }
 
 RenderDataStream::~RenderDataStream()
@@ -12,17 +12,28 @@ RenderDataStream::~RenderDataStream()
 	delete _stream;
 }
 
-RenderDataBatch RenderDataStream::getNext()
+RenderDataBatch RenderDataStream::readNext()
 {
-	RenderDataBatch res = _stream->front();
+	RenderDataBatch res(STREAM_DATA_TYPE::INVALID, nullptr);
+		
+	if (!_stream->empty()) {
+		res = _stream->at(_streamIndex);
+		_streamIndex--;
+	}
 
-	_stream->pop_front();
 
 	return res;
 }
 
-void RenderDataStream::insertData(IResource * res, STREAM_DATA_TYPE type)
+void RenderDataStream::resetStreamIndex()
+{
+	_streamIndex = _stream->size() - 1;
+}
+
+void RenderDataStream::writeNext(IResource * res, STREAM_DATA_TYPE type)
 {
 	_stream->push_back(RenderDataBatch(type, res));
+
+	_streamIndex = _stream->size() - 1;
 }
 

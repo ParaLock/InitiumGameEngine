@@ -8,6 +8,8 @@ cbuffer MatrixBuffer
 	matrix cbuff_projectionMatrix;
 	matrix cbuff_orthoProjection;
 	matrix cbuff_OBJSpecificMatrix;
+	matrix cbuff_lightViewMatrix;
+	matrix cbuff_lightProjectionMatrix;
 };
 
 cbuffer LightBuffer
