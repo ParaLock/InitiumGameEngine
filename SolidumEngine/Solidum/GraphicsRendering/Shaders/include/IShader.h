@@ -17,6 +17,8 @@ public:
 
 	virtual void updateMaterialPassUniforms(MaterialPass* pass) = 0;
 	virtual void updateLightUniforms(ILight* light) = 0;
+	virtual void updateLightUniformsForwardRendering(std::vector<ILight*> lights) = 0;
+
 	virtual void updateModelUniforms(Transform* transform) = 0;
 	virtual void updateCameraUniforms(camera* cam) = 0;
 

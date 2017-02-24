@@ -18,6 +18,8 @@ public:
 	LightRenderNode(Light* light);
 	~LightRenderNode();
 
+	ILight* getLight() { return _light; }
+
 	void render();
 };
 

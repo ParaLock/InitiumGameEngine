@@ -49,6 +49,8 @@ public:
 
 	void updateMaterialPassUniforms(MaterialPass* pass);
 	void updateLightUniforms(ILight* light);
+	void updateLightUniformsForwardRendering(std::vector<ILight*> lights);
+
 	void updateModelUniforms(Transform* transform);
 	void updateCameraUniforms(camera* cam);
 

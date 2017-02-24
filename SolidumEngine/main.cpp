@@ -43,13 +43,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	//** RESOURCE INITIALIZATION **//
 
 	GPUPipeline* endscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/endScene_pipeline.solPipe", resManagerPool), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/deferredRendering/endScene_pipeline.solPipe", resManagerPool), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* deferredPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/deferredPipeline.solPipe", resManagerPool), "deferred_geometry_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/deferredRendering/deferredPipeline.solPipe", resManagerPool), "deferred_geometry_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* deferredLightingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/deferredLightingPipeline.solPipe", resManagerPool), "deferred_lighting_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/deferredRendering/deferredLightingPipeline.solPipe", resManagerPool), "deferred_lighting_pipeline_state", false)->getCore<GPUPipeline>();
 
 	Light* dirLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
 		(LIGHT_TYPE::DIRECTIONAL_LIGHT), "dirLight1", false)->getCore<Light>();
@@ -82,13 +82,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		(L"./res/Textures/metal.png"), "metal_tex", false)->getCore<Texture>();
 
 	Shader* deferredShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
-		(L"./res/Shaders/deferredShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "deferred_geometry_shader", false)->getCore<Shader>();
+		(L"./res/Shaders/deferredRendering/deferredShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "deferred_geometry_shader", false)->getCore<Shader>();
 
 	Shader* directionalLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
-		(L"./res/Shaders/directionalLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "directional_light_shader", false)->getCore<Shader>();
+		(L"./res/Shaders/deferredRendering/directionalLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "directional_light_shader", false)->getCore<Shader>();
 
 	Shader* pointLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
-		(L"./res/Shaders/pointLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "point_light_shader", false)->getCore<Shader>();
+		(L"./res/Shaders/deferredRendering/pointLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "point_light_shader", false)->getCore<Shader>();
 
 	directionalLightShader->attachPipeline(deferredLightingPipeline);
 	pointLightShader->attachPipeline(deferredLightingPipeline);

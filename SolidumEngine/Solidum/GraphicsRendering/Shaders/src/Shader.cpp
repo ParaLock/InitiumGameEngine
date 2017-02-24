@@ -53,6 +53,48 @@ void Shader::updateLightUniforms(ILight* light)
 	updateUniform("cbuff_pointLightExponent", &exponent);
 }
 
+void Shader::updateLightUniformsForwardRendering(std::vector<ILight*> lights)
+{
+	std::vector<float> lights_intensity;
+	std::vector<float> lights_constant;
+	std::vector<float> lights_linear;
+	std::vector<float> lights_exponent;
+	std::vector<float> lights_range;
+
+	std::vector<Matrix4f> lights_viewMatrix;
+	std::vector<Matrix4f> lights_projectionMatrix;
+	std::vector<Vector3f> lights_direction;
+	std::vector<Vector3f> lights_position;
+	std::vector<Vector4f> lights_color;
+
+	for (int i = 0; i < lights.size(); i++) {
+		lights_intensity.push_back(lights[i]->getIntensity());
+		lights_constant.push_back(lights[i]->getAttenuationConstant());
+		lights_linear.push_back(lights[i]->getAttenuationLinear());
+		lights_exponent.push_back(lights[i]->getAttenuationExponent());
+		lights_range.push_back(lights[i]->getRange());
+
+		lights_viewMatrix.push_back(Matrix4f::transpose(lights[i]->getViewMatrix()));
+		lights_projectionMatrix.push_back(Matrix4f::transpose(lights[i]->getProjectionMatrix()));
+		lights_direction.push_back(lights[i]->getDirection());
+		lights_position.push_back(lights[i]->getPosition());
+		lights_color.push_back(lights[i]->getColor());
+	}
+
+	updateUniform("cbuff_lightViewMatrix", &lights_viewMatrix);
+	updateUniform("cbuff_lightProjectionMatrix", &lights_projectionMatrix);
+
+	updateUniform("cbuff_lightDirection", &lights_direction);
+	updateUniform("cbuff_lightPos", &lights_position);
+	updateUniform("cbuff_lightColor", &lights_color);
+	updateUniform("cbuff_lightIntensity", &lights_intensity);
+	updateUniform("cbuff_pointLightRange", &lights_range);
+	updateUniform("cbuff_pointLightConstant", &lights_constant);
+	updateUniform("cbuff_pointLightLinear", &lights_linear);
+	updateUniform("cbuff_pointLightExponent", &lights_exponent);
+}
+
+
 void Shader::updateModelUniforms(Transform* transform)
 {
 	updateUniform("cbuff_OBJSpecificMatrix", &Matrix4f::transpose(transform->getMatrix()));

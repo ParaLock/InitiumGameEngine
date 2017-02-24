@@ -1,0 +1,25 @@
+{RESOURCE INIT}
+SHADER: name->deferredShader file->deferredShader.hlsl pipeFile->deferredPipeline.solPipe
+SHADER: name->directionalLightShader file->directionalLightShader.hlsl pipeFile->deferredLightingPipeline.solPipe
+SHADER: name->pointLightShader file->pointLightShader.hlsl pipeFile->deferredLightingPipeline.solPipe  
+
+MESH: name->hammerMesh file->hammer2.obj 
+MESH: name->planeMesh file->plane.obj 
+MESH: name->cubeMesh file->cube.obj
+MESH: name->orthoWindowMesh file->gen_ortho_window_mesh
+
+TEXTURE: name->woodTex file->Wood.png
+TEXTURE: name->metalTex file->metal.png
+TEXTURE: name->grassTex file->grass.png
+
+MATERIAL: name->metalMaterial specIntensity->9.0 specPower->0.0 specColor->1.0 1.0 1.0 1.0
+MATERIAL: name->woodMaterial specIntensity->0.0 specPower->0.0 specColor->1.0 1.0 1.0 1.0
+
+{OBJECT INIT}
+SOLIDUMOBJECT: name->hammer mesh->hammerMesh pos->0 0 0 mat->metalMaterial shader->deferredShader
+SOLIDUMOBJECT: name->cube mesh->cubeMesh pos->0 -2.0 -3.0 mat->woodMaterial shader->deferredShader
+SOLIDUMOBJECT: name->plane mesh->planeMesh pos->0 -3.5 0 mat->metalMaterial shader->deferredShader
+
+LIGHT: name->pointLight1 shader->pointLightShader mesh->orthoWindowMesh pos->-0.1 0.01 0.5 dir->0.0 0.0 0.0 intensity->0.2 color->0.5 2.5 0.5 0.5 range->10.5
+LIGHT: name->pointLight2 shader->pointLightShader mesh->orthoWindowMesh pos->-0.2 0.01 -0.1 dir->0.0 0.0 0.0 intensity->0.2 color->0.5 0.5 2.5 0.5 range->10.5
+LIGHT: name->pointLight3 shader->pointLightShader mesh->orthoWindowMesh pos->-0.2 0.01 -0.5 dir->0.0 0.0 0.0 intensity->0.1 color->3.5 0.5 0.5 0.5 range->10.5

@@ -39,6 +39,8 @@ public:
 
 	void setVisibility(bool isVisible) { _isVisible = isVisible; };
 
+	RENDER_NODE_TYPE getType() { return _type; }
+
 	IShader* getShader() { return _shader; }
 };
 

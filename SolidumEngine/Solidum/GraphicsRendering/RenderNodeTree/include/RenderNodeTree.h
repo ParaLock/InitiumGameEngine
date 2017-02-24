@@ -27,6 +27,8 @@ public:
 
 	void updateNodeVisibility(bool isVisible, uint64_t nodeid);
 
+	std::vector<RenderNode*> queryAllLights();
+
 	void removeNode(uint64_t id);
 
 	void frustrumCull();

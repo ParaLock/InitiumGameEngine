@@ -21,7 +21,33 @@ void MeshRenderNode::render()
 {
 	if (_isVisible) {
 
-		if (!_renderParams.getPerNodeParam_ForwardRendering()) {
+		if (_renderParams.getPerNodeParam_ForwardRendering()) {
+
+			std::vector<RenderNode*> lightNodes = GraphicsCore::getInstance()->getRenderNodeTree()->queryAllLights();
+
+			std::vector<ILight*> lights;
+
+			for each (RenderNode* node in lightNodes) {
+				LightRenderNode* lightNode = (LightRenderNode*)node;
+
+				lights.push_back(lightNode->getLight());
+			}
+
+			_shader->updateLightUniformsForwardRendering(lights);
+
+			_shader->updateCameraUniforms(_renderParams.getGlobalParam_GlobalRenderingCamera());
+
+			_shader->setMesh(_mesh);
+
+			_shader->setModelTexture(_texture);
+
+			_shader->updateMaterialPassUniforms(_pass);
+
+			_shader->updateModelUniforms(_renderParams.getPerNodeParam_Transform());
+
+			_shader->updateGPU();
+		}
+		else {
 
 			_shader->updateCameraUniforms(_renderParams.getGlobalParam_GlobalRenderingCamera());
 
@@ -47,7 +73,6 @@ void MeshRenderNode::render()
 			_shader->getPipeline()->setRasterState(RASTER_STATE::NORMAL);
 			_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_ENABLE);
 			_shader->getPipeline()->setBlendState(BLEND_STATE::BLENDING_OFF);
-
 		}
 
 		_isVisible = false;

@@ -103,6 +103,26 @@ void RenderNodeTree::updateNodeVisibility(bool isVisible, uint64_t nodeid)
 	}
 }
 
+std::vector<RenderNode*> RenderNodeTree::queryAllLights()
+{
+	std::vector<RenderNode*> lights;
+
+	for (auto itr = _rootNodes->begin(); itr != _rootNodes->end(); itr++) {
+
+		RenderNode* child = itr->second;
+		while (child != nullptr) {
+
+			if (child->getType() == RENDER_NODE_TYPE::LIGHT_RENDER_NODE) {
+				lights.push_back(child);
+			}
+
+			child = child->getChild();
+		}
+	}
+
+	return lights;
+}
+
 void RenderNodeTree::removeNode(uint64_t id)
 {
 	auto itr = _nodeQueryMap->find(id);

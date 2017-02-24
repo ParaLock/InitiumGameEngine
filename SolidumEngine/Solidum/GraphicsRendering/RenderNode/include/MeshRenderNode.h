@@ -5,6 +5,8 @@
 #include "../../Textures/include/Texture.h"
 #include "../../Shaders/include/Shader.h"
 
+#include "../include/LightRenderNode.h"
+
 class MaterialPass;
 
 class MeshRenderNode : public RenderNode
