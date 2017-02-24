@@ -40,6 +40,7 @@ private:
 
 	void InitializeDepthBuffer();
 	void InitializeFrameBuffer();
+	void InitializeRasterStates();
 	void InitializeDepthStencilStates();
 
 	void InitializeBlendStates();
@@ -71,17 +72,21 @@ public:
 	ID3D11DepthStencilState* depthStencilDisable;
 	ID3D11DepthStencilState* depthStencilEnable;
 
-	ID3D11BlendState *blendEnable;
+	ID3D11RasterizerState* rasterStateNormalRendering;
+	ID3D11RasterizerState* rasterStateNoCulling;
+
+	ID3D11BlendState *lightBlendState;
+	ID3D11BlendState *passBlendState;
 	ID3D11BlendState *blendDisable;
 
 	void clearDepthStencil();
 	void clearFrameBuffer(float R, float G, float B, float A);
 	
-	void disableDepthStencil();
-	void enableDepthStencil();
+	void setRasterState(RASTER_STATE state);
 
-	void enableBlending();
-	void disableBlending();
+	void setDepthTestState(DEPTH_TEST_STATE state);
+
+	void setBlendState(BLEND_STATE state);
 
 	void setViewport(std::string viewportSelect);
 

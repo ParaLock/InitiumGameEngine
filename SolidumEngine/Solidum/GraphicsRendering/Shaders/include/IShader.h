@@ -24,6 +24,7 @@ public:
 	virtual void updateGPU() = 0;
 
 	virtual void attachPipeline(GPUPipeline* pipe) = 0;
+	virtual GPUPipeline* getPipeline() = 0;
 
 	virtual void execute(int numIndices) = 0;
 

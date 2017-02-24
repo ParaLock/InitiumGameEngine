@@ -9,8 +9,7 @@ MeshRenderNode::MeshRenderNode(mesh* mesh, Texture* texture, MaterialPass* pass)
 {
 	_shader = _pass->getShader();
 
-
-	int debugRef = -1;
+	_type = RENDER_NODE_TYPE::MESH_RENDER_NODE;
 }
 
 
@@ -22,19 +21,35 @@ void MeshRenderNode::render()
 {
 	if (_isVisible) {
 
-		_shader->updateCameraUniforms(_renderParams.getGlobalParam_GlobalRenderingCamera());
+		if (!_renderParams.getPerNodeParam_ForwardRendering()) {
 
-		_shader->setMesh(_mesh);
+			_shader->updateCameraUniforms(_renderParams.getGlobalParam_GlobalRenderingCamera());
 
-		_shader->setModelTexture(_texture);
+			_shader->setMesh(_mesh);
 
-		_shader->updateMaterialPassUniforms(_pass);
+			_shader->setModelTexture(_texture);
 
-		_shader->updateModelUniforms(_renderParams.getPerNodeParam_Transform());
+			_shader->updateMaterialPassUniforms(_pass);
 
-		_shader->updateGPU();
-		_shader->execute(_mesh->numIndices);
-	
+			_shader->updateModelUniforms(_renderParams.getPerNodeParam_Transform());
+
+			_shader->updateGPU();
+
+			if (!_renderParams.getPerNodeParam_DepthTestEnableState()) {
+
+				_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_ENABLE);
+				_shader->getPipeline()->setRasterState(RASTER_STATE::DISABLE_TRIANGLE_CULL);
+				_shader->getPipeline()->setBlendState(BLEND_STATE::PASS_BLENDING);
+
+			}
+			_shader->execute(_mesh->numIndices);
+
+			_shader->getPipeline()->setRasterState(RASTER_STATE::NORMAL);
+			_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_ENABLE);
+			_shader->getPipeline()->setBlendState(BLEND_STATE::BLENDING_OFF);
+
+		}
+
 		_isVisible = false;
 	}
 }

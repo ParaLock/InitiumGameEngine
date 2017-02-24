@@ -8,7 +8,7 @@ LightComponent::LightComponent(Light* light)
 
 	_light = light;
 
-	std::unique_ptr<RenderNodeTree> tree = GraphicsCore::getInstance()->getRenderNodeTree();
+	RenderNodeTree* tree = GraphicsCore::getInstance()->getRenderNodeTree();
 
 	uint64_t newNodeid = tree->getUniqueNodeID();
 

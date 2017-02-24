@@ -30,6 +30,7 @@ public:
 			}
 		}
 		else {
+			throw "Resource Manager Not Found";
 			std::cout << "Resource Manager Not Found! :(" << " " << "RESOURCE MANAGER NAME:" << name << std::endl;
 		}
 	}

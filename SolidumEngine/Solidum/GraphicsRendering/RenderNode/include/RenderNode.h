@@ -14,6 +14,8 @@ protected:
 	uint64_t id;
 	IShader* _shader;
 
+	RENDER_NODE_TYPE _type;
+
 	RenderParams _renderParams;
 
 	RenderNode* _parent = nullptr;

@@ -54,6 +54,22 @@
 #define SSTR( x ) static_cast< std::ostringstream & >( \
         ( std::ostringstream() << std::dec << x ) ).str()
 
+enum RASTER_STATE {
+	NORMAL,
+	DISABLE_TRIANGLE_CULL
+};
+
+enum BLEND_STATE {
+	BLENDING_OFF,
+	LIGHT_BLENDING,
+	PASS_BLENDING
+};
+
+enum DEPTH_TEST_STATE {
+	FULL_DISABLE,
+	FULL_ENABLE
+};
+
 enum TEX_FILTERS {
 	TEX_FILTER_ANISOTROPHIC,
 	TEX_FILTER_LINEAR,
@@ -107,6 +123,12 @@ enum LIGHT_TYPE {
 enum MATERIAL_TEX {
 	DIFFUSE_MATERIAL_TEXTURE,
 	SPECULAR_MATERIAL_TEXTURE,
+};
+
+enum RENDER_NODE_TYPE {
+	LIGHT_RENDER_NODE,
+	MESH_RENDER_NODE,
+	POST_FX_RENDER_NODE
 };
 
 enum SHADER_RENDER_TYPE {

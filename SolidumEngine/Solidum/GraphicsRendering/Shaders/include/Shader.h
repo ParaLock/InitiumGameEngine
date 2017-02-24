@@ -56,6 +56,7 @@ public:
 	void updateGPU();
 
 	virtual void attachPipeline(GPUPipeline* pipe) = 0;
+	GPUPipeline* getPipeline() { return _pipelineState; }
 
 	virtual void execute(int numIndices);
 

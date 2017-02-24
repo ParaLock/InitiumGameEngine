@@ -12,8 +12,12 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 {
 	if (singletonInstance == nullptr)
 		singletonInstance = this;
+	else
+		return;
 
 	ActiveGraphicsAPI::setCurrentAPI(api);
+
+	_renderTree = new RenderNodeTree();
 
 	EventFrameworkCore::getInstance()->getGlobalEventHub("ComponentEventHub")->subscribeListener(this);
 
@@ -56,6 +60,8 @@ GraphicsCore::~GraphicsCore()
 {
 	if (_dxManager != nullptr)
 		delete _dxManager;
+	if (_renderTree != nullptr)
+		delete _renderTree;
 }
 
 void GraphicsCore::RenderAll()
@@ -65,13 +71,13 @@ void GraphicsCore::RenderAll()
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING);
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT);
 
-	_renderTree.setExecutionOrder(renderExecutionOrder);
+	_renderTree->setExecutionOrder(renderExecutionOrder);
 
-	_renderTree.updateGlobalRenderParams(_globalRenderingParameters);
+	_renderTree->updateGlobalRenderParams(_globalRenderingParameters);
 	
-	_renderTree.optimize();
+	_renderTree->optimize();
 
-	_renderTree.walkTree();
+	_renderTree->walkTree();
 }
 
 void GraphicsCore::onEvent(EVENT_PTR evt)

@@ -183,20 +183,20 @@ void GPUPipeline::load(IResourceBuilder * builder)
 			if (splitStr.at(0) == "DEPTH_TEST") {
 
 				if (splitStr.at(1) == "enable") {
-					setDepthTest(true);
+					setDepthTestState(DEPTH_TEST_STATE::FULL_ENABLE);
 				}
 				else {
-					setDepthTest(false);
+					setDepthTestState(DEPTH_TEST_STATE::FULL_DISABLE);
 				}
 			}
 
 			if (splitStr.at(0) == "BLENDING") {
 				if (splitStr.at(1) == "enable") {
 
-					setBlending(true);
+					blendState = BLEND_STATE::LIGHT_BLENDING;
 				}
 				else {
-					setBlending(false);
+					blendState = BLEND_STATE::BLENDING_OFF;
 				}
 			}
 		}
@@ -212,8 +212,7 @@ void GPUPipeline::unload()
 
 void GPUPipeline::reset()
 {
-	depthTestEnabled = false;
-	blendingEnabled = false;
+	blendState = BLEND_STATE::BLENDING_OFF;
 
 	_constantBufferMemberNameMap->clear();
 	_opList->clear();
@@ -232,14 +231,19 @@ void GPUPipeline::attachOP(GPUPipelineSupportedOP opType, std::string targetName
 }
 
 
-void GPUPipeline::setDepthTest(bool enable)
+void GPUPipeline::setRasterState(RASTER_STATE state)
 {
-	depthTestEnabled = enable;
+	rasterState = state;
 }
 
-void GPUPipeline::setBlending(bool enable)
+void GPUPipeline::setDepthTestState(DEPTH_TEST_STATE state)
 {
-	blendingEnabled = enable;
+	depthState = state;
+}
+
+void GPUPipeline::setBlendState(BLEND_STATE state)
+{
+	blendState = state;
 }
 
 void GPUPipeline::setHookResource(IResource* res, std::string name)

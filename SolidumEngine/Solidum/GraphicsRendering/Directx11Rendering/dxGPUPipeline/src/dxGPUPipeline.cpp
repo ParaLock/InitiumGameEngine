@@ -176,20 +176,11 @@ void dxGPUPipeline::applyState()
 		delete[] renderTargets;
 	}
 
-	if (depthTestEnabled) {
-		dxDeviceAccessor::dxEncapsulator->enableDepthStencil();
-	}
-	else {
-		dxDeviceAccessor::dxEncapsulator->disableDepthStencil();
-	}
+	dxDeviceAccessor::dxEncapsulator->setDepthTestState(depthState);
+	
+	dxDeviceAccessor::dxEncapsulator->setRasterState(rasterState);
 
-	if (blendingEnabled) {
-		dxDeviceAccessor::dxEncapsulator->enableBlending();
-	}
-	else {
-		dxDeviceAccessor::dxEncapsulator->disableBlending();
-	}
-
+	dxDeviceAccessor::dxEncapsulator->setBlendState(blendState);
 }
 
 void dxGPUPipeline::processOp(GPUPipelineOP* op)

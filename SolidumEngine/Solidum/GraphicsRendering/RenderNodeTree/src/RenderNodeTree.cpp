@@ -23,13 +23,13 @@ uint64_t RenderNodeTree::getUniqueNodeID()
 	return dist(mt);
 }
 
-void RenderNodeTree::setExecutionOrder(const std::list<SHADER_RENDER_TYPE>& order)
+void RenderNodeTree::setExecutionOrder(std::list<SHADER_RENDER_TYPE> order)
 {
-	for each(SHADER_RENDER_TYPE type in order) {
+	for (auto typeItr = order.begin(); typeItr != order.end(); typeItr++) {
 
 		for (auto itr = _rootNodes->begin(); itr != _rootNodes->end(); itr++) {
 
-			if (itr->second->getShader()->getRenderMode() == type) {
+			if (itr->second->getShader()->getRenderMode() == *typeItr) {
 
 				_orderedRootNodes->push_back(itr->second);
 			}
@@ -139,4 +139,6 @@ void RenderNodeTree::walkTree()
 
 		node->render();
 	}
+
+	_orderedRootNodes->clear();
 }

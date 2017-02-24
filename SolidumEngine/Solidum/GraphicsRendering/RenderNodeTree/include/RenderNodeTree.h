@@ -18,7 +18,7 @@ public:
 
 	uint64_t getUniqueNodeID();
 
-	void setExecutionOrder(const std::list<SHADER_RENDER_TYPE>& order);
+	void setExecutionOrder(std::list<SHADER_RENDER_TYPE> order);
 
 	void addNode(RenderNode* node, uint64_t id);
 

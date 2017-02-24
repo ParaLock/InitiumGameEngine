@@ -97,8 +97,9 @@ protected:
 	std::map<std::string, GPUPipelineElement*> *_elementList;
 	std::list<GPUPipelineOP*> *_opList;
 
-	bool blendingEnabled;
-	bool depthTestEnabled;
+	BLEND_STATE blendState = BLEND_STATE::BLENDING_OFF;
+	DEPTH_TEST_STATE depthState = DEPTH_TEST_STATE::FULL_DISABLE;
+	RASTER_STATE rasterState = RASTER_STATE::NORMAL;
 
 public:
 	GPUPipeline();
@@ -111,8 +112,9 @@ public:
 
 	void attachOP(GPUPipelineSupportedOP opType, std::string targetName, GPUPipelineElementType opTargetType, bool executionContext);
 
-	void setDepthTest(bool enable);
-	void setBlending(bool enable);
+	void setRasterState(RASTER_STATE state);
+	void setDepthTestState(DEPTH_TEST_STATE state);
+	void setBlendState(BLEND_STATE state);
 
 	void setHookResource(IResource* res, std::string name);
 

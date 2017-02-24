@@ -189,6 +189,9 @@ void camera::updateLook(float mouseX, float mouseY)
 
 void camera::move(CAMERA_MOVE direction, float speed)
 {
+	if (speed > 5 || speed < -1)
+		return;
+
 	switch (direction) {
 	case CAMERA_MOVE::CAM_LOOK_DOWN:
 		adjustYawAndPitch(0.0f, speed * 1.0f);

@@ -29,6 +29,10 @@ void dxDevice::Initialize(dxConfigBlock *config)
 	scd.OutputWindow = devConfig->swapchain.OutputWindow;
 	scd.Windowed = devConfig->swapchain.Windowed;
 
+
+	UINT creationFlags = 0;
+	creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+
 	result = D3D11CreateDeviceAndSwapChain(
 		NULL,
 		devConfig->dev.DriverType,
@@ -51,6 +55,7 @@ void dxDevice::Initialize(dxConfigBlock *config)
 		InitializeDepthStencilStates();
 		InitializeViewport();
 		InitializeBlendStates();
+		InitializeRasterStates();
 
 		setViewport("light");
 }
@@ -98,6 +103,41 @@ void dxDevice::InitializeFrameBuffer()
 
 	result = dxSwapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&FrameBufferTexture);
 	result = dxDev->CreateRenderTargetView(FrameBufferTexture, NULL, &FrameBufferShaderAccess);
+}
+
+void dxDevice::InitializeRasterStates()
+{
+	D3D11_RASTERIZER_DESC rasterizerStateNormalDesc;
+	ZeroMemory(&rasterizerStateNormalDesc, sizeof(rasterizerStateNormalDesc));
+	
+	rasterizerStateNormalDesc.FillMode = D3D11_FILL_SOLID;
+	rasterizerStateNormalDesc.CullMode = D3D11_CULL_BACK;
+	rasterizerStateNormalDesc.FrontCounterClockwise = FALSE;
+	rasterizerStateNormalDesc.DepthBias = D3D11_DEFAULT_DEPTH_BIAS;
+	rasterizerStateNormalDesc.DepthBiasClamp = D3D11_DEFAULT_DEPTH_BIAS_CLAMP;
+	rasterizerStateNormalDesc.SlopeScaledDepthBias = D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+	rasterizerStateNormalDesc.DepthClipEnable = TRUE;
+	rasterizerStateNormalDesc.ScissorEnable = FALSE;
+	rasterizerStateNormalDesc.MultisampleEnable = FALSE;
+	rasterizerStateNormalDesc.AntialiasedLineEnable = FALSE;
+
+	dxDev->CreateRasterizerState(&rasterizerStateNormalDesc, &rasterStateNormalRendering);
+
+	D3D11_RASTERIZER_DESC rasterizerStateNoCullingDesc;
+	ZeroMemory(&rasterizerStateNoCullingDesc, sizeof(rasterizerStateNoCullingDesc));
+
+	rasterizerStateNoCullingDesc.FillMode = D3D11_FILL_SOLID;
+	rasterizerStateNoCullingDesc.CullMode = D3D11_CULL_BACK;
+	rasterizerStateNoCullingDesc.FrontCounterClockwise = FALSE;
+	rasterizerStateNoCullingDesc.DepthBias = D3D11_DEFAULT_DEPTH_BIAS;
+	rasterizerStateNoCullingDesc.DepthBiasClamp = D3D11_DEFAULT_DEPTH_BIAS_CLAMP;
+	rasterizerStateNoCullingDesc.SlopeScaledDepthBias = D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+	rasterizerStateNoCullingDesc.DepthClipEnable = FALSE;
+	rasterizerStateNoCullingDesc.ScissorEnable = FALSE;
+	rasterizerStateNoCullingDesc.MultisampleEnable = FALSE;
+	rasterizerStateNoCullingDesc.AntialiasedLineEnable = FALSE;
+
+	dxDev->CreateRasterizerState(&rasterizerStateNoCullingDesc, &rasterStateNoCulling);
 }
 
 void dxDevice::InitializeDepthStencilStates()
@@ -156,33 +196,47 @@ void dxDevice::InitializeBlendStates()
 {
 	HRESULT result;
 
-	D3D11_BLEND_DESC BlendEnableDesc;
-	ZeroMemory(&BlendEnableDesc, sizeof(D3D11_BLEND_DESC));
+	D3D11_BLEND_DESC lightBlendStateDesc;
+	ZeroMemory(&lightBlendStateDesc, sizeof(D3D11_BLEND_DESC));
 	
-	//BlendEnableDesc.AlphaToCoverageEnable = FALSE;
-	//BlendEnableDesc.IndependentBlendEnable = FALSE;
+	lightBlendStateDesc.RenderTarget[0].BlendEnable = TRUE;
+	lightBlendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	lightBlendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	lightBlendStateDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	lightBlendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	lightBlendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	lightBlendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	lightBlendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 
-	//BlendEnableDesc.RenderTarget[0].BlendEnable = TRUE;
-	//BlendEnableDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-	//BlendEnableDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-	//BlendEnableDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	//BlendEnableDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+	result = dxDev->CreateBlendState(&lightBlendStateDesc, &lightBlendState);
 
-	BlendEnableDesc.RenderTarget[0].BlendEnable = TRUE;
-	BlendEnableDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	BlendEnableDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	BlendEnableDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	BlendEnableDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-	BlendEnableDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-	BlendEnableDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	BlendEnableDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	D3D11_BLEND_DESC passBlendStateDesc;
+	ZeroMemory(&passBlendStateDesc, sizeof(D3D11_BLEND_DESC));
 
-	result = dxDev->CreateBlendState(&BlendEnableDesc, &blendEnable);
+	passBlendStateDesc.RenderTarget[0].BlendEnable = TRUE;
+	passBlendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	passBlendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	passBlendStateDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	passBlendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	passBlendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	passBlendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	passBlendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 
+	passBlendStateDesc.RenderTarget[3].BlendEnable = TRUE;
+	passBlendStateDesc.RenderTarget[3].BlendOp = D3D11_BLEND_OP_ADD;
+	passBlendStateDesc.RenderTarget[3].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	passBlendStateDesc.RenderTarget[3].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	passBlendStateDesc.RenderTarget[3].SrcBlend = D3D11_BLEND_ONE;
+	passBlendStateDesc.RenderTarget[3].DestBlend = D3D11_BLEND_ONE;
+	passBlendStateDesc.RenderTarget[3].SrcBlendAlpha = D3D11_BLEND_ONE;
+	passBlendStateDesc.RenderTarget[3].DestBlendAlpha = D3D11_BLEND_ONE;
+
+	result = dxDev->CreateBlendState(&passBlendStateDesc, &passBlendState);
 
 	D3D11_BLEND_DESC BlendDisableDesc;
 	ZeroMemory(&BlendDisableDesc, sizeof(D3D11_BLEND_DESC));
-	BlendDisableDesc.RenderTarget[0].BlendEnable = TRUE;
+
+	BlendDisableDesc.RenderTarget[0].BlendEnable = FALSE;
 	BlendDisableDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	BlendDisableDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	BlendDisableDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
@@ -190,11 +244,8 @@ void dxDevice::InitializeBlendStates()
 	BlendDisableDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
 	BlendDisableDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	BlendDisableDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+
 	result = dxDev->CreateBlendState(&BlendDisableDesc, &blendDisable);
-
-
-
-	int i = 9;
 }
 
 
@@ -229,25 +280,54 @@ void dxDevice::clearFrameBuffer(float R, float G, float B, float A)
 	dxDevContext->ClearRenderTargetView(FrameBufferShaderAccess, D3DXCOLOR(R, G, B, A));
 }
 
-void dxDevice::disableDepthStencil()
+void dxDevice::setRasterState(RASTER_STATE state)
 {
-	dxDevContext->OMSetDepthStencilState(depthStencilDisable, 1);
+	switch (state)
+	{
+	case RASTER_STATE::NORMAL:
+		dxDevContext->RSSetState(rasterStateNormalRendering);
+		break;
+	case RASTER_STATE::DISABLE_TRIANGLE_CULL:
+		dxDevContext->RSSetState(rasterStateNoCulling);
+		break;
+	default:
+		break;
+	}
 }
 
-void dxDevice::enableDepthStencil()
+void dxDevice::setDepthTestState(DEPTH_TEST_STATE state)
 {
-	dxDevContext->OMSetDepthStencilState(depthStencilEnable, 1);
+	switch (state)
+	{
+	case FULL_DISABLE:
+		dxDevContext->OMSetDepthStencilState(depthStencilDisable, 1);
+		break;
+	case FULL_ENABLE:
+		dxDevContext->OMSetDepthStencilState(depthStencilEnable, 1);
+		break;
+	default:
+		break;
+	}
 }
 
-void dxDevice::enableBlending()
+void dxDevice::setBlendState(BLEND_STATE state)
 {
-	dxDevContext->OMSetBlendState(blendEnable, 0, 0xffffffff);
+	switch (state)
+	{
+	case BLEND_STATE::BLENDING_OFF:
+		dxDevContext->OMSetBlendState(blendDisable, 0, 0xffffffff);
+		break;
+	case BLEND_STATE::LIGHT_BLENDING:
+		dxDevContext->OMSetBlendState(lightBlendState, 0, 0xffffffff);
+		break;
+	case BLEND_STATE::PASS_BLENDING:
+		dxDevContext->OMSetBlendState(passBlendState, 0, 0xffffffff);
+		break;
+	default:
+		break;
+	}
 }
 
-void dxDevice::disableBlending()
-{
-	dxDevContext->OMSetBlendState(blendDisable, 0, 0xffffffff);
-}
 
 void dxDevice::setViewport(std::string viewportSelect)
 {

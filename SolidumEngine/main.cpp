@@ -106,7 +106,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		(), "woodMaterial", false)->getCore<Material>();
 
 	woodMaterial->createPass("basicPhongWSpecular", deferredShader, deferredPipeline);
-	
+
 	woodMaterial->getPass("basicPhongWSpecular")->setSpecularColor(Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 	woodMaterial->getPass("basicPhongWSpecular")->setSpecularIntensity(0.002f);
 	woodMaterial->getPass("basicPhongWSpecular")->setSpecularPower(0.002f);
@@ -216,7 +216,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	ROOT_ENTITY->addChild(pointLight3Entity);
 	ROOT_ENTITY->addChild(hammer);
 	ROOT_ENTITY->addChild(plane);
-	//ROOT_ENTITY->addChild(dirLightEntity);
 
 	while (myWindow->running) {
 

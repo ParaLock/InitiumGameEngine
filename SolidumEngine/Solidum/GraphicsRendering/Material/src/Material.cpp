@@ -41,7 +41,7 @@ std::vector<uint64_t> Material::generateClientRenderNodes(mesh * mesh, Texture *
 {
 	std::vector<uint64_t> _nodes;
 	
-	std::unique_ptr<RenderNodeTree> renderTree = GraphicsCore::getInstance()->getRenderNodeTree();
+	RenderNodeTree* renderTree = GraphicsCore::getInstance()->getRenderNodeTree();
 
 	for (auto itr = _passes.begin(); itr != _passes.end(); itr++) {
 

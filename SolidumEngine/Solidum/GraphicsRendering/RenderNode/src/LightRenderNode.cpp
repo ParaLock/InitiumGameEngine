@@ -10,6 +10,8 @@ LightRenderNode::LightRenderNode(Light* light) :
 
 	_shader = ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>
 		("LightManager")->getLightShader(_light->getType());
+
+	_type = RENDER_NODE_TYPE::LIGHT_RENDER_NODE;
 }
 
 
@@ -22,12 +24,15 @@ void LightRenderNode::render()
 {
 	if (_isVisible) {
 
-		_shader->setMesh(_orthoMesh);
-		_shader->updateLightUniforms(_light);
-		_shader->updateCameraUniforms(_renderParams.getGlobalParam_GlobalRenderingCamera());
+		if (!_renderParams.getPerNodeParam_ForwardRendering()) {
+			_shader->setMesh(_orthoMesh);
+			_shader->updateLightUniforms(_light);
+			_shader->updateCameraUniforms(_renderParams.getGlobalParam_GlobalRenderingCamera());
 
-		_shader->updateGPU();
-		_shader->execute(_orthoMesh->numIndices);
+			_shader->updateGPU();
+			_shader->execute(_orthoMesh->numIndices);
+
+		}
 
 		_isVisible = false;
 	}

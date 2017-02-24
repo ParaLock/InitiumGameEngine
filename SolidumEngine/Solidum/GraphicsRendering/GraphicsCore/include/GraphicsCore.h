@@ -32,7 +32,7 @@ private:
 
 	camera* _primaryCamera = nullptr;
 
-	RenderNodeTree _renderTree;
+	RenderNodeTree *_renderTree;
 
 	GlobalRenderingParams _globalRenderingParameters;
 
@@ -46,7 +46,7 @@ public:
 
 	void attachPrimaryCamera(camera* cam);
 
-	std::unique_ptr<RenderNodeTree> getRenderNodeTree() { return std::make_unique<RenderNodeTree>(_renderTree); };
+	RenderNodeTree* getRenderNodeTree() { return _renderTree; };
 	camera* getPrimaryCamera() { return _primaryCamera; }
 
 	static GraphicsCore* singletonInstance;
