@@ -2,44 +2,47 @@
 
 
 
-LightComponent::LightComponent(Light* light, mesh* mesh, std::string renderProcessName)
+LightComponent::LightComponent(Light* light)
 {
 	_parentTransformDirty = true;
 
 	_light = light;
-	_mesh = mesh;
 
-	_graphicsStream = new RenderDataStream();
+	std::unique_ptr<RenderNodeTree> tree = GraphicsCore::getInstance()->getRenderNodeTree();
 
-	EVENT_PTR regEvt = std::make_shared<RenderEvent>(EVENT_TYPE::RENDER_EVENT_REGISTER_STREAM);
-	
-	regEvt->getEvent<RenderEvent>()->setData(_graphicsStream, renderProcessName);
+	uint64_t newNodeid = tree->getUniqueNodeID();
 
-	EventFrameworkCore::getInstance()->
-		getGlobalEventHub("ComponentEventHub")->publishEvent(regEvt);
+	_renderNodes.push_back(newNodeid);
+
+	tree->addNode(new LightRenderNode(_light), newNodeid);
 }
 
 
 LightComponent::~LightComponent()
 {
+	for each (uint64_t nodeid in _renderNodes)
+		GraphicsCore::getInstance()->getRenderNodeTree()->removeNode(nodeid);
 }
 
 void LightComponent::update()
 {
-	if (_parent != nullptr) {
+	if (_parentTransformDirty) {
 
-		if (_parentTransformDirty) {
-			_parentTransformDirty = false;
-			_parent->getTransform()->setPos(_light->getPosition());
-		}
-
-		_light->setPosition(_parent->getTransform()->getPos());
+		_parentTransformDirty = false; 
+		_parent->getTransform()->setPos(_light->getPosition());
 	}
 
-	_graphicsStream->writeNext((IResource*)_light, STREAM_DATA_TYPE::LIGHT);
-	_graphicsStream->writeNext((IResource*)_parent->getTransform(), STREAM_DATA_TYPE::TRANSFORM);
-	_graphicsStream->writeNext((IResource*)_mesh, STREAM_DATA_TYPE::MESH);
-	
+	_light->setPosition(_parent->getTransform()->getPos());
+
+	LocalRenderingParams params;
+
+	params._transform = _parent->getTransform();
+
+	for each (uint64_t nodeid in _renderNodes) {
+
+		GraphicsCore::getInstance()->getRenderNodeTree()->updateNodeVisibility(true, nodeid);
+		GraphicsCore::getInstance()->getRenderNodeTree()->updateNodeLocalRenderParams(params, nodeid);
+	}
 }
 
 void LightComponent::onEvent(EVENT_PTR evt)

@@ -1,37 +1,28 @@
 #include "../include/MeshComponent.h"
 
 
-MeshComponent::MeshComponent(mesh* mesh, Texture* tex, Material* mat, std::string rendProcID)
+MeshComponent::MeshComponent(mesh* mesh, Texture* tex, Material* mat)
 {
-	_mesh = mesh;
-	_tex = tex;
-	_mat = mat;
-
-	EVENT_PTR regEvt = std::make_shared<RenderEvent>(EVENT_TYPE::RENDER_EVENT_REGISTER_STREAM);
-
-	_graphicsStream = new RenderDataStream();
-
-	regEvt->getEvent<RenderEvent>()->setData(_graphicsStream, rendProcID);
-
-	EventFrameworkCore::getInstance()->
-		getGlobalEventHub("ComponentEventHub")->publishEvent(regEvt);
+	_renderNodes = mat->generateClientRenderNodes(mesh, tex);
 }
 
 MeshComponent::~MeshComponent()
 {
+	for each (uint64_t nodeid in _renderNodes)
+		GraphicsCore::getInstance()->getRenderNodeTree()->removeNode(nodeid);
 }
 
 void MeshComponent::update()
 {
-	if (_parent != nullptr)
-		_transform = _parent->getTransform();
+	LocalRenderingParams params;
 
-	if(_transform != nullptr)
-		_graphicsStream->writeNext((IResource*)_parent->getTransform(), STREAM_DATA_TYPE::TRANSFORM);
+	params._transform = _parent->getTransform();
 
-	_graphicsStream->writeNext((IResource*)_mat, STREAM_DATA_TYPE::MATERIAL);
-	_graphicsStream->writeNext((IResource*)_mesh, STREAM_DATA_TYPE::MESH);
-	_graphicsStream->writeNext((IResource*)_tex, STREAM_DATA_TYPE::TEXTURE);
+	for each (uint64_t nodeid in _renderNodes) {
+
+		GraphicsCore::getInstance()->getRenderNodeTree()->updateNodeVisibility(true, nodeid);
+		GraphicsCore::getInstance()->getRenderNodeTree()->updateNodeLocalRenderParams(params, nodeid);
+	}
 }
 
 void MeshComponent::onEvent(EVENT_PTR evt)

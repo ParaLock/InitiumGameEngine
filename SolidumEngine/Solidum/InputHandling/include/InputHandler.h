@@ -4,14 +4,12 @@
 
 #include "../../EventFramework/include/EventFrameworkCore.h"
 
-#include "../../EventFramework/include/IEventPublisher.h"
-
 #include "../../EventFramework/include/InputEvent.h"
 
 #include "../../GraphicsRendering/Window/include/windowAccessor.h"
 
 
-class InputHandler : public IResource, public IEventPublisher, public IEventListener
+class InputHandler : public IResource, public IEventListener
 {
 public:
 	InputHandler();

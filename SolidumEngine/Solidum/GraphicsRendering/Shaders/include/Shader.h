@@ -11,27 +11,31 @@
 #include "../../Camera/include/camera.h"
 #include "../../Mesh/include/mesh.h"
 
+#include "IShader.h"
+
 #include "../../../ResourceFramework/include/IResource.h"
 
 class ShaderBuilder : public IResourceBuilder {
 public:
 	LPCWSTR _filename;
-	ResourceManagerPool* _resManagerPool;
+	SHADER_RENDER_TYPE _renderType;
 
-	ShaderBuilder(LPCWSTR filename, ResourceManagerPool* resManagerPool) {
+	ShaderBuilder(LPCWSTR filename, SHADER_RENDER_TYPE renderType) {
 		_filename = filename;
-		_resManagerPool = resManagerPool;
+		_renderType = renderType;
 	};
 };
 
-class Shader : public IResource
+class MaterialPass;
+
+class Shader : public IShader, public IResource
 {
 protected:
 	std::map<std::string, DynamicStruct*> *_constantBufferMemberNameMap;
 
-	GPUPipeline* _pipelineState = nullptr;
+	SHADER_RENDER_TYPE _renderType;
 
-	ResourceManagerPool* _resManagerPool;
+	GPUPipeline* _pipelineState = nullptr;
 public:
 	Shader();
 	~Shader();
@@ -43,7 +47,7 @@ public:
 
 	void setModelTexture(Texture* tex);
 
-	void updateMaterialUniforms(Material* mat);
+	void updateMaterialPassUniforms(MaterialPass* pass);
 	void updateLightUniforms(ILight* light);
 	void updateModelUniforms(Transform* transform);
 	void updateCameraUniforms(camera* cam);
@@ -54,5 +58,7 @@ public:
 	virtual void attachPipeline(GPUPipeline* pipe) = 0;
 
 	virtual void execute(int numIndices);
+
+	SHADER_RENDER_TYPE getRenderMode() { return _renderType; }
 };
 

@@ -15,7 +15,7 @@ void dxShader::load(IResourceBuilder * builder)
 
 	LPCWSTR shaderFilename = realBuilder->_filename;
 
-	_resManagerPool = realBuilder->_resManagerPool;
+	_renderType = realBuilder->_renderType;
 
 	ID3DBlob* errorBlob = nullptr;
 	HRESULT result;
@@ -181,7 +181,7 @@ void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3
 					cbuff->addVariable(BufferLayout.Variables.at(q).Name, BufferLayout.Variables.at(q).Size);
 				}
 
-				cbuff->initMemory(_resManagerPool);
+				cbuff->initMemory();
 
 				_pipelineState->attachResource(cbuff, BufferLayout.Description.Name,
 					GPUPipelineElementType::SOL_GENERAL_DATA_BUFF, shaderType, false);

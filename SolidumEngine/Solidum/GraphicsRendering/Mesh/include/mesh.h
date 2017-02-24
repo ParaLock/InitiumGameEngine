@@ -3,7 +3,9 @@
 #include "meshLoader.h"
 #include "meshLoaderOBJ.h"
 #include "../../../sysInclude.h"
+
 #include "../../Directx11Rendering/dxDevice/include/dxDeviceAccessor.h"
+
 #include "../../GraphicsBuffers/include/GPUBuffer.h"
 
 #include "../../../EngineUtils/include/StringManipulation.h"
@@ -15,8 +17,6 @@
 #include "../../../ResourceFramework/include/IResourceManager.h"
 
 #include "../../../ResourceFramework/include/ResourceManagerPool.h"
-
-#include "../../Mesh/include/mesh.h"
 
 #include "../../ActiveGraphicsAPI.h"
 

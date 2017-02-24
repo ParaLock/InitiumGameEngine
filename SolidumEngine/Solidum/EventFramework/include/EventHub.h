@@ -1,6 +1,5 @@
 #pragma once
 #include "../../sysInclude.h"
-#include "IEventPublisher.h"
 #include "IEventListener.h"
 
 class EventHub

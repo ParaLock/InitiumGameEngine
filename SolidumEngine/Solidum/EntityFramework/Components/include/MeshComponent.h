@@ -6,18 +6,14 @@
 #include "../../../GraphicsRendering/Material/include/Material.h"
 #include "../../../GraphicsRendering/Textures/include/Texture.h"
 
+#include "../../../GraphicsRendering/RenderNode/include/MeshRenderNode.h"
+
 class MeshComponent : public Component
 {
 private:
-	mesh* _mesh;
-	Texture* _tex;
-	Material* _mat;
-
-	Transform* _transform = nullptr;
-
-	RenderDataStream *_graphicsStream = nullptr;
+	std::vector<uint64_t> _renderNodes;
 public:
-	MeshComponent(mesh* mesh, Texture* tex, Material* mat, std::string rendProcID);
+	MeshComponent(mesh* mesh, Texture* tex, Material* mat);
 	~MeshComponent();
 
 	void update();

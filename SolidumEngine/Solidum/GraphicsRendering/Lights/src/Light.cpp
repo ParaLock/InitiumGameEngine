@@ -15,6 +15,10 @@ Light::~Light()
 
 void Light::load(IResourceBuilder * builder)
 {
+	LightBuilder* realBuilder = static_cast<LightBuilder*>(builder);
+
+	_type = realBuilder->_type;
+
 	isLoaded = true;
 }
 

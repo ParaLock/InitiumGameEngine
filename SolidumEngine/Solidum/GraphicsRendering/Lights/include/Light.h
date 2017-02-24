@@ -12,14 +12,18 @@
 
 class LightBuilder : public IResourceBuilder {
 public:
-	LightBuilder() {
+	LIGHT_TYPE _type;
 
+	LightBuilder(LIGHT_TYPE type) {
+		_type = type;
 	}
 };
 
 class Light : public IResource, public ILight
 {
 private:
+
+	LIGHT_TYPE _type;
 
 	Matrix4f _viewMatrix, _projectionMatrix;
 	
@@ -51,6 +55,8 @@ public:
 
 	void load(IResourceBuilder* builder);
 	void unload();
+
+	LIGHT_TYPE getType() { return _type; }
 
 	void setDirection(Vector3f dir);
 	void setPosition(Vector3f pos);

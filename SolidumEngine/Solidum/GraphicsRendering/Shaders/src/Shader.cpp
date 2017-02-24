@@ -22,26 +22,14 @@ void Shader::setModelTexture(Texture * tex)
 	_pipelineState->setHookResource(tex, "model_tex");
 }
 
-void Shader::updateMaterialUniforms(Material* mat)
+void Shader::updateMaterialPassUniforms(MaterialPass* pass)
 {
-	float specPower = mat->getSpecularPower();
-	float specIntensity= mat->getSpecularIntensity();
-	int matID = mat->getID();
+	float specPower = pass->getSpecularPower();
+	float specIntensity= pass->getSpecularIntensity();
 
 	updateUniform("cbuff_specularIntensity", &specIntensity);
-	updateUniform("cbuff_specularColor", &mat->getSpecularColor());
+	updateUniform("cbuff_specularColor", &pass->getSpecularColor());
 	updateUniform("cbuff_specularPower", &specPower);
-
-	std::map<MATERIAL_TEX, Texture*>& const textures = mat->getTextures();
-
-	for (auto itr = textures.begin(); itr != textures.end(); itr++) {
-		if (itr->first == MATERIAL_TEX::PRIMARY_MATERIAL_TEXTURE) {
-			_pipelineState->setHookResource(itr->second, "material_color_tex");
-		}
-		if (itr->first == MATERIAL_TEX::SECONDARY_MATERIAL_TEXTURE) {
-			_pipelineState->setHookResource(itr->second, "material_base_tex");
-		}
-	}
 }
 
 void Shader::updateLightUniforms(ILight* light)

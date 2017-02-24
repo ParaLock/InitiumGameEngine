@@ -1,10 +1,19 @@
 #include "../include/ResourceManagerPool.h"
 
+ResourceManagerPool* ResourceManagerPool::singletonInstance = nullptr;
+
+ResourceManagerPool * ResourceManagerPool::getInstance()
+{
+	return singletonInstance;
+}
 
 
 ResourceManagerPool::ResourceManagerPool()
 {
 	_managerPool = new std::map<std::string, IResourceManager*>;
+
+	if (singletonInstance == nullptr)
+		singletonInstance = this;
 }
 
 

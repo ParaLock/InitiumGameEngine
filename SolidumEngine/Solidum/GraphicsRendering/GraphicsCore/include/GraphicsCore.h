@@ -16,21 +16,25 @@
 
 #include "../../../ResourceFramework/include/ResourceManagerPool.h"
 
+#include "../../../EntityFramework/Entity/include/IEntity.h"
+
 #include "../../../EventFramework/include/IEventListener.h"
-#include "../../../EventFramework/include/IEventPublisher.h"
-
-#include "../../../EventFramework/include/RenderEvent.h"
-
-#include "../../RenderProcess/include/RenderProcess.h"
 
 #include "../../../EventFramework/include/EventFrameworkCore.h"
 
-class GraphicsCore : public IEventListener, public IEventPublisher
+#include "../../RenderNodeTree/include/RenderNodeTree.h"
+
+class GraphicsCore : public IEventListener
 {
 private:
-	camera* _primaryCamera;
 	dxDeviceManager *_dxManager = nullptr;
 	ResourceManagerPool *_resManagerPool = nullptr;
+
+	camera* _primaryCamera = nullptr;
+
+	RenderNodeTree _renderTree;
+
+	GlobalRenderingParams _globalRenderingParameters;
 
 public:
 	GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool);
@@ -42,6 +46,10 @@ public:
 
 	void attachPrimaryCamera(camera* cam);
 
-	camera* getPrimaryCamera() { return _primaryCamera; };
+	std::unique_ptr<RenderNodeTree> getRenderNodeTree() { return std::make_unique<RenderNodeTree>(_renderTree); };
+	camera* getPrimaryCamera() { return _primaryCamera; }
+
+	static GraphicsCore* singletonInstance;
+	static GraphicsCore* getInstance();
 };
 

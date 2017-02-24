@@ -3,21 +3,26 @@
 
 enum EVENT_TYPE {
 	INPUT_EVENT,
-	RENDER_EVENT_REGISTER_STREAM,
-	RENDER_EVENT_UNREGISTER_STREAM,
-	ENTITY_EVENT
+	ENTITY_EVENT,
+	PHYSICS_EVENT,
+	GRAPHICS_EVENT
+};
+
+enum SUB_EVENT_TYPE {
+	REGISTER_RENDER_NODE,
+	UNREGISTER_RENDER_NODE,
 };
 
 class IEvent
 {
-private:
+protected:
 	EVENT_TYPE _type;
+	SUB_EVENT_TYPE _subType;
 public:
 	IEvent();
 	~IEvent();
 
 	EVENT_TYPE getType() { return _type; }
-	void setType(EVENT_TYPE type) { _type = type; }
 
 	template<typename T>
 	T* getEvent() {

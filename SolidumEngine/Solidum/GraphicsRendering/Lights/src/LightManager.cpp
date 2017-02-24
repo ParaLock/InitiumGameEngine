@@ -11,6 +11,16 @@ LightManager::~LightManager()
 {
 }
 
+void LightManager::setLightShader(LIGHT_TYPE light, Shader * shader)
+{
+	_lightShaderMap[light] = shader;
+}
+
+Shader * LightManager::getLightShader(LIGHT_TYPE type)
+{
+	return _lightShaderMap.at(type);
+}
+
 IResource* LightManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
 {
 	IResource* newLight = new Light();

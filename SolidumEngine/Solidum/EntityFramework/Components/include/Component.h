@@ -1,12 +1,12 @@
 #pragma once
-#pragma once
+
 #include "../../../EventFramework/include/EventFrameworkCore.h"
 
-#include "../../../EventFramework/include/RenderEvent.h"
-
-#include "IComponent.h"
+#include "../../../GraphicsRendering/GraphicsCore/include/GraphicsCore.h"
 
 #include "../../Entity/include/IEntity.h"
+
+#include "IComponent.h"
 
 class Component : public IComponent
 {
@@ -22,6 +22,7 @@ public:
 	COMPONENT_TYPE getType() { return _type; }
 
 	virtual void update() = 0;
+
 	virtual void onEvent(EVENT_PTR evt) = 0;
 
 	void setParent(IEntity* parent) { _parent = parent; };

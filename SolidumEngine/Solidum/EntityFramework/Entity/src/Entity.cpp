@@ -34,11 +34,8 @@ void Entity::addChild(IEntity * entity)
 void Entity::update()
 {
 
-	if (_parent != nullptr) {
-
+	if (_parent != nullptr) 
 		_transform->setPos(_parent->getTransform()->getPos());
-
-	}
 
 	for (auto itr = _components->begin(); itr != _components->end(); itr++) {
 		

@@ -69,7 +69,7 @@ public:
 
 	void updateGPU();
 
-	void initMemory(ResourceManagerPool* resManagerPool);
+	void initMemory();
 
 	std::string getName() { return _name; };
 	std::vector<std::string> getVarNameList();

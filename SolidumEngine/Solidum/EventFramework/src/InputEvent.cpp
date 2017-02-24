@@ -4,7 +4,7 @@
 
 InputEvent::InputEvent()
 {
-	setType(EVENT_TYPE::INPUT_EVENT);
+	_type = EVENT_TYPE::INPUT_EVENT;
 }
 
 

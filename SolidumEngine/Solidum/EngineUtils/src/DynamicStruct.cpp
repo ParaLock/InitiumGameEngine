@@ -59,7 +59,7 @@ void DynamicStruct::updateGPU()
 		_GPUBuff->getCore<GPUBuffer>()->Write(_pBuffCPUMem, _lastVarOffset, 0);
 }
 
-void DynamicStruct::initMemory(ResourceManagerPool* resManagerPool)
+void DynamicStruct::initMemory()
 {
 	_pBuffCPUMem = new __int8[_lastVarOffset];
 
@@ -67,7 +67,7 @@ void DynamicStruct::initMemory(ResourceManagerPool* resManagerPool)
 
 	if (_hasGPUBuff) {
 		GPUBufferBuilder buffBuilder(_lastVarOffset, BUFFER_TYPE::SHADER_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE);
-		_GPUBuff = resManagerPool->getResourceManager("GPUBufferManager")->createResource(&buffBuilder, _name, false)->getCore<GPUBuffer>();
+		_GPUBuff = ResourceManagerPool::getInstance()->getResourceManager("GPUBufferManager")->createResource(&buffBuilder, _name, false)->getCore<GPUBuffer>();
 	}
 }
 

@@ -1,13 +1,27 @@
 #include "../include/GraphicsCore.h"
 
+GraphicsCore* GraphicsCore::singletonInstance = nullptr;
+
+GraphicsCore * GraphicsCore::getInstance()
+{
+	return singletonInstance;
+}
+
+
 GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool)
 {
+	if (singletonInstance == nullptr)
+		singletonInstance = this;
+
 	ActiveGraphicsAPI::setCurrentAPI(api);
 
 	EventFrameworkCore::getInstance()->getGlobalEventHub("ComponentEventHub")->subscribeListener(this);
 
 	_primaryCamera = new camera(0.1f, 1000.0f);
 	_resManagerPool = resManagerPool;
+
+	_globalRenderingParameters._globalRenderingCamera = _primaryCamera;
+	_globalRenderingParameters._ambientLightLevel = Vector4f(0.2f, 0.2f, 0.2f, 0.2f);
 
 	if (api == SUPPORTED_GRAPHICS_API::DIRECTX11) {
 
@@ -46,61 +60,22 @@ GraphicsCore::~GraphicsCore()
 
 void GraphicsCore::RenderAll()
 {
-	std::map<std::string, IResource*> *allActiveRenderProcesses = _resManagerPool->
-		getResourceManager("RenderProcessManager")->getResourceMap();
+	std::list<SHADER_RENDER_TYPE> renderExecutionOrder;
+	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::FORWARD_RENDERING);
+	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING);
+	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT);
 
-	std::list<RenderProcess*> deferredProcesses;
+	_renderTree.setExecutionOrder(renderExecutionOrder);
 
-	for (auto itr = allActiveRenderProcesses->begin(); itr != allActiveRenderProcesses->end(); itr++) {
+	_renderTree.updateGlobalRenderParams(_globalRenderingParameters);
+	
+	_renderTree.optimize();
 
-		if (itr->second->getLoadStatus()) {
-
-			RenderProcess* rendProc = itr->second->getCore<RenderProcess>();
-
-			std::list<RenderDataStream*>* streams = rendProc->getRegisteredStreams();
-
-			for (auto streamItr = streams->begin(); streamItr != streams->end(); streamItr++) {
-
-				RenderDataStream* stream = *streamItr;
-
-				stream->writeNext((IResource*)_primaryCamera, STREAM_DATA_TYPE::CAMERA);
-			}
-
-			if (rendProc->getDeferredFlag()) {
-
-				deferredProcesses.push_back(rendProc); continue;
-			}	
-
-			rendProc->execute();
-		}
-	}
-
-	for (auto defProcItr = deferredProcesses.begin(); defProcItr != deferredProcesses.end(); defProcItr++) {
-		RenderProcess* defRendProc = *defProcItr;
-
-		defRendProc->execute();
-	}
+	_renderTree.walkTree();
 }
 
 void GraphicsCore::onEvent(EVENT_PTR evt)
 {
-	RenderEvent* renderEvt;
-	RenderProcess *rendProc;
-
-	switch (evt.get()->getType())
-	{
-		case EVENT_TYPE::RENDER_EVENT_REGISTER_STREAM:
-			renderEvt = evt->getEvent<RenderEvent>();
-
-			rendProc = _resManagerPool->getResourceManager("RenderProcessManager")->
-				getResource(renderEvt->getRendProcID())->getCore<RenderProcess>();
-
-			rendProc->registerDataStream(renderEvt->getStream());
-
-			break;
-	default:
-		break;
-	}
 }
 
 void GraphicsCore::attachPrimaryCamera(camera* cam)

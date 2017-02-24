@@ -16,7 +16,6 @@ PIPELINE_BEGIN
 	BIND GBUFFER OUTPUT normals_gbuff
 	BIND GBUFFER OUTPUT position_gbuff
 	BIND GBUFFER OUTPUT specular_gbuff
-	BIND GBUFFER OUTPUT shadow_gbuff
 	
 	DEPTH_TEST enable
 	BLENDING disable

@@ -15,7 +15,7 @@ public:
 
 	template<typename T>
 	T* getResourceManagerSpecific(std::string name) {
-		auto itr = _managerPool->find(typeid(T).name());
+		auto itr = _managerPool->find(name);
 
 		if (itr != _managerPool->end()) {
 
@@ -23,6 +23,7 @@ public:
 				return dynamic_cast<T*>(_managerPool->at(name));
 			}
 			else {
+
 				std::cout << "Resource Manager Cast To Core Type failed!" << " " << "RESOURCE MANAGER NAME:" << name << std::endl;
 
 				return nullptr;
@@ -32,5 +33,8 @@ public:
 			std::cout << "Resource Manager Not Found! :(" << " " << "RESOURCE MANAGER NAME:" << name << std::endl;
 		}
 	}
+
+	static ResourceManagerPool* singletonInstance;
+	static ResourceManagerPool* getInstance();
 };
 

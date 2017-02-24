@@ -10,21 +10,15 @@ PIPELINE_BEGIN
 	BLENDING enable
 	
 	VS_SHADER_BEGIN
-		
-		BIND BUFFER_HOOK vertex_buffer
-		BIND BUFFER_HOOK index_buffer
 
 	VS_SHADER_END
 	
 	PS_SHADER_BEGIN
 	
-		BIND GBUFFER INPUT color_gbuff
-		BIND GBUFFER INPUT normals_gbuff
 		BIND GBUFFER INPUT position_gbuff
-		BIND GBUFFER INPUT specular_gbuff
-		BIND GBUFFER INPUT shadow_gbuff
+		BIND GBUFFER INPUT depth_buffer
 		
-		BIND GBUFFER OUTPUT framebuffer
+		BIND GBUFFER OUTPUT shadow_gbuff
 		
 		BIND SAMPLER pointSampler
 		

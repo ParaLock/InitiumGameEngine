@@ -1,19 +1,16 @@
 #pragma once
 #include "../../../EventFramework/include/IEventListener.h"
-#include "../../../EventFramework/include/IEventPublisher.h"
-
 #include "../../../EventFramework/include/EventFrameworkCore.h"
-
-#include "../../../EventFramework/include/RenderEvent.h"
 
 #include "../../Entity/include/IEntity.h"
 
 enum COMPONENT_TYPE {
 	MOVE_COMPONENT,
-	RENDER_COMPONENT
+	LIGHT_COMPONENT,
+	MESH_COMPONENT
 };
 
-class IComponent : public IEventListener, public IEventPublisher
+class IComponent : public IEventListener
 {
 private:
 protected:
@@ -24,6 +21,7 @@ public:
 	virtual COMPONENT_TYPE getType() = 0;
 
 	virtual void update() = 0;
+
 	virtual void onEvent(EVENT_PTR evt) = 0;
 
 	virtual void setParent(IEntity* parent) = 0;

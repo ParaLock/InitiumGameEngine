@@ -10,6 +10,7 @@
 #include <Vector>
 #include <iostream>
 #include <fstream> 
+#include <random>
 
 #include <dxgi.h>
 #include <d3d11.h>
@@ -88,17 +89,6 @@ enum BUFFER_CPU_ACCESS {
 	CPU_ACCESS_READWRITE
 };
 
-
-enum STREAM_DATA_TYPE {
-	INVALID,
-	TEXTURE,
-	MESH,
-	TRANSFORM,
-	MATERIAL,
-	LIGHT,
-	CAMERA
-};
-
 enum KEY_MAP {
 	Q, W, E, R, T, Y, U, I, O, P, A,
 	S, D, F, G, H, J, K, L, z, X, V,
@@ -107,6 +97,23 @@ enum KEY_MAP {
 	DOWN,
 	LEFT,
 	RIGHT,
+};
+
+enum LIGHT_TYPE {
+	DIRECTIONAL_LIGHT,
+	POINT_LIGHT
+};
+
+enum MATERIAL_TEX {
+	DIFFUSE_MATERIAL_TEXTURE,
+	SPECULAR_MATERIAL_TEXTURE,
+};
+
+enum SHADER_RENDER_TYPE {
+	DEFERRED_RENDERING,
+	DEFERRED_RENDERING_LIGHT,
+	FORWARD_RENDERING,
+	MULTI_PASS_RENDERING
 };
 
 class IEvent;

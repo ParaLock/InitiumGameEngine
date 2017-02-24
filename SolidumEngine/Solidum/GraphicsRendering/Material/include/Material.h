@@ -5,48 +5,37 @@
 #include "../../../ResourceFramework/include/IResource.h"
 #include "../../../ResourceFramework/include/IResourceBuilder.h"
 
+#include "../../RenderNode/include/MeshRenderNode.h"
+#include "../../RenderNodeTree/include/RenderNodeTree.h"
+#include "../../GraphicsCore/include/GraphicsCore.h"
+
+
 class MaterialBuilder : public IResourceBuilder {
 public:
-	int _ID;
 
-	float _specIntensity;
-	float _specPower; 
-
-	Vector4f _specColor; 
-
-	MaterialBuilder(int ID, float specIntensity, float specPower, Vector4f specColor) {
-		_ID = ID;
-		_specIntensity = specIntensity;
-		_specPower = specPower;
-		_specColor = specColor;
+	MaterialBuilder() {
 	}
 };
 
-enum MATERIAL_TEX {
-	PRIMARY_MATERIAL_TEXTURE,
-	SECONDARY_MATERIAL_TEXTURE
-};
-
-class Material : public IResource
-{
+class MaterialPass {
 private:
-	int _ID;
+
+	std::string _name;
 
 	float _specularIntensity;
 	float _specularPower;
+
+	Shader* _shader;
+	GPUPipeline* _pipeline;
 
 	Vector4f _specularColor;
 
 	std::map<MATERIAL_TEX, Texture*> _textures;
 
 public:
-	Material();
-	~Material();
+	MaterialPass() {}
 
-	void load(IResourceBuilder* builder);
-	void unload();
-
-	void attachMaterialTexture(Texture* tex, MATERIAL_TEX texType);
+	void setName(std::string name) { _name = name; }
 
 	void setSpecularIntensity(float intensity) { _specularIntensity = intensity; }
 	void setSpecularPower(float power) { _specularPower = power; }
@@ -55,10 +44,29 @@ public:
 	float getSpecularIntensity() { return _specularIntensity; }
 	float getSpecularPower() { return _specularPower; }
 
+	void setShader(Shader* shader) { _shader = shader; }
+	void setGPUPipeline(GPUPipeline* pipeline) { _pipeline = pipeline; }
+
 	Vector4f getSpecularColor() { return _specularColor; }
 
-	int getID() { return _ID; }
+	Shader* getShader() { return _shader; }
+	GPUPipeline* getPipeline() { return _pipeline; }
+};
 
-	std::map<MATERIAL_TEX, Texture*>& getTextures() { return _textures; };
+class Material : public IResource
+{
+private:
+	std::map<std::string, MaterialPass*> _passes;
+public:
+	Material();
+	~Material();
+
+	void load(IResourceBuilder* builder);
+	void unload();
+
+	void createPass(std::string name, Shader* shader, GPUPipeline* pipeline);
+	MaterialPass* getPass(std::string name);
+
+	std::vector<uint64_t> generateClientRenderNodes(mesh* mesh, Texture* texture);
 };
 

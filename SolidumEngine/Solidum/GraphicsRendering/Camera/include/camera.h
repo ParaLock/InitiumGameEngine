@@ -9,7 +9,6 @@
 #include "../../../ResourceFramework/include/IResource.h"
 
 #include "../../../EventFramework/include/IEventListener.h"
-#include "../../../EventFramework/include/IEventPublisher.h"
 
 #include "../../../EventFramework/include/EventFrameworkCore.h"
 
@@ -45,7 +44,7 @@ enum CAMERA_MOVE {
 	CAM_LOOK_DOWN
 };
 
-class camera : public IEventListener, public IEventPublisher, public IResource
+class camera : public IEventListener, public IResource
 {
 private:
 	float _movementStore[4];

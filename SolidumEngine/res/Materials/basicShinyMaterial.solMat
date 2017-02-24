@@ -1,0 +1,10 @@
+MATERIAL_BEGIN basicShinyMat
+	
+	LAYER basicTextured
+		SHADER:   
+		PIPELINE:
+		
+		DIFFUSE_TEXTURE: diffuse_wood.png
+	END_LAYER
+	
+MATERIAL_END	
