@@ -6,8 +6,6 @@ PIPELINE_INIT_END
 
 PIPELINE_BEGIN
 	
-	BIND GBUFFER OUTPUT framebuffer
-	
 	DEPTH_TEST enable
 	BLENDING disable
 
@@ -22,11 +20,11 @@ PIPELINE_BEGIN
 	PS_SHADER_BEGIN
 
 		BIND TEXTURE_HOOK model_tex
-		BIND TEXTURE_HOOK material_color_tex
-		BIND TEXTURE_HOOK material_base_tex
 		
 		BIND SAMPLER wrapSampler		
 
+		BIND GBUFFER OUTPUT framebuffer
+		
 	PS_SHADER_END
 
 PIPELINE_END

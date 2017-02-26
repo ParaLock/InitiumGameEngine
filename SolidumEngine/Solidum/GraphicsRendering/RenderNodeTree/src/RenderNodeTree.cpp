@@ -157,6 +157,7 @@ void RenderNodeTree::walkTree()
 			node = node->getChild();
 		}
 
+		node->getRenderParams()->setPerNodeParam_ForwardRendering(true);
 		node->render();
 	}
 

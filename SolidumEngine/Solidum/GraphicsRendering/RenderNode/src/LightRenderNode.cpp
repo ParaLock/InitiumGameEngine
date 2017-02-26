@@ -24,14 +24,14 @@ void LightRenderNode::render()
 {
 	if (_isVisible) {
 
-		if (!_renderParams.getPerNodeParam_ForwardRendering()) {
+		if (_shader->getRenderMode() != SHADER_RENDER_TYPE::FORWARD_RENDERING) {
+
 			_shader->setMesh(_orthoMesh);
-			_shader->updateLightUniforms(_light);
+			_shader->updateDeferredLightUniforms(_light);
 			_shader->updateCameraUniforms(_renderParams.getGlobalParam_GlobalRenderingCamera());
 
 			_shader->updateGPU();
 			_shader->execute(_orthoMesh->numIndices);
-
 		}
 
 		_isVisible = false;

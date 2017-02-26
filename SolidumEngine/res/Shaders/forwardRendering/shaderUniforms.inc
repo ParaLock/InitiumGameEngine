@@ -1,4 +1,27 @@
-#define MAX_LIGHTS 3
+#define MAX_LIGHTS 9
+
+struct PointLight 
+{
+	float3 lightPos;
+	float range;
+	float3 lightDirection;
+	float intensity;
+	float4 lightColor;
+	
+	float AttenConstant;
+	float AttenLinear;
+	float AttenExponent;
+	float padding3;
+};
+
+struct DirectionalLight 
+{
+	float3 lightPos;
+	float intensity;
+	float3 lightDirection;
+	float padding4;
+	float4 lightColor;
+};
 
 cbuffer MatrixBuffer
 {
@@ -10,26 +33,18 @@ cbuffer MatrixBuffer
 	matrix cbuff_projectionMatrix;
 	matrix cbuff_orthoProjection;
 	matrix cbuff_OBJSpecificMatrix;
-	matrix cbuff_lightViewMatrix;
-	matrix cbuff_lightProjectionMatrix;
+	
+
+	float4 cbuff_ambientColor;
 };
 
 cbuffer LightBuffer
-{
-	float3 cbuff_lightDirection[MAX_LIGHTS];
+{		
 	float cbuff_specularIntensity;
-	float3 cbuff_lightPos[MAX_LIGHTS];
 	float cbuff_specularPower;
-	float4 cbuff_ambientColor;
-	float4 cbuff_lightColor[MAX_LIGHTS];
-    float4 cbuff_specularColor[MAX_LIGHTS];
-	float cbuff_lightIntensity[MAX_LIGHTS];
-	float cbuff_pointLightConstant[MAX_LIGHTS];
-	float cbuff_pointLightLinear[MAX_LIGHTS];
-	float cbuff_pointLightExponent[MAX_LIGHTS];
-	
-	float cbuff_pointLightRange[MAX_LIGHTS];
-	float3 padding2;
+	float2 padding1;
+	PointLight pointLights[MAX_LIGHTS];
+	//DirectionalLight directionalLights[MAX_LIGHTS];
 };
 
 struct CoreData 

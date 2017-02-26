@@ -32,7 +32,7 @@ void Shader::updateMaterialPassUniforms(MaterialPass* pass)
 	updateUniform("cbuff_specularPower", &specPower);
 }
 
-void Shader::updateLightUniforms(ILight* light)
+void Shader::updateDeferredLightUniforms(ILight* light)
 {
 	float intensity = light->getIntensity();
 	float constant = light->getAttenuationConstant();
@@ -53,45 +53,86 @@ void Shader::updateLightUniforms(ILight* light)
 	updateUniform("cbuff_pointLightExponent", &exponent);
 }
 
-void Shader::updateLightUniformsForwardRendering(std::vector<ILight*> lights)
+void Shader::updatePointLightsForwardRendering(std::vector<ILight*> pointLights)
 {
-	std::vector<float> lights_intensity;
-	std::vector<float> lights_constant;
-	std::vector<float> lights_linear;
-	std::vector<float> lights_exponent;
-	std::vector<float> lights_range;
+	struct PointLight {
+		Vector3f lightPos;
+		float range;
+		Vector3f lightDirection;
+		float intensity;
+		Vector4f lightColor;
 
-	std::vector<Matrix4f> lights_viewMatrix;
-	std::vector<Matrix4f> lights_projectionMatrix;
-	std::vector<Vector3f> lights_direction;
-	std::vector<Vector3f> lights_position;
-	std::vector<Vector4f> lights_color;
+		float AttenConstant;
+		float AttenLinear;
+		float AttenExponent;
+		float padding3;
+	};
 
-	for (int i = 0; i < lights.size(); i++) {
-		lights_intensity.push_back(lights[i]->getIntensity());
-		lights_constant.push_back(lights[i]->getAttenuationConstant());
-		lights_linear.push_back(lights[i]->getAttenuationLinear());
-		lights_exponent.push_back(lights[i]->getAttenuationExponent());
-		lights_range.push_back(lights[i]->getRange());
+	PointLight lights[MAX_FORWARD_RENDERING_LIGHTS];
 
-		lights_viewMatrix.push_back(Matrix4f::transpose(lights[i]->getViewMatrix()));
-		lights_projectionMatrix.push_back(Matrix4f::transpose(lights[i]->getProjectionMatrix()));
-		lights_direction.push_back(lights[i]->getDirection());
-		lights_position.push_back(lights[i]->getPosition());
-		lights_color.push_back(lights[i]->getColor());
+	for (int i = 0; i < MAX_FORWARD_RENDERING_LIGHTS; i++) {
+
+		if (i < pointLights.size()) {
+
+			lights[i].AttenConstant = pointLights[i]->getAttenuationConstant();
+			lights[i].AttenLinear = pointLights[i]->getAttenuationLinear();
+			lights[i].AttenExponent = pointLights[i]->getAttenuationExponent();
+
+			lights[i].range = pointLights[i]->getRange();
+
+			lights[i].intensity = pointLights[i]->getIntensity();
+			lights[i].lightPos = pointLights[i]->getPosition();
+			lights[i].lightDirection = pointLights[i]->getDirection();
+			lights[i].lightColor = pointLights[i]->getColor();
+		}
+		else {
+			lights[i].AttenConstant = 0.0f;
+			lights[i].AttenLinear = 0.0f;
+			lights[i].AttenExponent = 0.0f;
+			lights[i].range = 0.0f;
+
+			lights[i].intensity = 0.0f;
+			lights[i].lightPos = Vector3f(0.0f, 0.0f, 0.0f);
+			lights[i].lightDirection = Vector3f(0.0f, 0.0f, 0.0f);
+			lights[i].lightColor = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
+		}
+
 	}
 
-	updateUniform("cbuff_lightViewMatrix", &lights_viewMatrix);
-	updateUniform("cbuff_lightProjectionMatrix", &lights_projectionMatrix);
+	updateUniform("pointLights", &lights);
+}
 
-	updateUniform("cbuff_lightDirection", &lights_direction);
-	updateUniform("cbuff_lightPos", &lights_position);
-	updateUniform("cbuff_lightColor", &lights_color);
-	updateUniform("cbuff_lightIntensity", &lights_intensity);
-	updateUniform("cbuff_pointLightRange", &lights_range);
-	updateUniform("cbuff_pointLightConstant", &lights_constant);
-	updateUniform("cbuff_pointLightLinear", &lights_linear);
-	updateUniform("cbuff_pointLightExponent", &lights_exponent);
+void Shader::updateDirectionalLightsForwardRendering(std::vector<ILight*> dirLights)
+{
+	struct DirectionalLight
+	{
+		Vector3f lightPos;
+		float intensity;
+		Vector3f lightDirection;
+		float padding;
+		Vector4f lightColor;
+	};
+
+	DirectionalLight lights[MAX_FORWARD_RENDERING_LIGHTS];
+
+	for (int i = 0; i < MAX_FORWARD_RENDERING_LIGHTS; i++) {
+
+		if (i < dirLights.size()) {
+
+			lights[i].intensity = dirLights[i]->getIntensity();
+			lights[i].lightPos = dirLights[i]->getPosition();
+			lights[i].lightDirection = dirLights[i]->getDirection();
+			lights[i].lightColor = dirLights[i]->getColor();
+		}
+		else {
+
+			lights[i].intensity = 0.0f;
+			lights[i].lightPos = Vector3f(0.0f, 0.0f, 0.0f);
+			lights[i].lightDirection = Vector3f(0.0f, 0.0f, 0.0f);
+			lights[i].lightColor = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
+		}
+	}
+	updateUniform("directionalLights", &lights);
 }
 
 

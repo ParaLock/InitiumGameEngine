@@ -1,20 +1,5 @@
 #include "shaderUniforms.inc"
 
-struct VertexInputType
-{
-	float4 position : POSITION;
-	float2 tex : TEXCOORD;
-};
-
-struct PixelInputType
-{
-	float4 position : SV_POSITION;
-	float2 tex : TEXCOORD;
-	float3 viewPos : TEXCOORD1;
-};
-
-SamplerState SampleTypePoint : register(s0);
-
 float4 calcLight(BaseLightData light, MaterialData mat, CoreData coreData) 
 {						
 	float diffuseFactor = dot(coreData.normal.xyz, -light.lightDirection);
@@ -48,11 +33,4 @@ float4 calcPointLight(PointLightData light, MaterialData mat, CoreData core)
 						0.0001;
 	
 	return finalColor / attenuation; 					
-}
-
-
-PixelInputType Vshader(VertexInputType input)
-{
-
-	return output;
 }

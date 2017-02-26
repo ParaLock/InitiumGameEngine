@@ -42,14 +42,20 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	//** RESOURCE INITIALIZATION **//
 
-	GPUPipeline* endscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+	GPUPipeline* forwardRenderingEndscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+		(L"./res/Pipelines/forwardRendering/endScene_pipeline.solPipe", resManagerPool), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
+
+	GPUPipeline* deferredRenderingEndscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
 		(L"./res/Pipelines/deferredRendering/endScene_pipeline.solPipe", resManagerPool), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
 
-	GPUPipeline* deferredPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+	GPUPipeline* deferredRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
 		(L"./res/Pipelines/deferredRendering/deferredPipeline.solPipe", resManagerPool), "deferred_geometry_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* deferredLightingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
 		(L"./res/Pipelines/deferredRendering/deferredLightingPipeline.solPipe", resManagerPool), "deferred_lighting_pipeline_state", false)->getCore<GPUPipeline>();
+
+	GPUPipeline* forwardRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+		(L"./res/Pipelines/forwardRendering/forwardPipeline.solPipe", resManagerPool), "forward_pipeline_state", false)->getCore<GPUPipeline>();
 
 	Light* dirLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
 		(LIGHT_TYPE::DIRECTIONAL_LIGHT), "dirLight1", false)->getCore<Light>();
@@ -81,22 +87,27 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Texture* metalTex = resManagerPool->getResourceManager("TextureManager")->createResource(&TextureBuilder
 		(L"./res/Textures/metal.png"), "metal_tex", false)->getCore<Texture>();
 
-	Shader* deferredShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
+	Shader* deferredRenderingShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
 		(L"./res/Shaders/deferredRendering/deferredShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "deferred_geometry_shader", false)->getCore<Shader>();
 
-	Shader* directionalLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
+	Shader* deferredRenderingDirectionalLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
 		(L"./res/Shaders/deferredRendering/directionalLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "directional_light_shader", false)->getCore<Shader>();
 
-	Shader* pointLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
+	Shader* deferredRenderingPointLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
 		(L"./res/Shaders/deferredRendering/pointLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "point_light_shader", false)->getCore<Shader>();
 
-	directionalLightShader->attachPipeline(deferredLightingPipeline);
-	pointLightShader->attachPipeline(deferredLightingPipeline);
+	Shader* forwardRenderingShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
+		(L"./res/Shaders/forwardRendering/forwardRendering.hlsl", SHADER_RENDER_TYPE::FORWARD_RENDERING), "forward_rendering_shader", false)->getCore<Shader>();
+
+	forwardRenderingShader->attachPipeline(forwardRenderingPipeline);
+
+	deferredRenderingDirectionalLightShader->attachPipeline(deferredLightingPipeline);
+	deferredRenderingPointLightShader->attachPipeline(deferredLightingPipeline);
 
 	Material* metalMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(&MaterialBuilder
 		(), "metalMaterial", false)->getCore<Material>();
 
-	metalMaterial->createPass("basicPhongWSpecular", deferredShader, deferredPipeline);
+	metalMaterial->createPass("basicPhongWSpecular", deferredRenderingShader, deferredRenderingPipeline);
 	
 	metalMaterial->getPass("basicPhongWSpecular")->setSpecularColor(Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 	metalMaterial->getPass("basicPhongWSpecular")->setSpecularIntensity(5.5f);
@@ -105,7 +116,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Material* woodMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(&MaterialBuilder
 		(), "woodMaterial", false)->getCore<Material>();
 
-	woodMaterial->createPass("basicPhongWSpecular", deferredShader, deferredPipeline);
+	woodMaterial->createPass("basicPhongWSpecular", deferredRenderingShader, deferredRenderingPipeline);
 
 	woodMaterial->getPass("basicPhongWSpecular")->setSpecularColor(Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 	woodMaterial->getPass("basicPhongWSpecular")->setSpecularIntensity(0.002f);
@@ -126,8 +137,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	//** RESOURCE INIT DONE **//
 
-	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(DIRECTIONAL_LIGHT, directionalLightShader);
-	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(POINT_LIGHT, pointLightShader);
+	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(DIRECTIONAL_LIGHT, deferredRenderingDirectionalLightShader);
+	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(POINT_LIGHT, deferredRenderingPointLightShader);
 
 	Entity* ROOT_ENTITY = new Entity();
 
@@ -234,7 +245,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		solidum->getGraphicsSubsystem()->RenderAll();
 
-		endscenePipelineState->executePass(NULL);
+		//forwardRenderingEndscenePipelineState->executePass(NULL);
+		deferredRenderingEndscenePipelineState->executePass(NULL);
 	}
 	myWindow->destroyWindow();
 }

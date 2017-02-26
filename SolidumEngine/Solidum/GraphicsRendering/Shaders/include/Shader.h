@@ -48,8 +48,10 @@ public:
 	void setModelTexture(Texture* tex);
 
 	void updateMaterialPassUniforms(MaterialPass* pass);
-	void updateLightUniforms(ILight* light);
-	void updateLightUniformsForwardRendering(std::vector<ILight*> lights);
+	void updateDeferredLightUniforms(ILight* light);
+
+	void updatePointLightsForwardRendering(std::vector<ILight*> pointLights);
+	void updateDirectionalLightsForwardRendering(std::vector<ILight*> dirLights);
 
 	void updateModelUniforms(Transform* transform);
 	void updateCameraUniforms(camera* cam);

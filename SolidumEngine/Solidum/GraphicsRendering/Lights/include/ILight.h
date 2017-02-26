@@ -9,6 +9,8 @@ public:
 	ILight();
 	~ILight();
 
+	virtual LIGHT_TYPE getType() = 0;
+
 	virtual Vector3f getDirection() = 0;
 	virtual Vector3f getPosition() = 0;
 	virtual Vector4f getColor() = 0;

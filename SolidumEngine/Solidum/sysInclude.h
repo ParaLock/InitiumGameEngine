@@ -138,6 +138,8 @@ enum SHADER_RENDER_TYPE {
 	MULTI_PASS_RENDERING
 };
 
+#define MAX_FORWARD_RENDERING_LIGHTS 10
+
 class IEvent;
 
 typedef std::shared_ptr<IEvent> EVENT_PTR;

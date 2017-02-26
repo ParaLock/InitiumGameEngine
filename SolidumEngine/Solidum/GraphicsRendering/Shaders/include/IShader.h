@@ -16,8 +16,10 @@ public:
 	virtual void setModelTexture(Texture* tex) = 0;
 
 	virtual void updateMaterialPassUniforms(MaterialPass* pass) = 0;
-	virtual void updateLightUniforms(ILight* light) = 0;
-	virtual void updateLightUniformsForwardRendering(std::vector<ILight*> lights) = 0;
+	virtual void updateDeferredLightUniforms(ILight* light) = 0;
+
+	virtual void updatePointLightsForwardRendering(std::vector<ILight*> pointLights) = 0;
+	virtual void updateDirectionalLightsForwardRendering(std::vector<ILight*> dirLights) = 0;
 
 	virtual void updateModelUniforms(Transform* transform) = 0;
 	virtual void updateCameraUniforms(camera* cam) = 0;

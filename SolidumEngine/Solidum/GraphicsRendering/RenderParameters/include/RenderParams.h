@@ -10,7 +10,7 @@ struct GlobalRenderingParams {
 };
 
 struct LocalRenderingParams {
-	bool _useForwardRendering = false;
+	bool _useForwardRendering;
 	camera* _renderCamera;
 
 	bool _depthTestEnabled;

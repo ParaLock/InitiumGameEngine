@@ -1,77 +1,102 @@
-#include "shaderUniforms.inc"
+#include "forwardLighting.hlsl"
+
 
 struct VertexInputType
 {
-	float4 position : POSITION;
-	float2 tex : TEXCOORD;
+    float4 position : POSITION;
+	float3 normal : NORMAL;
+    float2 tex : TEXCOORD0;
 };
 
 struct PixelInputType
 {
-	float4 position : SV_POSITION;
-	float2 tex : TEXCOORD;
+    float4 position : SV_POSITION;
+	float3 normal : NORMAL;
+    float2 tex : TEXCOORD0;
 	float3 viewPos : TEXCOORD1;
+	float4 worldPos : TEXCOORD2;
 };
 
-Texture2D colorTexture : register(t0);
-Texture2D normalTexture : register(t1);
-Texture2D positionTexture : register(t2);
-Texture2D specularColorTexture : register(t3);
-Texture2D shadowTexture : register(t4);
-
-SamplerState SampleTypePoint : register(s0);
-
-float4 calcLight(BaseLightData light, MaterialData mat, CoreData coreData) 
-{						
-	float diffuseFactor = dot(coreData.normal.xyz, -light.lightDirection);
-	
-	float4 diffuseColor = float4(0,0,0,0);
-	float4 specularColor = float4(0,0,0,0);
-	
-	if(diffuseFactor > 0) 
-	{
-		diffuseColor = float4(light.lightColor, 1.0) * light.intensity * diffuseFactor;
-		
-		float3 V = normalize(coreData.viewPos - coreData.worldPos);	
-		float3 R = reflect(normalize(normalize(light.lightDirection)), normalize(coreData.normal.xyz)); 
-	
-		specularColor = mat.specularIntensity * float4(light.lightColor, 1) 
-			* pow( saturate( dot( R, V ) ), mat.specularPower );
-	}
-	
-	return diffuseColor + specularColor;
-}
-
-float4 calcPointLight(PointLightData light, MaterialData mat, CoreData core) 
-{
-	light.baseLight.lightDirection = normalize(light.baseLight.lightDirection);
-
-	float4 finalColor = calcLight(light.baseLight, mat, core);
-	
-	float attenuation = light.AttenConstant +
-						light.AttenLinear * light.distanceToPoint +
-						light.AttenExponent * light.distanceToPoint * light.distanceToPoint + 
-						0.0001;
-	
-	return finalColor / attenuation; 					
-}
-
+Texture2D shaderTexture : register(t0);
+SamplerState SampleTypeWrap : register(s0);
 
 PixelInputType Vshader(VertexInputType input)
 {
-	PixelInputType output;
+    PixelInputType output;
+    
+    input.position.w = 1.0f;
 
-	float4 worldPos = positionTexture[input.tex];
+	matrix FinalworldMatrix = mul(cbuff_OBJSpecificMatrix, cbuff_worldMatrix);
 	
-	output.viewPos = cbuff_eyePos.xyz - worldPos.xyz;
+    output.position = mul(input.position, FinalworldMatrix);
 	
-	input.position.w = 1.0f;
+	output.viewPos = cbuff_eyePos.xyz - output.position;
+	output.worldPos = output.position;
 	
-	output.position = mul(output.position, cbuff_worldMatrix);
-	output.position = mul(input.position, cbuff_camViewStart);
-	output.position = mul(output.position, cbuff_orthoProjection);
-
+    output.position = mul(output.position, cbuff_viewMatrix);
+    output.position = mul(output.position, cbuff_projectionMatrix);
+    
 	output.tex = input.tex;
+    
+    output.normal = mul(input.normal, FinalworldMatrix);
+	
+    return output;
+}
 
-	return output;
+float4 Pshader(PixelInputType input) : SV_TARGET
+{
+	float3 normals;
+	float4 worldPos;
+	
+	float4 finalColor;
+	
+	normals = input.normal;
+	worldPos = input.worldPos;
+	
+	float4 ambientLight = { 0.05f, 0.05f, 0.05f, 0.05f };
+		
+	float4 texColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
+	texColor = saturate(ambientLight * texColor);
+	
+	finalColor = texColor;
+	
+	MaterialData mat;
+	
+	mat.specularPower = cbuff_specularPower;
+	mat.specularIntensity = cbuff_specularIntensity;
+	
+	CoreData core;
+	
+	core.viewPos = input.viewPos;
+	core.worldPos = worldPos.xyz;
+	core.normal = normals.xyz;
+	
+	for(int i = 0; i < MAX_LIGHTS; i++) {
+		
+		float3 LightDirection = worldPos.xyz - pointLights[i].lightPos;
+		float distanceToPoint = length(LightDirection);
+	
+		//if(distanceToPoint > pointLights[i].range)
+		//	return float4(0,0,0,0);
+			
+		LightDirection = normalize(LightDirection);		
+	
+		PointLightData pointLight;
+	
+		pointLight.distanceToPoint = distanceToPoint;
+	
+		pointLight.AttenConstant = pointLights[i].AttenConstant;
+		pointLight.AttenLinear = pointLights[i].AttenLinear;
+		pointLight.AttenExponent = pointLights[i].AttenExponent;
+	
+		pointLight.baseLight.intensity = pointLights[i].intensity;
+		pointLight.baseLight.lightPos = pointLights[i].lightPos;
+		pointLight.baseLight.lightDirection = LightDirection;
+		pointLight.baseLight.lightColor = pointLights[i].lightColor;
+	
+		finalColor += calcPointLight(pointLight, mat, core);
+	
+	}
+	
+	return finalColor;
 }

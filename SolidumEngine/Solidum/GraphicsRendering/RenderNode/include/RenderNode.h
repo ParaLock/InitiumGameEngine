@@ -40,6 +40,7 @@ public:
 	void setVisibility(bool isVisible) { _isVisible = isVisible; };
 
 	RENDER_NODE_TYPE getType() { return _type; }
+	RenderParams* getRenderParams() { return &_renderParams; };
 
 	IShader* getShader() { return _shader; }
 };
