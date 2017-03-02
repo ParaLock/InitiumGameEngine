@@ -18,15 +18,31 @@ void meshLoaderOBJ::loadMesh(LPCWSTR fileName, mesh *mesh)
 {
 	std::ifstream file(fileName);
 
-	std::vector<std::string*> *line = new std::vector<std::string*>;
+	std::vector<std::string*> line;
 
-	std::vector<D3DXVECTOR3> *vertices = new std::vector<D3DXVECTOR3>;
-	std::vector<D3DXVECTOR3> *normals = new std::vector<D3DXVECTOR3>;
-	std::vector<D3DXVECTOR2> *texCoords = new std::vector<D3DXVECTOR2>;
+	std::vector<Vector3f> temp_vertices;
+	std::vector<Vector3f> temp_normals;
+	std::vector<Vector2f> temp_texCoords;
 
-	std::vector<DWORD> *verticeIndex = new std::vector<DWORD>;
-	std::vector<DWORD> *normalsIndex = new std::vector<DWORD>;
-	std::vector<DWORD> *texCoordsIndex = new std::vector<DWORD>;
+	std::vector<Vector3f> expanded_vertices;
+	std::vector<Vector3f> expanded_normals;
+	std::vector<Vector2f> expanded_texCoords;
+
+	std::vector<Vector3f> final_vertices;
+	std::vector<Vector3f> final_normals;
+	std::vector<Vector2f> final_texCoords;
+
+	std::vector<Vector3f> expanded_biNormals;
+	std::vector<Vector3f> expanded_tangents;
+
+	std::vector<Vector3f> final_biNormals;
+	std::vector<Vector3f> final_tangents;
+
+	std::vector<unsigned short> final_indices;
+
+	std::vector<DWORD> verticeIndex;
+	std::vector<DWORD> normalsIndex;
+	std::vector<DWORD> texCoordsIndex;
 
 	int indice_1;
 	int indice_2;
@@ -59,109 +75,116 @@ void meshLoaderOBJ::loadMesh(LPCWSTR fileName, mesh *mesh)
 			file.getline(buf, 256);
 
 			if(buf[0] != 0)
-			line->push_back(new std::string(buf));
+			line.push_back(new std::string(buf));
 		}
 
-		for (size_t i = 0; i < line->size(); i++) {
+		for (size_t i = 0; i < line.size(); i++) {
 
-			if (line->at(i)->at(0) == '#') {
+			if (line.at(i)->at(0) == '#') {
 				continue;
 			}
 
-			if (line->at(i)->at(0) == 'v' && line->at(i)->at(1) == ' ') {
+			if (line.at(i)->at(0) == 'v' && line.at(i)->at(1) == ' ') {
 
-				sscanf_s(line->at(i)->c_str(), "v %f %f %f", &res_1, &res_2, &res_3);
+				sscanf_s(line.at(i)->c_str(), "v %f %f %f", &res_1, &res_2, &res_3);
 
-				D3DXVECTOR3 vecTemp = {res_1, res_2, res_3};
+				Vector3f vecTemp = {res_1, res_2, res_3};
 
-				vertices->push_back(vecTemp);
-
-			}
-
-			if (line->at(i)->at(0) == 'v' && line->at(i)->at(1) == 't') {
-
-				sscanf_s(line->at(i)->c_str(), "vt %f %f", &res_1, &res_2);
-
-				D3DXVECTOR2 normTemp = {res_1, res_2};
-
-				texCoords->push_back(normTemp);
-			}
-
-			if (line->at(i)->at(0) == 'v' && line->at(i)->at(1) == 'n') {
-
-				sscanf_s(line->at(i)->c_str(), "vn %f %f %f", &res_1, &res_2, &res_3);
-
-				D3DXVECTOR3 normTemp = { res_1, res_2, res_3 };
-
-				normals->push_back(normTemp);
+				temp_vertices.push_back(vecTemp);
 
 			}
 
-			if (line->at(i)->at(0) == 'f') {
+			if (line.at(i)->at(0) == 'v' && line.at(i)->at(1) == 't') {
 
-				if (std::count(line->at(i)->begin(), line->at(i)->end(), ' ') == 4) {
+				sscanf_s(line.at(i)->c_str(), "vt %f %f", &res_1, &res_2);
+
+				Vector2f normTemp = {res_1, res_2};
+
+				temp_texCoords.push_back(normTemp);
+			}
+
+			if (line.at(i)->at(0) == 'v' && line.at(i)->at(1) == 'n') {
+
+				sscanf_s(line.at(i)->c_str(), "vn %f %f %f", &res_1, &res_2, &res_3);
+
+				Vector3f normTemp = { res_1, res_2, res_3 };
+
+				temp_normals.push_back(normTemp);
+
+			}
+
+			if (line.at(i)->at(0) == 'f') {
+
+				if (std::count(line.at(i)->begin(), line.at(i)->end(), ' ') == 4) {
 
 					printf("Quad Meshes Not Supported!\n");
-					break;
 
+					break;
 				}
 
-				sscanf_s(line->at(i)->c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d",
+				sscanf_s(line.at(i)->c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d",
 					&indice_1, &texCoordIndex_1, &normalIndex_1,
 					&indice_2, &texCoordIndex_2, &normalIndex_2,
 					&indice_3, &texCoordIndex_3, &normalIndex_3);
 
-				verticeIndex->push_back(indice_1 - 1);
-				verticeIndex->push_back(indice_2 - 1);
-				verticeIndex->push_back(indice_3 - 1);
+				verticeIndex.push_back(indice_1);
+				verticeIndex.push_back(indice_2);
+				verticeIndex.push_back(indice_3);
 
-				texCoordsIndex->push_back(texCoordIndex_1 - 1);
-				texCoordsIndex->push_back(texCoordIndex_2 - 1);
-				texCoordsIndex->push_back(texCoordIndex_3 - 1);
+				texCoordsIndex.push_back(texCoordIndex_1);
+				texCoordsIndex.push_back(texCoordIndex_2);
+				texCoordsIndex.push_back(texCoordIndex_3);
 
-				normalsIndex->push_back(normalIndex_1 - 1);
-				normalsIndex->push_back(normalIndex_2 - 1);
-				normalsIndex->push_back(normalIndex_3 - 1);
-
-			}
-
-			if (line->at(i)->at(0) == 'u' && line->at(i)->at(1) == 's' && line->at(i)->at(2) == 'e') {
+				normalsIndex.push_back(normalIndex_1);
+				normalsIndex.push_back(normalIndex_2);
+				normalsIndex.push_back(normalIndex_3);
 
 			}
 		}
 
-		mesh->meshSize = verticeIndex->size() * sizeof(VERTEX);
-		mesh->indicesSize = verticeIndex->size() * sizeof(DWORD);
+		mesh->meshSize = verticeIndex.size() * sizeof(VERTEX);
+		mesh->indicesSize = verticeIndex.size() * sizeof(DWORD);
 
-		mesh->numIndices = verticeIndex->size();
+		mesh->numIndices = verticeIndex.size();
 
 		mesh->meshIndices = new DWORD[mesh->indicesSize];
 		mesh->meshVertices = new VERTEX[mesh->meshSize];
 
-		std::map<std::tuple<int, int, int>, int> indexMap;
+		for (int i = 0; i < verticeIndex.size(); i++) {
 
-		for (size_t i = 0; i < verticeIndex->size(); i++) {
+			DWORD vertexIndex = verticeIndex[i];
+			DWORD uvIndex = texCoordsIndex[i];
+			DWORD normalIndex = normalsIndex[i];
 
-			indexMap[std::make_tuple(verticeIndex->at(i), texCoordsIndex->at(i), normalsIndex->at(i))] = i;
-			mesh->meshIndices[i] = indexMap[std::make_tuple(verticeIndex->at(i), texCoordsIndex->at(i), normalsIndex->at(i))];
+			Vector3f vertex = temp_vertices[vertexIndex - 1];
+			Vector2f uv = temp_texCoords[uvIndex - 1];
+			Vector3f normal = temp_normals[normalIndex - 1];
+
+			expanded_vertices.push_back(vertex);
+			expanded_texCoords.push_back(uv);
+			expanded_normals.push_back(normal);
 		}
 
-		for (size_t i = 0; i < verticeIndex->size(); i++) {
+		mesh->calcTangentsAndBiNormals(expanded_vertices, expanded_texCoords,
+			expanded_normals, expanded_tangents, expanded_biNormals);
 
-			mesh->meshVertices[i].Pos = vertices->at(verticeIndex->at(i));
-			mesh->meshVertices[i].Normal = normals->at(normalsIndex->at(i));
-			mesh->meshVertices[i].TexCoords = texCoords->at(texCoordsIndex->at(i));
 
+		mesh->calcMeshIndices(expanded_vertices, expanded_texCoords, expanded_normals, 
+			expanded_tangents, expanded_biNormals, final_indices, final_vertices, final_texCoords, final_normals, final_tangents, final_biNormals);
+	
+		mesh->numVertices = final_vertices.size();
+
+		for (int i = 0; i < mesh->numVertices; i++) {
+
+			mesh->meshVertices[i].Pos = final_vertices[i];
+			mesh->meshVertices[i].Normal = final_normals[i];
+			mesh->meshVertices[i].TexCoords = final_texCoords[i];
+			mesh->meshVertices[i].Tangent = final_tangents[i];
+			mesh->meshVertices[i].biNormal = final_biNormals[i];
 		}
 
-		delete line;
-		delete vertices;
-		delete normals;
-		delete texCoords;
-
-		delete texCoordsIndex;
-		delete normalsIndex;
-		delete verticeIndex;
+		for (int i = 0; i < final_indices.size(); i++)
+			mesh->meshIndices[i] = final_indices[i];
 	}
 }
 

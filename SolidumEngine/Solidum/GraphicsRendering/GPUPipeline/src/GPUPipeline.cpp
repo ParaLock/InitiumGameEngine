@@ -273,6 +273,13 @@ void GPUPipeline::attachResource(IResource* res, std::string name, GPUPipelineEl
 
 	newElement->resourceSlot = 0;
 
+	if (type == GPUPipelineElementType::SOL_TEXTURE_HOOK) {
+
+		newElement->resourceSlot = texHookCount;
+
+		texHookCount++;
+	}
+
 	if (type == GPUPipelineElementType::SOL_RENDER_TARGET) {
 
 		newElement->resourceSlot = renderTargetCount;

@@ -15,7 +15,7 @@ public:
 
 	virtual uint64_t getUniqueNodeID() = 0;
 
-	virtual void setExecutionOrder(std::list<SHADER_RENDER_TYPE> order) = 0;
+	virtual void setExecutionOrder(std::vector<SHADER_RENDER_TYPE> order) = 0;
 
 	virtual void addNode(RenderNode* node, uint64_t id) = 0;
 

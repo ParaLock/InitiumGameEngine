@@ -24,12 +24,44 @@ void Shader::setModelTexture(Texture * tex)
 
 void Shader::updateMaterialPassUniforms(MaterialPass* pass)
 {
+	_pipelineState->setHookResource(nullptr, "mat_tex_albedo");
+	_pipelineState->setHookResource(nullptr, "mat_tex_normal");
+	_pipelineState->setHookResource(nullptr, "mat_tex_specular");
+	_pipelineState->setHookResource(nullptr, "mat_tex_pbr_emessive");
+	_pipelineState->setHookResource(nullptr, "mat_tex_pbr_roughness");
+
 	float specPower = pass->getSpecularPower();
 	float specIntensity= pass->getSpecularIntensity();
+	Vector4f specColor = pass->getSpecularColor();
 
 	updateUniform("cbuff_specularIntensity", &specIntensity);
-	updateUniform("cbuff_specularColor", &pass->getSpecularColor());
+	updateUniform("cbuff_specularColor", &specColor);
 	updateUniform("cbuff_specularPower", &specPower);
+
+	const std::map<MATERIAL_TEX, Texture*>& materialTextures = pass->getTextures();
+
+	for (auto itr = materialTextures.begin(); itr != materialTextures.end(); itr++) {		
+		switch (itr->first)
+		{
+		case MATERIAL_TEX::ALBEDO_MAT_TEXTURE:
+			_pipelineState->setHookResource(itr->second, "mat_tex_albedo");
+			break;
+		case MATERIAL_TEX::NORMAL_MAT_TEXTURE:
+			_pipelineState->setHookResource(itr->second, "mat_tex_normal");
+			break;
+		case MATERIAL_TEX::SPECULAR_MAT_TEXTURE:
+			_pipelineState->setHookResource(itr->second, "mat_tex_specular");
+			break;
+		case MATERIAL_TEX::EMESSIVE_PBR_TEXTURE:
+			_pipelineState->setHookResource(itr->second, "mat_tex_pbr_emessive");
+			break;
+		case MATERIAL_TEX::ROUGHNESS_PBR_TEXTURE:
+			_pipelineState->setHookResource(itr->second, "mat_tex_pbr_roughness");
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void Shader::updateDeferredLightUniforms(ILight* light)

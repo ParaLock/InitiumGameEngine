@@ -89,6 +89,7 @@ class GPUPipeline : public IResource
 private:
 	int renderTargetCount = 0;
 	int texSamplerCount = 0;
+	int texHookCount = 0;
 protected:
 
 	ResourceManagerPool* _resManagerPool;

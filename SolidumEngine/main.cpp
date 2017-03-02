@@ -69,8 +69,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Light* pointLight3 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
 		(LIGHT_TYPE::POINT_LIGHT), "pointLight3", false)->getCore<Light>();
 
-	mesh* hammerMesh = resManagerPool->getResourceManager("meshManager")->createResource(&meshBuilder
-		(L"./res/Meshes/hammer2.obj", resManagerPool), "hammer_mesh", false)->getCore<mesh>();
+	//mesh* hammerMesh = resManagerPool->getResourceManager("meshManager")->createResource(&meshBuilder
+	//	(L"./res/Meshes/hammer2.obj", resManagerPool), "hammer_mesh", false)->getCore<mesh>();
 
 	mesh* cubeMesh = resManagerPool->getResourceManager("meshManager")->createResource(&meshBuilder
 		(L"./res/Meshes/cube.obj", resManagerPool), "cube_mesh", false)->getCore<mesh>();
@@ -79,22 +79,31 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		(L"./res/Meshes/plane.obj", resManagerPool), "plane_mesh", false)->getCore<mesh>();
 
 	Texture* grassTex = resManagerPool->getResourceManager("TextureManager")->createResource(&TextureBuilder
-		(L"./res/Textures/grass.png"), "grass_tex", false)->getCore<Texture>();
+		(L"./res/Textures/diffuse/grass.png"), "grass_tex", false)->getCore<Texture>();
 
 	Texture* woodTex = resManagerPool->getResourceManager("TextureManager")->createResource(&TextureBuilder
-		(L"./res/Textures/Wood.png"), "wood_tex", false)->getCore<Texture>();
+		(L"./res/Textures/diffuse/Wood.png"), "wood_tex", false)->getCore<Texture>();
 
 	Texture* metalTex = resManagerPool->getResourceManager("TextureManager")->createResource(&TextureBuilder
-		(L"./res/Textures/metal.png"), "metal_tex", false)->getCore<Texture>();
+		(L"./res/Textures/diffuse/metal.png"), "metal_tex", false)->getCore<Texture>();
+
+	Texture* bricksTex = resManagerPool->getResourceManager("TextureManager")->createResource(&TextureBuilder
+		(L"./res/Textures/diffuse/grey_bricks.png"), "bricks_tex", false)->getCore<Texture>();
+
+	Texture* bricksNormalMap = resManagerPool->getResourceManager("TextureManager")->createResource(&TextureBuilder
+		(L"./res/Textures/normals/bricks_normal.bmp"), "bricks_normal_map", false)->getCore<Texture>();
+
+	Shader* deferredRenderingShaderWNormalMapping = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
+		(L"./res/Shaders/deferredRendering/basicShaders/deferredShaderWNormalMapping.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING), "deferred_geometry_shader_normal_mapping", false)->getCore<Shader>();
 
 	Shader* deferredRenderingShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
-		(L"./res/Shaders/deferredRendering/deferredShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "deferred_geometry_shader", false)->getCore<Shader>();
+		(L"./res/Shaders/deferredRendering/basicShaders/deferredShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING), "deferred_geometry_shader", false)->getCore<Shader>();
 
 	Shader* deferredRenderingDirectionalLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
-		(L"./res/Shaders/deferredRendering/directionalLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "directional_light_shader", false)->getCore<Shader>();
+		(L"./res/Shaders/deferredRendering/basicShaders/directionalLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "directional_light_shader", false)->getCore<Shader>();
 
 	Shader* deferredRenderingPointLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
-		(L"./res/Shaders/deferredRendering/pointLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "point_light_shader", false)->getCore<Shader>();
+		(L"./res/Shaders/deferredRendering/basicShaders/pointLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "point_light_shader", false)->getCore<Shader>();
 
 	Shader* forwardRenderingShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
 		(L"./res/Shaders/forwardRendering/forwardRendering.hlsl", SHADER_RENDER_TYPE::FORWARD_RENDERING), "forward_rendering_shader", false)->getCore<Shader>();
@@ -104,15 +113,17 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	deferredRenderingDirectionalLightShader->attachPipeline(deferredLightingPipeline);
 	deferredRenderingPointLightShader->attachPipeline(deferredLightingPipeline);
 
-	Material* metalMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(&MaterialBuilder
-		(), "metalMaterial", false)->getCore<Material>();
+	Material* brickMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(&MaterialBuilder
+		(), "brickMaterial", false)->getCore<Material>();
 
-	metalMaterial->createPass("basicPhongWSpecular", deferredRenderingShader, deferredRenderingPipeline);
+	brickMaterial->createPass("basicPhongWSpecular", deferredRenderingShaderWNormalMapping, deferredRenderingPipeline);
 	
-	metalMaterial->getPass("basicPhongWSpecular")->setSpecularColor(Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
-	metalMaterial->getPass("basicPhongWSpecular")->setSpecularIntensity(5.5f);
-	metalMaterial->getPass("basicPhongWSpecular")->setSpecularPower(20.0f);
+	brickMaterial->getPass("basicPhongWSpecular")->setSpecularColor(Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+	brickMaterial->getPass("basicPhongWSpecular")->setSpecularIntensity(5.5f);
+	brickMaterial->getPass("basicPhongWSpecular")->setSpecularPower(20.0f);
 
+	brickMaterial->getPass("basicPhongWSpecular")->setNormalTexture(bricksNormalMap);
+	
 	Material* woodMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(&MaterialBuilder
 		(), "woodMaterial", false)->getCore<Material>();
 
@@ -203,7 +214,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Entity* hammer = new Entity();
 
 	hammer->addComponent(new MoveComponent(Vector3f(0, 0, 0), 0.5, true, moveKeyConfig1));
-	hammer->addComponent(new MeshComponent(hammerMesh, metalTex, metalMaterial));
+	//hammer->addComponent(new MeshComponent(hammerMesh, metalTex, metalMaterial));
 
 	Entity* cube = new Entity();
 
@@ -213,7 +224,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Entity* plane = new Entity();
 
 	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, moveKeyConfig1));
-	plane->addComponent(new MeshComponent(planeMesh, metalTex, metalMaterial));
+	plane->addComponent(new MeshComponent(planeMesh, bricksTex, brickMaterial));
 
 	camera* myCam = GraphicsCore::getInstance()->getPrimaryCamera();
 

@@ -6,7 +6,6 @@ RenderNodeTree::RenderNodeTree()
 {
 	_nodeQueryMap = new std::map<uint64_t, RenderNode*>;
 	_rootNodes = new std::map<IShader*, RenderNode*>;
-	_orderedRootNodes = new std::list<RenderNode*>;
 }
 
 
@@ -23,18 +22,9 @@ uint64_t RenderNodeTree::getUniqueNodeID()
 	return dist(mt);
 }
 
-void RenderNodeTree::setExecutionOrder(std::list<SHADER_RENDER_TYPE> order)
+void RenderNodeTree::setExecutionOrder(std::vector<SHADER_RENDER_TYPE> order)
 {
-	for (auto typeItr = order.begin(); typeItr != order.end(); typeItr++) {
-
-		for (auto itr = _rootNodes->begin(); itr != _rootNodes->end(); itr++) {
-
-			if (itr->second->getShader()->getRenderMode() == *typeItr) {
-
-				_orderedRootNodes->push_back(itr->second);
-			}
-		}
-	}
+	_renderOrder = order;
 }
 
 void RenderNodeTree::addNode(RenderNode * node, uint64_t id)
@@ -63,7 +53,6 @@ void RenderNodeTree::addNode(RenderNode * node, uint64_t id)
 		}
 	}
 	else {
-
 		_rootNodes->insert({node->getShader(), node});
 	}
 }
@@ -150,16 +139,27 @@ void RenderNodeTree::optimize()
 
 void RenderNodeTree::walkTree()
 {
-	for each(RenderNode* node in *_orderedRootNodes) {
+	std::vector<RenderNode*> _orderedRootNodes;
+
+	for (int i = 0; i < _renderOrder.size(); i++) {
+		for (auto itr = _rootNodes->begin(); itr != _rootNodes->end(); itr++) {
+			RenderNode* node = itr->second;
+
+			if (node->getShader()->getRenderMode() == _renderOrder[i]) {
+				_orderedRootNodes.push_back(node);
+			}
+		}
+	}
+
+	for (int i = 0; i < _orderedRootNodes.size(); i++) {
+
+		RenderNode* node = _orderedRootNodes[i];
 
 		while (node->getChild() != nullptr) {
 			node->render();
 			node = node->getChild();
 		}
 
-		node->getRenderParams()->setPerNodeParam_ForwardRendering(true);
 		node->render();
 	}
-
-	_orderedRootNodes->clear();
 }

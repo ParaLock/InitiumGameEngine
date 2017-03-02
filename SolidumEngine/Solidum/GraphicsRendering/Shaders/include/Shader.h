@@ -18,7 +18,7 @@
 class ShaderBuilder : public IResourceBuilder {
 public:
 	LPCWSTR _filename;
-	SHADER_RENDER_TYPE _renderType;
+	SHADER_RENDER_TYPE _renderType = SHADER_RENDER_TYPE::INVALID;
 
 	ShaderBuilder(LPCWSTR filename, SHADER_RENDER_TYPE renderType) {
 		_filename = filename;

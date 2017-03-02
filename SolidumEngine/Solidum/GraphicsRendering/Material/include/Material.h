@@ -44,14 +44,24 @@ public:
 	float getSpecularIntensity() { return _specularIntensity; }
 	float getSpecularPower() { return _specularPower; }
 
+	void setSpecularTexture(Texture* tex);
+	void setNormalTexture(Texture* tex);
+
+	void setPBRAlbedoTexture(Texture* tex);
+	void setPBRRoughnessTexture(Texture* tex);
+	void setPBREmessiveTexture(Texture* tex);
+
 	void setShader(Shader* shader) { _shader = shader; }
 	void setGPUPipeline(GPUPipeline* pipeline) { _pipeline = pipeline; }
 
 	Vector4f getSpecularColor() { return _specularColor; }
 
+	const std::map<MATERIAL_TEX, Texture*>& getTextures() { return _textures; }
+
 	Shader* getShader() { return _shader; }
 	GPUPipeline* getPipeline() { return _pipeline; }
 };
+
 
 class Material : public IResource
 {
@@ -65,7 +75,10 @@ public:
 	void unload();
 
 	void createPass(std::string name, Shader* shader, GPUPipeline* pipeline);
+
 	MaterialPass* getPass(std::string name);
+
+	std::vector<MaterialPass*> getPassList();
 
 	std::vector<uint64_t> generateClientRenderNodes(mesh* mesh, Texture* texture);
 };

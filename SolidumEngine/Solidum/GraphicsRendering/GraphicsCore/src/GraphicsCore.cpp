@@ -19,6 +19,13 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 
 	_renderTree = new RenderNodeTree();
 
+	std::vector<SHADER_RENDER_TYPE> renderExecutionOrder;
+	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::FORWARD_RENDERING);
+	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING);
+	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT);
+
+	_renderTree->setExecutionOrder(renderExecutionOrder);
+
 	EventFrameworkCore::getInstance()->getGlobalEventHub("ComponentEventHub")->subscribeListener(this);
 
 	_primaryCamera = new camera(0.1f, 1000.0f);
@@ -66,13 +73,6 @@ GraphicsCore::~GraphicsCore()
 
 void GraphicsCore::RenderAll()
 {
-	std::list<SHADER_RENDER_TYPE> renderExecutionOrder;
-	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::FORWARD_RENDERING);
-	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING);
-	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT);
-
-	_renderTree->setExecutionOrder(renderExecutionOrder);
-
 	_renderTree->updateGlobalRenderParams(_globalRenderingParameters);
 	
 	_renderTree->optimize();

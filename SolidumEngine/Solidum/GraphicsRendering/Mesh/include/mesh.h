@@ -48,7 +48,46 @@ public:
 	int meshSize;
 	int indicesSize;
 
+	int numVertices;
 	int numIndices;
+
+	bool is_near(float v1, float v2);
+
+	bool getSimilarVertexIndex(
+		Vector3f & in_vertex,
+		Vector2f & in_uv,
+		Vector3f & in_normal,
+		std::vector<Vector3f> & out_vertices,
+		std::vector<Vector2f> & out_uvs,
+		std::vector<Vector3f> & out_normals,
+		unsigned short & result
+		);
+
+
+
+	void calcMeshIndices(
+		std::vector<Vector3f> & in_vertices,
+		std::vector<Vector2f> & in_uvs,
+		std::vector<Vector3f> & in_normals,
+		std::vector<Vector3f> & in_tangents,
+		std::vector<Vector3f> & in_bitangents,
+
+		std::vector<unsigned short> & out_indices,
+		std::vector<Vector3f> & out_vertices,
+		std::vector<Vector2f> & out_uvs,
+		std::vector<Vector3f> & out_normals,
+		std::vector<Vector3f> & out_tangents,
+		std::vector<Vector3f> & out_bitangents
+		);
+
+	void calcTangentsAndBiNormals(
+		std::vector<Vector3f> & vertices,
+		std::vector<Vector2f> & uvs,
+		std::vector<Vector3f> & normals,
+		
+		std::vector<Vector3f> & tangents,
+		std::vector<Vector3f> & bitangents
+		);
 
 	VERTEX *meshVertices;
 	DWORD *meshIndices;

@@ -4,7 +4,6 @@ PIPELINE_INIT
 	INIT GBUFFER normals_gbuff
 	INIT GBUFFER position_gbuff
 	INIT GBUFFER specular_gbuff
-	INIT GBUFFER shadow_gbuff
 	
 	INIT SAMPLER WRAP LINEAR wrapSampler
 	
@@ -31,8 +30,13 @@ PIPELINE_BEGIN
 	PS_SHADER_BEGIN
 
 		BIND TEXTURE_HOOK model_tex
-		BIND TEXTURE_HOOK material_color_tex
-		BIND TEXTURE_HOOK material_base_tex
+		
+		BIND TEXTURE_HOOK mat_tex_albedo
+		BIND TEXTURE_HOOK mat_tex_normal
+		BIND TEXTURE_HOOK mat_tex_specular
+		
+		BIND TEXTURE_HOOK mat_tex_pbr_emessive
+		BIND TEXTURE_HOOK mat_tex_pbr_roughness
 		
 		BIND SAMPLER wrapSampler		
 

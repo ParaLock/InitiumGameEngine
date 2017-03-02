@@ -34,6 +34,8 @@ void dxTexture::loadImage(LPCWSTR filename)
 		NULL,
 		&texture,
 		NULL);
+
+	int debugRef = -1;
 }
 
 void dxTexture::updateParameter(std::string varName, void * data)

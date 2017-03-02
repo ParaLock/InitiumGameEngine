@@ -121,8 +121,12 @@ enum LIGHT_TYPE {
 };
 
 enum MATERIAL_TEX {
-	DIFFUSE_MATERIAL_TEXTURE,
-	SPECULAR_MATERIAL_TEXTURE,
+	ALBEDO_MAT_TEXTURE,
+	SPECULAR_MAT_TEXTURE,
+	NORMAL_MAT_TEXTURE,
+
+	ROUGHNESS_PBR_TEXTURE,
+	EMESSIVE_PBR_TEXTURE
 };
 
 enum RENDER_NODE_TYPE {
@@ -132,6 +136,7 @@ enum RENDER_NODE_TYPE {
 };
 
 enum SHADER_RENDER_TYPE {
+	INVALID,
 	DEFERRED_RENDERING,
 	DEFERRED_RENDERING_LIGHT,
 	FORWARD_RENDERING,
@@ -144,7 +149,7 @@ class IEvent;
 
 typedef std::shared_ptr<IEvent> EVENT_PTR;
 
-struct VERTEX { D3DXVECTOR3 Pos; D3DXVECTOR3 Normal; D3DXVECTOR2 TexCoords; };
-struct LIGHT_VERTEX { D3DXVECTOR3 position; D3DXVECTOR2 texture; };
+struct VERTEX { Vector3f Pos; Vector3f Normal; Vector2f TexCoords; Vector3f biNormal; Vector3f Tangent; };
+struct LIGHT_VERTEX { Vector3f position; Vector2f texture; };
 
 #endif

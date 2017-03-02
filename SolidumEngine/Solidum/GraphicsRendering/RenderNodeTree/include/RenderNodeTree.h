@@ -11,14 +11,14 @@ private:
 	std::map<uint64_t, RenderNode*>* _nodeQueryMap;
 	std::map<IShader*, RenderNode*>* _rootNodes;
 
-	std::list<RenderNode*>* _orderedRootNodes;
+	std::vector<SHADER_RENDER_TYPE> _renderOrder;
 public:
 	RenderNodeTree();
 	~RenderNodeTree();
 
 	uint64_t getUniqueNodeID();
 
-	void setExecutionOrder(std::list<SHADER_RENDER_TYPE> order);
+	void setExecutionOrder(std::vector<SHADER_RENDER_TYPE> order);
 
 	void addNode(RenderNode* node, uint64_t id);
 
