@@ -82,8 +82,8 @@ void dxRenderTarget::load(IResourceBuilder * builder)
 		break;
 	}
 
-	textureDesc.Width = windowAccessor::screen_width;
-	textureDesc.Height = windowAccessor::screen_height;
+	textureDesc.Width = window::getInstance()->screen_width;
+	textureDesc.Height = window::getInstance()->screen_height;
 	textureDesc.ArraySize = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;

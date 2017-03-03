@@ -6,8 +6,6 @@
 #include "../../Directx11Rendering/dxDevice/include/dxDeviceAccessor.h"
 #include "../../ActiveGraphicsAPI.h"
 
-#include "../../Camera/include/camera.h"
-
 #include "../../ActiveGraphicsAPI.h"
 
 #include "../../Directx11Rendering/dxRenderTarget/include/dxRenderTarget.h"
@@ -24,30 +22,37 @@
 
 #include "../../RenderNodeTree/include/RenderNodeTree.h"
 
+#include "../../GPUPipeline/include/GPUPipeline.h"
+
 class GraphicsCore : public IEventListener
 {
 private:
 	dxDeviceManager *_dxManager = nullptr;
 	ResourceManagerPool *_resManagerPool = nullptr;
 
-	camera* _primaryCamera = nullptr;
-
 	RenderNodeTree *_renderTree;
 
 	GlobalRenderingParams _globalRenderingParameters;
+
+	GPUPipeline* _endFrameState;
 
 public:
 	GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool);
 	~GraphicsCore();
 
-	void RenderAll();
+	void beginFrame();
+
+	void endFrame();
+
+	void render();
+
+	void setCurrentRenderingCamera(CameraComponent* cam);
 
 	void onEvent(EVENT_PTR evt);
 
-	void attachPrimaryCamera(camera* cam);
+	void setEndFrameHandler(GPUPipeline* pipe);
 
 	RenderNodeTree* getRenderNodeTree() { return _renderTree; };
-	camera* getPrimaryCamera() { return _primaryCamera; }
 
 	static GraphicsCore* singletonInstance;
 	static GraphicsCore* getInstance();

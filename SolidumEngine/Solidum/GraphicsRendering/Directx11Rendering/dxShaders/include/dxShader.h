@@ -11,8 +11,6 @@
 
 #include "../../../../EngineUtils/include/DynamicStruct.h"
 
-#include "../../../Window/include/windowAccessor.h"
-
 #include "dxShaderInputLayout.h"
 
 struct dxConstantBufferLayout {

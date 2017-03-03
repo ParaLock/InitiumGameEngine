@@ -71,8 +71,8 @@ void dxDevice::InitializeDepthBuffer()
 	ZeroMemory(&descDSV, sizeof(descDSV));
 	ZeroMemory(&sr_desc, sizeof(sr_desc));
 
-	descDepth.Width = windowAccessor::screen_width;
-	descDepth.Height = windowAccessor::screen_height;
+	descDepth.Width = window::getInstance()->screen_width;
+	descDepth.Height = window::getInstance()->screen_height;
 	descDepth.MipLevels = 1;
 	descDepth.ArraySize = 1;
 	descDepth.Format = DXGI_FORMAT_R24G8_TYPELESS;
@@ -253,8 +253,8 @@ void dxDevice::InitializeViewport()
 {
 	ZeroMemory(&meshViewport, sizeof(D3D11_VIEWPORT));
 
-	meshViewport.Width = (FLOAT)windowAccessor::screen_width;
-	meshViewport.Height = (FLOAT)windowAccessor::screen_height;
+	meshViewport.Width = (FLOAT)window::getInstance()->screen_width;
+	meshViewport.Height = (FLOAT)window::getInstance()->screen_height;
 	meshViewport.TopLeftX = 0;
 	meshViewport.TopLeftY = 0;
 	meshViewport.MaxDepth = 1;
@@ -262,8 +262,8 @@ void dxDevice::InitializeViewport()
 
 	ZeroMemory(&lightViewport, sizeof(D3D11_VIEWPORT));
 
-	lightViewport.Width = (FLOAT)windowAccessor::screen_width;
-	lightViewport.Height = (FLOAT)windowAccessor::screen_height;
+	lightViewport.Width = (FLOAT)window::getInstance()->screen_width;
+	lightViewport.Height = (FLOAT)window::getInstance()->screen_height;
 	lightViewport.TopLeftX = 0;
 	lightViewport.TopLeftY = 0;
 	lightViewport.MaxDepth = 1;

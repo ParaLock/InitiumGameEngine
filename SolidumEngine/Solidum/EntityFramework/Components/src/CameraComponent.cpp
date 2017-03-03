@@ -1,6 +1,6 @@
-#include "../include/camera.h"
+#include "../include/CameraComponent.h"
 
-camera::camera(float near_value, float far_value) :
+CameraComponent::CameraComponent(float near_value, float far_value) :
 	_dV(Vector3f(0, 0, 1)),
 	_dU(Vector3f(0, 1, 0)),
 	_up(Vector3f(0, 1, 0)),
@@ -11,16 +11,18 @@ camera::camera(float near_value, float far_value) :
 	_yaw(0),
 	_pitch(0)
 {
+	setType(COMPONENT_TYPE::CAMERA_COMPONENT);
+
 	EventFrameworkCore::getInstance()->getGlobalEventHub("InputEventHub")->subscribeListener(this);
 
 	_viewMatrix = Matrix4f::get_identity();
 	_projectionMatrix = Matrix4f::get_identity();
 	_worldMatrix = Matrix4f::get_identity();
 
-	float aspect = (float)windowAccessor::screen_width / (float)windowAccessor::screen_height;
+	float aspect = (float)window::getInstance()->screen_width / (float)window::getInstance()->screen_height;
 	
-	screen_width = (float)windowAccessor::screen_width;
-	screen_height = (float)windowAccessor::screen_height;
+	screen_width = (float)window::getInstance()->screen_width;
+	screen_height = (float)window::getInstance()->screen_height;
 
 	float left, right, top, bottom;
 
@@ -46,7 +48,7 @@ camera::camera(float near_value, float far_value) :
 	_previousMousePos = Vector2f(_screenCenter[0], _screenCenter[1]);
 
 	POINT pt = { (LONG)_screenCenter[0], (LONG)_screenCenter[1] };
-	ClientToScreen(windowAccessor::hWnd, &pt);
+	ClientToScreen(window::getInstance()->hWnd, &pt);
 	SetCursorPos(pt.x, pt.y);
 
 	_mouseLocked = true;
@@ -56,7 +58,7 @@ camera::camera(float near_value, float far_value) :
 	isLoaded = true;
 }
 
-camera::~camera()
+CameraComponent::~CameraComponent()
 {
 	isLoaded = false;
 }
@@ -66,7 +68,7 @@ float toRadians(float input) {
 	return input * halfC;
 }
 
-void camera::onEvent(EVENT_PTR evt)
+void CameraComponent::onEvent(EVENT_PTR evt)
 {
 	switch (evt.get()->getType())
 	{
@@ -100,7 +102,7 @@ void camera::onEvent(EVENT_PTR evt)
 	}
 }
 
-void camera::adjustYawAndPitch(float yaw, float pitch)
+void CameraComponent::adjustYawAndPitch(float yaw, float pitch)
 {
 	_yaw += yaw;
 	_pitch += pitch;
@@ -112,7 +114,7 @@ void camera::adjustYawAndPitch(float yaw, float pitch)
 	else if (_pitch < 0) _pitch = (float)TWO_PI + _pitch;
 }
 
-void camera::updateLook(float mouseX, float mouseY)
+void CameraComponent::updateLook(float mouseX, float mouseY)
 {
 	float mX = mouseX;
 	float mY = mouseY;
@@ -147,7 +149,7 @@ void camera::updateLook(float mouseX, float mouseY)
 			_previousMousePos = Vector2f(_screenCenter[0], _screenCenter[1]);
 
 			POINT pt = { (LONG)_screenCenter[0], (LONG)_screenCenter[1] };
-			ClientToScreen(windowAccessor::hWnd, &pt);
+			ClientToScreen(window::getInstance()->hWnd, &pt);
 			SetCursorPos(pt.x, pt.y);
 
 			return;
@@ -187,7 +189,7 @@ void camera::updateLook(float mouseX, float mouseY)
 	_previousMousePos[1] = mY;
 }
 
-void camera::move(CAMERA_MOVE direction, float speed)
+void CameraComponent::move(CAMERA_MOVE direction, float speed)
 {
 	if (speed > 5 || speed < -1)
 		return;
@@ -221,7 +223,7 @@ void camera::move(CAMERA_MOVE direction, float speed)
 	}
 }
 
-void camera::update()
+void CameraComponent::update()
 {
 	float t = (float)camTimer.getElapsedTimeSeconds();
 

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "../../../../sysInclude.h"
-#include "../../../Window/include/windowAccessor.h"
+
+#include "../../../Window/include/window.h"
 
 #ifndef _DXDEVICE_H
 #define _DXDEVICE_H

@@ -1,8 +1,8 @@
 #include <windows.h>
 
-#include "Solidum\GraphicsRendering\Window\include\windowAccessor.h"
 #include "Solidum\GraphicsRendering\Window\include\window.h"
-#include "Solidum\GraphicsRendering\Camera\include\camera.h"
+
+#include "Solidum\EntityFramework\Components\include\CameraComponent.h"
 
 #include "Solidum\EngineCore\include\EngineInstance.h"
 
@@ -15,6 +15,8 @@
 #include "Solidum\InputHandling\include\InputHandler.h"
 
 #include "Solidum\EntityFramework\Entity\include\Entity.h"
+
+#include "Solidum\WorldSimulation\include\World.h"
 
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -34,28 +36,29 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	windowConfig.screen_width = 1024;
 
 	window *myWindow = new window(&windowConfig);
-	windowAccessor::initAccessor(myWindow);
 
 	EngineInstance *solidum = new EngineInstance(myWindow);
 
+	World* world = new World;
+
 	ResourceManagerPool* resManagerPool = solidum->getResourceManagerPool();
 
-	//** RESOURCE INITIALIZATION **//
+	//** RESOURCE LOADING **//
 
 	GPUPipeline* forwardRenderingEndscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/forwardRendering/endScene_pipeline.solPipe", resManagerPool), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/forwardRendering/basicShaders/endScene_pipeline.solPipe", resManagerPool), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* deferredRenderingEndscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/deferredRendering/endScene_pipeline.solPipe", resManagerPool), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/deferredRendering/basicShaders/endScene_pipeline.solPipe", resManagerPool), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* deferredRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/deferredRendering/deferredPipeline.solPipe", resManagerPool), "deferred_geometry_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/deferredRendering/basicShaders/deferredPipeline.solPipe", resManagerPool), "deferred_geometry_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* deferredLightingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/deferredRendering/deferredLightingPipeline.solPipe", resManagerPool), "deferred_lighting_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/deferredRendering/basicShaders/deferredLightingPipeline.solPipe", resManagerPool), "deferred_lighting_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* forwardRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/forwardRendering/forwardPipeline.solPipe", resManagerPool), "forward_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/forwardRendering/basicShaders/forwardPipeline.solPipe", resManagerPool), "forward_pipeline_state", false)->getCore<GPUPipeline>();
 
 	Light* dirLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
 		(LIGHT_TYPE::DIRECTIONAL_LIGHT), "dirLight1", false)->getCore<Light>();
@@ -146,12 +149,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	moveKeyConfig2->insert({ KEY_MAP::J, MOVE_FUNCTION::MOVE_LEFT });
 	moveKeyConfig2->insert({ KEY_MAP::L, MOVE_FUNCTION::MOVE_RIGHT });
 
-	//** RESOURCE INIT DONE **//
+	//** RESOURCE LOADING DONE **//
 
 	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(DIRECTIONAL_LIGHT, deferredRenderingDirectionalLightShader);
 	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(POINT_LIGHT, deferredRenderingPointLightShader);
-
-	Entity* ROOT_ENTITY = new Entity();
 
 	dirLight1->setColor(Vector4f(1.5f, 2.5f, 1.5f, 1.5f));
 	dirLight1->setDirection(Vector3f(0.0f, 0.0f, 9.0f));
@@ -191,74 +192,68 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	pointLight3->setRange(60.5f);
 
-	Entity* dirLightEntity = new Entity();
+	Entity* dirLightEntity = new Entity(world);
 
 	dirLightEntity->addComponent(new LightComponent(dirLight1));
 
-	Entity* pointLight1Entity = new Entity();
+	Entity* pointLight1Entity = new Entity(world);
 
 	pointLight1Entity->addComponent(new MoveComponent(Vector3f(4.0f, 0.01f, -1.8f), 0.5, true, moveKeyConfig2));
 	pointLight1Entity->addComponent(new LightComponent(pointLight1));
 
-	Entity* pointLight2Entity = new Entity();
+	Entity* pointLight2Entity = new Entity(world);
 
 	pointLight2Entity->addComponent(new MoveComponent(Vector3f(0.2f, 0.01f, -5.0f), 0.5, false, moveKeyConfig1));
 	pointLight2Entity->addComponent(new LightComponent(pointLight2));
 
-	Entity* pointLight3Entity = new Entity();
+	Entity* pointLight3Entity = new Entity(world);
 
 	pointLight3Entity->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial));
 	pointLight3Entity->addComponent(new MoveComponent(Vector3f(-0.2f, 0.01f, 8.0f), 0.5, false, moveKeyConfig1));
 	pointLight3Entity->addComponent(new LightComponent(pointLight3));
 
-	Entity* hammer = new Entity();
+	Entity* hammer = new Entity(world);
 
 	hammer->addComponent(new MoveComponent(Vector3f(0, 0, 0), 0.5, true, moveKeyConfig1));
 	//hammer->addComponent(new MeshComponent(hammerMesh, metalTex, metalMaterial));
 
-	Entity* cube = new Entity();
+	Entity* cube = new Entity(world);
 
 	cube->addComponent(new MoveComponent(Vector3f(0, 5.0f, -3.0f), 0.5, false, moveKeyConfig1));
 	cube->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial));
 
-	Entity* plane = new Entity();
+	Entity* plane = new Entity(world);
 
 	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, moveKeyConfig1));
 	plane->addComponent(new MeshComponent(planeMesh, bricksTex, brickMaterial));
 
-	camera* myCam = GraphicsCore::getInstance()->getPrimaryCamera();
+	Entity* camera = new Entity(world);
 
-	InputHandler* inputHandler = resManagerPool->getResourceManager("InputHandlerManager")->
-		getResource("InputHandler")->getCore<InputHandler>();
+	camera->addComponent(new CameraComponent(0.1f, 1000.0f));
 
 	hammer->addChild(pointLight1Entity);
 	hammer->addChild(cube);
 
-	ROOT_ENTITY->addChild(pointLight2Entity);
-	ROOT_ENTITY->addChild(pointLight3Entity);
-	ROOT_ENTITY->addChild(hammer);
-	ROOT_ENTITY->addChild(plane);
+	world->addPrimaryCamera(camera, 0000);
+	
+	world->addEntity(pointLight2Entity, 0001);
+	world->addEntity(pointLight3Entity, 0010);
+	world->addEntity(hammer, 0011);
+	world->addEntity(plane, 0100);
 
-	while (myWindow->running) {
+	solidum->loadWorld(world);
 
-		myWindow->pollWin32Events();
+	solidum->getGraphicsSubsystem()->setEndFrameHandler(deferredRenderingEndscenePipelineState);
 
-		if (GetAsyncKeyState(VK_ESCAPE)) {
+	solidum->start();
 
-			myWindow->running = false;
-		}
+	if (GetAsyncKeyState(VK_ESCAPE)) {
 
-		inputHandler->update();
+		solidum->stop();
 
-		myCam->update();
-
-		ROOT_ENTITY->update();
-
-		solidum->getGraphicsSubsystem()->RenderAll();
-
-		//forwardRenderingEndscenePipelineState->executePass(NULL);
-		deferredRenderingEndscenePipelineState->executePass(NULL);
+		solidum->cleanup();
 	}
+
 	myWindow->destroyWindow();
 }
 

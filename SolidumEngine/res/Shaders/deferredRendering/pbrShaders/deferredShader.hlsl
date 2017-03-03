@@ -5,40 +5,75 @@ struct VertexInputType
 	float4 position : POSITION;
 	float3 normal : NORMAL;
 	float2 tex : TEXCOORD;
-	float3 tangent : TANGENT;
 	float3 binormal : BINORMAL;
+	float3 tangent : TANGENT;
 };
 
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
 	float3 normal : NORMAL;
-	float4 worldPos : TEXCOORD1;
-	float2 texCoords : TEXCOORD;
+	float4 worldPos : TEXCOORD0;
+	float2 tex : TEXCOORD1;
+	float3 binormal : BINORMAL;
+	float3 tangent : TANGENT;
 };
 
 struct PixelOutputType
 {
 	float4 color : SV_Target0;
 	float4 normal : SV_Target1;
-	float4 position : SV_Target2;
+	float4 glow : SV_Target2;
 };
 
-Texture2D model_tex : register(t0);
+Texture2D colorTexture : register(t0);
 
-Texture2D specularTexture : register(t3);
+Texture2D mat_tex_albedo : register(t1);
+Texture2D mat_tex_normal : register(t2);
+Texture2D mat_tex_specular : register(t3);
 
-Texture2D pbr_colorTexture : register(t4);
-Texture2D pbr_emessiveTexture : register(t5);
-Texture2D pbr_roughnessTexture : register(t6);
-Texture2D pbr_normalTexture : register(t7);
+Texture2D mat_tex_pbr_emessive : register(t4);
+Texture2D mat_tex_pbr_roughness : register(t5);
 
 SamplerState SampleTypeWrap : register(s0);
 
-void CreateGBufferMaterial(PixelInputType input, inout MaterialData mat) {
+void CreateMaterial(PixelInputType input, inout materialData mat)
+{
+	mat.diffuseColor = mat_tex_albedo.Sample(SampleTypeWrap, input.tex) 
+                                              * float4(colorTexture.Sample(SampleTypeWrap, input.tex), 1.0f);
+											  
+	float4 bumpNormal = mat_tex_normal.Load(int3(input.position.xy, 0));
+        
+	float4 emessiveColor = mat_tex_pbr_emessive.Sample(SampleTypeWrap, input.tex) 
+                                                  * float4(float3(0.2f, 0.2f, 0.2f), 1.0f);
 
-	mat.diffuseColor = pbr_colorTexture.Sample(SampleTypeWrap, );
+	mat.glowColor = emessiveColor.rgb;
+
+	mat.glowIntensity = 0.5f;
+
+	bumpNormal = (bumpNormal  * 2.0f) - 1.0f;
+
+	mat.normal = (bumpNormal.x * input.tangent) 
+            + (bumpNormal.y * input.binormal) + (bumpNormal.z * input.normal);
+
+	mat.normal = normalize(input.normal);
+
+	mat.roughness = mat_tex_pbr_roughness.Sample(SampleTypeWrap, input.tex).r; * 0.5f;
+	mat.metallic = mat_tex_pbr_roughness.Sample(SampleTypeWrap, input.tex).r;
+ 
+	mat.roughness *= 0.5f;
+	mat.metallic *= 0.5f;
 }
+
+void PackOutput(inout PixelOutputType output, MaterialData mat)
+{
+    output.color = float4(mat.diffuseColor.rgb, mat.roughness);
+
+    output.normal = float4(mat.normal.xyz, mat.metallic);
+
+	output.glow = float4(mat.glowColor * mat.glowIntensity, 1.0f);
+};
+
 
 PixelInputType Vshader(VertexInputType input)
 {
@@ -58,6 +93,8 @@ PixelInputType Vshader(VertexInputType input)
 	output.tex = input.tex;
 
 	output.normal = mul(input.normal, FinalworldMatrix);
+	output.tangent = mul(input.tangent, cbuff_projectionMatrix);
+	output.binormal = mul(input.binormal, cbuff_projectionMatrix);
 	
 	return output;
 }
@@ -68,14 +105,9 @@ PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 	
 	MaterialData mat;
 	
-	CreateGBufferMaterial(mat);
+	CreateMaterial(input, mat);
 	
-	float4 ambientLight = { 0.05f, 0.05f, 0.05f, 0.05f };
-		
-	float4 texColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
-	texColor = saturate(ambientLight * texColor);
-	
-	
+	PackOutput(output, mat);
 	
 	return output;
 }

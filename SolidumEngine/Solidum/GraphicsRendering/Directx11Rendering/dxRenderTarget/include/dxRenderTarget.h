@@ -2,7 +2,7 @@
 
 #include "../../../../sysInclude.h"
 
-#include "../../../Window/include/windowAccessor.h"
+#include "../../../Window/include/window.h"
 #include "../../dxDevice/include/dxDeviceAccessor.h"
 #include "../../../RenderTarget/include/RenderTarget.h"
 

@@ -17,7 +17,7 @@ std::pair<unsigned long, unsigned long> InputHandler::getMousePos()
 	POINT mousePos;
 	GetCursorPos(&mousePos);
 
-	ScreenToClient(windowAccessor::hWnd, &mousePos);
+	ScreenToClient(window::getInstance()->hWnd, &mousePos);
 
 	return std::make_pair(mousePos.x, mousePos.y);
 }

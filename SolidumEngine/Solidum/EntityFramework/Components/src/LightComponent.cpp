@@ -4,6 +4,8 @@
 
 LightComponent::LightComponent(Light* light)
 {
+	setType(COMPONENT_TYPE::LIGHT_COMPONENT);
+
 	_parentTransformDirty = true;
 
 	_light = light;

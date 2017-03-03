@@ -2,9 +2,13 @@
 #ifndef _CAMERA_H
 #define _CAMERA_H
 
+#include "Component.h"
+
+#include "../../../GraphicsRendering/Window/include/window.h"
+
+#include "../../../EngineUtils/include/Timer.h"
+
 #include "./../../../sysInclude.h"
-#include "../../Window/include/windowAccessor.h"
-#include "Timer.h"
 
 #include "../../../ResourceFramework/include/IResource.h"
 
@@ -20,10 +24,6 @@
 #include "../../../EngineUtils/include/Vector4.h"
 #include "../../../EngineUtils/include/Vector3.h"
 #include "../../../EngineUtils/include/Vector2.h"
-
-#define TWO_PI 6.283185307179586476925286766559
-#define DEG_TO_RAD 0.01745329251994329576923690768489
-#define M_PI    3.14159265358979323846264338327950288
 
 #define SMOOTHING_FACTOR 100
 
@@ -44,9 +44,10 @@ enum CAMERA_MOVE {
 	CAM_LOOK_DOWN
 };
 
-class camera : public IEventListener, public IResource
+class CameraComponent : public Component, public IResource
 {
 private:
+
 	float _movementStore[4];
 
 	float _yaw = 0, _pitch = 0;
@@ -73,8 +74,8 @@ private:
 	void unload() { isLoaded = false; };
 
 public:
-	camera(float near_value, float far_value);
-	~camera();
+	CameraComponent(float near_value, float far_value);
+	~CameraComponent();
 
 	void onEvent(EVENT_PTR evt);
 

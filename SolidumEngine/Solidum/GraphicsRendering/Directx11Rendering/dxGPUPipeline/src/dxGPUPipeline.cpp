@@ -14,6 +14,7 @@ dxGPUPipeline::~dxGPUPipeline()
 
 void dxGPUPipeline::applyState()
 {
+
 	dxDeviceAccessor::dxEncapsulator->dxDevContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	int debugRefPoint = -1;
@@ -200,6 +201,7 @@ void dxGPUPipeline::processOp(GPUPipelineOP* op)
 	}
 
 	if (op->type == GPUPipelineSupportedOP::SOL_SWAPFRAME) {
+
 		dxDeviceAccessor::dxEncapsulator->dxSwapchain->Present(1, 0);
 	}
 }

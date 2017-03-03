@@ -3,7 +3,7 @@
 
 MoveComponent::MoveComponent(Vector3f startPos, float movementSpeed, bool keyboardControl, KEY_FUNCTION_MAP* keyMap)
 {
-	_type = COMPONENT_TYPE::MOVE_COMPONENT;
+	setType(COMPONENT_TYPE::MOVE_COMPONENT);
 
 	if (keyboardControl) {
 		EventFrameworkCore::getInstance()->
@@ -25,6 +25,7 @@ void MoveComponent::update()
 	if (_parent->getParent() != nullptr) {
 
 		Vector3f finalPos = _vPos + _parent->getParent()->getTransform()->getPos();
+
 		_parent->getTransform()->setPos(finalPos);
 
 	}

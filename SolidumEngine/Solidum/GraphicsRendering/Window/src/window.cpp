@@ -1,14 +1,19 @@
 #include "..\include\window.h"
 
-int window::screen_height;
-int window::screen_width;
+window* window::singletonInstance = nullptr;
 
-bool window::running = true;
-
-HWND window::hWnd;
+window * window::getInstance()
+{
+	return singletonInstance;
+}
 
 window::window(windowConfigBlock *config)
 {
+	if (singletonInstance == nullptr)
+		singletonInstance = this;
+	else
+		return;
+
 	this->screen_height = config->screen_height;
 	this->screen_width = config->screen_width;
 
@@ -64,6 +69,11 @@ void window::pollWin32Events()
 WPARAM window::destroyWindow()
 {
 	return WPARAM();
+}
+
+void window::update()
+{
+	pollWin32Events();
 }
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

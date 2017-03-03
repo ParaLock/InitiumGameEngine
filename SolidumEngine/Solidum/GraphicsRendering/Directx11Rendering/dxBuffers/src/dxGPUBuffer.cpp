@@ -62,7 +62,7 @@ void dxGPUBuffer::load(IResourceBuilder * builder)
 
 		std::wstring errorMsg = L"DX CBUFFER ERROR: Padding in-correct: ";
 
-		MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+		MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
 		return;
 	}
 

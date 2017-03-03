@@ -37,6 +37,15 @@ struct CoreData
 	float3 normal;
 };
 
+struct GBUFFER_DATA {
+	float4 diffuseColor;
+	float3 normal;
+	float roughness;
+	float metallic;
+	
+	float ndcDepthZ;
+}; 
+
 struct MaterialData 
 {
 	float4 diffuseColor;

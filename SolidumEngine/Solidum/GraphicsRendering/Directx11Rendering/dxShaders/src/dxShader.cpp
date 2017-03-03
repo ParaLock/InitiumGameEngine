@@ -37,7 +37,7 @@ void dxShader::load(IResourceBuilder * builder)
 			errorMsg += tmp;
 
 
-			MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+			MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
 			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 			errorBlob->Release();
 		}
@@ -51,7 +51,7 @@ void dxShader::load(IResourceBuilder * builder)
 		errorMsg += shaderFilename;
 		errorMsg += L"\n";
 
-		MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+		MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
 
 		std::cout << "DX SHADER: VS CREATION FAILED" << std::endl;
 	}
@@ -71,7 +71,7 @@ void dxShader::load(IResourceBuilder * builder)
 			errorMsg += tmp;
 
 
-			MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+			MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
 			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 
 			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
@@ -89,7 +89,7 @@ void dxShader::load(IResourceBuilder * builder)
 		errorMsg += shaderFilename;
 		errorMsg += L"\n";
 
-		MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+		MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
 		OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 	}
 

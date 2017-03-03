@@ -6,7 +6,6 @@
     <ClInclude Include="Solidum\EngineCore\include\EngineInstance.h" />
     <ClInclude Include="Solidum\resourceManagerInclude.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\World.h" />
-    <ClInclude Include="Solidum\WorldSimulation\include\WorldNode.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldManager.h" />
     <ClInclude Include="Solidum\EngineUtils\include\DynamicStruct.h" />
     <ClInclude Include="Solidum\EventFramework\include\IEventListener.h" />
@@ -19,8 +18,6 @@
     <ClInclude Include="Solidum\ResourceFramework\include\IResourceBuilder.h" />
     <ClInclude Include="Solidum\ResourceFramework\include\IResourceManager.h" />
     <ClInclude Include="Solidum\ResourceFramework\include\ResourceManagerPool.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Camera\include\camera.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Camera\include\Timer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxBuffers\include\dxGPUBuffer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDevice.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDeviceAccessor.h" />
@@ -56,7 +53,6 @@
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureSamplerManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Transform\include\Transform.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Window\include\window.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Window\include\windowAccessor.h" />
     <ClInclude Include="Solidum\GraphicsRendering\ActiveGraphicsAPI.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldCell.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\IComponent.h" />
@@ -82,12 +78,13 @@
     <ClInclude Include="Solidum\EventFramework\include\RenderNodeEvent.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNodeTree\include\IRenderNodeTree.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\IShader.h" />
+    <ClInclude Include="Solidum\EntityFramework\Components\include\CameraComponent.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Solidum\EngineCore\src\EngineInstance.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\World.cpp" />
-    <ClCompile Include="Solidum\WorldSimulation\src\WorldNode.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldManager.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\IEventListener.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\EventFrameworkCore.cpp" />
@@ -99,7 +96,6 @@
     <ClCompile Include="Solidum\ResourceFramework\src\IResourceBuilder.cpp" />
     <ClCompile Include="Solidum\ResourceFramework\src\IResourceManager.cpp" />
     <ClCompile Include="Solidum\ResourceFramework\src\ResourceManagerPool.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Camera\src\camera.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxBuffers\src\dxGPUBuffer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\src\dxDevice.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\src\dxDeviceAccessor.cpp" />
@@ -135,7 +131,6 @@
     <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureSamplerManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Transform\src\Transform.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Window\src\window.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Window\src\windowAccessor.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\ActiveGraphicsAPI.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldCell.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\IComponent.cpp" />
@@ -155,5 +150,6 @@
     <ClCompile Include="Solidum\GraphicsRendering\RenderNodeTree\src\RenderNodeTree.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\RenderNodeEvent.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNodeTree\src\IRenderNodeTree.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Components\src\CameraComponent.cpp" />
   </ItemGroup>
 </Project>

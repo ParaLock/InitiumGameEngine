@@ -15,6 +15,8 @@ protected:
 	COMPONENT_TYPE _type;
 
 	IEntity* _parent = nullptr;
+
+	void setType(COMPONENT_TYPE type) { _type = type; };
 public:
 	Component();
 	~Component();

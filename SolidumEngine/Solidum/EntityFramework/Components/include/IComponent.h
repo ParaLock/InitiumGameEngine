@@ -4,12 +4,6 @@
 
 #include "../../Entity/include/IEntity.h"
 
-enum COMPONENT_TYPE {
-	MOVE_COMPONENT,
-	LIGHT_COMPONENT,
-	MESH_COMPONENT
-};
-
 class IComponent : public IEventListener
 {
 private:

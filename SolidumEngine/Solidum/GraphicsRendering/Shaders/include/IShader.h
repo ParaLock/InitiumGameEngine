@@ -6,7 +6,7 @@ class Texture;
 class MaterialPass;
 class ILight;
 class Transform;
-class camera;
+class CameraComponent;
 class GPUPipeline;
 
 class IShader {
@@ -22,7 +22,7 @@ public:
 	virtual void updateDirectionalLightsForwardRendering(std::vector<ILight*> dirLights) = 0;
 
 	virtual void updateModelUniforms(Transform* transform) = 0;
-	virtual void updateCameraUniforms(camera* cam) = 0;
+	virtual void updateCameraUniforms(CameraComponent* cam) = 0;
 
 	virtual void updateUniform(std::string varName, void * pData) = 0;
 	virtual void updateGPU() = 0;

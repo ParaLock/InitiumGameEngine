@@ -8,8 +8,9 @@
 #include "../../Lights/include/ILight.h"
 #include "../../Material/include/Material.h"
 #include "../../Transform/include/Transform.h"
-#include "../../Camera/include/camera.h"
 #include "../../Mesh/include/mesh.h"
+
+#include "../../../EntityFramework/Components/include/CameraComponent.h"
 
 #include "IShader.h"
 
@@ -54,7 +55,7 @@ public:
 	void updateDirectionalLightsForwardRendering(std::vector<ILight*> dirLights);
 
 	void updateModelUniforms(Transform* transform);
-	void updateCameraUniforms(camera* cam);
+	void updateCameraUniforms(CameraComponent* cam);
 
 	void updateUniform(std::string varName, void * pData);
 	void updateGPU();

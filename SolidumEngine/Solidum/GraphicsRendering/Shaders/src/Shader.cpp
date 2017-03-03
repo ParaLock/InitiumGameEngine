@@ -173,7 +173,7 @@ void Shader::updateModelUniforms(Transform* transform)
 	updateUniform("cbuff_OBJSpecificMatrix", &Matrix4f::transpose(transform->getMatrix()));
 }
 
-void Shader::updateCameraUniforms(camera* cam)
+void Shader::updateCameraUniforms(CameraComponent* cam)
 {
 	updateUniform("cbuff_eyePos", &cam->getPos());
 	updateUniform("cbuff_viewMatrix", &Matrix4f::transpose(cam->getViewMatrix()));

@@ -165,7 +165,7 @@ void dxShaderInputLayout::generateInputLayout()
 		errorMsg += tmp;
 
 
-		MessageBox(windowAccessor::hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+		MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
 
 		OutputDebugStringA((char*)compileError->GetBufferPointer());
 		compileError->Release();

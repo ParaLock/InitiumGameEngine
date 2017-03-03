@@ -3,6 +3,8 @@
 
 MeshComponent::MeshComponent(mesh* mesh, Texture* tex, Material* mat)
 {
+	setType(COMPONENT_TYPE::MESH_COMPONENT);
+
 	_renderNodes = mat->generateClientRenderNodes(mesh, tex);
 }
 

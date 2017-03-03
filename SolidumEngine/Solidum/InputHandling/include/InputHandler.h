@@ -6,7 +6,7 @@
 
 #include "../../EventFramework/include/InputEvent.h"
 
-#include "../../GraphicsRendering/Window/include/windowAccessor.h"
+#include "../../GraphicsRendering/Window/include/window.h"
 
 
 class InputHandler : public IResource, public IEventListener

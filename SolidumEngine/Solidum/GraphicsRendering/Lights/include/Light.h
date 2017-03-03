@@ -1,6 +1,5 @@
 #pragma once
 #include "../../../sysInclude.h"
-#include "../../Camera/include/camera.h"
 
 #include "../../Directx11Rendering/dxDevice/include/dxDeviceAccessor.h"
 

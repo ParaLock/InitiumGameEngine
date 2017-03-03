@@ -31,14 +31,19 @@ public:
 
 	~window();
 
-	static bool running;
+	bool running;
 
-	static int screen_width;
-	static int screen_height;
+	int screen_width;
+	int screen_height;
 
-	static HWND hWnd;
+	HWND hWnd;
 
 	void pollWin32Events();
 	WPARAM destroyWindow();
+
+	void update();
+
+	static window* singletonInstance;
+	static window* getInstance();
 };
 

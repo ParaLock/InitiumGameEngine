@@ -28,10 +28,9 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 
 	EventFrameworkCore::getInstance()->getGlobalEventHub("ComponentEventHub")->subscribeListener(this);
 
-	_primaryCamera = new camera(0.1f, 1000.0f);
 	_resManagerPool = resManagerPool;
 
-	_globalRenderingParameters._globalRenderingCamera = _primaryCamera;
+
 	_globalRenderingParameters._ambientLightLevel = Vector4f(0.2f, 0.2f, 0.2f, 0.2f);
 
 	if (api == SUPPORTED_GRAPHICS_API::DIRECTX11) {
@@ -58,7 +57,7 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 			dxDeviceAccessor::dxEncapsulator->getDepthBufferShaderView(),
 			dxDeviceAccessor::dxEncapsulator->getDepthBufferTexture());
 
-		resManagerPool->getResourceManager("RenderTargetManager")->addResource(frameBufferRT, "depth_buffer");
+		resManagerPool->getResourceManager("RenderTargetManager")->addResource(depthBufferRT, "depth_buffer");
 	}
 }
 
@@ -71,20 +70,38 @@ GraphicsCore::~GraphicsCore()
 		delete _renderTree;
 }
 
-void GraphicsCore::RenderAll()
+void GraphicsCore::beginFrame()
 {
+}
+
+void GraphicsCore::endFrame()
+{
+	_endFrameState->executePass(NULL);
+}
+
+void GraphicsCore::render()
+{
+	beginFrame();
+
 	_renderTree->updateGlobalRenderParams(_globalRenderingParameters);
 	
 	_renderTree->optimize();
 
 	_renderTree->walkTree();
+
+	endFrame();
+}
+
+void GraphicsCore::setCurrentRenderingCamera(CameraComponent* cam)
+{
+	_globalRenderingParameters._globalRenderingCamera = cam;
 }
 
 void GraphicsCore::onEvent(EVENT_PTR evt)
 {
 }
 
-void GraphicsCore::attachPrimaryCamera(camera* cam)
+void GraphicsCore::setEndFrameHandler(GPUPipeline * pipe)
 {
-	_primaryCamera = cam;
+	_endFrameState = pipe;
 }

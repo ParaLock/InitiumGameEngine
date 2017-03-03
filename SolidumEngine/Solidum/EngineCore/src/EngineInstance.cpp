@@ -26,7 +26,12 @@ EngineInstance::EngineInstance(window* renderWindow)
 
 	_resManagers->getResourceManager("InputHandlerManager")->createResource(nullptr, "InputHandler", false);
 
+	_inputHandler = _resManagers->getResourceManager("InputHandlerManager")->
+		getResource("InputHandler")->getCore<InputHandler>();
+
 	_graphicsCore = new GraphicsCore(DIRECTX11, renderWindow, _resManagers);
+
+	_currentWindow = renderWindow;
 }
 
 
@@ -36,10 +41,56 @@ EngineInstance::~EngineInstance()
 	delete _resManagers;
 }
 
-void EngineInstance::startEngine()
+void EngineInstance::loadWorld(World * world)
 {
+	_currentWorld = world;
 }
 
-void EngineInstance::stopEngine()
+void EngineInstance::executionCycle()
+{
+	while (engineActive) {
+		update();
+		render();
+	}
+}
+
+void EngineInstance::update()
+{
+	const std::map<uint64_t, IEntity*>& worldEntities = _currentWorld->getEntities();
+
+	for (auto itr = worldEntities.begin(); itr != worldEntities.end(); itr++) {
+		IEntity* entity = itr->second;
+
+
+		entity->update();
+	}
+	
+	_inputHandler->update();
+}
+
+void EngineInstance::render()
+{
+	IEntity* cameraEntity = _currentWorld->getEntity(_currentWorld->getPrimaryCameraID());
+
+	_graphicsCore->setCurrentRenderingCamera((CameraComponent*)cameraEntity->getComponentByType(COMPONENT_TYPE::CAMERA_COMPONENT));
+
+	_graphicsCore->render();
+
+	_currentWindow->update();
+}
+
+void EngineInstance::start()
+{
+	engineActive = true;
+
+	executionCycle();
+}
+
+void EngineInstance::stop()
+{
+	engineActive = false;
+}
+
+void EngineInstance::cleanup()
 {
 }

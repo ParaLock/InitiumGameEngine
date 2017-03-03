@@ -80,13 +80,12 @@
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDeviceManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDeviceAccessor.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxTextures\include\dxTextureSampleState.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Camera\include\camera.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Camera\include\Timer.h" />
+    <ClInclude Include="Solidum\EntityFramework\Components\include\CameraComponent.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\Timer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Mesh\include\mesh.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Mesh\include\meshLoader.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Mesh\include\meshLoaderOBJ.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Window\include\window.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Window\include\windowAccessor.h" />
     <ClInclude Include="Solidum\resourceManagerInclude.h" />
     <ClInclude Include="Solidum\sysInclude.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxTextures\include\dxTexture.h" />
@@ -97,7 +96,6 @@
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureSamplerManager.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\World.h" />
-    <ClInclude Include="Solidum\WorldSimulation\include\WorldNode.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldManager.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldCell.h" />
   </ItemGroup>
@@ -155,8 +153,7 @@
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\src\dxDeviceManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\src\dxDeviceAccessor.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxTextures\src\dxTextureSampleState.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Camera\src\camera.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Window\src\windowAccessor.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Components\src\CameraComponent.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxTextures\src\dxTexture.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Mesh\src\mesh.cpp" />
@@ -170,7 +167,6 @@
     <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureSamplerManager.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\World.cpp" />
-    <ClCompile Include="Solidum\WorldSimulation\src\WorldNode.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldManager.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldCell.cpp" />
   </ItemGroup>

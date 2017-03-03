@@ -169,8 +169,8 @@ void mesh::calcTangentsAndBiNormals(
 void mesh::generateOrthoWindowMesh(meshBuilder* builder)
 {
 
-	int screen_width = windowAccessor::screen_width;
-	int screen_height = windowAccessor::screen_height;
+	int screen_width = window::getInstance()->screen_width;
+	int screen_height = window::getInstance()->screen_height;
 
 	int m_vertexCount, m_indexCount;
 
