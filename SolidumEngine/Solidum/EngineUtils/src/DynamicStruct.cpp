@@ -2,6 +2,14 @@
 
 
 
+void * DynamicStruct::getParameter(std::string varName)
+{
+	if (varName == "GPUBUFFER") {
+		return _GPUBuff->getParameter("BUFFER");
+	}
+	return nullptr;
+}
+
 DynamicStruct::DynamicStruct()
 {
 	_typeSizeMap = new std::map<std::string, size_t>;

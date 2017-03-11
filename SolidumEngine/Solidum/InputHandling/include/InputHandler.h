@@ -18,6 +18,9 @@ public:
 	void load(IResourceBuilder* builder) { isLoaded = true; }
 	void unload() { isLoaded = false; }
 
+	void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName) { return nullptr; };
+
 	std::pair<unsigned long, unsigned long> getMousePos();
 	std::list<KEY_MAP> getPressedKeys();
 

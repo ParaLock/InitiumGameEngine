@@ -8,7 +8,7 @@
 
 #include "IComponent.h"
 
-class Component : public IComponent
+class Component : public IComponent, public IResource
 {
 private:
 protected:

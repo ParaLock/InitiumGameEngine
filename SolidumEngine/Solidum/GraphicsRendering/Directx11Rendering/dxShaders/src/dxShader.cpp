@@ -107,14 +107,14 @@ void dxShader::attachPipeline(GPUPipeline* pipe)
 
 		_pipelineState = pipe;
 
-		enumerateResources(GPUPipelineElementParentShader::SOL_VS, vertexShaderCode);
-		enumerateResources(GPUPipelineElementParentShader::SOL_PS, pixelShaderCode);
+		enumerateResources(SHADER_TYPE::VERTEX_SHADER, vertexShaderCode);
+		enumerateResources(SHADER_TYPE::PIXEL_SHADER, pixelShaderCode);
 
 		_constantBufferMemberNameMap = _pipelineState->getVarToBuffMap();
 	}
 }
 
-void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3D10Blob *shaderCode)
+void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode)
 {
 	ID3D11ShaderReflection* pReflector = NULL;
 	HRESULT hr = D3DReflect(shaderCode->GetBufferPointer(),
@@ -137,8 +137,13 @@ void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3
 
 		newLayout->getCore<dxShaderInputLayout>()->generateInputLayout();
 
-		_pipelineState->attachResource(newLayout, "unnamed",
-			GPUPipelineElementType::SOL_MESH_DATA_LAYOUT, shaderType, false);
+		if (shaderType == SHADER_TYPE::VERTEX_SHADER) {
+
+			_pipelineState->shaderSetVertexInputLayout(newLayout);
+		}
+		else {
+			delete newLayout;
+		}
 
 		for (UINT i = 0; i < desc.OutputParameters; i++) {
 
@@ -184,18 +189,29 @@ void dxShader::enumerateResources(GPUPipelineElementParentShader shaderType, ID3
 				cbuff->initMemory();
 
 				_pipelineState->attachResource(cbuff, BufferLayout.Description.Name,
-					GPUPipelineElementType::SOL_GENERAL_DATA_BUFF, shaderType, false);
+					SHADER_RESOURCE_TYPE::SHADER_CONSTANT_BUFFER, shaderType, false);
 			}
 		}
 	}
 }
 
-void dxShader::execute(int numIndices)
+void dxShader::bind()
 {
 	dxDeviceAccessor::dxEncapsulator->dxDevContext->VSSetShader(vertexShader, NULL, 0);
 	dxDeviceAccessor::dxEncapsulator->dxDevContext->PSSetShader(pixelShader, NULL, 0);
+}
+
+void dxShader::execute(int numIndices)
+{
+	std::function<void()> bindFunc = std::bind(&dxShader::bind, this);
+
+	_pipelineState->getParentCommandQueue()->queueCommand(new PipelineStateResetCommand());
+
+	_pipelineState->getParentCommandQueue()->queueCommand(new PipelineBindShaderCommand(bindFunc));
 
 	_pipelineState->applyState();
 
-	_pipelineState->executePass(numIndices);
+	_pipelineState->getParentCommandQueue()->queueCommand(new PipelineDrawIndexedCommand(0, numIndices));
+
+	_pipelineState->getParentCommandQueue()->processAllCommands();
 }

@@ -11,77 +11,40 @@
 #include "../../../ResourceFramework/include/ResourceManagerPool.h"
 #include "../../../ResourceFramework/include/IResource.h"
 
+#include "../../PipelineCommand/include/PipelineCommand.h"
+
 #include "../../../EngineUtils/include/StringManipulation.h"
+
+#include "../../PipelineCommandQueue/include/PipelineCommandQueue.h"
 
 class GPUPipelineBuilder : public IResourceBuilder {
 public:
 	LPCWSTR _filename;
-	ResourceManagerPool* _pResManagerPool;
+	PipelineCommandQueue* _commandQueue;
 
-	GPUPipelineBuilder(LPCWSTR filename, ResourceManagerPool* pResFactoryPool) {
+	GPUPipelineBuilder(LPCWSTR filename, PipelineCommandQueue* commandQueue) {
 		_filename = filename;
-		_pResManagerPool = pResFactoryPool;
+		_commandQueue = commandQueue;
 	}
-};
-
-enum GPUPipelineElementParentShader {
-	SOL_VS,
-	SOL_PS,
-	SOL_NON
-};
-
-enum GPUPipelineElementType {
-	SOL_RENDER_TARGET,
-	SOL_ZBUFFER,
-	SOL_GENERAL_DATA_BUFF,
-	SOL_MESH_DATA_LAYOUT,
-	SOL_SAMPLER,
-	SOL_BUFFER_HOOK,
-	SOL_TEXTURE_HOOK
-};
-
-enum GPUPipelineDataType {
-	SOL_MATRIX,
-	SOL_FLOAT,
-	SOL_FLOAT2,
-	SOL_FLOAT3,
-	SOL_FLOAT4
-};
-
-enum GPUPipelineElementAttrib {
-	SOL_OUTPUT,
-	SOL_INPUT,
-	SOL_WRAP,
-	SOL_LINEAR
-};
-
-enum GPUPipelineSupportedOP {
-	SOL_CLEAR,
-	SOL_DEPTH_TEST,
-	SOL_BLENDING,
-	SOL_SWAPFRAME
 };
 
 class GPUPipelineElement {
 public:
-	std::string name;
-	GPUPipelineElementType type;
-	GPUPipelineElementParentShader parentShader;
+	SHADER_RESOURCE_TYPE type;
+	SHADER_TYPE parentShader;
 
 	IResource* core;
 
-	int resourceSlot;
+	int bindSlot;
 	bool isOutput;
 };
 
 class GPUPipelineOP {
 public:
-	std::string targetName;
+	GPUPIPELINE_OP_TYPE opType;
+	SHADER_RESOURCE_TYPE resType;
 
-	GPUPipelineElementType targetType;
-	GPUPipelineSupportedOP type;
-
-	bool deferred;
+	IResource* opTarget;
 };
 
 class GPUPipeline : public IResource
@@ -90,17 +53,22 @@ private:
 	int renderTargetCount = 0;
 	int texSamplerCount = 0;
 	int texHookCount = 0;
-protected:
 
-	ResourceManagerPool* _resManagerPool;
+	PipelineCommandQueue* _parentCommandQueue;
 
 	std::map<std::string, DynamicStruct*> *_constantBufferMemberNameMap;
 	std::map<std::string, GPUPipelineElement*> *_elementList;
-	std::list<GPUPipelineOP*> *_opList;
+
+	std::list<GPUPipelineOP> *_opList;
+
+	IResource* _currentInputLayout = nullptr;
 
 	BLEND_STATE blendState = BLEND_STATE::BLENDING_OFF;
 	DEPTH_TEST_STATE depthState = DEPTH_TEST_STATE::FULL_DISABLE;
 	RASTER_STATE rasterState = RASTER_STATE::NORMAL;
+
+	void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName) { return nullptr; };
 
 public:
 	GPUPipeline();
@@ -111,20 +79,22 @@ public:
 
 	void reset();
 
-	void attachOP(GPUPipelineSupportedOP opType, std::string targetName, GPUPipelineElementType opTargetType, bool executionContext);
-
 	void setRasterState(RASTER_STATE state);
 	void setDepthTestState(DEPTH_TEST_STATE state);
 	void setBlendState(BLEND_STATE state);
 
 	void setHookResource(IResource* res, std::string name);
 
-	void attachResource(IResource* res, std::string name, GPUPipelineElementType type,
-		GPUPipelineElementParentShader parentShader, bool isOutput);
+	void attachResource(IResource* res, std::string name, SHADER_RESOURCE_TYPE type,
+		SHADER_TYPE parentShader, bool isOutput);
 
+	void attachOP(GPUPipelineOP op);
 
-	virtual void applyState() = 0;
-	virtual void executePass(int numIndices) = 0;
+	void shaderSetVertexInputLayout(IResource* inputLayout) { _currentInputLayout = inputLayout; };
+
+	void applyState();
+
+	PipelineCommandQueue* getParentCommandQueue() { return _parentCommandQueue; }
 
 	std::map<std::string, DynamicStruct*>* getVarToBuffMap() { return _constantBufferMemberNameMap; };
 };

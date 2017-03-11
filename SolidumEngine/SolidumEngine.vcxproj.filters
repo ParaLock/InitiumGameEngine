@@ -22,7 +22,6 @@
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDevice.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDeviceAccessor.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\include\dxDeviceManager.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxGPUPipeline\include\dxGPUPipeline.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxRenderTarget\include\dxRenderTarget.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxShaders\include\dxShader.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxShaders\include\dxShaderInputLayout.h" />
@@ -80,6 +79,11 @@
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\IShader.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\CameraComponent.h" />
     <ClInclude Include="Solidum\EngineUtils\include\Timer.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderCommand\include\RenderCommand.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\PipelineCommand\include\PipelineCommand.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\api_function_wrappers\include\dx11_pipeline_functions_wrapper.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\PipelineCommandQueue\include\PipelineCommandQueue.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\PipelineCommand\include\PipelineFunctions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -100,7 +104,6 @@
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\src\dxDevice.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\src\dxDeviceAccessor.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDevice\src\dxDeviceManager.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxGPUPipeline\src\dxGPUPipeline.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxRenderTarget\src\dxRenderTarget.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxShaders\src\dxShader.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxShaders\src\dxShaderInputLayout.cpp" />
@@ -151,5 +154,10 @@
     <ClCompile Include="Solidum\EventFramework\src\RenderNodeEvent.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNodeTree\src\IRenderNodeTree.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\CameraComponent.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderCommand\src\RenderCommand.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\PipelineCommand\src\PipelineCommand.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\PipelineCommandQueue\src\PipelineCommandQueue.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\api_function_wrappers\src\dx11_pipeline_functions_wrapper.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\PipelineCommand\src\PipelineFunctions.cpp" />
   </ItemGroup>
 </Project>

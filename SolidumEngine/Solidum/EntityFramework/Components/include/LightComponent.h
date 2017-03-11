@@ -15,6 +15,12 @@ private:
 	std::list<uint64_t> _renderNodes;
 
 	bool _parentTransformDirty = false;
+
+	void load(IResourceBuilder* builder) { isLoaded = true; };
+	void unload() { isLoaded = false; };
+
+	void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName) { return nullptr; };
 public:
 	LightComponent(Light* light);
 	~LightComponent();

@@ -28,6 +28,12 @@ private:
 	float _movementSpeed = 0.0f;
 
 	KEY_FUNCTION_MAP* _keyFuncMap;
+
+	void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName) { return nullptr; };
+
+	void load(IResourceBuilder* builder) { isLoaded = true; };
+	void unload() { isLoaded = false; };
 protected:
 
 public:

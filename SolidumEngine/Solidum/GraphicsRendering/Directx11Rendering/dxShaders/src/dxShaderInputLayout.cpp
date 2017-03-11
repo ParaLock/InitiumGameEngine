@@ -22,14 +22,14 @@ dxShaderInputLayout::~dxShaderInputLayout()
 
 void dxShaderInputLayout::updateParameter(std::string varName, void * data)
 {
-	if (varName == "D3D_INPUT_LAYOUT") {
+	if (varName == "INPUT_LAYOUT") {
 		_inputLayout = (ID3D11InputLayout*)data;
 	}
 }
 
 void * dxShaderInputLayout::getParameter(std::string varName)
 {
-	if (varName == "D3D_INPUT_LAYOUT") {
+	if (varName == "INPUT_LAYOUT") {
 		return _inputLayout;
 	}
 	return nullptr;
@@ -117,7 +117,9 @@ void dxShaderInputLayout::generateInputLayout()
 		elementCount++;
 	}
 
+
 	_dataStride;
+
 
 	ID3D11VertexShader *vertexShader;
 	ID3D10Blob *vertexShaderCode;

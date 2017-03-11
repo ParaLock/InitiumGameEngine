@@ -299,10 +299,10 @@ void dxDevice::setDepthTestState(DEPTH_TEST_STATE state)
 {
 	switch (state)
 	{
-	case FULL_DISABLE:
+	case DEPTH_TEST_STATE::FULL_DISABLE:
 		dxDevContext->OMSetDepthStencilState(depthStencilDisable, 1);
 		break;
-	case FULL_ENABLE:
+	case DEPTH_TEST_STATE::FULL_ENABLE:
 		dxDevContext->OMSetDepthStencilState(depthStencilEnable, 1);
 		break;
 	default:

@@ -27,6 +27,9 @@ private:
 	ID3D11PixelShader *pixelShader;
 
 	ID3D10Blob *vertexShaderCode, *pixelShaderCode;
+
+	void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName) { return nullptr; };
 public:
 	dxShader();
 	~dxShader();
@@ -36,7 +39,9 @@ public:
 
 	void attachPipeline(GPUPipeline* pipe);
 
-	void enumerateResources(GPUPipelineElementParentShader shaderType, ID3D10Blob *shaderCode);
+	void enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode);
+
+	void bind();
 
 	void execute(int numIndices);
 };

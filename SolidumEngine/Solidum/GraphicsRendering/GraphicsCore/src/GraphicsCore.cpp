@@ -30,10 +30,30 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 
 	_resManagerPool = resManagerPool;
 
+	_primaryPipelineCommandQueue = new PipelineCommandQueue;
 
 	_globalRenderingParameters._ambientLightLevel = Vector4f(0.2f, 0.2f, 0.2f, 0.2f);
 
 	if (api == SUPPORTED_GRAPHICS_API::DIRECTX11) {
+
+		PipelineFunctions::pipeline_bindBuffer = dx11_bind_shader_buffer;
+		PipelineFunctions::pipeline_bindConstantBuffer = dx11_bind_shader_constant_buffer;
+		PipelineFunctions::pipeline_bindInputLayout = dx11_bind_shader_input_layout;
+		PipelineFunctions::pipeline_bindTexture = dx11_bind_shader_texture;
+		PipelineFunctions::pipeline_bindTextureSampler = dx11_bind_shader_texture_sampler;
+		PipelineFunctions::pipeline_set_blend_state = dx11_set_blend_state;
+		PipelineFunctions::pipeline_setPrimitiveTopology = dx11_set_primitive_topology;
+		PipelineFunctions::pipeline_set_depth_test_state = dx11_set_depth_test_state;
+		PipelineFunctions::pipeline_bindRenderTargetAsSR = dx11_bind_render_target_as_sr;
+		PipelineFunctions::pipeline_bindRenderTargetAsRT = dx11_bind_render_targets_as_rt;
+		PipelineFunctions::pipeline_swap_frame = dx11_pipeline_swapframe;
+		PipelineFunctions::pipeline_reset = dx11_reset_pipeline;
+
+		PipelineFunctions::pipeline_clearDepthStencil = dx11_pipeline_clear_depth_stencil;
+
+		PipelineFunctions::pipeline_set_raster_state = dx11_set_raster_state;
+
+		PipelineFunctions::pipeline_drawIndexed = dx11_pipeline_draw_indexed;
 
 		_dxManager = new dxDeviceManager();
 
@@ -57,7 +77,7 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 			dxDeviceAccessor::dxEncapsulator->getDepthBufferShaderView(),
 			dxDeviceAccessor::dxEncapsulator->getDepthBufferTexture());
 
-		resManagerPool->getResourceManager("RenderTargetManager")->addResource(depthBufferRT, "depth_buffer");
+		resManagerPool->getResourceManager("RenderTargetManager")->addResource(depthBufferRT, "depthbuffer");
 	}
 }
 
@@ -76,20 +96,21 @@ void GraphicsCore::beginFrame()
 
 void GraphicsCore::endFrame()
 {
-	_endFrameState->executePass(NULL);
 }
 
 void GraphicsCore::render()
 {
-	beginFrame();
-
 	_renderTree->updateGlobalRenderParams(_globalRenderingParameters);
 	
 	_renderTree->optimize();
 
 	_renderTree->walkTree();
 
-	endFrame();
+	_primaryPipelineCommandQueue->processAllCommands();
+
+	_endFrameState->applyState();
+
+	_primaryPipelineCommandQueue->processAllCommands();
 }
 
 void GraphicsCore::setCurrentRenderingCamera(CameraComponent* cam)

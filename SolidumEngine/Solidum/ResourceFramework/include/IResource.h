@@ -16,6 +16,9 @@ public:
 
 	virtual void unload() = 0;
 
+	virtual void updateParameter(std::string varName, void *data) = 0;
+	virtual void* getParameter(std::string varName) = 0;
+
 	bool getLoadStatus() { return isLoaded; };
 
 	template<typename T>

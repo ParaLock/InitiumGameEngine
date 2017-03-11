@@ -74,6 +74,9 @@ public:
 	void load(IResourceBuilder* builder);
 	void unload();
 
+	void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName) { return nullptr; };
+
 	void createPass(std::string name, Shader* shader, GPUPipeline* pipeline);
 
 	MaterialPass* getPass(std::string name);

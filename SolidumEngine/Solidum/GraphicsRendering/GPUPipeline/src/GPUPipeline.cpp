@@ -6,7 +6,7 @@ GPUPipeline::GPUPipeline()
 {
 	_elementList = new std::map<std::string, GPUPipelineElement*>;
 	_constantBufferMemberNameMap = new std::map<std::string, DynamicStruct*>;
-	_opList = new std::list<GPUPipelineOP*>;
+	_opList = new std::list<GPUPipelineOP>;
 }
 
 
@@ -21,7 +21,7 @@ void GPUPipeline::load(IResourceBuilder * builder)
 {
 	GPUPipelineBuilder* realBuilder = static_cast<GPUPipelineBuilder*>(builder);
 
-	_resManagerPool = realBuilder->_pResManagerPool;
+	_parentCommandQueue = realBuilder->_commandQueue;
 
 	std::wstring filePathWStr(realBuilder->_filename);
 
@@ -46,7 +46,7 @@ void GPUPipeline::load(IResourceBuilder * builder)
 				line->push_back(new std::string(buf));
 		}
 
-		GPUPipelineElementParentShader shaderContext = GPUPipelineElementParentShader::SOL_NON;
+		SHADER_TYPE shaderContext = SHADER_TYPE::INVALID;
 
 		std::string meshDataLayoutContext = "null";
 		std::string generalDataContext = "null";
@@ -60,25 +60,25 @@ void GPUPipeline::load(IResourceBuilder * builder)
 			std::string debugTest = splitStr.at(0);
 
 			if (splitStr.at(0) == "VS_SHADER_END") {
-				shaderContext = GPUPipelineElementParentShader::SOL_NON;
+				shaderContext = SHADER_TYPE::INVALID;
 			}
 
 			if (splitStr.at(0) == "PS_SHADER_END") {
-				shaderContext = GPUPipelineElementParentShader::SOL_NON;
+				shaderContext = SHADER_TYPE::INVALID;
 			}
 
 			if (splitStr.at(0) == "VS_SHADER_BEGIN") {
-				shaderContext = GPUPipelineElementParentShader::SOL_VS;
+				shaderContext = SHADER_TYPE::VERTEX_SHADER;
 			}
 
 			if (splitStr.at(0) == "PS_SHADER_BEGIN") {
-				shaderContext = GPUPipelineElementParentShader::SOL_PS;
+				shaderContext = SHADER_TYPE::PIXEL_SHADER;
 			}
 
 			if (splitStr.at(0) == "INIT") {
 				if (splitStr.at(1) == "GBUFFER") {
 
-					realBuilder->_pResManagerPool->getResourceManager("RenderTargetManager")->createResource(
+					ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->createResource(
 						&RenderTargetBuilder(1, 1, TEX_FORMAT::RGBA_32BIT_FLOAT), splitStr.at(2), false);
 				}
 
@@ -101,7 +101,7 @@ void GPUPipeline::load(IResourceBuilder * builder)
 						filterType = TEX_FILTERS::TEX_FILTER_POINT;
 					}
 
-					realBuilder->_pResManagerPool->getResourceManager("TextureSamplerManager")->createResource(&TextureSamplerBuilder(
+					ResourceManagerPool::getInstance()->getResourceManager("TextureSamplerManager")->createResource(&TextureSamplerBuilder(
 						filterType, ANISOTRPHIC_FILTER_LEVELS::NO_ANISOTROPHIC_FILTERING, addrMode),
 						splitStr.at(4), false);
 				}
@@ -112,42 +112,43 @@ void GPUPipeline::load(IResourceBuilder * builder)
 
 				if (splitStr.at(1) == "GBUFFER" && splitStr.at(2) == "OUTPUT") {
 
+					IResource* res = ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->getResource(splitStr.at(3));
 
-					attachResource(realBuilder->_pResManagerPool->getResourceManager("RenderTargetManager")->getResource(splitStr.at(3)),
-						splitStr.at(3), GPUPipelineElementType::SOL_RENDER_TARGET, shaderContext, true);
+					attachResource(res,
+						splitStr.at(3), SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET, shaderContext, true);
 
 				}
 				else if (splitStr.at(1) == "GBUFFER" && splitStr.at(2) == "INPUT") {
 
-					attachResource(realBuilder->_pResManagerPool->getResourceManager("RenderTargetManager")->getResource(splitStr.at(3)),
-						splitStr.at(3), GPUPipelineElementType::SOL_RENDER_TARGET, shaderContext, false);
+					IResource* res = ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->getResource(splitStr.at(3));
+
+					attachResource(res,
+						splitStr.at(3), SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET, shaderContext, false);
 				}
 				if (splitStr.at(1) == "TEXTURE_HOOK") {
 
 					attachResource(nullptr,
-						splitStr.at(2), GPUPipelineElementType::SOL_TEXTURE_HOOK, shaderContext, false);
+						splitStr.at(2), SHADER_RESOURCE_TYPE::SHADER_TEXTURE_HOOK, shaderContext, false);
 				}
 
 				if (splitStr.at(1) == "BUFFER_HOOK") {
 
 					attachResource(nullptr,
-						splitStr.at(2), GPUPipelineElementType::SOL_BUFFER_HOOK, shaderContext, false);
+						splitStr.at(2), SHADER_RESOURCE_TYPE::SHADER_BUFFER_HOOK, shaderContext, false);
 				}
 
 				if (splitStr.at(1) == "SAMPLER") {
 
-					attachResource(realBuilder->_pResManagerPool->getResourceManager("TextureSamplerManager")->getResource(splitStr.at(2)),
-						splitStr.at(2), GPUPipelineElementType::SOL_SAMPLER, shaderContext, false);
+					attachResource(ResourceManagerPool::getInstance()->getResourceManager("TextureSamplerManager")->getResource(splitStr.at(2)),
+						splitStr.at(2), SHADER_RESOURCE_TYPE::SHADER_TEX_SAMPLER, shaderContext, false);
 				}
 			}
 
 			if (splitStr.at(0) == "PIPELINE_OP") {
 
-				bool executionContext;
-				GPUPipelineSupportedOP op;
-				GPUPipelineElementType opTargetType;
+				GPUPipelineOP op;
 
-				std::string targetName = "null";
+				bool executionContext;
 
 				if (splitStr.at(1) == "DEFERRED") {
 					executionContext = true;
@@ -157,27 +158,27 @@ void GPUPipeline::load(IResourceBuilder * builder)
 				}
 
 				if (splitStr.at(2) == "CLEAR") {
-					op = GPUPipelineSupportedOP::SOL_CLEAR;
+
+					op.opType = GPUPIPELINE_OP_TYPE::CLEAR;
 				}
 
-
 				if (splitStr.at(2) == "SWAPFRAME") {
-
-					op = GPUPipelineSupportedOP::SOL_SWAPFRAME;
+					op.opType = GPUPIPELINE_OP_TYPE::SWAPFRAME;
 				}
 
 				if (splitStr.at(3) == "GBUFFER") {
 
-					opTargetType = GPUPipelineElementType::SOL_RENDER_TARGET;
-					targetName = splitStr.at(4);
+					op.resType = SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET;
+
+					op.opTarget = ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->getResource(splitStr.at(4));
 				}
 
 				if (splitStr.at(3) == "ZBUFFER") {
-					opTargetType = GPUPipelineElementType::SOL_ZBUFFER;
+					op.resType = SHADER_RESOURCE_TYPE::SHADER_ZBUFFER;
 				}
 
-				attachOP(op, targetName,
-					opTargetType, executionContext);
+
+				attachOP(op);
 			}
 
 			if (splitStr.at(0) == "DEPTH_TEST") {
@@ -215,21 +216,8 @@ void GPUPipeline::reset()
 	blendState = BLEND_STATE::BLENDING_OFF;
 
 	_constantBufferMemberNameMap->clear();
-	_opList->clear();
 	_elementList->clear();
 }
-
-void GPUPipeline::attachOP(GPUPipelineSupportedOP opType, std::string targetName, GPUPipelineElementType opTargetType, bool executionContext)
-{
-	GPUPipelineOP* newOP = new GPUPipelineOP();
-
-	newOP->type = opType;
-	newOP->targetType = opTargetType;
-	newOP->targetName = targetName;
-
-	_opList->push_back(newOP);
-}
-
 
 void GPUPipeline::setRasterState(RASTER_STATE state)
 {
@@ -258,42 +246,41 @@ void GPUPipeline::setHookResource(IResource* res, std::string name)
 	}
 }
 
-void GPUPipeline::attachResource(IResource* res, std::string name, GPUPipelineElementType type,
-	GPUPipelineElementParentShader parentShader, bool isOutput)
+void GPUPipeline::attachResource(IResource* res, std::string name, SHADER_RESOURCE_TYPE type,
+	SHADER_TYPE parentShader, bool isOutput)
 {
 	GPUPipelineElement* newElement = new GPUPipelineElement();
 
 	newElement->isOutput = isOutput;
 
-	newElement->name = name;
 	newElement->type = type;
 	newElement->parentShader = parentShader;
 
 	newElement->core = res;
 
-	newElement->resourceSlot = 0;
+	newElement->bindSlot = 0;
 
-	if (type == GPUPipelineElementType::SOL_TEXTURE_HOOK) {
+	if (type == SHADER_RESOURCE_TYPE::SHADER_TEXTURE_HOOK) {
 
-		newElement->resourceSlot = texHookCount;
+		newElement->bindSlot = texHookCount;
 
 		texHookCount++;
 	}
 
-	if (type == GPUPipelineElementType::SOL_RENDER_TARGET) {
+	if (type == SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET) {
 
-		newElement->resourceSlot = renderTargetCount;
+		newElement->bindSlot = renderTargetCount;
 
 		renderTargetCount++;
 	}
-	if (type == GPUPipelineElementType::SOL_SAMPLER) {
+	if (type == SHADER_RESOURCE_TYPE::SHADER_TEX_SAMPLER) {
 
-		newElement->resourceSlot = texSamplerCount;
+		newElement->bindSlot = texSamplerCount;
 
 		texSamplerCount++;
 	}
 
-	if (type == GPUPipelineElementType::SOL_GENERAL_DATA_BUFF) {
+	if (type == SHADER_RESOURCE_TYPE::SHADER_CONSTANT_BUFFER) {
 
 		DynamicStruct* generalBuff = res->getCore<DynamicStruct>();
 
@@ -305,4 +292,91 @@ void GPUPipeline::attachResource(IResource* res, std::string name, GPUPipelineEl
 	}
 
 	_elementList->insert({ name, newElement });
+}
+
+void GPUPipeline::attachOP(GPUPipelineOP op)
+{
+	_opList->push_back(op);
+}
+
+void GPUPipeline::applyState()
+{
+	std::list<IResource*> outputRTs;
+
+	_parentCommandQueue->queueCommand(new PipelineSetPTCommand(PRIMITIVE_TOPOLOGY::TRANGLE_LIST));
+
+	for (std::map<std::string, GPUPipelineElement*>::iterator itr =
+		_elementList->begin(); itr != _elementList->end(); ++itr)
+	{
+
+		GPUPipelineElement* element = itr->second;
+
+		if (element->core != nullptr) {
+
+			if (element->type == SHADER_RESOURCE_TYPE::SHADER_TEXTURE_HOOK) {
+
+				_parentCommandQueue->queueCommand(new PipelineSRBindCommand(element->bindSlot,
+					element->core, element->parentShader, element->type));
+			}
+
+			if (element->type == SHADER_RESOURCE_TYPE::SHADER_TEX_SAMPLER) {
+
+				_parentCommandQueue->queueCommand(new PipelineSRBindCommand(element->bindSlot,
+					element->core, element->parentShader, element->type));
+			}
+
+			if (element->type == SHADER_RESOURCE_TYPE::SHADER_CONSTANT_BUFFER) {
+
+				_parentCommandQueue->queueCommand(new PipelineSRBindCommand(element->bindSlot,
+					element->core, element->parentShader, element->type));
+			}
+
+			if (element->type == SHADER_RESOURCE_TYPE::SHADER_BUFFER_HOOK) {
+
+				_parentCommandQueue->queueCommand(new PipelineBufferBindCommand(element->core, 0,
+					_currentInputLayout->getCore<ShaderInputLayout>()->getDataStride()));
+
+			}
+
+			if (element->type == SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET) {
+				if (element->isOutput)
+				{
+					outputRTs.push_back(element->core);
+				}
+				else {
+					_parentCommandQueue->queueCommand(new PipelineRenderTargetCommand(RENDER_TARGET_OP_TYPE::BIND_AS_INPUT,
+						element->parentShader, element->bindSlot, std::list<IResource*>{ element->core }));
+				}
+			}
+		}
+	}
+
+	if (_currentInputLayout != nullptr)
+		_parentCommandQueue->queueCommand(new PipelineILBindCommand(_currentInputLayout));
+	
+
+	_parentCommandQueue->queueCommand(new PipelineRenderTargetCommand(RENDER_TARGET_OP_TYPE::BIND_AS_OUTPUT,
+		SHADER_TYPE::INVALID, -1, outputRTs));
+
+	_parentCommandQueue->queueCommand(new PipelineSetBlendStateCommand(blendState));
+	_parentCommandQueue->queueCommand(new PipelineSetDepthTestStateCommand(depthState));
+	_parentCommandQueue->queueCommand(new PipelineSetRasterStateCommand(rasterState));
+
+	for (auto itr = _opList->begin(); itr != _opList->end(); itr++) {
+		GPUPipelineOP op = *itr;
+		
+		if (op.opType == GPUPIPELINE_OP_TYPE::CLEAR) {
+
+			if(op.resType == SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET)
+				_parentCommandQueue->queueCommand(new PipelineRenderTargetCommand(RENDER_TARGET_OP_TYPE::CLEAR,
+					SHADER_TYPE::INVALID, -1, std::list<IResource*>{op.opTarget}));
+		
+			if (op.resType == SHADER_RESOURCE_TYPE::SHADER_ZBUFFER)
+				_parentCommandQueue->queueCommand(new PipelineClearDepthStencil());
+		}
+
+		if (op.opType == GPUPIPELINE_OP_TYPE::SWAPFRAME) {
+			_parentCommandQueue->queueCommand(new PipelineSwapFrame());
+		}
+	}
 }

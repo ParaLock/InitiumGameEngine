@@ -39,10 +39,11 @@ public:
 
 	virtual void updateParameter(std::string varName, void *data) = 0;
 	virtual void* getParameter(std::string varName) = 0;
+
 	virtual void generateInputLayout() = 0;
 
 	std::string getName() { return _name; };
 
-	UINT getDataStride() { return _dataStride; };
+	UINT getDataStride() {return _dataStride; };
 };
 

@@ -45,6 +45,9 @@ public:
 	void load(IResourceBuilder *builder);
 	void unload();
 
+	void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName) { return nullptr; };
+
 	int meshSize;
 	int indicesSize;
 

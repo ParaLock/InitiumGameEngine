@@ -45,20 +45,21 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	//** RESOURCE LOADING **//
 
-	GPUPipeline* forwardRenderingEndscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/forwardRendering/basicShaders/endScene_pipeline.solPipe", resManagerPool), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
-
-	GPUPipeline* deferredRenderingEndscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/deferredRendering/basicShaders/endScene_pipeline.solPipe", resManagerPool), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* deferredRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/deferredRendering/basicShaders/deferredPipeline.solPipe", resManagerPool), "deferred_geometry_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/deferredRendering/basicShaders/deferredPipeline.solPipe", GraphicsCore::getInstance()->getPipelineCommandQueue()), "deferred_geometry_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* deferredLightingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/deferredRendering/basicShaders/deferredLightingPipeline.solPipe", resManagerPool), "deferred_lighting_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/deferredRendering/basicShaders/deferredLightingPipeline.solPipe", GraphicsCore::getInstance()->getPipelineCommandQueue()), "deferred_lighting_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* forwardRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/forwardRendering/basicShaders/forwardPipeline.solPipe", resManagerPool), "forward_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/forwardRendering/basicShaders/forwardPipeline.solPipe", GraphicsCore::getInstance()->getPipelineCommandQueue()), "forward_pipeline_state", false)->getCore<GPUPipeline>();
+
+	//GPUPipeline* forwardRenderingEndscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+	//	(L"./res/Pipelines/forwardRendering/basicShaders/endScene_pipeline.solPipe", GraphicsCore::getInstance()->getPipelineCommandQueue()), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
+
+	GPUPipeline* deferredRenderingEndscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+		(L"./res/Pipelines/deferredRendering/basicShaders/endScene_pipeline.solPipe", GraphicsCore::getInstance()->getPipelineCommandQueue()), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
 
 	Light* dirLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
 		(LIGHT_TYPE::DIRECTIONAL_LIGHT), "dirLight1", false)->getCore<Light>();
@@ -108,10 +109,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Shader* deferredRenderingPointLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
 		(L"./res/Shaders/deferredRendering/basicShaders/pointLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "point_light_shader", false)->getCore<Shader>();
 
-	Shader* forwardRenderingShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
-		(L"./res/Shaders/forwardRendering/forwardRendering.hlsl", SHADER_RENDER_TYPE::FORWARD_RENDERING), "forward_rendering_shader", false)->getCore<Shader>();
+	//Shader* forwardRenderingShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
+	//	(L"./res/Shaders/forwardRendering/forwardRendering.hlsl", SHADER_RENDER_TYPE::FORWARD_RENDERING), "forward_rendering_shader", false)->getCore<Shader>();
 
-	forwardRenderingShader->attachPipeline(forwardRenderingPipeline);
+	//forwardRenderingShader->attachPipeline(forwardRenderingPipeline);
 
 	deferredRenderingDirectionalLightShader->attachPipeline(deferredLightingPipeline);
 	deferredRenderingPointLightShader->attachPipeline(deferredLightingPipeline);
@@ -151,8 +152,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	//** RESOURCE LOADING DONE **//
 
-	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(DIRECTIONAL_LIGHT, deferredRenderingDirectionalLightShader);
-	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(POINT_LIGHT, deferredRenderingPointLightShader);
+	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(LIGHT_TYPE::DIRECTIONAL_LIGHT, deferredRenderingDirectionalLightShader);
+	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(LIGHT_TYPE::POINT_LIGHT, deferredRenderingPointLightShader);
 
 	dirLight1->setColor(Vector4f(1.5f, 2.5f, 1.5f, 1.5f));
 	dirLight1->setDirection(Vector3f(0.0f, 0.0f, 9.0f));
@@ -215,7 +216,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Entity* hammer = new Entity(world);
 
 	hammer->addComponent(new MoveComponent(Vector3f(0, 0, 0), 0.5, true, moveKeyConfig1));
-	//hammer->addComponent(new MeshComponent(hammerMesh, metalTex, metalMaterial));
+	hammer->addComponent(new MeshComponent(cubeMesh, metalTex, brickMaterial));
 
 	Entity* cube = new Entity(world);
 

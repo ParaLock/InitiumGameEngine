@@ -55,6 +55,9 @@ public:
 	void load(IResourceBuilder* builder);
 	void unload();
 
+    void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName) { return nullptr; };
+
 	LIGHT_TYPE getType() { return _type; }
 
 	void setDirection(Vector3f dir);

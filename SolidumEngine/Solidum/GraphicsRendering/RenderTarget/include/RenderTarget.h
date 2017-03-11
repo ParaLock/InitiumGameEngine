@@ -26,7 +26,7 @@ protected:
 
 	int _mipLevel;
 	int _aaSamples;
-	int _texFormat;
+	TEX_FORMAT _texFormat;
 
 public:
 	RenderTarget();
@@ -34,9 +34,6 @@ public:
 
 	virtual void load(IResourceBuilder* builder) = 0;
 	virtual void unload() = 0;
-
-	virtual void updateParameter(std::string varName, void *data) = 0;
-	virtual void* getParameter(std::string varName) = 0;
 
 	virtual void Clear(float R, float G, float B, float A) = 0;
 };

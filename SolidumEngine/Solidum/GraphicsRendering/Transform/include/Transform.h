@@ -32,6 +32,9 @@ public:
 	void setRotation(float angleOfRot, ROT_DIR direction);
 	void setPos(Vector3f pos);
 	
+	void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName) { return nullptr; };
+
 	Matrix4f getMatrix() { return _transformMatrix; };
 
 	Vector3f getPos() { return _pos; }

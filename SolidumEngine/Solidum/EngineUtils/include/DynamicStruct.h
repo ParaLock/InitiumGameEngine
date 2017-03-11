@@ -56,6 +56,9 @@ private:
 
 	GPUBuffer* _GPUBuff = nullptr;
 
+	void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName);
+
 public:
 	DynamicStruct();
 	~DynamicStruct();

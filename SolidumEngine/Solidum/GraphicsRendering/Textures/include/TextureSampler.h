@@ -28,8 +28,5 @@ public:
 
 	virtual void load(IResourceBuilder* builder) = 0;
 	virtual void unload() = 0;
-
-	virtual void updateParameter(std::string varName, void *data);
-	virtual void* getParameter(std::string varName);
 };
 

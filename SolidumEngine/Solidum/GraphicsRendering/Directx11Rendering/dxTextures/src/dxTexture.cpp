@@ -40,14 +40,14 @@ void dxTexture::loadImage(LPCWSTR filename)
 
 void dxTexture::updateParameter(std::string varName, void * data)
 {
-	if (varName == "D3D_TEXTURE") {
+	if (varName == "TEXTURE") {
 		texture = (ID3D11ShaderResourceView*)data;
 	}
 }
 
 void * dxTexture::getParameter(std::string varName)
 {
-	if (varName == "D3D_TEXTURE") {
+	if (varName == "TEXTURE") {
 		return texture;
 	}
 

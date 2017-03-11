@@ -12,6 +12,12 @@ class MeshComponent : public Component
 {
 private:
 	std::vector<uint64_t> _renderNodes;
+
+	void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName) { return nullptr; };
+
+	void load(IResourceBuilder* builder) { isLoaded = true; };
+	void unload() { isLoaded = false; };
 public:
 	MeshComponent(mesh* mesh, Texture* tex, Material* mat);
 	~MeshComponent();

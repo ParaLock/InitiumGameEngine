@@ -12,18 +12,18 @@ dxRenderTarget::dxRenderTarget(ID3D11RenderTargetView * rt, ID3D11Texture2D * rt
 
 	_aaSamples = -1;
 	_mipLevel = -1;
-	_texFormat = -1;
+	_texFormat = TEX_FORMAT::UNKNOWN;
 }
 
 dxRenderTarget::dxRenderTarget(ID3D11ShaderResourceView * sv, ID3D11Texture2D * svTex)
 {
-	//And again.... I promise to fix this in the future... (4 years later)
+	//And again.... I promise to fix this in the future... ;)
 	_texture = svTex;
 	_shaderView = sv;
 
 	_aaSamples = -1;
 	_mipLevel = -1;
-	_texFormat = -1;
+	_texFormat = TEX_FORMAT::UNKNOWN;
 }
 
 dxRenderTarget::~dxRenderTarget()
@@ -56,7 +56,7 @@ void dxRenderTarget::load(IResourceBuilder * builder)
 	ZeroMemory(&shaderResourceViewDesc, sizeof(shaderResourceViewDesc));
 
 	switch (_texFormat) {
-	case RGBA_32BIT_FLOAT:
+	case TEX_FORMAT::RGBA_32BIT_FLOAT:
 
 		textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
@@ -64,7 +64,7 @@ void dxRenderTarget::load(IResourceBuilder * builder)
 
 		renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 		break;
-	case RGB_32BIT_FLOAT:
+	case TEX_FORMAT::RGB_32BIT_FLOAT:
 
 		textureDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
 
@@ -72,7 +72,7 @@ void dxRenderTarget::load(IResourceBuilder * builder)
 
 		renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 		break;
-	case D24_UNORM_S8_UINT_COUGH_FRAMEBUFFER:
+	case TEX_FORMAT::D24_UNORM_S8_UINT_COUGH_FRAMEBUFFER:
 
 		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 
@@ -114,26 +114,26 @@ void dxRenderTarget::unload()
 
 void dxRenderTarget::updateParameter(std::string varName, void * data)
 {
-	if (varName == "D3D_TEXTURE") {
+	if (varName == "TEXTURE") {
 		_texture = (ID3D11Texture2D*)data;
 	}
-	if (varName == "D3D_RENDERTARGET") {
+	if (varName == "RENDERTARGET") {
 		_renderTarget = (ID3D11RenderTargetView*)data;
 	}
-	if (varName == "D3D_SHADERVIEW") {
+	if (varName == "SHADERVIEW") {
 		_shaderView = (ID3D11ShaderResourceView*)data;
 	}
 }
 
 void * dxRenderTarget::getParameter(std::string varName)
 {
-	if (varName == "D3D_TEXTURE") {
+	if (varName == "TEXTURE") {
 		return _texture;
 	}
-	if (varName == "D3D_RENDERTARGET") {
+	if (varName == "RENDERTARGET") {
 		return _renderTarget;
 	}
-	if (varName == "D3D_SHADERVIEW") {
+	if (varName == "SHADERVIEW") {
 		return _shaderView;
 	}
 

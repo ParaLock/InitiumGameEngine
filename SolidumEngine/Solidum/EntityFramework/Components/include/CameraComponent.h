@@ -44,7 +44,7 @@ enum CAMERA_MOVE {
 	CAM_LOOK_DOWN
 };
 
-class CameraComponent : public Component, public IResource
+class CameraComponent : public Component
 {
 private:
 
@@ -72,6 +72,9 @@ private:
 
 	void load(IResourceBuilder* builder) { isLoaded = true; };
 	void unload() { isLoaded = false; };
+
+	void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName) { return nullptr; };
 
 public:
 	CameraComponent(float near_value, float far_value);

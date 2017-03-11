@@ -27,25 +27,25 @@ void dxGPUBuffer::load(IResourceBuilder * builder)
 	ZeroMemory(&bd, sizeof(bd));
 
 	switch (_access) {
-	case CPU_ACCESS_READ:
+	case BUFFER_CPU_ACCESS::CPU_ACCESS_READ:
 		bd.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 		break;
-	case CPU_ACCESS_WRITE:
+	case BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE:
 		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		break;
-	case CPU_ACCESS_READWRITE:
+	case BUFFER_CPU_ACCESS::CPU_ACCESS_READWRITE:
 		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
 		break;
 	}
 
 	switch (_type) {
-	case VERTEX_BUFF:
+	case BUFFER_TYPE::VERTEX_BUFF:
 		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		break;
-	case INDEX_BUFF:
+	case BUFFER_TYPE::INDEX_BUFF:
 		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		break;
-	case SHADER_BUFF:
+	case BUFFER_TYPE::SHADER_BUFF:
 		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		break;
 	}
@@ -106,14 +106,14 @@ void dxGPUBuffer::Read(void *pDest, size_t byteToRead, size_t offset)
 
 void dxGPUBuffer::updateParameter(std::string varName, void * data)
 {
-	if (varName == "D3D_BUFFER") {
+	if (varName == "BUFFER") {
 		bufferPtr = (ID3D11Buffer*)data;
 	}
 }
 
 void * dxGPUBuffer::getParameter(std::string varName)
 {
-	if (varName == "D3D_BUFFER") {
+	if (varName == "BUFFER") {
 		return bufferPtr;
 	}
 

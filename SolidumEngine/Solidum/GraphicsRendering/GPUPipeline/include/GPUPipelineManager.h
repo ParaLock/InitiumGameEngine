@@ -3,8 +3,6 @@
 
 #include "../../ActiveGraphicsAPI.h"
 
-#include "../../Directx11Rendering/dxGPUPipeline/include/dxGPUPipeline.h"
-
 #include "GPUPipeline.h"
 
 #include "../../../ResourceFramework/include/IResourceManager.h"

@@ -34,5 +34,7 @@ IResource* RenderTargetManager::createResource(IResourceBuilder * builder, std::
 		return newResource;
 	}
 
+	int debugRef = -1;
+
 	return nullptr;
 }

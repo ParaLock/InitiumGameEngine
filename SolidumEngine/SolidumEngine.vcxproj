@@ -19,6 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\GraphicsRendering\PipelineCommand\include\PipelineFunctions.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\PipelineCommandQueue\include\PipelineCommandQueue.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\api_function_wrappers\include\dx11_pipeline_functions_wrapper.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\PipelineCommand\include\PipelineCommand.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderCommand\include\RenderCommand.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNodeTree\include\IRenderNodeTree.h" />
     <ClInclude Include="Solidum\EventFramework\include\RenderNodeEvent.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNodeTree\include\RenderNodeTree.h" />
@@ -67,7 +72,6 @@
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\Shader.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderInputLayout.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxShaders\include\dxShaderInputLayout.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxGPUPipeline\include\dxGPUPipeline.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsBuffers\include\GPUBuffer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxBuffers\include\dxGPUBuffer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCore\include\GraphicsCore.h" />
@@ -100,6 +104,11 @@
     <ClInclude Include="Solidum\WorldSimulation\include\WorldCell.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\GraphicsRendering\PipelineCommand\src\PipelineFunctions.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\api_function_wrappers\src\dx11_pipeline_functions_wrapper.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\PipelineCommandQueue\src\PipelineCommandQueue.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\PipelineCommand\src\PipelineCommand.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderCommand\src\RenderCommand.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNodeTree\src\IRenderNodeTree.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\RenderNodeEvent.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNodeTree\src\RenderNodeTree.cpp" />
@@ -140,7 +149,6 @@
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\Shader.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderInputLayout.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxShaders\src\dxShaderInputLayout.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxGPUPipeline\src\dxGPUPipeline.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsBuffers\src\GPUBuffer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxBuffers\src\dxGPUBuffer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCore\src\GraphicsCore.cpp" />
