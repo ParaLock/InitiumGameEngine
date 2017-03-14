@@ -19,6 +19,11 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 
 	_renderTree = new RenderNodeTree();
 
+	_gcqManager = new GCQManager();
+
+	_gcqManager->createCommandQueue("primaryGraphicsCommandQueue");
+	_gcqManager->setPrimaryCommandQueue("primaryGraphicsCommandQueue");
+
 	std::vector<SHADER_RENDER_TYPE> renderExecutionOrder;
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::FORWARD_RENDERING);
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING);
@@ -29,8 +34,6 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 	EventFrameworkCore::getInstance()->getGlobalEventHub("ComponentEventHub")->subscribeListener(this);
 
 	_resManagerPool = resManagerPool;
-
-	_primaryPipelineCommandQueue = new PipelineCommandQueue;
 
 	_globalRenderingParameters._ambientLightLevel = Vector4f(0.2f, 0.2f, 0.2f, 0.2f);
 
@@ -106,11 +109,9 @@ void GraphicsCore::render()
 
 	_renderTree->walkTree();
 
-	_primaryPipelineCommandQueue->processAllCommands();
-
 	_endFrameState->applyState();
 
-	_primaryPipelineCommandQueue->processAllCommands();
+	_gcqManager->getPrimaryCommandQueue()->processCommands();
 }
 
 void GraphicsCore::setCurrentRenderingCamera(CameraComponent* cam)

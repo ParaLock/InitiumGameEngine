@@ -25,22 +25,23 @@
 #include "../../GPUPipeline/include/GPUPipeline.h"
 
 #include "../../Directx11Rendering/api_function_wrappers/include/dx11_pipeline_functions_wrapper.h"
-#include "../../PipelineCommand/include/PipelineFunctions.h"
+#include "../../PipelineCommands/include/PipelineFunctions.h"
 
-#include "../../PipelineCommand/include/PipelineCommand.h"
-#include "../../PipelineCommandQueue/include/PipelineCommandQueue.h"
+#include "../../PipelineCommands/include/PipelineCommand.h"
+#include "../../GraphicsCommandQueue/include/GraphicsCommandQueue.h"
+#include "../../GraphicsCommandQueueManager/include/GCQManager.h"
 
 class GraphicsCore : public IEventListener
 {
 private:
+	GCQManager* _gcqManager;
+
 	dxDeviceManager *_dxManager = nullptr;
 	ResourceManagerPool *_resManagerPool = nullptr;
 
 	RenderNodeTree *_renderTree;
 
 	GlobalRenderingParams _globalRenderingParameters;
-
-	PipelineCommandQueue* _primaryPipelineCommandQueue;
 
 	GPUPipeline* _endFrameState;
 
@@ -61,8 +62,6 @@ public:
 	void setEndFrameHandler(GPUPipeline* pipe);
 
 	RenderNodeTree* getRenderNodeTree() { return _renderTree; };
-
-	PipelineCommandQueue* getPipelineCommandQueue() { return _primaryPipelineCommandQueue; }
 
 	static GraphicsCore* singletonInstance;
 	static GraphicsCore* getInstance();

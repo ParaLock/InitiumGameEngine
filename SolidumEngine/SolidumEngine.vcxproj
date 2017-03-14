@@ -19,11 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Solidum\GraphicsRendering\PipelineCommand\include\PipelineFunctions.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\PipelineCommandQueue\include\PipelineCommandQueue.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandQueueManager\include\GCQManager.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\ShaderCommands\include\ShaderCommand.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandQueue\include\GraphicsCommandQueue.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommand\include\GraphicsCommand.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\PipelineCommands\include\PipelineFunctions.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\api_function_wrappers\include\dx11_pipeline_functions_wrapper.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\PipelineCommand\include\PipelineCommand.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\RenderCommand\include\RenderCommand.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\PipelineCommands\include\PipelineCommand.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderCommands\include\RenderCommand.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNodeTree\include\IRenderNodeTree.h" />
     <ClInclude Include="Solidum\EventFramework\include\RenderNodeEvent.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNodeTree\include\RenderNodeTree.h" />
@@ -104,11 +107,14 @@
     <ClInclude Include="Solidum\WorldSimulation\include\WorldCell.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Solidum\GraphicsRendering\PipelineCommand\src\PipelineFunctions.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandQueueManager\src\GCQManager.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\ShaderCommands\src\ShaderCommand.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandQueue\src\GraphicsCommandQueue.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommand\src\GraphicsCommand.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\PipelineCommands\src\PipelineFunctions.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\api_function_wrappers\src\dx11_pipeline_functions_wrapper.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\PipelineCommandQueue\src\PipelineCommandQueue.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\PipelineCommand\src\PipelineCommand.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\RenderCommand\src\RenderCommand.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\PipelineCommands\src\PipelineCommand.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderCommands\src\RenderCommand.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNodeTree\src\IRenderNodeTree.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\RenderNodeEvent.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNodeTree\src\RenderNodeTree.cpp" />

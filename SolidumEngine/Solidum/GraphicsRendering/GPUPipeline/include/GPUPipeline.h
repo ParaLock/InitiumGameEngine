@@ -11,20 +11,19 @@
 #include "../../../ResourceFramework/include/ResourceManagerPool.h"
 #include "../../../ResourceFramework/include/IResource.h"
 
-#include "../../PipelineCommand/include/PipelineCommand.h"
+#include "../../PipelineCommands/include/PipelineCommand.h"
 
 #include "../../../EngineUtils/include/StringManipulation.h"
 
-#include "../../PipelineCommandQueue/include/PipelineCommandQueue.h"
+#include "../../GraphicsCommandQueue/include/GraphicsCommandQueue.h"
+#include "../../GraphicsCommandQueueManager/include/GCQManager.h"
 
 class GPUPipelineBuilder : public IResourceBuilder {
 public:
 	LPCWSTR _filename;
-	PipelineCommandQueue* _commandQueue;
 
-	GPUPipelineBuilder(LPCWSTR filename, PipelineCommandQueue* commandQueue) {
+	GPUPipelineBuilder(LPCWSTR filename) {
 		_filename = filename;
-		_commandQueue = commandQueue;
 	}
 };
 
@@ -53,8 +52,6 @@ private:
 	int renderTargetCount = 0;
 	int texSamplerCount = 0;
 	int texHookCount = 0;
-
-	PipelineCommandQueue* _parentCommandQueue;
 
 	std::map<std::string, DynamicStruct*> *_constantBufferMemberNameMap;
 	std::map<std::string, GPUPipelineElement*> *_elementList;
@@ -93,8 +90,6 @@ public:
 	void shaderSetVertexInputLayout(IResource* inputLayout) { _currentInputLayout = inputLayout; };
 
 	void applyState();
-
-	PipelineCommandQueue* getParentCommandQueue() { return _parentCommandQueue; }
 
 	std::map<std::string, DynamicStruct*>* getVarToBuffMap() { return _constantBufferMemberNameMap; };
 };

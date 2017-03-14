@@ -26,11 +26,19 @@ void LightRenderNode::render()
 
 		if (_shader->getRenderMode() != SHADER_RENDER_TYPE::FORWARD_RENDERING) {
 
+			//Hooks must be set in immediate context
 			_shader->setMesh(_orthoMesh);
-			_shader->updateDeferredLightUniforms(_light);
-			_shader->updateCameraUniforms(_renderParams.getGlobalParam_GlobalRenderingCamera());
 
-			_shader->updateGPU();
+			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
+				new ShaderUpdateCameraUniformsCommand(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader));
+
+			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
+				new ShaderSyncUniforms(_shader));
+
+			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
+				new ShaderUpdateLightUniformsCommand(std::vector<ILight*>{_light}, _shader));
+
+
 			_shader->execute(_orthoMesh->numIndices);
 		}
 

@@ -3,6 +3,9 @@
 
 #include "../../RenderParameters/include/RenderParams.h"
 
+#include "../../GraphicsCommandQueueManager/include/GCQManager.h"
+#include "../../ShaderCommands/include/ShaderCommand.h"
+
 class IResource;
 class GPUPipeline;
 class RenderComposite;

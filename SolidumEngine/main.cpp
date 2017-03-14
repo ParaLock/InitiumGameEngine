@@ -47,19 +47,19 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 
 	GPUPipeline* deferredRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/deferredRendering/basicShaders/deferredPipeline.solPipe", GraphicsCore::getInstance()->getPipelineCommandQueue()), "deferred_geometry_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/deferredRendering/basicShaders/deferredPipeline.solPipe"), "deferred_geometry_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* deferredLightingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/deferredRendering/basicShaders/deferredLightingPipeline.solPipe", GraphicsCore::getInstance()->getPipelineCommandQueue()), "deferred_lighting_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/deferredRendering/basicShaders/deferredLightingPipeline.solPipe"), "deferred_lighting_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* forwardRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/forwardRendering/basicShaders/forwardPipeline.solPipe", GraphicsCore::getInstance()->getPipelineCommandQueue()), "forward_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/forwardRendering/basicShaders/forwardPipeline.solPipe"), "forward_pipeline_state", false)->getCore<GPUPipeline>();
 
 	//GPUPipeline* forwardRenderingEndscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
 	//	(L"./res/Pipelines/forwardRendering/basicShaders/endScene_pipeline.solPipe", GraphicsCore::getInstance()->getPipelineCommandQueue()), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* deferredRenderingEndscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/deferredRendering/basicShaders/endScene_pipeline.solPipe", GraphicsCore::getInstance()->getPipelineCommandQueue()), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
+		(L"./res/Pipelines/deferredRendering/basicShaders/endScene_pipeline.solPipe"), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
 
 	Light* dirLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
 		(LIGHT_TYPE::DIRECTIONAL_LIGHT), "dirLight1", false)->getCore<Light>();

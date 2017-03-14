@@ -205,13 +205,12 @@ void dxShader::execute(int numIndices)
 {
 	std::function<void()> bindFunc = std::bind(&dxShader::bind, this);
 
-	_pipelineState->getParentCommandQueue()->queueCommand(new PipelineStateResetCommand());
+	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineBindShaderCommand(bindFunc));
 
-	_pipelineState->getParentCommandQueue()->queueCommand(new PipelineBindShaderCommand(bindFunc));
-
+	//The resource hooks are not yet set when this command loops through all NOT NULL resources. The proper resources would still be null
 	_pipelineState->applyState();
 
-	_pipelineState->getParentCommandQueue()->queueCommand(new PipelineDrawIndexedCommand(0, numIndices));
+	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineDrawIndexedCommand(0, numIndices));
 
-	_pipelineState->getParentCommandQueue()->processAllCommands();
+	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineStateResetCommand());
 }
