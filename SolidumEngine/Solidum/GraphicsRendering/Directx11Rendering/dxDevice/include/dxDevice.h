@@ -72,6 +72,7 @@ public:
 
 	ID3D11DepthStencilState* depthStencilDisable;
 	ID3D11DepthStencilState* depthStencilEnable;
+	ID3D11DepthStencilState* depthLessEqualState;
 
 	ID3D11RasterizerState* rasterStateNormalRendering;
 	ID3D11RasterizerState* rasterStateNoCulling;
@@ -79,6 +80,7 @@ public:
 	ID3D11BlendState *lightBlendState;
 	ID3D11BlendState *passBlendState;
 	ID3D11BlendState *blendDisable;
+
 
 	void clearDepthStencil();
 	void clearFrameBuffer(float R, float G, float B, float A);

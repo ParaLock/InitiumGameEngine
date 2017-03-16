@@ -8,12 +8,15 @@ class ILight;
 class Transform;
 class CameraComponent;
 class GPUPipeline;
+class IResource;
 
 class IShader {
 public:
 	virtual void setMesh(mesh* newMesh) = 0;
 
 	virtual void setModelTexture(Texture* tex) = 0;
+
+	virtual void setMiscResourceHook(IResource* res, std::string name) = 0;
 
 	virtual void updateMaterialPassUniforms(MaterialPass* pass) = 0;
 	virtual void updateDeferredLightUniforms(ILight* light) = 0;

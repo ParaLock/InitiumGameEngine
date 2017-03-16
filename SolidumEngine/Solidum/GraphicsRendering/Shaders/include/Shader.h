@@ -44,6 +44,8 @@ public:
 	virtual void load(IResourceBuilder* builder) = 0;
 	virtual void unload() = 0;
 
+	void setMiscResourceHook(IResource* res, std::string name);
+
 	void setMesh(mesh* newMesh);
 
 	void setModelTexture(Texture* tex);

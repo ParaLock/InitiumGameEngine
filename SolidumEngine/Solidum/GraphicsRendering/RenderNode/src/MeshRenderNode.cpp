@@ -92,25 +92,16 @@ void MeshRenderNode::render()
 
 			if (!_renderParams.getPerNodeParam_DepthTestEnableState()) {
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new PipelineSetBlendStateCommand(BLEND_STATE::PASS_BLENDING));
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new PipelineSetDepthTestStateCommand(DEPTH_TEST_STATE::FULL_ENABLE));
-
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new PipelineSetRasterStateCommand(RASTER_STATE::DISABLE_TRIANGLE_CULL));
+				_shader->getPipeline()->setBlendState(BLEND_STATE::PASS_BLENDING);
+				_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_ENABLE);
+				_shader->getPipeline()->setRasterState(RASTER_STATE::DISABLE_TRIANGLE_CULL);
 
 			}
 
-			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-				new PipelineSetBlendStateCommand(BLEND_STATE::BLENDING_OFF));
-
-			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-				new PipelineSetDepthTestStateCommand(DEPTH_TEST_STATE::FULL_ENABLE));
-
-			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-				new PipelineSetRasterStateCommand(RASTER_STATE::NORMAL));
+			_shader->getPipeline()->setBlendState(BLEND_STATE::BLENDING_OFF);
+			_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_ENABLE);
+			_shader->getPipeline()->setRasterState(RASTER_STATE::NORMAL);
 
 			_shader->execute(_mesh->numIndices);
 		}

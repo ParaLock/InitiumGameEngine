@@ -18,6 +18,9 @@
 
 #include "Solidum\WorldSimulation\include\World.h"
 
+
+#include "Solidum\GraphicsRendering\RenderNode\include\SkyBoxRenderNode.h"
+
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine,
@@ -55,6 +58,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	GPUPipeline* forwardRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
 		(L"./res/Pipelines/forwardRendering/basicShaders/forwardPipeline.solPipe"), "forward_pipeline_state", false)->getCore<GPUPipeline>();
 
+	GPUPipeline* skyRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+		(L"./res/Pipelines/deferredRendering/basicShaders/skyPipeline.solPipe"), "sky_pipeline_state", false)->getCore<GPUPipeline>();
+
 	//GPUPipeline* forwardRenderingEndscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
 	//	(L"./res/Pipelines/forwardRendering/basicShaders/endScene_pipeline.solPipe", GraphicsCore::getInstance()->getPipelineCommandQueue()), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
 
@@ -82,6 +88,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	mesh* planeMesh = resManagerPool->getResourceManager("meshManager")->createResource(&meshBuilder
 		(L"./res/Meshes/plane.obj", resManagerPool), "plane_mesh", false)->getCore<mesh>();
 
+	mesh* skydomeMesh = resManagerPool->getResourceManager("meshManager")->createResource(&meshBuilder
+		(L"./res/Meshes/skydome.obj", resManagerPool), "sky_mesh", false)->getCore<mesh>();
+
 	Texture* grassTex = resManagerPool->getResourceManager("TextureManager")->createResource(&TextureBuilder
 		(L"./res/Textures/diffuse/grass.png"), "grass_tex", false)->getCore<Texture>();
 
@@ -97,6 +106,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Texture* bricksNormalMap = resManagerPool->getResourceManager("TextureManager")->createResource(&TextureBuilder
 		(L"./res/Textures/normals/bricks_normal.bmp"), "bricks_normal_map", false)->getCore<Texture>();
 
+	Texture* skydomeCubeMap = resManagerPool->getResourceManager("TextureManager")->createResource(&TextureBuilder
+		(L"./res/Textures/cubemaps/sunsetcube1024.dds"), "cube_map", false)->getCore<Texture>();
+
 	Shader* deferredRenderingShaderWNormalMapping = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
 		(L"./res/Shaders/deferredRendering/basicShaders/deferredShaderWNormalMapping.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING), "deferred_geometry_shader_normal_mapping", false)->getCore<Shader>();
 
@@ -109,6 +121,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Shader* deferredRenderingPointLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
 		(L"./res/Shaders/deferredRendering/basicShaders/pointLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "point_light_shader", false)->getCore<Shader>();
 
+	Shader* skydomeShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
+		(L"./res/Shaders/deferredRendering/basicShaders/skyShader.hlsl", SHADER_RENDER_TYPE::SKYBOX_RENDERING), "sky_shader", false)->getCore<Shader>();
+
 	//Shader* forwardRenderingShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
 	//	(L"./res/Shaders/forwardRendering/forwardRendering.hlsl", SHADER_RENDER_TYPE::FORWARD_RENDERING), "forward_rendering_shader", false)->getCore<Shader>();
 
@@ -116,6 +131,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	deferredRenderingDirectionalLightShader->attachPipeline(deferredLightingPipeline);
 	deferredRenderingPointLightShader->attachPipeline(deferredLightingPipeline);
+
+	skydomeShader->attachPipeline(skyRenderingPipeline);
 
 	Material* brickMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(&MaterialBuilder
 		(), "brickMaterial", false)->getCore<Material>();
@@ -232,6 +249,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	camera->addComponent(new CameraComponent(0.1f, 1000.0f));
 
+	RenderNode* skyNode = new SkyBoxRenderNode(skydomeShader, skydomeCubeMap, skydomeMesh, 
+		(CameraComponent*)camera->getComponentByType(COMPONENT_TYPE::CAMERA_COMPONENT));
+
+	solidum->getGraphicsSubsystem()->getRenderNodeTree()->addNode(skyNode, 0000001);
+
 	hammer->addChild(pointLight1Entity);
 	hammer->addChild(cube);
 
@@ -247,13 +269,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	solidum->getGraphicsSubsystem()->setEndFrameHandler(deferredRenderingEndscenePipelineState);
 
 	solidum->start();
-
-	if (GetAsyncKeyState(VK_ESCAPE)) {
-
-		solidum->stop();
-
-		solidum->cleanup();
-	}
 
 	myWindow->destroyWindow();
 }

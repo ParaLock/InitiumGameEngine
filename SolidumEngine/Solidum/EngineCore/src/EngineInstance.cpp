@@ -51,6 +51,13 @@ void EngineInstance::executionCycle()
 	while (engineActive) {
 		update();
 		render();
+
+		if (GetAsyncKeyState(VK_ESCAPE)) {
+
+			stop();
+
+			cleanup();
+		}
 	}
 }
 

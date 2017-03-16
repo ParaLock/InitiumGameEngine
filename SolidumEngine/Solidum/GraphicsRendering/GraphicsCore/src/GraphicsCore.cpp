@@ -25,6 +25,7 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 	_gcqManager->setPrimaryCommandQueue("primaryGraphicsCommandQueue");
 
 	std::vector<SHADER_RENDER_TYPE> renderExecutionOrder;
+	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::SKYBOX_RENDERING);
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::FORWARD_RENDERING);
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING);
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT);

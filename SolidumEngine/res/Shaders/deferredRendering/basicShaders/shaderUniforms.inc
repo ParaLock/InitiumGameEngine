@@ -10,6 +10,8 @@ cbuffer MatrixBuffer
 	matrix cbuff_OBJSpecificMatrix;
 	matrix cbuff_lightViewMatrix;
 	matrix cbuff_lightProjectionMatrix;
+	
+	float4x4 cbuff_skydomeWorldViewProj;
 };
 
 cbuffer LightBuffer

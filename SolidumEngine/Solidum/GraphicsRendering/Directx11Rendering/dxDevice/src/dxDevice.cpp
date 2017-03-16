@@ -126,16 +126,27 @@ void dxDevice::InitializeRasterStates()
 	D3D11_RASTERIZER_DESC rasterizerStateNoCullingDesc;
 	ZeroMemory(&rasterizerStateNoCullingDesc, sizeof(rasterizerStateNoCullingDesc));
 
+	//rasterizerStateNoCullingDesc.FillMode = D3D11_FILL_SOLID;
+	//rasterizerStateNoCullingDesc.CullMode = D3D11_CULL_NONE;
+	//rasterizerStateNoCullingDesc.FrontCounterClockwise = FALSE;
+	//rasterizerStateNoCullingDesc.DepthBias = D3D11_DEFAULT_DEPTH_BIAS;
+	//rasterizerStateNoCullingDesc.DepthBiasClamp = D3D11_DEFAULT_DEPTH_BIAS_CLAMP;
+	//rasterizerStateNoCullingDesc.SlopeScaledDepthBias = D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+	//rasterizerStateNoCullingDesc.DepthClipEnable = TRUE;
+	//rasterizerStateNoCullingDesc.ScissorEnable = FALSE;
+	//rasterizerStateNoCullingDesc.MultisampleEnable = FALSE;
+	//rasterizerStateNoCullingDesc.AntialiasedLineEnable = FALSE;
+
+	rasterizerStateNoCullingDesc.AntialiasedLineEnable = false;
+	rasterizerStateNoCullingDesc.CullMode = D3D11_CULL_NONE;
+	rasterizerStateNoCullingDesc.DepthBias = 0;
+	rasterizerStateNoCullingDesc.DepthBiasClamp = 0.0f;
+	rasterizerStateNoCullingDesc.DepthClipEnable = true;
 	rasterizerStateNoCullingDesc.FillMode = D3D11_FILL_SOLID;
-	rasterizerStateNoCullingDesc.CullMode = D3D11_CULL_BACK;
-	rasterizerStateNoCullingDesc.FrontCounterClockwise = FALSE;
-	rasterizerStateNoCullingDesc.DepthBias = D3D11_DEFAULT_DEPTH_BIAS;
-	rasterizerStateNoCullingDesc.DepthBiasClamp = D3D11_DEFAULT_DEPTH_BIAS_CLAMP;
-	rasterizerStateNoCullingDesc.SlopeScaledDepthBias = D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
-	rasterizerStateNoCullingDesc.DepthClipEnable = FALSE;
-	rasterizerStateNoCullingDesc.ScissorEnable = FALSE;
-	rasterizerStateNoCullingDesc.MultisampleEnable = FALSE;
-	rasterizerStateNoCullingDesc.AntialiasedLineEnable = FALSE;
+	rasterizerStateNoCullingDesc.FrontCounterClockwise = false;
+	rasterizerStateNoCullingDesc.MultisampleEnable = false;
+	rasterizerStateNoCullingDesc.ScissorEnable = false;
+	rasterizerStateNoCullingDesc.SlopeScaledDepthBias = 0.0f;
 
 	dxDev->CreateRasterizerState(&rasterizerStateNoCullingDesc, &rasterStateNoCulling);
 }
@@ -146,6 +157,7 @@ void dxDevice::InitializeDepthStencilStates()
 
 	D3D11_DEPTH_STENCIL_DESC depthStencilDisabledDesc;
 	D3D11_DEPTH_STENCIL_DESC depthStencilEnableDesc;
+	D3D11_DEPTH_STENCIL_DESC depthStencilLessEqualDesc;
 
 	ZeroMemory(&depthStencilEnableDesc, sizeof(depthStencilEnableDesc));
 
@@ -190,6 +202,28 @@ void dxDevice::InitializeDepthStencilStates()
 	depthStencilDisabledDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	result = dxDev->CreateDepthStencilState(&depthStencilDisabledDesc, &depthStencilDisable);
+
+	ZeroMemory(&depthStencilLessEqualDesc, sizeof(depthStencilLessEqualDesc));
+
+	depthStencilLessEqualDesc.DepthEnable = true;
+	depthStencilLessEqualDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilLessEqualDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+	depthStencilLessEqualDesc.StencilEnable = true;
+	depthStencilLessEqualDesc.StencilReadMask = 0xFF;
+	depthStencilLessEqualDesc.StencilWriteMask = 0xFF;
+
+	depthStencilLessEqualDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilLessEqualDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthStencilLessEqualDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilLessEqualDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	depthStencilLessEqualDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilLessEqualDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthStencilLessEqualDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilLessEqualDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	result = dxDev->CreateDepthStencilState(&depthStencilLessEqualDesc, &depthLessEqualState);
 }
 
 void dxDevice::InitializeBlendStates()
@@ -272,7 +306,7 @@ void dxDevice::InitializeViewport()
 
 void dxDevice::clearDepthStencil()
 {
-	dxDevContext->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	dxDevContext->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 void dxDevice::clearFrameBuffer(float R, float G, float B, float A)
@@ -304,6 +338,9 @@ void dxDevice::setDepthTestState(DEPTH_TEST_STATE state)
 		break;
 	case DEPTH_TEST_STATE::FULL_ENABLE:
 		dxDevContext->OMSetDepthStencilState(depthStencilEnable, 1);
+		break;
+	case DEPTH_TEST_STATE::LESS_EQUAL:
+		dxDevContext->OMSetDepthStencilState(depthLessEqualState, 1);
 		break;
 	default:
 		break;

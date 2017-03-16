@@ -11,6 +11,11 @@ Shader::~Shader()
 {
 }
 
+void Shader::setMiscResourceHook(IResource * res, std::string name)
+{
+	_pipelineState->setHookResource(res, name);
+}
+
 void Shader::setMesh(mesh* newMesh)
 {
 	_pipelineState->setHookResource(newMesh->getIndexBuff(), "index_buffer");

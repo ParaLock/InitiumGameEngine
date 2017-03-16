@@ -87,6 +87,7 @@
     <ClInclude Include="Solidum\GraphicsRendering\PipelineCommands\include\PipelineFunctions.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandQueue\include\GraphicsCommandQueue.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandQueueManager\include\GCQManager.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderNode\include\SkyBoxRenderNode.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -165,5 +166,6 @@
     <ClCompile Include="Solidum\GraphicsRendering\PipelineCommands\src\PipelineFunctions.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandQueue\src\GraphicsCommandQueue.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandQueueManager\src\GCQManager.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\SkyBoxRenderNode.cpp" />
   </ItemGroup>
 </Project>
