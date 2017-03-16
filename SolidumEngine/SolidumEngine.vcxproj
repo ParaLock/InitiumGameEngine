@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\EntityFramework\Components\include\SkydomeWeatherComponent.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNode\include\SkyBoxRenderNode.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandQueueManager\include\GCQManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\ShaderCommands\include\ShaderCommand.h" />
@@ -108,6 +109,7 @@
     <ClInclude Include="Solidum\WorldSimulation\include\WorldCell.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\EntityFramework\Components\src\SkydomeWeatherComponent.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\SkyBoxRenderNode.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandQueueManager\src\GCQManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\ShaderCommands\src\ShaderCommand.cpp" />

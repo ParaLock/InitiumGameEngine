@@ -15,6 +15,9 @@ struct LocalRenderingParams {
 
 	bool _depthTestEnabled;
 
+	Vector4f _skydomeApexColor;
+	Vector4f _skydomeCenterColor;
+
 	Transform* _transform;
 };
 
@@ -30,8 +33,14 @@ public:
 	void setGlobalParam_AmbientLight(Vector4f color) { global_params._ambientLightLevel = color; };
 	void setGlobalParam_GlobalRenderingCamera(CameraComponent* cam) { global_params._globalRenderingCamera = cam; }
 
+	void setPerNodeParam_skydomeCenterColor(Vector4f color) { local_params._skydomeCenterColor = color; };
+	void setPerNodeParam_skydomeApexColor(Vector4f cam) { local_params._skydomeApexColor = cam; }
+
 	Vector4f getGlobalParam_AmbientLight() { return global_params._ambientLightLevel; }
 	CameraComponent* getGlobalParam_GlobalRenderingCamera() { return global_params._globalRenderingCamera; }
+
+	Vector4f getPerNodeParam_skydomeCenterColor() { return local_params._skydomeCenterColor; };
+	Vector4f getPerNodeParam_skydomeApexColor() { return local_params._skydomeApexColor; }
 
 	void setPerNodeParam_RenderCamera(CameraComponent* cam) { local_params._renderCamera = cam; };
 	void setPerNodeParam_ForwardRendering(bool enable) { local_params._useForwardRendering = enable; };

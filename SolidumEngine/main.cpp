@@ -11,6 +11,7 @@
 #include "Solidum\EntityFramework\Components\include\MoveComponent.h"
 #include "Solidum\EntityFramework\Components\include\LightComponent.h"
 #include "Solidum\EntityFramework\Components\include\MeshComponent.h"
+#include "Solidum\EntityFramework\Components\include\SkydomeWeatherComponent.h"
 
 #include "Solidum\InputHandling\include\InputHandler.h"
 
@@ -19,7 +20,7 @@
 #include "Solidum\WorldSimulation\include\World.h"
 
 
-#include "Solidum\GraphicsRendering\RenderNode\include\SkyBoxRenderNode.h"
+
 
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -249,11 +250,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	camera->addComponent(new CameraComponent(0.1f, 1000.0f));
 
-	RenderNode* skyNode = new SkyBoxRenderNode(skydomeShader, skydomeCubeMap, skydomeMesh, 
-		(CameraComponent*)camera->getComponentByType(COMPONENT_TYPE::CAMERA_COMPONENT), 
-			Vector4f(0.1f, 0.1f, 0.1f, 1.0f), Vector4f(0.1f, 0.1f, 0.1f, 1.0f));
+	Entity* sky = new Entity(world);
 
-	solidum->getGraphicsSubsystem()->getRenderNodeTree()->addNode(skyNode, 0000001);
+	sky->addComponent(new SkydomeWeatherComponent(skydomeShader, skydomeCubeMap, skydomeMesh,
+		(CameraComponent*)camera->getComponentByType(COMPONENT_TYPE::CAMERA_COMPONENT),
+		Vector4f(0.1f, 0.1f, 0.1f, 1.0f), Vector4f(0.1f, 0.1f, 0.1f, 1.0f)));
 
 	hammer->addChild(pointLight1Entity);
 	hammer->addChild(cube);
@@ -264,6 +265,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	world->addEntity(pointLight3Entity, 0010);
 	world->addEntity(hammer, 0011);
 	world->addEntity(plane, 0100);
+	world->addEntity(sky, 0101);
 
 	solidum->loadWorld(world);
 
