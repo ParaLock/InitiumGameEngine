@@ -13,6 +13,8 @@ struct PixelInputType
 {
 	float4 PosH : SV_POSITION;
     float3 PosL : POSITION;
+	float4 apexColor : TEXCOORD0;
+	float4 centerColor : TEXCOORD1;
 };
 
 struct PixelOutputType
@@ -31,6 +33,9 @@ PixelInputType Vshader(VertexInputType input)
 	
 	output.PosL = input.PosL;
 	
+	output.apexColor = cbuff_skydomeApexColor;
+	output.centerColor = cbuff_skydomeCenterColor;
+	
 	return output;
 }
 
@@ -40,9 +45,19 @@ SamplerState SampleTypeWrap : register(s0);
 
 PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 {
+	float height;
 	PixelOutputType output;
 
+	height = input.PosL.y;
+
+	if(height < 0.0)
+	{
+		height = 0.0f;
+	}
+	
 	output.color = skyCube.Sample(SampleTypeWrap, input.PosL);
+	
+	output.color *= lerp(input.centerColor, input.apexColor, height);
 	
 	return output;
 }

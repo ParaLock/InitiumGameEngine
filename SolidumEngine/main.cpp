@@ -250,7 +250,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	camera->addComponent(new CameraComponent(0.1f, 1000.0f));
 
 	RenderNode* skyNode = new SkyBoxRenderNode(skydomeShader, skydomeCubeMap, skydomeMesh, 
-		(CameraComponent*)camera->getComponentByType(COMPONENT_TYPE::CAMERA_COMPONENT));
+		(CameraComponent*)camera->getComponentByType(COMPONENT_TYPE::CAMERA_COMPONENT), 
+			Vector4f(0.1f, 0.1f, 0.1f, 1.0f), Vector4f(0.1f, 0.1f, 0.1f, 1.0f));
 
 	solidum->getGraphicsSubsystem()->getRenderNodeTree()->addNode(skyNode, 0000001);
 
