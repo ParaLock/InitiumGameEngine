@@ -39,7 +39,7 @@ private:
 	int _timeOfDayIndex = 0;
 
 	TIME_OF_DAY_BLOCK _skyCycle[4] =
-	{ { 2.7f, TIME_OF_DAY_CYCLE::MID_DAY, 1.0f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f },
+	{ { 1.7f, TIME_OF_DAY_CYCLE::MID_DAY, 1.0f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f },
 	{ 0.6f, TIME_OF_DAY_CYCLE::SUN_SET, 0.5f, 0.06f, 0.06f, 0.06f, 0.06f, 0.06f },
 	{ 4.0f, TIME_OF_DAY_CYCLE::NIGHT, 0.04f, 0.04f, 0.1f, 0.04f, 0.04f, 0.1f } };
 
@@ -53,7 +53,7 @@ public:
 	SkydomeWeatherComponent(IShader* shader, Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor);
 	~SkydomeWeatherComponent();
 
-	void update();
+	void update(float delta);
 
 	void onEvent(EVENT_PTR evt);
 

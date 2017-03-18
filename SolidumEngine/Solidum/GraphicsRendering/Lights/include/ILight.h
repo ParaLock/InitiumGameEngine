@@ -27,6 +27,10 @@ public:
 	virtual Matrix4f getViewMatrix() = 0;
 	virtual Matrix4f getProjectionMatrix() = 0;
 
+	virtual void setDirection(Vector3f dir) = 0;
+	virtual void setColor(Vector4f color) = 0;
+	virtual void setIntensity(float intensity) = 0;
+
 	virtual bool getIsShadowCaster() = 0;
 	virtual void setIsShadowCaster(bool isShaderCaster) = 0;
 };

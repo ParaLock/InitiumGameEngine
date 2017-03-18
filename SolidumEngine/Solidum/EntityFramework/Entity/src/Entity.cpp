@@ -38,7 +38,7 @@ IComponent * Entity::getComponentByType(COMPONENT_TYPE type)
 	return _components->at(type);
 }
 
-void Entity::update()
+void Entity::update(float delta)
 {
 	if (_parent != nullptr) 
 		_transform->setPos(_parent->getTransform()->getPos());
@@ -47,14 +47,14 @@ void Entity::update()
 		
 		IComponent* comp = itr->second;
 		
-		comp->update();
+		comp->update(delta);
 	}
 
 	for (auto itr = _children->begin(); itr != _children->end(); itr++) {
 
 		IEntity* child = *itr;
 
-		child->update();
+		child->update(delta);
 	}
 
 }

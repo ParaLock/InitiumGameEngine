@@ -89,6 +89,8 @@
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandQueueManager\include\GCQManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNode\include\SkyBoxRenderNode.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\SkydomeWeatherComponent.h" />
+    <ClInclude Include="Solidum\EntityFramework\Components\include\OrbitComponent.h" />
+    <ClInclude Include="Solidum\EntityFramework\Components\include\SunMoonLightingComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -169,5 +171,7 @@
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandQueueManager\src\GCQManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\SkyBoxRenderNode.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\SkydomeWeatherComponent.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Components\src\OrbitComponent.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Components\src\SunMoonLightingComponent.cpp" />
   </ItemGroup>
 </Project>

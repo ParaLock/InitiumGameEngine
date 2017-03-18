@@ -213,6 +213,7 @@ void GPUPipeline::reset()
 {
 	blendState = BLEND_STATE::BLENDING_OFF;
 
+	_boundCbuffers.clear();
 	_constantBufferMemberNameMap->clear();
 	_elementList->clear();
 }
@@ -280,13 +281,18 @@ void GPUPipeline::attachResource(IResource* res, std::string name, SHADER_RESOUR
 
 	if (type == SHADER_RESOURCE_TYPE::SHADER_CONSTANT_BUFFER) {
 
-		DynamicStruct* generalBuff = res->getCore<DynamicStruct>();
+		//if (_boundCbuffers.find(name) == _boundCbuffers.end()) {
 
-		std::vector<std::string> varNameList = generalBuff->getVarNameList();
+			//_boundCbuffers.insert({ name, res->getCore<DynamicStruct>() });
 
-		for (unsigned int i = 0; i < varNameList.size(); ++i) {
-			_constantBufferMemberNameMap->insert({ varNameList[i], generalBuff });
-		}
+			DynamicStruct* generalBuff = res->getCore<DynamicStruct>();
+
+			std::vector<std::string> varNameList = generalBuff->getVarNameList();
+
+			for (unsigned int i = 0; i < varNameList.size(); ++i) {
+				_constantBufferMemberNameMap->insert({ varNameList[i], generalBuff });
+			}
+		//}
 	}
 
 	_elementList->insert({ name, newElement });

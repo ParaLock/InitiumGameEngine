@@ -19,6 +19,15 @@ Transform::~Transform()
 	isLoaded = false;
 }
 
+void Transform::setMatrix(Matrix4f matrix)
+{
+	_transformMatrix = matrix;
+
+	_pos[0] = _transformMatrix[3][0];
+	_pos[1] = _transformMatrix[3][1];
+	_pos[2] = _transformMatrix[3][2];
+}
+
 void Transform::setRotation(float angleOfRot, ROT_DIR direction) {
 
 	switch (direction)

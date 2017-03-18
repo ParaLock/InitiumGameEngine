@@ -31,19 +31,19 @@ private:
 
 	struct GenericData {
 
-		float _intensity;
-		float _range;
+		float _intensity = 0.0f;
+		float _range = 0.0f;
 
-		Vector3f _direction;
-		Vector3f _pos;
-		Vector4f _color;
+		Vector3f _direction = Vector3f(0.0f, 0.0f, 0.0f);
+		Vector3f _pos = Vector3f(0.0f, 0.0f, 0.0f);
+		Vector4f _color = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
 
 	} _GenericData;
 
 	struct Attenuation {
-		float _constant;
-		float _linear;
-		float _exponent;
+		float _constant = 0;
+		float _linear = 0;
+		float _exponent = 0;
 
 	} _Attenuation;
 

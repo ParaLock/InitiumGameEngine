@@ -22,7 +22,7 @@ public:
 	MeshComponent(mesh* mesh, Texture* tex, Material* mat);
 	~MeshComponent();
 
-	void update();
+	void update(float delta);
 	void onEvent(EVENT_PTR evt);
 };
 

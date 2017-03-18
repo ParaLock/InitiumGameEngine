@@ -53,6 +53,8 @@ private:
 	int texSamplerCount = 0;
 	int texHookCount = 0;
 
+	std::map<std::string, DynamicStruct*> _boundCbuffers;
+
 	std::map<std::string, DynamicStruct*> *_constantBufferMemberNameMap;
 	std::map<std::string, GPUPipelineElement*> *_elementList;
 

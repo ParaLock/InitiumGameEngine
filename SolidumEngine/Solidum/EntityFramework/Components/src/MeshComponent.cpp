@@ -14,7 +14,7 @@ MeshComponent::~MeshComponent()
 		GraphicsCore::getInstance()->getRenderNodeTree()->removeNode(nodeid);
 }
 
-void MeshComponent::update()
+void MeshComponent::update(float delta)
 {
 	int nodeCount = 0;
 

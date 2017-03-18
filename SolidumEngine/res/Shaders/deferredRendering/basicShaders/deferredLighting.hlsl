@@ -32,7 +32,7 @@ float4 calcLight(BaseLightData light, MaterialData mat, CoreData coreData)
 	{
 		diffuseColor = float4(light.lightColor, 1.0) * light.intensity * diffuseFactor;
 		
-		float3 V = normalize(coreData.viewPos - coreData.worldPos);	
+		float3 V = normalize(coreData.viewPos - coreData.worldPos.xyz);	
 		float3 R = reflect(normalize(light.lightDirection), normalize(coreData.normal.xyz)); 
 	
 		specularColor = mat.specularIntensity * float4(light.lightColor, 1) 
@@ -67,8 +67,8 @@ PixelInputType Vshader(VertexInputType input)
 	
 	input.position.w = 1.0f;
 	
-	output.position = mul(output.position, cbuff_worldMatrix);
-	output.position = mul(input.position, cbuff_camViewStart);
+	output.position = mul(input.position, cbuff_worldMatrix);
+	output.position = mul(output.position, cbuff_camViewStart);
 	output.position = mul(output.position, cbuff_orthoProjection);
 
 	output.tex = input.tex;

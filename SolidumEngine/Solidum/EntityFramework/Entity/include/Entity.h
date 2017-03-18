@@ -38,6 +38,6 @@ public:
 
 	Transform* getTransform() { return _transform; }
 
-	void update();
+	void update(float delta);
 };
 

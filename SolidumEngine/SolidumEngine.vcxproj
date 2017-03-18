@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\EntityFramework\Components\include\OrbitComponent.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\SkydomeWeatherComponent.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNode\include\SkyBoxRenderNode.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandQueueManager\include\GCQManager.h" />
@@ -107,8 +108,10 @@
     <ClInclude Include="Solidum\WorldSimulation\include\World.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldManager.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldCell.h" />
+    <ClInclude Include="Solidum\EntityFramework\Components\include\SunMoonLightingComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\EntityFramework\Components\src\OrbitComponent.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\SkydomeWeatherComponent.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\SkyBoxRenderNode.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandQueueManager\src\GCQManager.cpp" />
@@ -187,6 +190,7 @@
     <ClCompile Include="Solidum\WorldSimulation\src\World.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldManager.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldCell.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Components\src\SunMoonLightingComponent.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{936972AA-1079-49FC-BABD-6CCFB9EE4B9A}</ProjectGuid>

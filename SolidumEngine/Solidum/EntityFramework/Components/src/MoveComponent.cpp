@@ -20,7 +20,7 @@ MoveComponent::~MoveComponent()
 {
 }
 
-void MoveComponent::update()
+void MoveComponent::update(float delta)
 {
 	if (_parent->getParent() != nullptr) {
 

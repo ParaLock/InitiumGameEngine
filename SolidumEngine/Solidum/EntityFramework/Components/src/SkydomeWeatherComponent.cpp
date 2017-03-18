@@ -11,6 +11,8 @@ SkydomeWeatherComponent::SkydomeWeatherComponent(IShader* shader, Texture* tex, 
 
 	GraphicsCore::getInstance()->getRenderNodeTree()->addNode(new 
 		SkyBoxRenderNode(shader, tex, skydome, cam, apexColor, centerColor), _renderNodeID);
+
+	setType(COMPONENT_TYPE::SKYBOX_WEATHER_COMPONENT);
 }
 
 
@@ -18,7 +20,7 @@ SkydomeWeatherComponent::~SkydomeWeatherComponent()
 {
 }
 
-void SkydomeWeatherComponent::update()
+void SkydomeWeatherComponent::update(float delta)
 {
 	updateDayNightCycle(0.0005f);
 
@@ -174,7 +176,6 @@ void SkydomeWeatherComponent::updateDayNightCycle(float delta)
 	}
 
 	_timeOfDayIndex = _timeOfDayIndex % 4;
-
 
 	CURRENT_TIME += delta;
 

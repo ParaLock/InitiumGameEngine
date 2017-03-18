@@ -14,6 +14,8 @@
 class EngineInstance
 {
 private:
+	HRTimer _engineTick;
+
 	window* _currentWindow;
 	GraphicsCore *_graphicsCore;
 	ResourceManagerPool* _resManagers;
@@ -36,7 +38,7 @@ public:
 
 	void cleanup();
 
-	void update();
+	void update(float delta);
 	void render();
 
 	EventFrameworkCore* getEventFrameworkCore() { return _eventFrameworkCore; };

@@ -23,7 +23,7 @@ public:
 
 	COMPONENT_TYPE getType() { return _type; }
 
-	virtual void update() = 0;
+	virtual void update(float delta) = 0;
 
 	virtual void onEvent(EVENT_PTR evt) = 0;
 

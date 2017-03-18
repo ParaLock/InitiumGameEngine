@@ -48,8 +48,12 @@ void EngineInstance::loadWorld(World * world)
 
 void EngineInstance::executionCycle()
 {
+	_engineTick.startTimer();
+
 	while (engineActive) {
-		update();
+
+		update(_engineTick.getElapsedTimeSeconds());
+
 		render();
 
 		if (GetAsyncKeyState(VK_ESCAPE)) {
@@ -58,10 +62,12 @@ void EngineInstance::executionCycle()
 
 			cleanup();
 		}
+
+		_engineTick.reset();
 	}
 }
 
-void EngineInstance::update()
+void EngineInstance::update(float delta)
 {
 	const std::map<uint64_t, IEntity*>& worldEntities = _currentWorld->getEntities();
 
@@ -69,7 +75,7 @@ void EngineInstance::update()
 		IEntity* entity = itr->second;
 
 
-		entity->update();
+		entity->update(delta);
 	}
 	
 	_inputHandler->update();

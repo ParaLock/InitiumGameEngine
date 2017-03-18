@@ -23,6 +23,6 @@ public:
 
 	virtual Transform* getTransform() = 0;
 
-	virtual void update() = 0;
+	virtual void update(float delta) = 0;
 };
 

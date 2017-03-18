@@ -29,6 +29,7 @@ public:
 	void load(IResourceBuilder* builder) { isLoaded = true; };
 	void unload() { isLoaded = false; };
 
+	void setMatrix(Matrix4f matrix);
 	void setRotation(float angleOfRot, ROT_DIR direction);
 	void setPos(Vector3f pos);
 	

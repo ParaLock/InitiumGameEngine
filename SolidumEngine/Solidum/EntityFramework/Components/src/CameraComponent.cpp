@@ -223,7 +223,7 @@ void CameraComponent::move(CAMERA_MOVE direction, float speed)
 	}
 }
 
-void CameraComponent::update()
+void CameraComponent::update(float delta)
 {
 	float t = (float)camTimer.getElapsedTimeSeconds();
 

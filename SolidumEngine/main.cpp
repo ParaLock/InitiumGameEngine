@@ -12,15 +12,14 @@
 #include "Solidum\EntityFramework\Components\include\LightComponent.h"
 #include "Solidum\EntityFramework\Components\include\MeshComponent.h"
 #include "Solidum\EntityFramework\Components\include\SkydomeWeatherComponent.h"
+#include "Solidum\EntityFramework\Components\include\OrbitComponent.h"
+#include "Solidum\EntityFramework\Components\include\SunMoonLightingComponent.h"
 
 #include "Solidum\InputHandling\include\InputHandler.h"
 
 #include "Solidum\EntityFramework\Entity\include\Entity.h"
 
 #include "Solidum\WorldSimulation\include\World.h"
-
-
-
 
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -48,13 +47,15 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	ResourceManagerPool* resManagerPool = solidum->getResourceManagerPool();
 
 	//** RESOURCE LOADING **//
-
-
+	
 	GPUPipeline* deferredRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
 		(L"./res/Pipelines/deferredRendering/basicShaders/deferredPipeline.solPipe"), "deferred_geometry_pipeline_state", false)->getCore<GPUPipeline>();
 
-	GPUPipeline* deferredLightingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
-		(L"./res/Pipelines/deferredRendering/basicShaders/deferredLightingPipeline.solPipe"), "deferred_lighting_pipeline_state", false)->getCore<GPUPipeline>();
+	GPUPipeline* deferredPointLightsPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+		(L"./res/Pipelines/deferredRendering/basicShaders/deferredLightingPipeline.solPipe"), "deferred_point_light_pipeline_state", false)->getCore<GPUPipeline>();
+
+	GPUPipeline* deferredDirectionalLightsPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+		(L"./res/Pipelines/deferredRendering/basicShaders/deferredLightingPipeline.solPipe"), "deferred_directional_light_pipeline_state", false)->getCore<GPUPipeline>();
 
 	GPUPipeline* forwardRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
 		(L"./res/Pipelines/forwardRendering/basicShaders/forwardPipeline.solPipe"), "forward_pipeline_state", false)->getCore<GPUPipeline>();
@@ -68,8 +69,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	GPUPipeline* deferredRenderingEndscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
 		(L"./res/Pipelines/deferredRendering/basicShaders/endScene_pipeline.solPipe"), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
 
-	Light* dirLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
-		(LIGHT_TYPE::DIRECTIONAL_LIGHT), "dirLight1", false)->getCore<Light>();
+	Light* sunLight = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
+		(LIGHT_TYPE::DIRECTIONAL_LIGHT), "sun", false)->getCore<Light>();
+
+	Light* moonLight = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
+		(LIGHT_TYPE::DIRECTIONAL_LIGHT), "moon", false)->getCore<Light>();
 
 	Light* pointLight1 = resManagerPool->getResourceManager("LightManager")->createResource(&LightBuilder
 		(LIGHT_TYPE::POINT_LIGHT), "pointLight1", false)->getCore<Light>();
@@ -130,8 +134,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	//forwardRenderingShader->attachPipeline(forwardRenderingPipeline);
 
-	deferredRenderingDirectionalLightShader->attachPipeline(deferredLightingPipeline);
-	deferredRenderingPointLightShader->attachPipeline(deferredLightingPipeline);
+	deferredRenderingDirectionalLightShader->attachPipeline(deferredDirectionalLightsPipeline);
+	deferredRenderingPointLightShader->attachPipeline(deferredPointLightsPipeline);
 
 	skydomeShader->attachPipeline(skyRenderingPipeline);
 
@@ -173,10 +177,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(LIGHT_TYPE::DIRECTIONAL_LIGHT, deferredRenderingDirectionalLightShader);
 	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(LIGHT_TYPE::POINT_LIGHT, deferredRenderingPointLightShader);
 
-	dirLight1->setColor(Vector4f(1.5f, 2.5f, 1.5f, 1.5f));
-	dirLight1->setDirection(Vector3f(0.0f, 0.0f, 9.0f));
-	dirLight1->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
-	dirLight1->setIntensity(0.0f);
+	sunLight->setColor(Vector4f(0.5f, 0.5f, 0.5f, 0.5f));
+	sunLight->setDirection(Vector3f(0, 0, 0));
+	sunLight->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
+	sunLight->setIntensity(0.5f);
 
 	pointLight1->setColor(Vector4f(0.5f, 2.5f, 0.5f, 0.5f));
 	pointLight1->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
@@ -211,13 +215,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	pointLight3->setRange(60.5f);
 
-	Entity* dirLightEntity = new Entity(world);
-
-	dirLightEntity->addComponent(new LightComponent(dirLight1));
+	Entity* globalWorldLighting = new Entity(world);
+	globalWorldLighting->addComponent(new SunMoonLightingComponent(sunLight, moonLight, 0.1f));
 
 	Entity* pointLight1Entity = new Entity(world);
 
-	pointLight1Entity->addComponent(new MoveComponent(Vector3f(4.0f, 0.01f, -1.8f), 0.5, true, moveKeyConfig2));
+	pointLight1Entity->addComponent(new MoveComponent(Vector3f(4.0f, 0.01f, -1.8f), 0.5, false, moveKeyConfig2));
 	pointLight1Entity->addComponent(new LightComponent(pointLight1));
 
 	Entity* pointLight2Entity = new Entity(world);
@@ -233,7 +236,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	Entity* hammer = new Entity(world);
 
-	hammer->addComponent(new MoveComponent(Vector3f(0, 0, 0), 0.5, true, moveKeyConfig1));
 	hammer->addComponent(new MeshComponent(cubeMesh, metalTex, brickMaterial));
 
 	Entity* cube = new Entity(world);
@@ -257,15 +259,16 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		Vector4f(0.1f, 0.1f, 0.1f, 1.0f), Vector4f(0.1f, 0.1f, 0.1f, 1.0f)));
 
 	hammer->addChild(pointLight1Entity);
-	hammer->addChild(cube);
 
 	world->addPrimaryCamera(camera, 0000);
 	
 	world->addEntity(pointLight2Entity, 0001);
 	world->addEntity(pointLight3Entity, 0010);
+	world->addEntity(globalWorldLighting, 1111);
 	world->addEntity(hammer, 0011);
 	world->addEntity(plane, 0100);
 	world->addEntity(sky, 0101);
+	world->addEntity(cube, 0110);
 
 	solidum->loadWorld(world);
 

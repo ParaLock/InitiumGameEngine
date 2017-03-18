@@ -26,7 +26,7 @@ LightComponent::~LightComponent()
 		GraphicsCore::getInstance()->getRenderNodeTree()->removeNode(nodeid);
 }
 
-void LightComponent::update()
+void LightComponent::update(float delta)
 {
 	if (_parentTransformDirty) {
 

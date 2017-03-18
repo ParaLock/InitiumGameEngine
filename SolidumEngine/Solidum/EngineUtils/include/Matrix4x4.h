@@ -59,6 +59,45 @@ public:
 		return result;
 	}
 
+	inline Matrix4x4<T> get_rotation_euler(T rotateX, T rotateY, T rotateZ)
+	{
+		Matrix4x4<T> rx, ry, rz;
+
+		const T x = rotateX;
+		const T y = rotateY;
+		const T z = rotateZ;
+
+		rx[0][0] = T(1);   rx[1][0] = T(0);  rx[2][0] = T(0); rx[3][0] = T(0);
+		rx[0][1] = T(0);   rx[1][1] = cos(x);  rx[2][1] = -sin(x); rx[3][1] = T(0);
+		rx[0][2] = T(0);   rx[1][2] = sin(x);  rx[2][2] = cos(x); rx[3][2] = T(0);
+		rx[0][3] = T(0);   rx[1][3] = T(0);  rx[2][3] = T(0); rx[3][3] = T(1);
+
+		ry[0][0] = cos(y); ry[1][0] = T(0);    ry[2][0] = -sin(y); ry[3][0] = T(0);
+		ry[0][1] = T(0); ry[1][1] = T(1);    ry[2][1] = T(0); ry[3][1] = T(0);
+		ry[0][2] = sin(y); ry[1][2] = T(0);    ry[2][2] = cos(y); ry[3][2] = T(0);
+		ry[0][3] = T(0); ry[1][3] = T(0);    ry[2][3] = T(0); ry[3][3] = T(1);
+
+		rz[0][0] = cos(z); rz[1][0] = -sin(z); rz[2][0] = T(0);    rz[3][0] = T(0);
+		rz[0][1] = sin(z); rz[1][1] = cos(z); rz[2][1] = T(0);    rz[3][1] = T(0);
+		rz[0][2] = T(0); rz[1][2] = T(0); rz[2][2] = T(1);    rz[3][2] = T(0);
+		rz[0][3] = T(0); rz[1][3] = T(0); rz[2][3] = T(0);    rz[3][3] = T(1);
+
+		Matrix4x4<T> result = rz * ry * rx;
+
+		return result;
+	}
+
+	inline static Matrix4x4<T> get_rotationX(float angle) {
+		Matrix4x4<T> _result = Matrix4x4<T>::get_identity();
+
+		_result[1][1] = cos(angle);
+		_result[2][2] = cos(angle);
+		_result[1][2] = sin(angle);
+		_result[2][1] = -sin(angle);
+
+		return _result;
+	}
+
 	inline static Matrix4x4<T> get_translation(const Vector3<T>& r)
 	{
 		Matrix4x4<T> result;

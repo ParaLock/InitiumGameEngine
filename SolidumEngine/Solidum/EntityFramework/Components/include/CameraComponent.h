@@ -88,7 +88,7 @@ public:
 
 	void move(CAMERA_MOVE direction, float speed);
 
-	void update();
+	void update(float delta);
 
 	Matrix4f getWorldMatrix() { return _worldMatrix; };
 	Matrix4f getViewMatrix() { return _viewMatrix; };

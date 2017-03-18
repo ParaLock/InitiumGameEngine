@@ -25,6 +25,7 @@ float4 Pshader(PixelInputType input) : SV_TARGET
 	
 	mat.specularPower = worldPos.w;
 	mat.specularIntensity = normals.w;
+	
 	CoreData core;
 	
 	core.viewPos = input.viewPos;

@@ -25,7 +25,7 @@ public:
 	LightComponent(Light* light);
 	~LightComponent();
 
-	void update();
+	void update(float delta);
 
 	void onEvent(EVENT_PTR evt);
 
