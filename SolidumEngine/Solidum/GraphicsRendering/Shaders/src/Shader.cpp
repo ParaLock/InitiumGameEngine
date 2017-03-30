@@ -203,6 +203,9 @@ void Shader::updateUniform(std::string varName, void * pData)
 
 		varsBuff->updateVar(varName, pData);
 	}
+	else {
+		int test = -1;
+	}
 }
 
 void Shader::updateGPU()

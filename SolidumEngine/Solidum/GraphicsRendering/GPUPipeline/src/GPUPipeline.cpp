@@ -57,6 +57,13 @@ void GPUPipeline::load(IResourceBuilder * builder)
 
 			std::string debugTest = splitStr.at(0);
 
+			if (splitStr.at(0) == "OUTPUT_GBUFFER_GROUP") {
+				if (splitStr.at(1) == "BIND_DS") {
+
+					_outputRTsBindDS = true;
+				}
+			}
+
 			if (splitStr.at(0) == "VS_SHADER_END") {
 				shaderContext = SHADER_TYPE::INVALID;
 			}
@@ -112,16 +119,15 @@ void GPUPipeline::load(IResourceBuilder * builder)
 
 					IResource* res = ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->getResource(splitStr.at(3));
 
-					attachResource(res,
-						splitStr.at(3), SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET, shaderContext, true);
+					attachResource(res, splitStr.at(3), SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET, shaderContext, true);
 
 				}
 				else if (splitStr.at(1) == "GBUFFER" && splitStr.at(2) == "INPUT") {
 
 					IResource* res = ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->getResource(splitStr.at(3));
 
-					attachResource(res,
-						splitStr.at(3), SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET, shaderContext, false);
+
+					attachResource(res, splitStr.at(3), SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET, shaderContext, false);
 				}
 				if (splitStr.at(1) == "TEXTURE_HOOK") {
 
@@ -246,11 +252,11 @@ void GPUPipeline::setHookResource(IResource* res, std::string name)
 }
 
 void GPUPipeline::attachResource(IResource* res, std::string name, SHADER_RESOURCE_TYPE type,
-	SHADER_TYPE parentShader, bool isOutput)
+	SHADER_TYPE parentShader, bool rt_isOutput)
 {
 	GPUPipelineElement* newElement = new GPUPipelineElement();
 
-	newElement->isOutput = isOutput;
+	newElement->rt_isOutput = rt_isOutput;
 
 	newElement->type = type;
 	newElement->parentShader = parentShader;
@@ -281,18 +287,13 @@ void GPUPipeline::attachResource(IResource* res, std::string name, SHADER_RESOUR
 
 	if (type == SHADER_RESOURCE_TYPE::SHADER_CONSTANT_BUFFER) {
 
-		//if (_boundCbuffers.find(name) == _boundCbuffers.end()) {
+		DynamicStruct* generalBuff = res->getCore<DynamicStruct>();
 
-			//_boundCbuffers.insert({ name, res->getCore<DynamicStruct>() });
+		std::vector<std::string> varNameList = generalBuff->getVarNameList();
 
-			DynamicStruct* generalBuff = res->getCore<DynamicStruct>();
-
-			std::vector<std::string> varNameList = generalBuff->getVarNameList();
-
-			for (unsigned int i = 0; i < varNameList.size(); ++i) {
-				_constantBufferMemberNameMap->insert({ varNameList[i], generalBuff });
-			}
-		//}
+		for (unsigned int i = 0; i < varNameList.size(); ++i) {
+			_constantBufferMemberNameMap->insert({ varNameList[i], generalBuff });
+		}
 	}
 
 	_elementList->insert({ name, newElement });
@@ -345,14 +346,15 @@ void GPUPipeline::applyState()
 			}
 
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET) {
-				if (element->isOutput)
+				if (element->rt_isOutput)
 				{
 					outputRTs.push_back(element->core);
 				}
 				else {
+
 					GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
 						new PipelineRenderTargetCommand(RENDER_TARGET_OP_TYPE::BIND_AS_INPUT,
-							element->parentShader, element->bindSlot, std::list<IResource*>{ element->core }));
+							element->parentShader, element->bindSlot, _outputRTsBindDS, std::list<IResource*>{ element->core }));
 				}
 			}
 		}
@@ -363,7 +365,7 @@ void GPUPipeline::applyState()
 	
 
 	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineRenderTargetCommand(RENDER_TARGET_OP_TYPE::BIND_AS_OUTPUT,
-		SHADER_TYPE::INVALID, -1, outputRTs));
+		SHADER_TYPE::INVALID, -1, _outputRTsBindDS, outputRTs));
 
 	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineSetBlendStateCommand(blendState));
 	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineSetDepthTestStateCommand(depthState));
@@ -376,7 +378,7 @@ void GPUPipeline::applyState()
 
 			if(op.resType == SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET)
 				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new PipelineRenderTargetCommand(RENDER_TARGET_OP_TYPE::CLEAR, SHADER_TYPE::INVALID, -1, std::list<IResource*>{op.opTarget}));
+					new PipelineRenderTargetCommand(RENDER_TARGET_OP_TYPE::CLEAR, SHADER_TYPE::INVALID, -1, false, std::list<IResource*>{op.opTarget}));
 		
 			if (op.resType == SHADER_RESOURCE_TYPE::SHADER_ZBUFFER)
 				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineClearDepthStencil());

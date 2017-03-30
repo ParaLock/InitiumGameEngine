@@ -1,15 +1,10 @@
 PIPELINE_INIT 
 
-	INIT GBUFFER color_gbuff
-	INIT GBUFFER normals_gbuff
-	INIT GBUFFER position_gbuff
-	INIT GBUFFER specular_gbuff
-	
-	INIT SAMPLER WRAP LINEAR wrapSampler
-	
 PIPELINE_INIT_END
 
 PIPELINE_BEGIN
+	
+	OUTPUT_GBUFFER_GROUP BIND_DS
 	
 	BIND GBUFFER OUTPUT color_gbuff
 	BIND GBUFFER OUTPUT normals_gbuff

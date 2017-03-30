@@ -1,8 +1,11 @@
 #include "../include/SkyBoxRenderNode.h"
 
 
-SkyBoxRenderNode::SkyBoxRenderNode(IShader * shader, Texture * tex, mesh * skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor)
+SkyBoxRenderNode::SkyBoxRenderNode(IShader * shader, Texture * tex, mesh * skydome, 
+	CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, uint64_t id)
 {
+	_id = id;
+
 	_shader = shader;
 	_cubeTex = tex;
 	_skydomeMesh = skydome;

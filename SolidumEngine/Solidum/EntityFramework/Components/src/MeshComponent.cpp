@@ -1,40 +1,41 @@
 #include "../include/MeshComponent.h"
 
 
-MeshComponent::MeshComponent(mesh* mesh, Texture* tex, Material* mat)
+MeshComponent::MeshComponent(mesh* mesh, Texture* tex, Material* mat, int index)
 {
-	setType(COMPONENT_TYPE::MESH_COMPONENT);
+	_index = index;
 
-	_renderNodes = mat->generateClientRenderNodes(mesh, tex);
+	_mesh = mesh;
+	_tex = tex;
+	_mat = mat;
+
+	setType(COMPONENT_TYPE::MESH_COMPONENT);
 }
 
 MeshComponent::~MeshComponent()
 {
-	for each (uint64_t nodeid in _renderNodes)
-		GraphicsCore::getInstance()->getRenderNodeTree()->removeNode(nodeid);
+}
+
+void MeshComponent::init()
+{
+	if (_parent != nullptr) {
+		//Static meshes are always index + 1
+		_parent->getRenderObject()->addStaticGeometry(_mesh, _index + 1);
+		_parent->getRenderObject()->addTexture(_tex, _index + 1);
+		_parent->getRenderObject()->addMaterial(_mat, _index + 1);
+	}
 }
 
 void MeshComponent::update(float delta)
 {
-	int nodeCount = 0;
+	RenderParams params;
 
-	LocalRenderingParams params;
+	params.setPerNodeParam_Transform(_parent->getTransform());
+	params.setPerNodeParam_isVisible(true);
+	params.setPerNodeParam_DepthTestEnableState(true);
 
-	params._transform = _parent->getTransform();
-
-	for each (uint64_t nodeid in _renderNodes) {
-
-		if (nodeCount > 0) {
-			params._depthTestEnabled = false;
-		}
-
-		GraphicsCore::getInstance()->getRenderNodeTree()->updateNodeVisibility(true, nodeid);
-		GraphicsCore::getInstance()->getRenderNodeTree()->updateNodeLocalRenderParams(params, nodeid);
-
-		nodeCount++;
-	}
-
-	params._depthTestEnabled = true;
+	if(_parent != nullptr)
+		_parent->getRenderObject()->updateRenderNode(RENDER_NODE_TYPE::MESH_RENDER_NODE, _index + 1, params);
 }
 
 void MeshComponent::onEvent(EVENT_PTR evt)

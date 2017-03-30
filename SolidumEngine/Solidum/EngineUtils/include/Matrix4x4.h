@@ -7,8 +7,8 @@
 template<typename T>
 class Matrix4x4 {
 private:
-	T m[4][4];
 public:
+	T m[4][4];
 
 	Matrix4x4<T>() {
 
@@ -247,6 +247,152 @@ public:
 		result[2][1] = -sin(pitch);
 		result[2][2] = (cos(pitch) * cos(yaw));
 		result[3][3] = 1;
+
+		return result;
+	}
+
+	inline static Matrix4x4<T> invert(Matrix4x4<T> mat) {
+
+
+		Matrix4x4<T> result = Matrix4x4<T>::get_identity();
+
+		float temp[16];
+		float elements[16];
+
+		int lim = 4 * 4;
+
+		for (int i = 0; i < lim; i++) {
+			temp[i] = 0;
+			elements[i] = 0;
+		}
+
+
+		for (int q = 0; q < lim; ++q) {
+			elements[q] = mat[q / 4][q%4];
+		}
+
+		temp[0] = elements[5] * elements[10] * elements[15] -
+			elements[5] * elements[11] * elements[14] -
+			elements[9] * elements[6] * elements[15] +
+			elements[9] * elements[7] * elements[14] +
+			elements[13] * elements[6] * elements[11] -
+			elements[13] * elements[7] * elements[10];
+
+		temp[4] = -elements[4] * elements[10] * elements[15] +
+			elements[4] * elements[11] * elements[14] +
+			elements[8] * elements[6] * elements[15] -
+			elements[8] * elements[7] * elements[14] -
+			elements[12] * elements[6] * elements[11] +
+			elements[12] * elements[7] * elements[10];
+
+		temp[8] = elements[4] * elements[9] * elements[15] -
+			elements[4] * elements[11] * elements[13] -
+			elements[8] * elements[5] * elements[15] +
+			elements[8] * elements[7] * elements[13] +
+			elements[12] * elements[5] * elements[11] -
+			elements[12] * elements[7] * elements[9];
+
+		temp[12] = -elements[4] * elements[9] * elements[14] +
+			elements[4] * elements[10] * elements[13] +
+			elements[8] * elements[5] * elements[14] -
+			elements[8] * elements[6] * elements[13] -
+			elements[12] * elements[5] * elements[10] +
+			elements[12] * elements[6] * elements[9];
+
+		temp[1] = -elements[1] * elements[10] * elements[15] +
+			elements[1] * elements[11] * elements[14] +
+			elements[9] * elements[2] * elements[15] -
+			elements[9] * elements[3] * elements[14] -
+			elements[13] * elements[2] * elements[11] +
+			elements[13] * elements[3] * elements[10];
+
+		temp[5] = elements[0] * elements[10] * elements[15] -
+			elements[0] * elements[11] * elements[14] -
+			elements[8] * elements[2] * elements[15] +
+			elements[8] * elements[3] * elements[14] +
+			elements[12] * elements[2] * elements[11] -
+			elements[12] * elements[3] * elements[10];
+
+		temp[9] = -elements[0] * elements[9] * elements[15] +
+			elements[0] * elements[11] * elements[13] +
+			elements[8] * elements[1] * elements[15] -
+			elements[8] * elements[3] * elements[13] -
+			elements[12] * elements[1] * elements[11] +
+			elements[12] * elements[3] * elements[9];
+
+		temp[13] = elements[0] * elements[9] * elements[14] -
+			elements[0] * elements[10] * elements[13] -
+			elements[8] * elements[1] * elements[14] +
+			elements[8] * elements[2] * elements[13] +
+			elements[12] * elements[1] * elements[10] -
+			elements[12] * elements[2] * elements[9];
+
+		temp[2] = elements[1] * elements[6] * elements[15] -
+			elements[1] * elements[7] * elements[14] -
+			elements[5] * elements[2] * elements[15] +
+			elements[5] * elements[3] * elements[14] +
+			elements[13] * elements[2] * elements[7] -
+			elements[13] * elements[3] * elements[6];
+
+		temp[6] = -elements[0] * elements[6] * elements[15] +
+			elements[0] * elements[7] * elements[14] +
+			elements[4] * elements[2] * elements[15] -
+			elements[4] * elements[3] * elements[14] -
+			elements[12] * elements[2] * elements[7] +
+			elements[12] * elements[3] * elements[6];
+
+		temp[10] = elements[0] * elements[5] * elements[15] -
+			elements[0] * elements[7] * elements[13] -
+			elements[4] * elements[1] * elements[15] +
+			elements[4] * elements[3] * elements[13] +
+			elements[12] * elements[1] * elements[7] -
+			elements[12] * elements[3] * elements[5];
+
+		temp[14] = -elements[0] * elements[5] * elements[14] +
+			elements[0] * elements[6] * elements[13] +
+			elements[4] * elements[1] * elements[14] -
+			elements[4] * elements[2] * elements[13] -
+			elements[12] * elements[1] * elements[6] +
+			elements[12] * elements[2] * elements[5];
+
+		temp[3] = -elements[1] * elements[6] * elements[11] +
+			elements[1] * elements[7] * elements[10] +
+			elements[5] * elements[2] * elements[11] -
+			elements[5] * elements[3] * elements[10] -
+			elements[9] * elements[2] * elements[7] +
+			elements[9] * elements[3] * elements[6];
+
+		temp[7] = elements[0] * elements[6] * elements[11] -
+			elements[0] * elements[7] * elements[10] -
+			elements[4] * elements[2] * elements[11] +
+			elements[4] * elements[3] * elements[10] +
+			elements[8] * elements[2] * elements[7] -
+			elements[8] * elements[3] * elements[6];
+
+		temp[11] = -elements[0] * elements[5] * elements[11] +
+			elements[0] * elements[7] * elements[9] +
+			elements[4] * elements[1] * elements[11] -
+			elements[4] * elements[3] * elements[9] -
+			elements[8] * elements[1] * elements[7] +
+			elements[8] * elements[3] * elements[5];
+
+		temp[15] = elements[0] * elements[5] * elements[10] -
+			elements[0] * elements[6] * elements[9] -
+			elements[4] * elements[1] * elements[10] +
+			elements[4] * elements[2] * elements[9] +
+			elements[8] * elements[1] * elements[6] -
+			elements[8] * elements[2] * elements[5];
+
+		float determinant = elements[0] * temp[0] + elements[1] * temp[4] + elements[2] * temp[8] + elements[3] * temp[12];
+		determinant = 1.0f / determinant;
+
+		for (int i = 0; i < 4 * 4; i++)
+			elements[i] = temp[i] * determinant;
+
+		for (int i = 0; i <4; i++)
+			for (int j = 0; j < 4; j++)
+				result[i][j] = temp[(j * 4) + i];
+
 
 		return result;
 	}

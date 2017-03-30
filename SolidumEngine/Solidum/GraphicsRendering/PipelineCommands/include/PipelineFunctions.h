@@ -13,7 +13,7 @@ public:
 	static std::function<void(int, SHADER_TYPE, void*)> pipeline_bindConstantBuffer;
 
 	static std::function<void(void* rt, SHADER_TYPE parentShader, int bindSlot)> pipeline_bindRenderTargetAsSR;
-	static std::function<void(std::vector<void*> renderTargets)> pipeline_bindRenderTargetAsRT;
+	static std::function<void(std::vector<void*> renderTargets, bool bindDS)> pipeline_bindRenderTargetAsRT;
 
 	static std::function<void(void*, UINT, BUFFER_TYPE)> pipeline_bindBuffer;
 	static std::function<void(void*)> pipeline_bindInputLayout;

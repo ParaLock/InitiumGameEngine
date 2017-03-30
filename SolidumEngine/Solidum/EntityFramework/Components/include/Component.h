@@ -6,12 +6,16 @@
 
 #include "../../Entity/include/IEntity.h"
 
+#include "../../../GraphicsRendering/EntityRenderObject/include/IEntityRenderObject.h"
+
 #include "IComponent.h"
 
 class Component : public IComponent, public IResource
 {
 private:
 protected:
+	int _index = -1;
+
 	COMPONENT_TYPE _type;
 
 	IEntity* _parent = nullptr;
@@ -20,6 +24,8 @@ protected:
 public:
 	Component();
 	~Component();
+
+	virtual void init() = 0;
 
 	COMPONENT_TYPE getType() { return _type; }
 

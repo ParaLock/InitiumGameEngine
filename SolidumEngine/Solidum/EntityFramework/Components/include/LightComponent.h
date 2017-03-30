@@ -12,8 +12,6 @@ class LightComponent : public Component
 private:
 	Light* _light;
 
-	std::list<uint64_t> _renderNodes;
-
 	bool _parentTransformDirty = false;
 
 	void load(IResourceBuilder* builder) { isLoaded = true; };
@@ -22,8 +20,10 @@ private:
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 public:
-	LightComponent(Light* light);
+	LightComponent(Light* light, int index);
 	~LightComponent();
+
+	void init();
 
 	void update(float delta);
 

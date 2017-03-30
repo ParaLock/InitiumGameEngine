@@ -15,10 +15,12 @@ private:
 	mesh* _orthoMesh;
 	Light* _light;
 public:
-	LightRenderNode(Light* light);
+	LightRenderNode(Light* light, uint64_t id);
 	~LightRenderNode();
 
 	ILight* getLight() { return _light; }
+
+	virtual void* getVar(std::string varname);
 
 	void render();
 };

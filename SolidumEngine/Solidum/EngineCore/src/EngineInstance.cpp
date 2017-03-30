@@ -4,6 +4,9 @@
 
 EngineInstance::EngineInstance(window* renderWindow)
 {
+
+
+
 	_eventFrameworkCore = new EventFrameworkCore();
 
 	_eventFrameworkCore->registerGlobalEventHub(new EventHub(), "ComponentEventHub");
@@ -85,7 +88,8 @@ void EngineInstance::render()
 {
 	IEntity* cameraEntity = _currentWorld->getEntity(_currentWorld->getPrimaryCameraID());
 
-	_graphicsCore->setCurrentRenderingCamera((CameraComponent*)cameraEntity->getComponentByType(COMPONENT_TYPE::CAMERA_COMPONENT));
+	_graphicsCore->setCurrentRenderingCamera((CameraComponent*)cameraEntity->
+		getComponentsByType(COMPONENT_TYPE::CAMERA_COMPONENT)->front());
 
 	_graphicsCore->render();
 

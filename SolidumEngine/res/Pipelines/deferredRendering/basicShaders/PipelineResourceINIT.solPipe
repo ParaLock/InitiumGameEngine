@@ -1,0 +1,14 @@
+PIPELINE_INIT 
+
+	INIT GBUFFER color_gbuff
+	INIT GBUFFER normals_gbuff
+	INIT GBUFFER position_gbuff
+	INIT GBUFFER specular_gbuff
+	INIT GBUFFER shadow_map
+	INIT GBUFFER light_space_map
+
+	INIT SAMPLER WRAP LINEAR wrapSampler
+	INIT SAMPLER WRAP LINEAR pointSampler
+	
+PIPELINE_INIT_END
+

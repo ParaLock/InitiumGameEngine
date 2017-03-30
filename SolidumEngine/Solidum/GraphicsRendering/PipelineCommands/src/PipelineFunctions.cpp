@@ -14,7 +14,7 @@ std::function<void(int, SHADER_TYPE, void*)> PipelineFunctions::pipeline_bindTex
 std::function<void(int, SHADER_TYPE, void*)> PipelineFunctions::pipeline_bindConstantBuffer;
 
 std::function<void(void* rt, SHADER_TYPE parentShader, int bindSlot)> PipelineFunctions::pipeline_bindRenderTargetAsSR;
-std::function<void(std::vector<void*> renderTargets)> PipelineFunctions::pipeline_bindRenderTargetAsRT;
+std::function<void(std::vector<void*> renderTargets, bool bindDS)> PipelineFunctions::pipeline_bindRenderTargetAsRT;
 
 std::function<void(void*, UINT, BUFFER_TYPE)> PipelineFunctions::pipeline_bindBuffer;
 std::function<void(void*)> PipelineFunctions::pipeline_bindInputLayout;

@@ -84,6 +84,7 @@ public:
 
 	Matrix4f getViewMatrix();
 	Matrix4f getProjectionMatrix();
+	Matrix4f getModelMatrix();
 
 	bool getIsShadowCaster() { return _isShadowCaster; };
 	void setIsShadowCaster(bool isShaderCaster) { _isShadowCaster = isShaderCaster; };

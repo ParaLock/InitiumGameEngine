@@ -34,6 +34,8 @@ public:
 	SunMoonLightingComponent(Light* sun, Light* moon, float speed);
 	~SunMoonLightingComponent();
 
+	void init() {};
+
 	void update(float delta);
 
 	void onEvent(EVENT_PTR evt) {};

@@ -5,9 +5,6 @@
 #include "../../Directx11Rendering/dxDevice/include/dxDeviceManager.h"
 #include "../../Directx11Rendering/dxDevice/include/dxDeviceAccessor.h"
 #include "../../ActiveGraphicsAPI.h"
-
-#include "../../ActiveGraphicsAPI.h"
-
 #include "../../Directx11Rendering/dxRenderTarget/include/dxRenderTarget.h"
 
 #include "../../Lights/include/Light.h"

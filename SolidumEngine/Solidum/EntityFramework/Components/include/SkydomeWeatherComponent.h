@@ -49,9 +49,17 @@ private:
 	void load(IResourceBuilder* builder) { isLoaded = true; };
 	void unload() { isLoaded = false; };
 
+
+	IShader* _shader;
+	Texture* _tex;
+	mesh* _skydome;
+	CameraComponent* _cam;
+	int _index;
 public:
-	SkydomeWeatherComponent(IShader* shader, Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor);
+	SkydomeWeatherComponent(IShader* shader, Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, int index);
 	~SkydomeWeatherComponent();
+
+	void init();
 
 	void update(float delta);
 

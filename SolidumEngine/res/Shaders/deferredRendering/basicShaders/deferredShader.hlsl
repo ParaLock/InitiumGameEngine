@@ -78,11 +78,10 @@ PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 	output.normal.xyz = input.normal;
 	output.normal.w = cbuff_specularIntensity;
 	
-	output.position.xyz = input.worldPos.xyz;
+	output.position = input.worldPos;
 	
-	output.position.w = cbuff_specularPower;
+	output.specularColor.xyz = cbuff_specularColor.xyz;
 	
-	output.specularColor = cbuff_specularColor;
-
+	output.specularColor.w = cbuff_specularPower;
 	return output;
 }

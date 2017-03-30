@@ -14,7 +14,7 @@ class IShader;
 class RenderNode
 {
 protected:
-	uint64_t id;
+	uint64_t _id;
 	IShader* _shader;
 
 	RENDER_NODE_TYPE _type;
@@ -28,6 +28,8 @@ protected:
 public:
 	RenderNode();
 	~RenderNode();
+
+	virtual void* getVar(std::string varname) { return nullptr; };
 
 	virtual void updateGlobalRenderParams(GlobalRenderingParams params);
 	virtual void updateLocalRenderParams(LocalRenderingParams params);
@@ -44,6 +46,10 @@ public:
 
 	RENDER_NODE_TYPE getType() { return _type; }
 	RenderParams* getRenderParams() { return &_renderParams; };
+
+	bool getVisibility() { return _isVisible; };
+
+	uint64_t getID() { return _id; }
 
 	IShader* getShader() { return _shader; }
 };

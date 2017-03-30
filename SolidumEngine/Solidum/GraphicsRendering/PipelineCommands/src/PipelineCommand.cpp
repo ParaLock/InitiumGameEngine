@@ -83,13 +83,13 @@ void PipelineRenderTargetCommand::execute()
 			pRts.push_back(res->getParameter("RENDERTARGET"));
 		}
 
-		PipelineFunctions::pipeline_bindRenderTargetAsRT(pRts);
+		PipelineFunctions::pipeline_bindRenderTargetAsRT(pRts, _bindDS);
 	}
 
 	if (_op == RENDER_TARGET_OP_TYPE::CLEAR) {
 		for each(IResource* rt in _involvedRTList) {
 
-			rt->getCore<RenderTarget>()->Clear(0.0f, 0.0f, 0.0f, 0.0f);
+			rt->getCore<RenderTarget>()->Clear(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 	}
 }

@@ -116,6 +116,8 @@ class PipelineRenderTargetCommand : public PipelineCommand {
 private:
 	int _bindSlot;
 
+	bool _bindDS;
+
 	SHADER_TYPE _parentShader;
 
 	std::vector<IResource*> _involvedRTList;
@@ -123,12 +125,14 @@ private:
 	RENDER_TARGET_OP_TYPE _op;
 public:
 
-	PipelineRenderTargetCommand(RENDER_TARGET_OP_TYPE op, SHADER_TYPE parentShader, int bindSlot,
+	PipelineRenderTargetCommand(RENDER_TARGET_OP_TYPE op, SHADER_TYPE parentShader, int bindSlot, bool bindDS,
 		std::list<IResource*> involvedRTs) {
 
 		_parentShader = parentShader;
 
 		_bindSlot = bindSlot;
+
+		_bindDS = bindDS;
 
 		_op = op;
 

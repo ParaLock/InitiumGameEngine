@@ -62,7 +62,7 @@ private:
 
 	HRTimer camTimer;
 
-	Matrix4f _projectionMatrix, _orthoProjectionMatrix, _viewMatrix, _startViewMatrix, _worldMatrix, _matRotate;
+	Matrix4f _projectionMatrix, _orthoProjectionMatrix, _viewMatrix, _startViewMatrix, _worldMatrix, _matRotate, _matTranslation, _matModelMatrix;
 
 	Vector3f _eye, _view, _up, _forward, _strafeRight;
 
@@ -80,6 +80,8 @@ public:
 	CameraComponent(float near_value, float far_value);
 	~CameraComponent();
 
+	void init() {}
+
 	void onEvent(EVENT_PTR evt);
 
 	void adjustYawAndPitch(float yaw, float pitch);
@@ -95,6 +97,15 @@ public:
 	Matrix4f getProjectionMatrix() { return _projectionMatrix; };
 	Matrix4f getStartViewMatrix() { return _startViewMatrix; };
 	Matrix4f getOrthoProjectionMatrix() { return _orthoProjectionMatrix; }
+
+	Matrix4f getModelMatrix() { 
+
+		_matTranslation = Matrix4f::get_translation(_eye);
+
+		_matModelMatrix = _matTranslation * _matRotate;
+
+		return _matModelMatrix; 
+	}
 
 	Vector3f getPos() { return _eye; }
 };

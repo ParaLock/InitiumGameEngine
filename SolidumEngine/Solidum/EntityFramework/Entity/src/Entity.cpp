@@ -2,13 +2,13 @@
 
 
 
-Entity::Entity(World* world)
+Entity::Entity()
 {
-	_transform = new Transform;
-	_components = new std::map<COMPONENT_TYPE, IComponent*>;
-	_children = new std::list<IEntity*>;
+	_renderObject = new EntityRenderObject();
 
-	_world = world;
+	_transform = new Transform;
+	_components = new std::map<COMPONENT_TYPE, std::list<IComponent*>*>;
+	_children = new std::list<IEntity*>;
 }
 
 
@@ -23,7 +23,12 @@ void Entity::addComponent(IComponent * comp)
 {
 	comp->setParent(this);
 
-	_components->operator[](comp->getType()) = comp;
+	comp->init();
+
+	if (_components->operator[](comp->getType()) == nullptr) 
+		_components->operator[](comp->getType()) = new std::list<IComponent*>;
+
+	_components->operator[](comp->getType())->push_back(comp);
 }
 
 void Entity::addChild(IEntity * entity)
@@ -33,7 +38,7 @@ void Entity::addChild(IEntity * entity)
 	_children->push_back(entity);
 }
 
-IComponent * Entity::getComponentByType(COMPONENT_TYPE type)
+std::list<IComponent*> * Entity::getComponentsByType(COMPONENT_TYPE type)
 {
 	return _components->at(type);
 }
@@ -45,9 +50,13 @@ void Entity::update(float delta)
 
 	for (auto itr = _components->begin(); itr != _components->end(); itr++) {
 		
-		IComponent* comp = itr->second;
-		
-		comp->update(delta);
+		for (auto compItr = _components->at(itr->first)->begin();
+			 compItr != _components->at(itr->first)->end(); compItr++) {
+
+			IComponent* comp = *compItr;
+
+			comp->update(delta);
+		}
 	}
 
 	for (auto itr = _children->begin(); itr != _children->end(); itr++) {
@@ -57,4 +66,5 @@ void Entity::update(float delta)
 		child->update(delta);
 	}
 
+	
 }

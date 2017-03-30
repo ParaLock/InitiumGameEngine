@@ -22,7 +22,7 @@ void dx11_bind_shader_texture(int bindSlot, SHADER_TYPE parentShader, void* pTex
 void dx11_bind_shader_input_layout(void* pInputLayout);
 void dx11_bind_shader_buffer(void* buffer, UINT buffStride, BUFFER_TYPE buffType);
 void dx11_bind_render_target_as_sr(void* rt, SHADER_TYPE parentShader, int bindSlot);
-void dx11_bind_render_targets_as_rt(std::vector<void*> renderTargets);
+void dx11_bind_render_targets_as_rt(std::vector<void*> renderTargets, bool bindDS);
 void dx11_set_primitive_topology(PRIMITIVE_TOPOLOGY ptType);
 
 void dx11_set_depth_test_state(DEPTH_TEST_STATE depthTestState);

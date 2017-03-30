@@ -101,7 +101,7 @@ std::vector<RenderNode*> RenderNodeTree::queryAllLights()
 		RenderNode* child = itr->second;
 		while (child != nullptr) {
 
-			if (child->getType() == RENDER_NODE_TYPE::LIGHT_RENDER_NODE) {
+			if (child->getType() == RENDER_NODE_TYPE::LIGHT_RENDER_NODE && child->getVisibility() == true) {
 				lights.push_back(child);
 			}
 
@@ -110,6 +110,51 @@ std::vector<RenderNode*> RenderNodeTree::queryAllLights()
 	}
 
 	return lights;
+}
+
+std::vector<RenderNode*> RenderNodeTree::queryAllShadowCastingLights()
+{
+	std::vector<RenderNode*> lights;
+
+	for (auto itr = _rootNodes->begin(); itr != _rootNodes->end(); itr++) {
+
+		RenderNode* child = itr->second;
+		while (child != nullptr) {
+
+			if (child->getType() == RENDER_NODE_TYPE::LIGHT_RENDER_NODE && child->getVisibility() == true) {
+
+				bool* isCaster = (bool*)child->getVar("IS_SHADOW_CASTER");
+
+				if (*isCaster) {
+
+					lights.push_back(child);
+				}
+			}
+			child = child->getChild();
+		}
+	}
+
+	return lights;
+}
+
+std::vector<RenderNode*> RenderNodeTree::queryAllMeshes()
+{
+	std::vector<RenderNode*> meshes;
+
+	for (auto itr = _rootNodes->begin(); itr != _rootNodes->end(); itr++) {
+
+		RenderNode* child = itr->second;
+		while (child != nullptr) {
+
+			if (child->getType() == RENDER_NODE_TYPE::MESH_RENDER_NODE && child->getVisibility() == true) {
+				meshes.push_back(child);
+			}
+
+			child = child->getChild();
+		}
+	}
+
+	return meshes;
 }
 
 void RenderNodeTree::removeNode(uint64_t id)

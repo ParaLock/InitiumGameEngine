@@ -14,6 +14,7 @@ struct LocalRenderingParams {
 	CameraComponent* _renderCamera;
 
 	bool _depthTestEnabled;
+	bool _isVisible;
 
 	Vector4f _skydomeApexColor;
 	Vector4f _skydomeCenterColor;
@@ -47,10 +48,13 @@ public:
 	void setPerNodeParam_Transform(Transform* transform) { local_params._transform = transform; };
 	void setPerNodeParam_DepthTestEnableState(bool depthTest) { local_params._depthTestEnabled = depthTest; }
 
+	void setPerNodeParam_isVisible(bool isVisible) { local_params._isVisible = isVisible; }
+
 	CameraComponent* getPerNodeParam_RenderCamera() { return local_params._renderCamera; };
 	bool getPerNodeParam_ForwardRendering() { return local_params._useForwardRendering; }
 	Transform* getPerNodeParam_Transform() { return local_params._transform; }
 	bool getPerNodeParam_DepthTestEnableState() { return local_params._depthTestEnabled; }
+	bool getPerNodeParam_isVisible() { return local_params._isVisible; }
 
 	GlobalRenderingParams getAllGlobalParams() { return global_params; };
 	LocalRenderingParams getAllLocalParams() { return local_params; };

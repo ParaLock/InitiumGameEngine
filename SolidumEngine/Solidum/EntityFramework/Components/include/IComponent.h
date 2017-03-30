@@ -12,6 +12,8 @@ public:
 	IComponent();
 	~IComponent();
 
+	virtual void init() = 0;
+
 	virtual COMPONENT_TYPE getType() = 0;
 
 	virtual void update(float delta) = 0;

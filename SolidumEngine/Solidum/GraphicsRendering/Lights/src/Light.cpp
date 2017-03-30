@@ -5,7 +5,9 @@ Light::Light()
 	_projectionMatrix = Matrix4f::get_identity();
 	_viewMatrix = Matrix4f::get_identity();
 
-	_projectionMatrix = Matrix4f::get_perspective((float)M_PI / 2.0f, 1.0f, 1.0f, 100.0f);
+	//_viewMatrix = Matrix4f::get_lookAt(Vector3f(-5.0f, 5.0f, -5.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
+
+	_projectionMatrix = Matrix4f::get_perspective(((float)M_PI / 2.0f), 1.0f, 1.0f, 100.0f);
 }
 
 
@@ -69,7 +71,8 @@ void Light::setAttenuationExponent(float exponent)
 Matrix4f Light::getViewMatrix()
 {
 	if (_lightViewMatDirty) {
-		_viewMatrix = Matrix4f::get_lookAt(_GenericData._pos, _GenericData._direction, Vector3f(0.0f, 1.0f, 0.0f));
+
+		_viewMatrix = Matrix4f::get_lookAt(_GenericData._direction, Vector3f(0.0f, 0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
 	
 		_lightViewMatDirty = false;
 	}
@@ -80,4 +83,9 @@ Matrix4f Light::getViewMatrix()
 Matrix4f Light::getProjectionMatrix()
 {
 	return _projectionMatrix;
+}
+
+Matrix4f Light::getModelMatrix()
+{
+	return Matrix4f::get_translation(_GenericData._pos);
 }

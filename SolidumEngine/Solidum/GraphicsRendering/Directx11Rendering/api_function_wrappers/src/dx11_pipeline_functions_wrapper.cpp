@@ -86,7 +86,7 @@ void dx11_bind_render_target_as_sr(void* rt, SHADER_TYPE parentShader, int bindS
 	}
 }
 
-void dx11_bind_render_targets_as_rt(std::vector<void*> renderTargets) {
+void dx11_bind_render_targets_as_rt(std::vector<void*> renderTargets, bool bindDS) {
 
 	ID3D11RenderTargetView **dxRenderTargets = new ID3D11RenderTargetView*[renderTargets.size()];
 
@@ -95,8 +95,16 @@ void dx11_bind_render_targets_as_rt(std::vector<void*> renderTargets) {
 		dxRenderTargets[i] = (ID3D11RenderTargetView*)renderTargets.at(i);
 	}
 
-	dxDeviceAccessor::dxEncapsulator->dxDevContext->OMSetRenderTargets(renderTargets.size(),
-		dxRenderTargets, dxDeviceAccessor::dxEncapsulator->depthStencil);
+	if (bindDS) {
+
+		dxDeviceAccessor::dxEncapsulator->dxDevContext->OMSetRenderTargets(renderTargets.size(),
+			dxRenderTargets, dxDeviceAccessor::dxEncapsulator->depthStencil);
+	}
+	else {
+		dxDeviceAccessor::dxEncapsulator->dxDevContext->OMSetRenderTargets(renderTargets.size(),
+			dxRenderTargets, nullptr);
+	}
+
 
 	delete[] dxRenderTargets;
 }

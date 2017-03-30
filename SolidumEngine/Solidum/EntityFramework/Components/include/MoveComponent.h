@@ -40,6 +40,8 @@ public:
 	MoveComponent(Vector3f startPos, float movementSpeed, bool keyboardControl, KEY_FUNCTION_MAP* keyMap);
 	~MoveComponent();
 
+	void init() {};
+
 	void update(float delta);
 
 	void onEvent(EVENT_PTR evt);

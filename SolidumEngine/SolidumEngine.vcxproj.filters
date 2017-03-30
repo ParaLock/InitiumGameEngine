@@ -91,6 +91,10 @@
     <ClInclude Include="Solidum\EntityFramework\Components\include\SkydomeWeatherComponent.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\OrbitComponent.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\SunMoonLightingComponent.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderNode\include\ShadowGenRenderNode.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\EntityRenderObject\include\EntityRenderObject.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\EntityRenderObject\include\IEntityRenderObject.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\ResourcePool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -173,5 +177,9 @@
     <ClCompile Include="Solidum\EntityFramework\Components\src\SkydomeWeatherComponent.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\OrbitComponent.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\SunMoonLightingComponent.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\ShadowGenRenderNode.cpp" />
+    <ClCompile Include="Solidum\ResourceFramework\src\ResourcePool.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\EntityRenderObject\src\EntityRenderObject.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\EntityRenderObject\src\IEntityRenderObject.cpp" />
   </ItemGroup>
 </Project>

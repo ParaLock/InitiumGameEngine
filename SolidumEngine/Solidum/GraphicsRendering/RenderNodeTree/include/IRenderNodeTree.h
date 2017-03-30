@@ -24,6 +24,9 @@ public:
 
 	virtual void updateNodeVisibility(bool isVisible, uint64_t nodeid) = 0;
 
+	virtual std::vector<RenderNode*> queryAllShadowCastingLights() = 0;
+	virtual std::vector<RenderNode*> queryAllMeshes() = 0;
+
 	virtual void removeNode(uint64_t id) = 0;
 
 	virtual void frustrumCull() = 0;

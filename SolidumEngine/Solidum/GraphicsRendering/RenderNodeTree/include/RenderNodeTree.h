@@ -28,6 +28,8 @@ public:
 	void updateNodeVisibility(bool isVisible, uint64_t nodeid);
 
 	std::vector<RenderNode*> queryAllLights();
+	std::vector<RenderNode*> queryAllShadowCastingLights();
+	std::vector<RenderNode*> queryAllMeshes();
 
 	void removeNode(uint64_t id);
 

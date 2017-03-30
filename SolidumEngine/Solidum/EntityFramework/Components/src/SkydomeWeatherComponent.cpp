@@ -2,15 +2,18 @@
 
 
 
-SkydomeWeatherComponent::SkydomeWeatherComponent(IShader* shader, Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor)
+SkydomeWeatherComponent::SkydomeWeatherComponent(IShader* shader, Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, int index)
 {
+	_index = index;
+
 	_weatherApexColor = apexColor;
 	_weatherCenterColor = centerColor;
 
-	_renderNodeID = GraphicsCore::getInstance()->getInstance()->getRenderNodeTree()->getUniqueNodeID();
-
-	GraphicsCore::getInstance()->getRenderNodeTree()->addNode(new 
-		SkyBoxRenderNode(shader, tex, skydome, cam, apexColor, centerColor), _renderNodeID);
+	_shader = shader;
+	_tex = tex;
+	_cam = cam;
+	_index = index;
+	_skydome = skydome;
 
 	setType(COMPONENT_TYPE::SKYBOX_WEATHER_COMPONENT);
 }
@@ -20,16 +23,26 @@ SkydomeWeatherComponent::~SkydomeWeatherComponent()
 {
 }
 
+void SkydomeWeatherComponent::init()
+{
+	uint64_t nodeID = GraphicsCore::getInstance()->getRenderNodeTree()->getUniqueNodeID();
+
+	_parent->getRenderObject()->addGenericRenderNode(new
+		SkyBoxRenderNode(_shader, _tex, _skydome, _cam, _weatherApexColor, _weatherCenterColor, nodeID),
+		RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index);
+}
+
 void SkydomeWeatherComponent::update(float delta)
 {
 	updateDayNightCycle(0.0005f);
 
-	LocalRenderingParams params;
+	RenderParams params;
 
-	params._skydomeApexColor = _weatherApexColor;
-	params._skydomeCenterColor = _weatherCenterColor;
+	params.setPerNodeParam_skydomeApexColor(_weatherApexColor);
+	params.setPerNodeParam_skydomeCenterColor(_weatherCenterColor);
 
-	GraphicsCore::getInstance()->getRenderNodeTree()->updateNodeLocalRenderParams(params, _renderNodeID);
+	if (_parent != nullptr)
+		_parent->getRenderObject()->updateRenderNode(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index, params);
 }
 
 void SkydomeWeatherComponent::updateDayNightCycle(float delta)
@@ -41,8 +54,6 @@ void SkydomeWeatherComponent::updateDayNightCycle(float delta)
 
 	switch (_skyCycle[_timeOfDayIndex].STATE) {
 	case TIME_OF_DAY_CYCLE::MID_DAY:
-
-		std::cout << "MID_DAY" << std::endl;
 
 		if (_weatherApexColor[0] < _skyCycle[_timeOfDayIndex].goal_rgb_apex[0])
 			_weatherApexColor[0] += 0.0001f;
@@ -74,7 +85,6 @@ void SkydomeWeatherComponent::updateDayNightCycle(float delta)
 
 		break;
 	case TIME_OF_DAY_CYCLE::SUN_RISE:
-		std::cout << "SUN_RISE" << std::endl;
 
 		if (_weatherApexColor[0] < _skyCycle[_timeOfDayIndex].goal_rgb_apex[0])
 			_weatherApexColor[0] += 0.0001f;
@@ -108,7 +118,6 @@ void SkydomeWeatherComponent::updateDayNightCycle(float delta)
 
 		break;
 	case TIME_OF_DAY_CYCLE::SUN_SET:
-		std::cout << "SUN_SET" << std::endl;
 
 		if (_weatherApexColor[0] < _skyCycle[_timeOfDayIndex].goal_rgb_apex[0])
 			_weatherApexColor[0] += 0.0001f;
@@ -142,7 +151,6 @@ void SkydomeWeatherComponent::updateDayNightCycle(float delta)
 
 		break;
 	case TIME_OF_DAY_CYCLE::NIGHT:
-		std::cout << "NIGHT" << std::endl;
 
 		if (_weatherApexColor[0] < _skyCycle[_timeOfDayIndex].goal_rgb_apex[0])
 			_weatherApexColor[0] += 0.0001f;

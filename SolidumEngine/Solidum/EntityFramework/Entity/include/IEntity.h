@@ -5,6 +5,8 @@ class IComponent;
 class Transform;
 class World;
 
+class IEntityRenderObject;
+
 class IEntity
 {
 public:
@@ -14,12 +16,12 @@ public:
 	virtual void addComponent(IComponent* comp) = 0;
 	virtual void addChild(IEntity* entity) = 0;
 
-	virtual IComponent* getComponentByType(COMPONENT_TYPE type) = 0;
+	virtual std::list<IComponent*>* getComponentsByType(COMPONENT_TYPE type) = 0;
+
+	virtual IEntityRenderObject* getRenderObject() = 0;
 
 	virtual void setParent(IEntity* parent) = 0;
 	virtual IEntity* getParent() = 0;
-
-	virtual World* getWorld() = 0;
 
 	virtual Transform* getTransform() = 0;
 

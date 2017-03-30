@@ -9,7 +9,7 @@ GraphicsCore * GraphicsCore::getInstance()
 
 
 GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool)
-{
+{	
 	if (singletonInstance == nullptr)
 		singletonInstance = this;
 	else
@@ -25,6 +25,7 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 	_gcqManager->setPrimaryCommandQueue("primaryGraphicsCommandQueue");
 
 	std::vector<SHADER_RENDER_TYPE> renderExecutionOrder;
+	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::SHADOW_MAP_RENDERING);
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::SKYBOX_RENDERING);
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::FORWARD_RENDERING);
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING);
@@ -54,9 +55,7 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 		PipelineFunctions::pipeline_reset = dx11_reset_pipeline;
 
 		PipelineFunctions::pipeline_clearDepthStencil = dx11_pipeline_clear_depth_stencil;
-
 		PipelineFunctions::pipeline_set_raster_state = dx11_set_raster_state;
-
 		PipelineFunctions::pipeline_drawIndexed = dx11_pipeline_draw_indexed;
 
 		_dxManager = new dxDeviceManager();

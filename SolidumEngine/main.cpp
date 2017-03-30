@@ -14,6 +14,7 @@
 #include "Solidum\EntityFramework\Components\include\SkydomeWeatherComponent.h"
 #include "Solidum\EntityFramework\Components\include\OrbitComponent.h"
 #include "Solidum\EntityFramework\Components\include\SunMoonLightingComponent.h"
+#include "Solidum\GraphicsRendering\RenderNode\include\ShadowGenRenderNode.h"
 
 #include "Solidum\InputHandling\include\InputHandler.h"
 
@@ -26,6 +27,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	LPSTR lpCmdLine,
 	int nCmdShow)
 {
+
 	AllocConsole();
 
 	freopen("CONOUT$", "w", stdout);
@@ -47,7 +49,12 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	ResourceManagerPool* resManagerPool = solidum->getResourceManagerPool();
 
 	//** RESOURCE LOADING **//
-	
+	GPUPipeline* pipelineResourceInit = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+		(L"./res/Pipelines/deferredRendering/basicShaders/PipelineResourceINIT.solPipe"), "pipeline_res_init", false)->getCore<GPUPipeline>();
+
+	GPUPipeline* shadowMapGenPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
+		(L"./res/Pipelines/deferredRendering/basicShaders/ShadowMapGenPipeline.solPipe"), "shadow_map_pipeline_state", false)->getCore<GPUPipeline>();
+
 	GPUPipeline* deferredRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
 		(L"./res/Pipelines/deferredRendering/basicShaders/deferredPipeline.solPipe"), "deferred_geometry_pipeline_state", false)->getCore<GPUPipeline>();
 
@@ -129,6 +136,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Shader* skydomeShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
 		(L"./res/Shaders/deferredRendering/basicShaders/skyShader.hlsl", SHADER_RENDER_TYPE::SKYBOX_RENDERING), "sky_shader", false)->getCore<Shader>();
 
+	Shader* shadowMapGenShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
+		(L"./res/Shaders/deferredRendering/basicShaders/deferredDepthMapGenShader.hlsl", SHADER_RENDER_TYPE::SHADOW_MAP_RENDERING), "shadow_map_gen_shader", false)->getCore<Shader>();
+
+	shadowMapGenShader->attachPipeline(shadowMapGenPipeline);
+
 	//Shader* forwardRenderingShader = resManagerPool->getResourceManager("ShaderManager")->createResource(&ShaderBuilder
 	//	(L"./res/Shaders/forwardRendering/forwardRendering.hlsl", SHADER_RENDER_TYPE::FORWARD_RENDERING), "forward_rendering_shader", false)->getCore<Shader>();
 
@@ -178,7 +190,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(LIGHT_TYPE::POINT_LIGHT, deferredRenderingPointLightShader);
 
 	sunLight->setColor(Vector4f(0.5f, 0.5f, 0.5f, 0.5f));
-	sunLight->setDirection(Vector3f(0, 0, 0));
+	sunLight->setDirection(Vector3f(-5.0f, 5.0f, -5.0f));
 	sunLight->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
 	sunLight->setIntensity(0.5f);
 
@@ -215,53 +227,62 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	pointLight3->setRange(60.5f);
 
-	Entity* globalWorldLighting = new Entity(world);
+	Entity* globalWorldLighting = new Entity();
 	globalWorldLighting->addComponent(new SunMoonLightingComponent(sunLight, moonLight, 0.1f));
 
-	Entity* pointLight1Entity = new Entity(world);
+	Entity* sun = new Entity();
+	sun->addComponent(new LightComponent(sunLight, 0));
+
+
+	Entity* pointLight1Entity = new Entity();
 
 	pointLight1Entity->addComponent(new MoveComponent(Vector3f(4.0f, 0.01f, -1.8f), 0.5, false, moveKeyConfig2));
-	pointLight1Entity->addComponent(new LightComponent(pointLight1));
+	pointLight1Entity->addComponent(new LightComponent(pointLight1, 0));
 
-	Entity* pointLight2Entity = new Entity(world);
+	Entity* pointLight2Entity = new Entity();
 
 	pointLight2Entity->addComponent(new MoveComponent(Vector3f(0.2f, 0.01f, -5.0f), 0.5, false, moveKeyConfig1));
-	pointLight2Entity->addComponent(new LightComponent(pointLight2));
+	pointLight2Entity->addComponent(new LightComponent(pointLight2, 0));
 
-	Entity* pointLight3Entity = new Entity(world);
+	Entity* pointLight3Entity = new Entity();
 
-	pointLight3Entity->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial));
+	pointLight3Entity->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, 0));
 	pointLight3Entity->addComponent(new MoveComponent(Vector3f(-0.2f, 0.01f, 8.0f), 0.5, false, moveKeyConfig1));
-	pointLight3Entity->addComponent(new LightComponent(pointLight3));
+	pointLight3Entity->addComponent(new LightComponent(pointLight3, 0));
 
-	Entity* hammer = new Entity(world);
+	Entity* hammer = new Entity();
 
-	hammer->addComponent(new MeshComponent(cubeMesh, metalTex, brickMaterial));
+	hammer->addComponent(new MeshComponent(cubeMesh, metalTex, brickMaterial, 0));
 
-	Entity* cube = new Entity(world);
+	Entity* cube = new Entity();
 
-	cube->addComponent(new MoveComponent(Vector3f(0, 5.0f, -3.0f), 0.5, false, moveKeyConfig1));
-	cube->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial));
+	cube->addComponent(new MoveComponent(Vector3f(0, 5.0f, -3.0f), 0.5, true, moveKeyConfig1));
+	cube->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, 0));
 
-	Entity* plane = new Entity(world);
+	Entity* plane = new Entity();
 
 	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, moveKeyConfig1));
-	plane->addComponent(new MeshComponent(planeMesh, bricksTex, brickMaterial));
+	plane->addComponent(new MeshComponent(planeMesh, bricksTex, brickMaterial, 0));
 
-	Entity* camera = new Entity(world);
+	Entity* camera = new Entity();
 
 	camera->addComponent(new CameraComponent(0.1f, 1000.0f));
 
-	Entity* sky = new Entity(world);
+	Entity* sky = new Entity();
 
 	sky->addComponent(new SkydomeWeatherComponent(skydomeShader, skydomeCubeMap, skydomeMesh,
-		(CameraComponent*)camera->getComponentByType(COMPONENT_TYPE::CAMERA_COMPONENT),
-		Vector4f(0.1f, 0.1f, 0.1f, 1.0f), Vector4f(0.1f, 0.1f, 0.1f, 1.0f)));
+		(CameraComponent*)camera->getComponentsByType(COMPONENT_TYPE::CAMERA_COMPONENT)->front(),
+		Vector4f(0.1f, 0.1f, 0.1f, 1.0f), Vector4f(0.1f, 0.1f, 0.1f, 1.0f), 0));
+
+	//Create Shadow generator
+	//solidum->getGraphicsSubsystem()->getRenderNodeTree()->
+	//	addNode(new ShadowGenRenderNode(shadowMapGenShader), 2222);
 
 	hammer->addChild(pointLight1Entity);
 
 	world->addPrimaryCamera(camera, 0000);
 	
+	world->addEntity(sun, 3333);
 	world->addEntity(pointLight2Entity, 0001);
 	world->addEntity(pointLight3Entity, 0010);
 	world->addEntity(globalWorldLighting, 1111);

@@ -5,8 +5,7 @@
 #include "../../../ResourceFramework/include/IResource.h"
 #include "../../../ResourceFramework/include/IResourceBuilder.h"
 
-#include "../../RenderNode/include/MeshRenderNode.h"
-#include "../../RenderNodeTree/include/RenderNodeTree.h"
+#include "../../Shaders/include/Shader.h"
 #include "../../GraphicsCore/include/GraphicsCore.h"
 
 
@@ -82,7 +81,5 @@ public:
 	MaterialPass* getPass(std::string name);
 
 	std::vector<MaterialPass*> getPassList();
-
-	std::vector<uint64_t> generateClientRenderNodes(mesh* mesh, Texture* texture);
 };
 

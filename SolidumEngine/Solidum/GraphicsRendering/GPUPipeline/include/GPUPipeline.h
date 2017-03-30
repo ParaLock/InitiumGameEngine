@@ -35,7 +35,7 @@ public:
 	IResource* core;
 
 	int bindSlot;
-	bool isOutput;
+	bool rt_isOutput;
 };
 
 class GPUPipelineOP {
@@ -52,6 +52,8 @@ private:
 	int renderTargetCount = 0;
 	int texSamplerCount = 0;
 	int texHookCount = 0;
+
+	bool _outputRTsBindDS = false;
 
 	std::map<std::string, DynamicStruct*> _boundCbuffers;
 
@@ -85,7 +87,7 @@ public:
 	void setHookResource(IResource* res, std::string name);
 
 	void attachResource(IResource* res, std::string name, SHADER_RESOURCE_TYPE type,
-		SHADER_TYPE parentShader, bool isOutput);
+		SHADER_TYPE parentShader, bool rt_isOutput);
 
 	void attachOP(GPUPipelineOP op);
 

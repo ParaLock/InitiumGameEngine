@@ -2,12 +2,10 @@
 
 
 
-MeshRenderNode::MeshRenderNode(mesh* mesh, Texture* texture, MaterialPass* pass) :
-	_mesh(mesh),
-	_texture(texture),
-	_pass(pass)
+MeshRenderNode::MeshRenderNode(mesh* model, uint64_t id) :
+	_mesh(model)
 {
-	_shader = _pass->getShader();
+	_id = id;
 
 	_type = RENDER_NODE_TYPE::MESH_RENDER_NODE;
 }
@@ -19,6 +17,8 @@ MeshRenderNode::~MeshRenderNode()
 
 void MeshRenderNode::render()
 {
+	_isVisible = _renderParams.getPerNodeParam_isVisible();
+
 	if (_isVisible) {
 
 		if (_shader->getRenderMode() == SHADER_RENDER_TYPE::FORWARD_RENDERING) {
@@ -31,7 +31,7 @@ void MeshRenderNode::render()
 			for each (RenderNode* node in lightNodes) {
 				LightRenderNode* lightNode = (LightRenderNode*)node;
 
-				if(lightNode->getLight()->getType() == LIGHT_TYPE::POINT_LIGHT)
+				if (lightNode->getLight()->getType() == LIGHT_TYPE::POINT_LIGHT)
 					pointLights.push_back(lightNode->getLight());
 				if (lightNode->getLight()->getType() == LIGHT_TYPE::DIRECTIONAL_LIGHT)
 					directionalLights.push_back(lightNode->getLight());
@@ -42,17 +42,14 @@ void MeshRenderNode::render()
 
 			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
 				new ShaderUpdateLightUniformsCommand(directionalLights, _shader));
-			
+
 			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
 				new ShaderUpdateCameraUniformsCommand(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader));
 
 			//Hooks must be set in immediate context
 			_shader->setMesh(_mesh);
 			_shader->setModelTexture(_texture);
-			_shader->updateMaterialPassUniforms(_pass);
-
-			//GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-			//	new ShaderUpdateMaterialPassUniformsCommand(_pass, _shader));
+			_shader->updateMaterialPassUniforms(_material->getPassList().at(0));
 
 			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
 				new ShaderUpdateTransformCommand(_renderParams.getPerNodeParam_Transform(), _shader));
@@ -79,10 +76,7 @@ void MeshRenderNode::render()
 			//Hooks must be set in immediate context
 			_shader->setMesh(_mesh);
 			_shader->setModelTexture(_texture);
-			_shader->updateMaterialPassUniforms(_pass);
-
-			//GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-			//	new ShaderUpdateMaterialPassUniformsCommand(_pass, _shader));
+			_shader->updateMaterialPassUniforms(_material->getPassList().at(0));
 
 			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
 				new ShaderUpdateTransformCommand(_renderParams.getPerNodeParam_Transform(), _shader));
@@ -105,7 +99,6 @@ void MeshRenderNode::render()
 
 			_shader->execute(_mesh->numIndices);
 		}
-
-		_isVisible = false;
 	}
+	_isVisible = false;
 }

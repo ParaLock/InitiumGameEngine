@@ -26,6 +26,7 @@ public:
 
 	virtual Matrix4f getViewMatrix() = 0;
 	virtual Matrix4f getProjectionMatrix() = 0;
+	virtual Matrix4f getModelMatrix() = 0;
 
 	virtual void setDirection(Vector3f dir) = 0;
 	virtual void setColor(Vector4f color) = 0;

@@ -21,7 +21,8 @@ private:
 
 	Matrix4f _wvp;
 public:
-	SkyBoxRenderNode(IShader* shader, Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor);
+	SkyBoxRenderNode(IShader* shader, Texture* tex, mesh* skydome, 
+		CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, uint64_t id);
 	~SkyBoxRenderNode();
 
 	void render();

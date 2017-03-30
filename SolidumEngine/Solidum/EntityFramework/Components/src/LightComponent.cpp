@@ -2,33 +2,31 @@
 
 
 
-LightComponent::LightComponent(Light* light)
+LightComponent::LightComponent(Light* light, int index)
 {
 	setType(COMPONENT_TYPE::LIGHT_COMPONENT);
+
+	_index = index;
 
 	_parentTransformDirty = true;
 
 	_light = light;
-
-	RenderNodeTree* tree = GraphicsCore::getInstance()->getRenderNodeTree();
-
-	uint64_t newNodeid = tree->getUniqueNodeID();
-
-	_renderNodes.push_back(newNodeid);
-
-	tree->addNode(new LightRenderNode(_light), newNodeid);
 }
 
 
 LightComponent::~LightComponent()
 {
-	for each (uint64_t nodeid in _renderNodes)
-		GraphicsCore::getInstance()->getRenderNodeTree()->removeNode(nodeid);
+}
+
+void LightComponent::init()
+{
+	if(_parent != nullptr)
+		_parent->getRenderObject()->addLight(_light, _index);
 }
 
 void LightComponent::update(float delta)
 {
-	if (_parentTransformDirty) {
+	if (_parentTransformDirty && _parent != nullptr) {
 
 		_parentTransformDirty = false; 
 		_parent->getTransform()->setPos(_light->getPosition());
@@ -36,14 +34,13 @@ void LightComponent::update(float delta)
 
 	_light->setPosition(_parent->getTransform()->getPos());
 
-	LocalRenderingParams params;
+	RenderParams params;
 
-	params._transform = _parent->getTransform();
-
-	for each (uint64_t nodeid in _renderNodes) {
-
-		GraphicsCore::getInstance()->getRenderNodeTree()->updateNodeVisibility(true, nodeid);
-		GraphicsCore::getInstance()->getRenderNodeTree()->updateNodeLocalRenderParams(params, nodeid);
+	params.setPerNodeParam_Transform(_parent->getTransform());
+	params.setPerNodeParam_isVisible(true);
+	
+	if (_parent != nullptr) {
+		_parent->getRenderObject()->updateRenderNode(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, _index, params);
 	}
 }
 

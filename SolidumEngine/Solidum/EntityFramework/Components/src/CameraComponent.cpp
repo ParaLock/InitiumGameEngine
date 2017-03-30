@@ -18,6 +18,8 @@ CameraComponent::CameraComponent(float near_value, float far_value) :
 	_viewMatrix = Matrix4f::get_identity();
 	_projectionMatrix = Matrix4f::get_identity();
 	_worldMatrix = Matrix4f::get_identity();
+	_matTranslation = Matrix4f::get_identity();
+	_matModelMatrix = Matrix4f::get_identity();
 
 	float aspect = (float)window::getInstance()->screen_width / (float)window::getInstance()->screen_height;
 	

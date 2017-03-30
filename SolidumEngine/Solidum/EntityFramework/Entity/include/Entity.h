@@ -7,35 +7,38 @@
 
 #include "../../../WorldSimulation/include/World.h"
 
+#include "../../../GraphicsRendering/EntityRenderObject/include/IEntityRenderObject.h"
+#include "../../../GraphicsRendering/EntityRenderObject/include/EntityRenderObject.h"
+
 #include "IEntity.h"
 
 class Entity : public IEntity
 {
 private:
-	World* _world;
+	IEntityRenderObject* _renderObject;
 
 	std::list<IEntity*>* _children;
 
-	std::map<COMPONENT_TYPE, IComponent*>* _components;
+	std::map<COMPONENT_TYPE, std::list<IComponent*>*>* _components;
 
 	Transform* _transform;
 
 	IEntity* _parent = nullptr;
 
 public:
-	Entity(World* world);
+	Entity();
 	~Entity();
 
 	void addComponent(IComponent* comp);
 	void addChild(IEntity* entity);
 
-	IComponent* getComponentByType(COMPONENT_TYPE type);
+	std::list<IComponent*>* getComponentsByType(COMPONENT_TYPE type);
+
+	IEntityRenderObject* getRenderObject() { return _renderObject; }
 
 	void setParent(IEntity* parent) { _parent = parent; };
 	IEntity* getParent() { return _parent; }
 	
-	World* getWorld() { return _world; }
-
 	Transform* getTransform() { return _transform; }
 
 	void update(float delta);

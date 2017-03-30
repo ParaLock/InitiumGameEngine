@@ -42,7 +42,7 @@ void dxShader::load(IResourceBuilder * builder)
 			errorBlob->Release();
 		}
 	}
-
+	
 	result = dxDev->CreateVertexShader(vertexShaderCode->GetBufferPointer(), vertexShaderCode->GetBufferSize(), NULL, &vertexShader);
 	if (FAILED(result))
 	{

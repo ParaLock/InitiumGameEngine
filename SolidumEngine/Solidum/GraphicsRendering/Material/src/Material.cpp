@@ -48,24 +48,6 @@ std::vector<MaterialPass*> Material::getPassList()
 	return passes;
 }
 
-std::vector<uint64_t> Material::generateClientRenderNodes(mesh * mesh, Texture * texture)
-{
-	std::vector<uint64_t> _nodes;
-	
-	RenderNodeTree* renderTree = GraphicsCore::getInstance()->getRenderNodeTree();
-
-	for (auto itr = _passes.begin(); itr != _passes.end(); itr++) {
-
-		uint64_t nodeID = renderTree->getUniqueNodeID();
-
-		renderTree->addNode(new MeshRenderNode(mesh, texture, itr->second), nodeID);
-
-		_nodes.push_back(nodeID);
-	}
-
-	return _nodes;
-}
-
 void MaterialPass::setSpecularTexture(Texture * tex)
 {
 	_textures.insert({ MATERIAL_TEX::SPECULAR_MAT_TEXTURE, tex});
