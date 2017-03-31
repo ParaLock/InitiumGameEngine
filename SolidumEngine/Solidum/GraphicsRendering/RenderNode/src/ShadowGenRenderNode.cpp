@@ -13,6 +13,11 @@ ShadowGenRenderNode::~ShadowGenRenderNode()
 {
 }
 
+bool ShadowGenRenderNode::isRenderViable()
+{
+	return true;
+}
+
 void ShadowGenRenderNode::render()
 {
 	std::vector<RenderNode*> lights = GraphicsCore::getInstance()->

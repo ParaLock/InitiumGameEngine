@@ -23,9 +23,10 @@ public:
 	void addNode(RenderNode* node, uint64_t id);
 
 	void updateGlobalRenderParams(GlobalRenderingParams params);
-	void updateNodeLocalRenderParams(LocalRenderingParams params, uint64_t nodeid);
 
 	void updateNodeVisibility(bool isVisible, uint64_t nodeid);
+
+	RenderParams* getRenderNodeParams(uint64_t nodeid) { return _nodeQueryMap->operator[](nodeid)->getRenderParams(); };
 
 	std::vector<RenderNode*> queryAllLights();
 	std::vector<RenderNode*> queryAllShadowCastingLights();

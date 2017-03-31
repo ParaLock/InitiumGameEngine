@@ -28,14 +28,14 @@ void MeshComponent::init()
 
 void MeshComponent::update(float delta)
 {
-	RenderParams params;
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::MESH_RENDER_NODE, _index + 1)->
+		setPerNodeParam_Transform(_parent->getTransform());
 
-	params.setPerNodeParam_Transform(_parent->getTransform());
-	params.setPerNodeParam_isVisible(true);
-	params.setPerNodeParam_DepthTestEnableState(true);
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::MESH_RENDER_NODE, _index + 1)->
+		setPerNodeParam_isVisible(true);
 
-	if(_parent != nullptr)
-		_parent->getRenderObject()->updateRenderNode(RENDER_NODE_TYPE::MESH_RENDER_NODE, _index + 1, params);
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::MESH_RENDER_NODE, _index + 1)->
+		setPerNodeParam_DepthTestEnableState(true);
 }
 
 void MeshComponent::onEvent(EVENT_PTR evt)

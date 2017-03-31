@@ -33,14 +33,14 @@ void LightComponent::update(float delta)
 	}
 
 	_light->setPosition(_parent->getTransform()->getPos());
-
-	RenderParams params;
-
-	params.setPerNodeParam_Transform(_parent->getTransform());
-	params.setPerNodeParam_isVisible(true);
 	
 	if (_parent != nullptr) {
-		_parent->getRenderObject()->updateRenderNode(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, _index, params);
+
+		_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, _index)->
+			setPerNodeParam_Transform(_parent->getTransform());
+
+		_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, _index)->
+			setPerNodeParam_isVisible(true);
 	}
 }
 

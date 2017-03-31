@@ -70,17 +70,6 @@ void RenderNodeTree::updateGlobalRenderParams(GlobalRenderingParams params)
 	}
 }
 
-void RenderNodeTree::updateNodeLocalRenderParams(LocalRenderingParams params, uint64_t nodeid)
-{
-	auto itr = _nodeQueryMap->find(nodeid);
-
-	if (itr != _nodeQueryMap->end()) {
-		RenderNode* node = _nodeQueryMap->at(nodeid);
-
-		node->updateLocalRenderParams(params);
-	}
-}
-
 void RenderNodeTree::updateNodeVisibility(bool isVisible, uint64_t nodeid)
 {
 	auto itr = _nodeQueryMap->find(nodeid);

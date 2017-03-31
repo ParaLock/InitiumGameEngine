@@ -93,6 +93,16 @@ GraphicsCore::~GraphicsCore()
 		delete _renderTree;
 }
 
+void GraphicsCore::registerDefaultShader(DEFAULT_SHADER_TYPE type, Shader * shader)
+{
+	_defaultShaders.insert({type, shader});
+}
+
+Shader * GraphicsCore::getDefaultShader(DEFAULT_SHADER_TYPE type)
+{
+	return _defaultShaders[type];
+}
+
 void GraphicsCore::beginFrame()
 {
 }

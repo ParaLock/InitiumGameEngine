@@ -13,12 +13,13 @@ class LightRenderNode : public RenderNode
 {
 private:
 	mesh* _orthoMesh;
-	Light* _light;
 public:
-	LightRenderNode(Light* light, uint64_t id);
+	LightRenderNode(uint64_t id);
 	~LightRenderNode();
 
-	ILight* getLight() { return _light; }
+	ILight* getLight() { return _renderParams.getPerNodeParam_Light(); }
+
+	bool isRenderViable();
 
 	virtual void* getVar(std::string varname);
 

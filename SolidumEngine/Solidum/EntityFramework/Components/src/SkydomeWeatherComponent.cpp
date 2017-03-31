@@ -28,21 +28,28 @@ void SkydomeWeatherComponent::init()
 	uint64_t nodeID = GraphicsCore::getInstance()->getRenderNodeTree()->getUniqueNodeID();
 
 	_parent->getRenderObject()->addGenericRenderNode(new
-		SkyBoxRenderNode(_shader, _tex, _skydome, _cam, _weatherApexColor, _weatherCenterColor, nodeID),
-		RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index);
+		SkyBoxRenderNode(_shader, _weatherApexColor, _weatherCenterColor, nodeID),
+			RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index);
+
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
+		->setPerNodeParam_MeshTexture(_tex);
+
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
+		->setPerNodeParam_Mesh(_skydome);
+
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
+		->setPerNodeParam_RenderCamera(_cam);
 }
 
 void SkydomeWeatherComponent::update(float delta)
 {
 	updateDayNightCycle(0.0005f);
 
-	RenderParams params;
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
+		->setPerNodeParam_skydomeApexColor(_weatherApexColor);
 
-	params.setPerNodeParam_skydomeApexColor(_weatherApexColor);
-	params.setPerNodeParam_skydomeCenterColor(_weatherCenterColor);
-
-	if (_parent != nullptr)
-		_parent->getRenderObject()->updateRenderNode(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index, params);
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
+		->setPerNodeParam_skydomeCenterColor(_weatherCenterColor);
 }
 
 void SkydomeWeatherComponent::updateDayNightCycle(float delta)

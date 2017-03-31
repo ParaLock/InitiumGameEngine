@@ -16,6 +16,8 @@ public:
 	ShadowGenRenderNode(IShader* shader, uint64_t id);
 	~ShadowGenRenderNode();
 
+	bool isRenderViable();
+
 	void render();
 };
 

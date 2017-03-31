@@ -15,8 +15,3 @@ void RenderNode::updateGlobalRenderParams(GlobalRenderingParams params)
 {
 	_renderParams.setAllGlobalParams(params);
 }
-
-void RenderNode::updateLocalRenderParams(LocalRenderingParams params)
-{
-	_renderParams.setAllLocalParams(params);
-}

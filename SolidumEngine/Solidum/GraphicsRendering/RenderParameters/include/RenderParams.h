@@ -1,8 +1,14 @@
 #pragma once
 #include "../../../EngineUtils/include/Vector4.h"
 
+
 class CameraComponent;
 class Transform;
+
+class Texture;
+class Material;
+class mesh;
+class Light;
 
 struct GlobalRenderingParams {
 	Vector4f _ambientLightLevel;
@@ -10,6 +16,12 @@ struct GlobalRenderingParams {
 };
 
 struct LocalRenderingParams {
+	
+	Light* _light;
+	Texture* _meshTex;
+	Material* _meshMat;
+	mesh* _mesh;
+
 	bool _useForwardRendering;
 	CameraComponent* _renderCamera;
 
@@ -48,6 +60,11 @@ public:
 	void setPerNodeParam_Transform(Transform* transform) { local_params._transform = transform; };
 	void setPerNodeParam_DepthTestEnableState(bool depthTest) { local_params._depthTestEnabled = depthTest; }
 
+	void setPerNodeParam_MeshTexture(Texture* tex) { local_params._meshTex = tex; };
+	void setPerNodeParam_MeshMaterial(Material* mat) { local_params._meshMat = mat; }
+	void setPerNodeParam_Mesh(mesh* modelMesh) { local_params._mesh = modelMesh; }
+	void setPerNodeParam_Light(Light* light) { local_params._light = light; }
+
 	void setPerNodeParam_isVisible(bool isVisible) { local_params._isVisible = isVisible; }
 
 	CameraComponent* getPerNodeParam_RenderCamera() { return local_params._renderCamera; };
@@ -56,10 +73,18 @@ public:
 	bool getPerNodeParam_DepthTestEnableState() { return local_params._depthTestEnabled; }
 	bool getPerNodeParam_isVisible() { return local_params._isVisible; }
 
+	Texture* getPerNodeParam_MeshTexture() { return local_params._meshTex; }
+	Material* getPerNodeParam_MeshMaterial() { return local_params._meshMat; }
+	mesh* getPerNodeParam_Mesh() { return local_params._mesh; }
+	Light* getPerNodeParam_Light() { return local_params._light; }
+
 	GlobalRenderingParams getAllGlobalParams() { return global_params; };
 	LocalRenderingParams getAllLocalParams() { return local_params; };
 
 	void setAllGlobalParams(GlobalRenderingParams params) { global_params = params; }
-	void setAllLocalParams(LocalRenderingParams params) { local_params = params; }
+
+	void updateAllLocalParams(LocalRenderingParams params) { 
+		local_params = params; 
+	}
 };
 

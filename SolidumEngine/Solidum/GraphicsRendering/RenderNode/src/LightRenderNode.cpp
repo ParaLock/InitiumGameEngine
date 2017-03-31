@@ -2,18 +2,14 @@
 
 
 
-LightRenderNode::LightRenderNode(Light* light, uint64_t id) :
-	_light(light)
+LightRenderNode::LightRenderNode(uint64_t id)
 {
 	_id = id;
 
 	_orthoMesh = new mesh();
 	_orthoMesh->load(&meshBuilder(L"gen_ortho_window_mesh", ResourceManagerPool::getInstance()));
 
-	_shader = ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>
-		("LightManager")->getLightShader(_light->getType());
-
-	_light->setIsShadowCaster(true);
+	_shader = GraphicsCore::getInstance()->getDefaultShader(DEFAULT_SHADER_TYPE::DEFAULT_LIGHT);
 
 	_type = RENDER_NODE_TYPE::LIGHT_RENDER_NODE;
 }
@@ -24,11 +20,25 @@ LightRenderNode::~LightRenderNode()
 	delete _orthoMesh;
 }
 
+bool LightRenderNode::isRenderViable()
+{
+	if (!_renderParams.getPerNodeParam_isVisible())
+		return false;
+	if (_renderParams.getPerNodeParam_Light() == nullptr)
+		return false;
+	if (_renderParams.getPerNodeParam_Mesh() == nullptr)
+		return false;
+	if (_renderParams.getPerNodeParam_RenderCamera() == nullptr)
+		return false;
+
+	return true;
+}
+
 void * LightRenderNode::getVar(std::string varname)
 {
 	if (varname == "IS_SHADOW_CASTER") {
 
-		bool caster = _light->getIsShadowCaster();
+		bool caster = _renderParams.getPerNodeParam_Light()->getIsShadowCaster();
 
 		return (void*)&caster;
 	}
@@ -38,18 +48,23 @@ void * LightRenderNode::getVar(std::string varname)
 
 void LightRenderNode::render()
 {
-	_isVisible = _renderParams.getPerNodeParam_isVisible();
+	if (isRenderViable()) {
 
-	if (_isVisible) {
+		_isVisible = _renderParams.getPerNodeParam_isVisible();
+
+		Light* light = _renderParams.getPerNodeParam_Light();
+
+		_shader = ResourceManagerPool::getInstance()->
+			getResourceManagerSpecific<LightManager>("LightManager")->getLightShader(light->getType());
 
 		if (_shader->getRenderMode() != SHADER_RENDER_TYPE::FORWARD_RENDERING) {
 
 			//Hooks must be set in immediate context
 			_shader->setMesh(_orthoMesh);
 
-			static Matrix4f LprojectionMatrix = _light->getProjectionMatrix();
-			static Matrix4f LviewMatrix = _light->getViewMatrix();
-			static Matrix4f LmodelMatrix = _light->getModelMatrix();
+			static Matrix4f LprojectionMatrix = light->getProjectionMatrix();
+			static Matrix4f LviewMatrix = light->getViewMatrix();
+			static Matrix4f LmodelMatrix = light->getModelMatrix();
 
 			static Matrix4f CprojectionMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getProjectionMatrix();
 			static Matrix4f CviewMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getViewMatrix();
@@ -73,12 +88,10 @@ void LightRenderNode::render()
 				new ShaderSyncUniforms(_shader));
 
 			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-				new ShaderUpdateLightUniformsCommand(std::vector<ILight*>{_light}, _shader));
+				new ShaderUpdateLightUniformsCommand(std::vector<ILight*>{light}, _shader));
 
 
 			_shader->execute(_orthoMesh->numIndices);
 		}
-
-		_isVisible = false;
 	}
 }

@@ -2,10 +2,11 @@
 
 
 
-MeshRenderNode::MeshRenderNode(mesh* model, uint64_t id) :
-	_mesh(model)
+MeshRenderNode::MeshRenderNode(uint64_t id)
 {
 	_id = id;
+
+	_shader = GraphicsCore::getInstance()->getDefaultShader(DEFAULT_SHADER_TYPE::DEFAULT_MESH);
 
 	_type = RENDER_NODE_TYPE::MESH_RENDER_NODE;
 }
@@ -15,11 +16,31 @@ MeshRenderNode::~MeshRenderNode()
 {
 }
 
+bool MeshRenderNode::isRenderViable()
+{
+	if (!_renderParams.getPerNodeParam_isVisible())
+		return false;
+	if (_renderParams.getPerNodeParam_Mesh() == nullptr)
+		return false;
+	if (_renderParams.getPerNodeParam_RenderCamera() == nullptr)
+		return false;
+	if (_renderParams.getPerNodeParam_MeshTexture() == nullptr)
+		return false;
+
+	return true;
+}
+
 void MeshRenderNode::render()
 {
-	_isVisible = _renderParams.getPerNodeParam_isVisible();
+	if (isRenderViable()) {
 
-	if (_isVisible) {
+		_isVisible = _renderParams.getPerNodeParam_isVisible();
+
+		Material* _material = _renderParams.getPerNodeParam_MeshMaterial();
+		Texture* _texture = _renderParams.getPerNodeParam_MeshTexture();
+		mesh* _mesh = _renderParams.getPerNodeParam_Mesh();
+
+		_shader = _material->getPassList().at(0)->getShader();
 
 		if (_shader->getRenderMode() == SHADER_RENDER_TYPE::FORWARD_RENDERING) {
 
@@ -100,5 +121,4 @@ void MeshRenderNode::render()
 			_shader->execute(_mesh->numIndices);
 		}
 	}
-	_isVisible = false;
 }

@@ -7,7 +7,7 @@
 
 #include "IEntityRenderObject.h"
 
-typedef std::map<int, RenderNode*>* ENTITY_INDEXED_RENDER_RESOURCE;
+typedef std::map<int, uint64_t>* ENTITY_INDEXED_RENDER_RESOURCE;
 
 class EntityRenderObject : public IEntityRenderObject
 {
@@ -25,6 +25,6 @@ public:
 
 	void addGenericRenderNode(RenderNode* renderNode, RENDER_NODE_TYPE type, int genericNodeIndex);
 
-	void updateRenderNode(RENDER_NODE_TYPE objtype, int index, RenderParams& params);
+	RenderParams* updateRenderNodeParams(RENDER_NODE_TYPE objtype, int index);
 };
 

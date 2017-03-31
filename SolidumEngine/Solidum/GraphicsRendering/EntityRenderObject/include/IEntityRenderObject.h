@@ -22,6 +22,6 @@ public:
 
 	virtual void addGenericRenderNode(RenderNode* renderNode, RENDER_NODE_TYPE type, int genericNodeIndex) = 0;
 
-	virtual void updateRenderNode(RENDER_NODE_TYPE nodetype, int index, RenderParams& params) = 0;
+	virtual RenderParams* updateRenderNodeParams(RENDER_NODE_TYPE objtype, int index) = 0;
 };
 

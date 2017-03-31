@@ -42,9 +42,14 @@ private:
 
 	GPUPipeline* _endFrameState;
 
+	std::map<DEFAULT_SHADER_TYPE, Shader*> _defaultShaders;
+
 public:
 	GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool);
 	~GraphicsCore();
+
+	void registerDefaultShader(DEFAULT_SHADER_TYPE type, Shader* shader);
+	Shader* getDefaultShader(DEFAULT_SHADER_TYPE type);
 
 	void beginFrame();
 

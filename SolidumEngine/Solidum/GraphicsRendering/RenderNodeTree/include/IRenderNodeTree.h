@@ -20,7 +20,6 @@ public:
 	virtual void addNode(RenderNode* node, uint64_t id) = 0;
 
 	virtual void updateGlobalRenderParams(GlobalRenderingParams params) = 0;
-	virtual void updateNodeLocalRenderParams(LocalRenderingParams params, uint64_t nodeid) = 0;
 
 	virtual void updateNodeVisibility(bool isVisible, uint64_t nodeid) = 0;
 
