@@ -9,7 +9,7 @@ meshManager::~meshManager()
 {
 }
 
-IResource* meshManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
+IResource* meshManager::createResource(std::shared_ptr<IResourceBuilder> builder, std::string name, bool loadAsync)
 {
 	IResource* newMesh = new mesh();
 

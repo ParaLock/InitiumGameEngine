@@ -21,7 +21,7 @@ Shader * LightManager::getLightShader(LIGHT_TYPE type)
 	return _lightShaderMap.at(type);
 }
 
-IResource* LightManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
+IResource* LightManager::createResource(std::shared_ptr<IResourceBuilder> builder, std::string name, bool loadAsync)
 {
 	IResource* newLight = new Light();
 

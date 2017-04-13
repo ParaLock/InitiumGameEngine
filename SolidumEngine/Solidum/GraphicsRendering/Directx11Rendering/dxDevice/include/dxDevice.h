@@ -46,8 +46,6 @@ private:
 
 	void InitializeBlendStates();
 
-	void InitializeViewport();
-
 	ID3D11Texture2D* FrameBufferTexture = nullptr;
 	
 	ID3D11Texture2D* depthTexture = nullptr;
@@ -90,8 +88,6 @@ public:
 	void setDepthTestState(DEPTH_TEST_STATE state);
 
 	void setBlendState(BLEND_STATE state);
-
-	void setViewport(std::string viewportSelect);
 
 	void Initialize(dxConfigBlock *config);
 

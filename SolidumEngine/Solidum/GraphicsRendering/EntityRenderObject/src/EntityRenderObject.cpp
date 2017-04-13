@@ -15,7 +15,11 @@ void EntityRenderObject::addLight(ILight * light, int lightIndex)
 {
 	RenderNodeTree* tree = GraphicsCore::getInstance()->getRenderNodeTree();
 
-	LightRenderNode* newNode = new LightRenderNode(tree->getUniqueNodeID());
+	RenderNodePool* renderNodePool = GraphicsCore::getInstance()->getRenderNodePool();
+
+	RenderNode* newNode = renderNodePool->getResource(RENDER_NODE_TYPE::LIGHT_RENDER_NODE);
+
+	newNode->load(std::make_shared<LightRenderNode::InitData>(tree->getUniqueNodeID()));
 
 	tree->addNode(newNode, newNode->getID());
 
@@ -57,7 +61,11 @@ void EntityRenderObject::addStaticGeometry(mesh * model, int meshIndex)
 {
 	RenderNodeTree* tree = GraphicsCore::getInstance()->getRenderNodeTree();
 
-	MeshRenderNode* newNode = new MeshRenderNode(tree->getUniqueNodeID());
+	RenderNodePool* renderNodePool = GraphicsCore::getInstance()->getRenderNodePool();
+
+	RenderNode* newNode = renderNodePool->getResource(RENDER_NODE_TYPE::MESH_RENDER_NODE);
+
+	newNode->load(std::make_shared<MeshRenderNode::InitData>(tree->getUniqueNodeID()));
 
 	tree->addNode(newNode, newNode->getID());
 
@@ -92,8 +100,10 @@ RenderParams* EntityRenderObject::updateRenderNodeParams(RENDER_NODE_TYPE nodeTy
 {
 	if (_renderResources.find(nodeType) != _renderResources.end()) {
 
-		return GraphicsCore::getInstance()->getRenderNodeTree()->
+		RenderParams* params = GraphicsCore::getInstance()->getRenderNodeTree()->
 			getRenderNodeParams(_renderResources[nodeType]->operator[](index));
+
+		return params;
 	}
 
 	return nullptr;

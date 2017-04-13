@@ -188,7 +188,7 @@ void Shader::updateCameraUniforms(CameraComponent* cam)
 	updateUniform("cbuff_camViewStart", &Matrix4f::transpose(cam->getStartViewMatrix()));
 }
 
-void Shader::execute(int numIndices)
+void Shader::execute(GraphicsCommandList* commandList)
 {
 	std::cout << "GENERIC SHADER: NO GRAPHICS API DIRECTIVE DETECTED" << std::endl;
 }

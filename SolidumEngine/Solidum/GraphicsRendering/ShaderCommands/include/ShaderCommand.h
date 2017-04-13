@@ -23,9 +23,23 @@ private:
 	std::pair<std::string, void*> _uniform;
 	IShader* _shader;
 public:
-	ShaderUpdateUniformCommand(void* data, std::string uniformName, IShader* shader) {
-		_uniform = std::make_pair(uniformName, data);
-		_shader = shader;
+	ShaderUpdateUniformCommand() { _type = GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM; }
+
+	struct InitData : public IResourceBuilder {
+		std::pair<std::string, void*> _uniform;
+		IShader* _shader;
+		
+		InitData(std::pair<std::string, void*> uniform, IShader* shader) {
+			_uniform = uniform;
+			_shader = shader;
+		}
+	};
+
+	void load(std::shared_ptr<IResourceBuilder> builder) {
+		InitData* realBuilder = static_cast<InitData*>(builder.get());
+
+		_uniform = realBuilder->_uniform;
+		_shader = realBuilder->_shader;
 	}
 
 	void execute();
@@ -36,10 +50,23 @@ private:
 	std::vector<ILight*> _lights;
 	IShader* _shader;
 public:
+	ShaderUpdateLightUniformsCommand() { _type = GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_LIGHT_UNIFORMS; }
 
-	ShaderUpdateLightUniformsCommand(std::vector<ILight*> lights, IShader* shader) {
-		_lights = lights;
-		_shader = shader;
+	struct InitData : public IResourceBuilder {
+		std::vector<ILight*> _lights;
+		IShader* _shader;
+
+		InitData(std::list<ILight*> lights, IShader* shader) {
+			for each(ILight* light in lights) _lights.push_back(light);
+			_shader = shader;
+		}
+	};
+
+	void load(std::shared_ptr<IResourceBuilder> builder) {
+		InitData* realBuilder = static_cast<InitData*>(builder.get());
+
+		_lights = realBuilder->_lights;
+		_shader = realBuilder->_shader;
 	}
 
 	void execute();
@@ -50,9 +77,24 @@ private:
 	MaterialPass* _matPass;
 	IShader* _shader;
 public:
-	ShaderUpdateMaterialPassUniformsCommand(MaterialPass* pass, IShader* shader) {
-		_matPass = pass;
-		_shader = shader;
+	ShaderUpdateMaterialPassUniformsCommand() { _type = GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_MATERIAL_PASS_UNIFORMS; }
+
+	struct InitData : public IResourceBuilder {
+		MaterialPass* _matPass;
+		IShader* _shader;
+
+		InitData(MaterialPass* matPass, IShader* shader) {
+			_matPass = matPass;
+			_shader = shader;
+		}
+	};
+
+	void load(std::shared_ptr<IResourceBuilder> builder) {
+
+		InitData* realBuilder = static_cast<InitData*>(builder.get());
+
+		_matPass = realBuilder->_matPass;
+		_shader = realBuilder->_shader;
 	}
 
 	void execute();
@@ -63,9 +105,23 @@ private:
 	CameraComponent* _camera;
 	IShader* _shader;
 public:
-	ShaderUpdateCameraUniformsCommand(CameraComponent* camera, IShader* shader) {
-		_camera = camera;
-		_shader = shader;
+	ShaderUpdateCameraUniformsCommand() { _type = GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS; };
+
+	struct InitData : public IResourceBuilder {
+		CameraComponent* _camera;
+		IShader* _shader;
+
+		InitData(CameraComponent* camera, IShader* shader) {
+			_camera = camera;
+			_shader = shader;
+		}
+	};
+
+	void load(std::shared_ptr<IResourceBuilder> builder) {
+		InitData* realBuilder = static_cast<InitData*>(builder.get());
+
+		_shader = realBuilder->_shader;
+		_camera = realBuilder->_camera;
 	}
 
 	void execute();
@@ -76,9 +132,23 @@ private:
 	Transform* _transform;
 	IShader* _shader;
 public:
-	ShaderUpdateTransformCommand(Transform* transform, IShader* shader) {
-		_transform = transform;
-		_shader = shader;
+	ShaderUpdateTransformCommand() { _type = GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_TRANSFORM_UNIFORMS; }
+
+	struct InitData : public IResourceBuilder {
+		Transform* _transform;
+		IShader* _shader;
+
+		InitData(Transform* transform, IShader* shader) {
+			_transform = transform;
+			_shader = shader;
+		}
+	};
+
+	void load(std::shared_ptr<IResourceBuilder> builder) {
+		InitData* realBuilder = static_cast<InitData*>(builder.get());
+
+		_transform = realBuilder->_transform;
+		_shader = realBuilder->_shader;
 	}
 
 	void execute();
@@ -90,9 +160,24 @@ private:
 	IShader* _shader;
 public:
 
-	ShaderUpdateModelMeshCommand(mesh* mesh, IShader* shader) {
-		_mesh = mesh;
-		_shader = shader;
+	ShaderUpdateModelMeshCommand() { _type = GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_MESH; }
+
+	struct InitData : public IResourceBuilder {
+
+		mesh* _mesh;
+		IShader* _shader;
+
+		InitData(mesh* mesh, IShader* shader) {
+			_mesh = mesh;
+			_shader = shader;
+		}
+	};
+
+	void load(std::shared_ptr<IResourceBuilder> builder) {
+		InitData* realBuilder = static_cast<InitData*>(builder.get());
+
+		_mesh = realBuilder->_mesh;
+		_shader = realBuilder->_shader;
 	}
 
 	void execute();
@@ -104,10 +189,24 @@ private:
 	Texture* _tex;
 	IShader* _shader;
 public:
+	ShaderUpdateModelTexCommand() { _type = GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_MODEL_TEX; }
 
-	ShaderUpdateModelTexCommand(Texture* tex, IShader* shader) {
-		_tex = tex;
-		_shader = shader;
+	struct InitData : public IResourceBuilder {
+
+		Texture* _tex;
+		IShader* _shader;
+
+		InitData(Texture* tex, IShader* shader) {
+			_tex = tex;
+			_shader = shader;
+		}
+	};
+
+	void load(std::shared_ptr<IResourceBuilder> builder) {
+		InitData* realBuilder = static_cast<InitData*>(builder.get());
+
+		_tex = realBuilder->_tex;
+		_shader = realBuilder->_shader;
 	}
 
 	void execute();
@@ -117,8 +216,20 @@ class ShaderSyncUniforms : public ShaderCommand {
 private:
 	IShader* _shader;
 public:
-	ShaderSyncUniforms(IShader* shader) {
-		_shader = shader;
+	ShaderSyncUniforms() { _type = GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS; }
+
+	struct InitData : public IResourceBuilder {
+		IShader* _shader;
+
+		InitData(IShader* shader) {
+			_shader = shader;
+		}
+	};
+
+	void load(std::shared_ptr<IResourceBuilder> builder) {
+		InitData* realBuilder = static_cast<InitData*>(builder.get());
+
+		_shader = realBuilder->_shader;
 	}
 
 	void execute();

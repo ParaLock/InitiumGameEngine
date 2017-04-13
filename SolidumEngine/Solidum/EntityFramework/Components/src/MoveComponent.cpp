@@ -29,7 +29,8 @@ void MoveComponent::update(float delta)
 		_parent->getTransform()->setPos(finalPos);
 
 	}
-	else {
+	else if(_parent != nullptr) {
+
 		_parent->getTransform()->setPos(_vPos);
 	}
 }

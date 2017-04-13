@@ -11,7 +11,7 @@ TextureSamplerManager::~TextureSamplerManager()
 {
 }
 
-IResource* TextureSamplerManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
+IResource* TextureSamplerManager::createResource(std::shared_ptr<IResourceBuilder> builder, std::string name, bool loadAsync)
 {
 	IResource* newResource = nullptr;
 

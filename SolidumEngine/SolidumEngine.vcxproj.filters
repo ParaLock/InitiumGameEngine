@@ -82,11 +82,8 @@
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\api_function_wrappers\include\dx11_pipeline_functions_wrapper.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommand\include\GraphicsCommand.h" />
     <ClInclude Include="Solidum\GraphicsRendering\ShaderCommands\include\ShaderCommand.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\RenderCommands\include\RenderCommand.h" />
     <ClInclude Include="Solidum\GraphicsRendering\PipelineCommands\include\PipelineCommand.h" />
     <ClInclude Include="Solidum\GraphicsRendering\PipelineCommands\include\PipelineFunctions.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandQueue\include\GraphicsCommandQueue.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandQueueManager\include\GCQManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNode\include\SkyBoxRenderNode.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\SkydomeWeatherComponent.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\OrbitComponent.h" />
@@ -95,6 +92,17 @@
     <ClInclude Include="Solidum\GraphicsRendering\EntityRenderObject\include\EntityRenderObject.h" />
     <ClInclude Include="Solidum\GraphicsRendering\EntityRenderObject\include\IEntityRenderObject.h" />
     <ClInclude Include="Solidum\ResourceFramework\include\ResourcePool.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Viewport\include\Viewport.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandList\include\GraphicsCommandList.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandListQueue\include\GraphicsCommandListQueue.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandListQueueManager\include\GCLQManager.h" />
+    <ClInclude Include="Solidum\EntityFramework\Entity\include\EntityComponentSlot.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderNode\include\RenderNodePool.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\ResourceFactory.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderNode\include\RenderNodeFactory.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommand\include\GraphicsCommandPool.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommand\include\GraphicsCommandFactory.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCore\include\IGraphicsCore.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -166,20 +174,26 @@
     <ClCompile Include="Solidum\GraphicsRendering\RenderNodeTree\src\IRenderNodeTree.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\CameraComponent.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\api_function_wrappers\src\dx11_pipeline_functions_wrapper.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommand\src\GraphicsCommand.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\ShaderCommands\src\ShaderCommand.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\RenderCommands\src\RenderCommand.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\PipelineCommands\src\PipelineCommand.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\PipelineCommands\src\PipelineFunctions.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandQueue\src\GraphicsCommandQueue.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandQueueManager\src\GCQManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\SkyBoxRenderNode.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\SkydomeWeatherComponent.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\OrbitComponent.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\SunMoonLightingComponent.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\ShadowGenRenderNode.cpp" />
-    <ClCompile Include="Solidum\ResourceFramework\src\ResourcePool.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\EntityRenderObject\src\EntityRenderObject.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\EntityRenderObject\src\IEntityRenderObject.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Viewport\src\Viewport.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandList\src\GraphicsCommandList.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandListQueue\src\GraphicsCommandListQueue.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandListQueueManager\src\GCLQManager.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Entity\src\EntityComponentSlot.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\RenderNodePool.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\RenderNodeFactory.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommand\src\GraphicsCommandPool.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommand\src\GraphicsCommandFactory.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCore\src\IGraphicsCore.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommand\src\GraphicsCommand.cpp" />
   </ItemGroup>
 </Project>

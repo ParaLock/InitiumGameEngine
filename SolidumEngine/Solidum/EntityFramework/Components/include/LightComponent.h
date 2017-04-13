@@ -14,7 +14,7 @@ private:
 
 	bool _parentTransformDirty = false;
 
-	void load(IResourceBuilder* builder) { isLoaded = true; };
+	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
 	void unload() { isLoaded = false; };
 
 	void updateParameter(std::string varName, void *data) {};

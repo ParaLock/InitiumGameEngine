@@ -9,6 +9,7 @@ class Transform;
 class CameraComponent;
 class GPUPipeline;
 class IResource;
+class GraphicsCommandList;
 
 class IShader {
 public:
@@ -33,7 +34,7 @@ public:
 	virtual void attachPipeline(GPUPipeline* pipe) = 0;
 	virtual GPUPipeline* getPipeline() = 0;
 
-	virtual void execute(int numIndices) = 0;
+	virtual void execute(GraphicsCommandList* commandList) = 0;
 
 	virtual SHADER_RENDER_TYPE getRenderMode() = 0;
 };

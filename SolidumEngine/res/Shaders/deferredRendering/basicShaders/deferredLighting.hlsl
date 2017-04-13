@@ -9,7 +9,7 @@ struct VertexInputType
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
-	float2 tex : TEXCOORD;
+	float2 tex : TEXCOORD0;
 	float3 viewPos : TEXCOORD1;
 };
 
@@ -17,10 +17,10 @@ Texture2D colorTexture : register(t0);
 Texture2D normalTexture : register(t1);
 Texture2D positionTexture : register(t2);
 Texture2D specularColorTexture : register(t3);
-Texture2D lightSpaceMap : register(t4);
-Texture2D shadowTexture : register(t5);
+Texture2D shadowTexture : register(t4);
 
-SamplerState SampleTypePoint : register(s0);
+SamplerState ShadowMapSampler : register(s0);
+SamplerState SampleTypePoint : register(s1);
 
 float4 calcLight(BaseLightData light, MaterialData mat, CoreData coreData) 
 {						
@@ -59,7 +59,7 @@ float4 calcPointLight(PointLightData light, MaterialData mat, CoreData core)
 
 
 PixelInputType Vshader(VertexInputType input)
-{
+{			  	
 	PixelInputType output;
 
 	float4 worldPos = positionTexture[input.tex];
@@ -71,8 +71,8 @@ PixelInputType Vshader(VertexInputType input)
 	output.position = mul(input.position, cbuff_worldMatrix);
 	output.position = mul(output.position, cbuff_camViewStart);
 	output.position = mul(output.position, cbuff_orthoProjection);
-	
-	output.tex = input.tex;
 
+	output.tex = input.tex;
+	
 	return output;
 }

@@ -8,14 +8,6 @@
 #include "../../Shaders/include/Shader.h"
 #include "../../GraphicsCore/include/GraphicsCore.h"
 
-
-class MaterialBuilder : public IResourceBuilder {
-public:
-
-	MaterialBuilder() {
-	}
-};
-
 class MaterialPass {
 private:
 
@@ -70,8 +62,15 @@ public:
 	Material();
 	~Material();
 
-	void load(IResourceBuilder* builder);
+	void load(std::shared_ptr<IResourceBuilder> builder);
 	void unload();
+
+	struct InitData : public IResourceBuilder {
+
+		InitData() {
+
+		}
+	};
 
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };

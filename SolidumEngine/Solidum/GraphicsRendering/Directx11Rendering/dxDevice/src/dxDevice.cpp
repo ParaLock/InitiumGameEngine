@@ -53,11 +53,8 @@ void dxDevice::Initialize(dxConfigBlock *config)
 		InitializeFrameBuffer();
 		InitializeDepthBuffer();
 		InitializeDepthStencilStates();
-		InitializeViewport();
 		InitializeBlendStates();
 		InitializeRasterStates();
-
-		setViewport("light");
 }
 
 void dxDevice::InitializeDepthBuffer()
@@ -282,28 +279,6 @@ void dxDevice::InitializeBlendStates()
 	result = dxDev->CreateBlendState(&BlendDisableDesc, &blendDisable);
 }
 
-
-void dxDevice::InitializeViewport()
-{
-	ZeroMemory(&meshViewport, sizeof(D3D11_VIEWPORT));
-
-	meshViewport.Width = (FLOAT)window::getInstance()->screen_width;
-	meshViewport.Height = (FLOAT)window::getInstance()->screen_height;
-	meshViewport.TopLeftX = 0;
-	meshViewport.TopLeftY = 0;
-	meshViewport.MaxDepth = 1;
-	meshViewport.MinDepth = 0;
-
-	ZeroMemory(&lightViewport, sizeof(D3D11_VIEWPORT));
-
-	lightViewport.Width = (FLOAT)window::getInstance()->screen_width;
-	lightViewport.Height = (FLOAT)window::getInstance()->screen_height;
-	lightViewport.TopLeftX = 0;
-	lightViewport.TopLeftY = 0;
-	lightViewport.MaxDepth = 1;
-	lightViewport.MinDepth = 0;
-}
-
 void dxDevice::clearDepthStencil()
 {
 	dxDevContext->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -364,13 +339,3 @@ void dxDevice::setBlendState(BLEND_STATE state)
 		break;
 	}
 }
-
-
-void dxDevice::setViewport(std::string viewportSelect)
-{
-	if(viewportSelect == "mesh")
-	dxDevContext->RSSetViewports(1, &meshViewport);
-	if(viewportSelect == "light")
-	dxDevContext->RSSetViewports(1, &lightViewport);
-}
-

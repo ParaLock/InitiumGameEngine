@@ -13,9 +13,9 @@ dxTextureSampleState::~dxTextureSampleState()
 	sampleState->Release();
 }
 
-void dxTextureSampleState::load(IResourceBuilder * builder)
+void dxTextureSampleState::load(std::shared_ptr<IResourceBuilder> builder)
 {
-	TextureSamplerBuilder* realBuilder = static_cast<TextureSamplerBuilder*>(builder);
+	InitData* realBuilder = static_cast<InitData*>(builder.get());
 
 	TEX_FILTERS texFilterType = realBuilder->_texFilterType;
 	ANISOTRPHIC_FILTER_LEVELS anisotropyFilterLevel = realBuilder->_anisotropyFilterLevel;

@@ -53,7 +53,7 @@ CameraComponent::CameraComponent(float near_value, float far_value) :
 	ClientToScreen(window::getInstance()->hWnd, &pt);
 	SetCursorPos(pt.x, pt.y);
 
-	_mouseLocked = true;
+	_mouseLocked = false;
 
 	ShowCursor(false);
 

@@ -25,6 +25,8 @@ void dx11_bind_render_target_as_sr(void* rt, SHADER_TYPE parentShader, int bindS
 void dx11_bind_render_targets_as_rt(std::vector<void*> renderTargets, bool bindDS);
 void dx11_set_primitive_topology(PRIMITIVE_TOPOLOGY ptType);
 
+void dx11_set_viewport(float maxDepth, float minDepth, int width, int height);
+
 void dx11_set_depth_test_state(DEPTH_TEST_STATE depthTestState);
 void dx11_set_blend_state(BLEND_STATE blendState);
 

@@ -32,7 +32,13 @@ public:
 	ShaderInputLayout();
 	~ShaderInputLayout();
 
-	void load(IResourceBuilder* builder) { isLoaded = true; };
+	struct InitData : public IResourceBuilder {
+		InitData() {
+
+		}
+	};
+
+	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
 	void unload() { isLoaded = false; };
 
 	virtual void addInput(int type, std::string name, UINT index, BYTE mask) = 0;

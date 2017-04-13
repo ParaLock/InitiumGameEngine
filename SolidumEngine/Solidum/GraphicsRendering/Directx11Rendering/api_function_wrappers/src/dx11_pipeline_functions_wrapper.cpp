@@ -122,6 +122,21 @@ void dx11_set_primitive_topology(PRIMITIVE_TOPOLOGY ptType) {
 	}
 }
 
+void dx11_set_viewport(float maxDepth, float minDepth, int width, int height)
+{
+	D3D11_VIEWPORT viewport;
+	ZeroMemory(&viewport, sizeof(viewport));
+
+	viewport.Width = width;
+	viewport.Height = height;
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	viewport.MaxDepth = maxDepth;
+	viewport.MinDepth = minDepth;
+
+	dxDeviceAccessor::dxEncapsulator->dxDevContext->RSSetViewports(1, &viewport);
+}
+
 void dx11_reset_pipeline() {
 
 	ID3D11ShaderResourceView* nullSRV[9] = { nullptr };

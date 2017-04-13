@@ -11,7 +11,7 @@ public:
 	dxTexture();
 	~dxTexture();
 
-	void load(IResourceBuilder* builder);
+	void load(std::shared_ptr<IResourceBuilder> builder);
 	void unload();
 
 	void loadImage(LPCWSTR filename);

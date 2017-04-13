@@ -17,9 +17,15 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 
 	ActiveGraphicsAPI::setCurrentAPI(api);
 
+	_renderNodeFactory = new RenderNodeFactory();
+	_renderNodePool = new RenderNodePool(_renderNodeFactory);
+
+	_graphicsCommandFactory = new GraphicsCommandFactory();
+	_graphicsCommandPool = new GraphicsCommandPool(_graphicsCommandFactory);
+
 	_renderTree = new RenderNodeTree();
 
-	_gcqManager = new GCQManager();
+	_gcqManager = new GCLQManager();
 
 	_gcqManager->createCommandQueue("primaryGraphicsCommandQueue");
 	_gcqManager->setPrimaryCommandQueue("primaryGraphicsCommandQueue");
@@ -58,6 +64,8 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 		PipelineFunctions::pipeline_set_raster_state = dx11_set_raster_state;
 		PipelineFunctions::pipeline_drawIndexed = dx11_pipeline_draw_indexed;
 
+		PipelineFunctions::pipeline_set_viewport = dx11_set_viewport;
+
 		_dxManager = new dxDeviceManager();
 
 		dxConfigBlock dxConfig;
@@ -70,18 +78,24 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 
 		dxDeviceAccessor::initAccessor(_dxManager);
 
+		Viewport frameBuffDepthStencilView = Viewport(outputWindow->screen_height, outputWindow->screen_width, 1, 0);
+
 		RenderTarget* frameBufferRT = new dxRenderTarget(
 			dxDeviceAccessor::dxEncapsulator->getFrameBufferRenderTarget(),
-			dxDeviceAccessor::dxEncapsulator->getFrameBufferTexture());
+			dxDeviceAccessor::dxEncapsulator->getFrameBufferTexture(),
+			frameBuffDepthStencilView);
 
 		resManagerPool->getResourceManager("RenderTargetManager")->addResource(frameBufferRT, "framebuffer");
 
 		RenderTarget* depthBufferRT = new dxRenderTarget(
 			dxDeviceAccessor::dxEncapsulator->getDepthBufferShaderView(),
-			dxDeviceAccessor::dxEncapsulator->getDepthBufferTexture());
+			dxDeviceAccessor::dxEncapsulator->getDepthBufferTexture(),
+			frameBuffDepthStencilView);
 
 		resManagerPool->getResourceManager("RenderTargetManager")->addResource(depthBufferRT, "depthbuffer");
 	}
+
+	IGraphicsCore::singletonInstance = this;
 }
 
 
@@ -119,9 +133,13 @@ void GraphicsCore::render()
 
 	_renderTree->walkTree();
 
-	_endFrameState->applyState();
+	GraphicsCommandList* _endsceneCommandList = new GraphicsCommandList();
 
-	_gcqManager->getPrimaryCommandQueue()->processCommands();
+	_endFrameState->applyState(_endsceneCommandList);
+
+	_gcqManager->getPrimaryCommandQueue()->queueCommandList(_endsceneCommandList);
+
+	_gcqManager->getPrimaryCommandQueue()->processAllCommands();
 }
 
 void GraphicsCore::setCurrentRenderingCamera(CameraComponent* cam)

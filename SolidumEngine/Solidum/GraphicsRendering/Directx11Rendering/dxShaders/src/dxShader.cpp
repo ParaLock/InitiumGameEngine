@@ -9,9 +9,11 @@ dxShader::~dxShader()
 {
 }
 
-void dxShader::load(IResourceBuilder * builder)
+void dxShader::load(std::shared_ptr<IResourceBuilder> builder)
 {
-	ShaderBuilder* realBuilder = static_cast<ShaderBuilder*>(builder);
+	_shaderBindFunc = std::bind(&dxShader::bind, this);
+
+	Shader::InitData* realBuilder = static_cast<Shader::InitData*>(builder.get());
 
 	LPCWSTR shaderFilename = realBuilder->_filename;
 
@@ -176,11 +178,10 @@ void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode
 
 			if (BufferLayout.Description.Type == D3D11_CT_CBUFFER) {
 
-				DynamicStructBuilder cbuffBuilder(BufferLayout.Description.Name, true);
-
 				DynamicStruct* cbuff = new DynamicStruct();
 
-				cbuff->load(&cbuffBuilder);
+				cbuff->load(std::make_shared<DynamicStruct::InitData>
+					(BufferLayout.Description.Name, true));
 
 				for (int q = 0; q < BufferLayout.Variables.size(); q++) {
 					cbuff->addVariable(BufferLayout.Variables.at(q).Name, BufferLayout.Variables.at(q).Size);
@@ -201,16 +202,16 @@ void dxShader::bind()
 	dxDeviceAccessor::dxEncapsulator->dxDevContext->PSSetShader(pixelShader, NULL, 0);
 }
 
-void dxShader::execute(int numIndices)
+void dxShader::execute(GraphicsCommandList* commandList)
 {
-	std::function<void()> bindFunc = std::bind(&dxShader::bind, this);
+	GraphicsCore* gCore = GraphicsCore::getInstance();
+	GraphicsCommandPool* commandPool = gCore->getGraphicsCommandPool();
 
-	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineBindShaderCommand(bindFunc));
+	GraphicsCommand* bindShaders = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SHADERS);
 
-	//The resource hooks are not yet set when this command loops through all NOT NULL resources. The proper resources would still be null
-	_pipelineState->applyState();
+	bindShaders->load(std::make_shared<PipelineBindShaderCommand::InitData>(_shaderBindFunc));
 
-	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineDrawIndexedCommand(0, numIndices));
+	commandList->queueCommand(bindShaders);
 
-	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineStateResetCommand());
+	_pipelineState->applyState(commandList);
 }

@@ -21,12 +21,11 @@ PIPELINE_BEGIN
 		BIND GBUFFER INPUT normals_gbuff
 		BIND GBUFFER INPUT position_gbuff
 		BIND GBUFFER INPUT specular_gbuff
-		BIND GBUFFER INPUT light_space_map
 		BIND GBUFFER INPUT shadow_map
-
 		
 		BIND GBUFFER OUTPUT framebuffer
 		
+		BIND SAMPLER shadowMapSampler
 		BIND SAMPLER pointSampler
 		
 	PS_SHADER_END

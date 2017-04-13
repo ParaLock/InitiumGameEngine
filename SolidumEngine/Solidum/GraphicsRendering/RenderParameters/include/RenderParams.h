@@ -12,26 +12,26 @@ class Light;
 
 struct GlobalRenderingParams {
 	Vector4f _ambientLightLevel;
-	CameraComponent* _globalRenderingCamera;
+	CameraComponent* _globalRenderingCamera = nullptr;
 };
 
 struct LocalRenderingParams {
 	
-	Light* _light;
-	Texture* _meshTex;
-	Material* _meshMat;
-	mesh* _mesh;
+	Light* _light = nullptr;
+	Texture* _meshTex = nullptr;
+	Material* _meshMat = nullptr;
+	mesh* _mesh = nullptr;
 
 	bool _useForwardRendering;
-	CameraComponent* _renderCamera;
+	CameraComponent* _renderCamera = nullptr;
 
-	bool _depthTestEnabled;
-	bool _isVisible;
+	bool _depthTestEnabled = false;
+	bool _isVisible = false;
 
 	Vector4f _skydomeApexColor;
 	Vector4f _skydomeCenterColor;
 
-	Transform* _transform;
+	Transform* _transform = nullptr;
 };
 
 class RenderParams

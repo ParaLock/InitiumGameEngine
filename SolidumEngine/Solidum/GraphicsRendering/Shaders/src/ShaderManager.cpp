@@ -11,7 +11,7 @@ ShaderManager::~ShaderManager()
 {
 }
 
-IResource* ShaderManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
+IResource* ShaderManager::createResource(std::shared_ptr<IResourceBuilder> builder, std::string name, bool loadAsync)
 {
 	IResource* newResource = nullptr;
 

@@ -4,7 +4,7 @@ dxRenderTarget::dxRenderTarget()
 {
 }
 
-dxRenderTarget::dxRenderTarget(ID3D11RenderTargetView * rt, ID3D11Texture2D * rtTex)
+dxRenderTarget::dxRenderTarget(ID3D11RenderTargetView * rt, ID3D11Texture2D * rtTex, Viewport& view)
 {
 	//Yup.... This constructer is a hack xD
 	_texture = rtTex;
@@ -13,9 +13,11 @@ dxRenderTarget::dxRenderTarget(ID3D11RenderTargetView * rt, ID3D11Texture2D * rt
 	_aaSamples = -1;
 	_mipLevel = -1;
 	_texFormat = TEX_FORMAT::UNKNOWN;
+
+	_viewPort = view;
 }
 
-dxRenderTarget::dxRenderTarget(ID3D11ShaderResourceView * sv, ID3D11Texture2D * svTex)
+dxRenderTarget::dxRenderTarget(ID3D11ShaderResourceView * sv, ID3D11Texture2D * svTex, Viewport& view)
 {
 	//And again.... I promise to fix this in the future... ;)
 	_texture = svTex;
@@ -24,6 +26,8 @@ dxRenderTarget::dxRenderTarget(ID3D11ShaderResourceView * sv, ID3D11Texture2D * 
 	_aaSamples = -1;
 	_mipLevel = -1;
 	_texFormat = TEX_FORMAT::UNKNOWN;
+
+	_viewPort = view;
 }
 
 dxRenderTarget::~dxRenderTarget()
@@ -36,15 +40,17 @@ dxRenderTarget::~dxRenderTarget()
 	_texture->Release();
 }
 
-void dxRenderTarget::load(IResourceBuilder * builder)
+void dxRenderTarget::load(std::shared_ptr<IResourceBuilder> builder)
 {
-	RenderTargetBuilder* realBuilder = static_cast<RenderTargetBuilder*>(builder);
+	InitData* realBuilder = static_cast<InitData*>(builder.get());
 
 	_aaSamples = realBuilder->_aaSamples;
 	_mipLevel = realBuilder->_mipLevel;
 	_texFormat = realBuilder->_texFormat;
 
 	ID3D11Device *dxDev = dxDeviceAccessor::dxEncapsulator->dxDev;
+
+	_viewPort = Viewport(realBuilder->_height, realBuilder->_width, 1, 0);
 
 	HRESULT result;
 	D3D11_TEXTURE2D_DESC textureDesc;
@@ -82,8 +88,8 @@ void dxRenderTarget::load(IResourceBuilder * builder)
 		break;
 	}
 
-	textureDesc.Width = window::getInstance()->screen_width;
-	textureDesc.Height = window::getInstance()->screen_height;
+	textureDesc.Width = realBuilder->_width;
+	textureDesc.Height = realBuilder->_height;
 	textureDesc.ArraySize = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;

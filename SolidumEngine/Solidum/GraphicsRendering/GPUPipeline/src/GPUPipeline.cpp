@@ -17,9 +17,9 @@ GPUPipeline::~GPUPipeline()
 	delete _opList;
 }
 
-void GPUPipeline::load(IResourceBuilder * builder)
+void GPUPipeline::load(std::shared_ptr<IResourceBuilder> builder)
 {
-	GPUPipelineBuilder* realBuilder = static_cast<GPUPipelineBuilder*>(builder);
+	InitData* realBuilder = static_cast<InitData*>(builder.get());
 
 	std::wstring filePathWStr(realBuilder->_filename);
 
@@ -83,8 +83,17 @@ void GPUPipeline::load(IResourceBuilder * builder)
 			if (splitStr.at(0) == "INIT") {
 				if (splitStr.at(1) == "GBUFFER") {
 
-					ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->createResource(
-						&RenderTargetBuilder(1, 1, TEX_FORMAT::RGBA_32BIT_FLOAT), splitStr.at(2), false);
+					if (splitStr.size() >= 4) {
+
+						ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->createResource(
+							std::make_shared<RenderTarget::InitData>(1, 1, TEX_FORMAT::RGBA_32BIT_FLOAT,
+								std::stoi(splitStr.at(4)), std::stoi(splitStr.at(3))), splitStr.at(2), false);
+					}
+					else {
+						ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->createResource(
+							std::make_shared<RenderTarget::InitData>(1, 1, TEX_FORMAT::RGBA_32BIT_FLOAT,
+								window::getInstance()->screen_height, window::getInstance()->screen_width), splitStr.at(2), false);
+					}
 				}
 
 				if (splitStr.at(1) == "SAMPLER") {
@@ -106,9 +115,8 @@ void GPUPipeline::load(IResourceBuilder * builder)
 						filterType = TEX_FILTERS::TEX_FILTER_POINT;
 					}
 
-					ResourceManagerPool::getInstance()->getResourceManager("TextureSamplerManager")->createResource(&TextureSamplerBuilder(
-						filterType, ANISOTRPHIC_FILTER_LEVELS::NO_ANISOTROPHIC_FILTERING, addrMode),
-						splitStr.at(4), false);
+					ResourceManagerPool::getInstance()->getResourceManager("TextureSamplerManager")->createResource(std::make_shared<TextureSampler::InitData>
+						(filterType, ANISOTRPHIC_FILTER_LEVELS::NO_ANISOTROPHIC_FILTERING, addrMode), splitStr.at(4), false);
 				}
 			}
 
@@ -304,12 +312,18 @@ void GPUPipeline::attachOP(GPUPipelineOP op)
 	_opList->push_back(op);
 }
 
-void GPUPipeline::applyState()
+void GPUPipeline::applyState(GraphicsCommandList* commandList)
 {
-	std::list<IResource*> outputRTs;
+	std::list<RenderTarget*> outputRTs;
 
-	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-		new PipelineSetPTCommand(PRIMITIVE_TOPOLOGY::TRANGLE_LIST));
+	IGraphicsCore* gCore = IGraphicsCore::getInstance();
+	GraphicsCommandPool* commandPool = gCore->getGraphicsCommandPool();
+
+	GraphicsCommand* setPTcommand = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_PRIMITIVE_TOPOLOGY);
+
+	setPTcommand->load(std::make_shared<PipelineSetPTCommand::InitData>(PRIMITIVE_TOPOLOGY::TRANGLE_LIST));
+
+	commandList->queueCommand(setPTcommand);
 
 	for (std::map<std::string, GPUPipelineElement*>::iterator itr =
 		_elementList->begin(); itr != _elementList->end(); ++itr)
@@ -321,71 +335,128 @@ void GPUPipeline::applyState()
 
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_TEXTURE_HOOK) {
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new PipelineSRBindCommand(element->bindSlot, element->core, element->parentShader, element->type));
+				GraphicsCommand* bindSR = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
+
+				bindSR->load(std::make_shared<PipelineSRBindCommand::InitData>
+					(element->core, element->bindSlot, element->type, element->parentShader));
+
+				commandList->queueCommand(bindSR);
 			}
 
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_TEX_SAMPLER) {
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new PipelineSRBindCommand(element->bindSlot, element->core, element->parentShader, element->type));
+				GraphicsCommand* bindSR = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
+
+				bindSR->load(std::make_shared<PipelineSRBindCommand::InitData>
+					(element->core, element->bindSlot, element->type, element->parentShader));
+
+				commandList->queueCommand(bindSR);
 			}
 
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_CONSTANT_BUFFER) {
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new PipelineSRBindCommand(element->bindSlot, element->core, element->parentShader, element->type));
+				GraphicsCommand* bindSR = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
+
+				bindSR->load(std::make_shared<PipelineSRBindCommand::InitData>
+					(element->core, element->bindSlot, element->type, element->parentShader));
+
+				commandList->queueCommand(bindSR);
 			}
 
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_BUFFER_HOOK) {
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new PipelineBufferBindCommand(element->core, 0, 
-						_currentInputLayout->getCore<ShaderInputLayout>()->getDataStride()));
+				GraphicsCommand* bindBuffercommand = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER);
+
+				bindBuffercommand->load(std::make_shared<PipelineBufferBindCommand::InitData>
+					(element->core->getCore<GPUBuffer>(), 0, _currentInputLayout->getCore<ShaderInputLayout>()->getDataStride()));
+
+				commandList->queueCommand(bindBuffercommand);
 
 			}
 
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET) {
 				if (element->rt_isOutput)
 				{
-					outputRTs.push_back(element->core);
+					outputRTs.push_back((RenderTarget*)element->core);
+
+					GraphicsCommand* bindViewport = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VIEWPORT_STATE);
+					
+					Viewport rtView = element->core->getCore<RenderTarget>()->getViewport();
+					
+					bindViewport->load(std::make_shared<PipelineSetViewportCommand::InitData>(rtView));
+
+					commandList->queueCommand(bindViewport);
 				}
 				else {
 
-					GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-						new PipelineRenderTargetCommand(RENDER_TARGET_OP_TYPE::BIND_AS_INPUT,
-							element->parentShader, element->bindSlot, _outputRTsBindDS, std::list<IResource*>{ element->core }));
+					GraphicsCommand* bindRTcommand = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
+
+					bindRTcommand->load(std::make_shared<PipelineRenderTargetCommand::InitData>
+						(element->bindSlot, _outputRTsBindDS, element->parentShader,std::list<RenderTarget*>{ (RenderTarget*)element->core }, RENDER_TARGET_OP_TYPE::BIND_AS_INPUT));
+
+					commandList->queueCommand(bindRTcommand);
+					
 				}
 			}
 		}
 	}
 
-	if (_currentInputLayout != nullptr)
-		GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineILBindCommand(_currentInputLayout));
-	
+	if (_currentInputLayout != nullptr) {
 
-	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineRenderTargetCommand(RENDER_TARGET_OP_TYPE::BIND_AS_OUTPUT,
-		SHADER_TYPE::INVALID, -1, _outputRTsBindDS, outputRTs));
+		GraphicsCommand* bindIL = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_INPUT_LAYOUT);
 
-	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineSetBlendStateCommand(blendState));
-	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineSetDepthTestStateCommand(depthState));
-	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineSetRasterStateCommand(rasterState));
+		bindIL->load(std::make_shared<PipelineILBindCommand::InitData>(_currentInputLayout));
+
+		commandList->queueCommand(bindIL);
+	}
+
+	GraphicsCommand* bindOutputRTs = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
+
+	bindOutputRTs->load(std::make_shared<PipelineRenderTargetCommand::InitData>
+		(-1, _outputRTsBindDS, SHADER_TYPE::INVALID, outputRTs, RENDER_TARGET_OP_TYPE::BIND_AS_OUTPUT));
+
+	commandList->queueCommand(bindOutputRTs);
+
+	GraphicsCommand* setBlendState = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_BLEND_STATE);
+	GraphicsCommand* setDepthState = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_DEPTH_TEST_STATE);
+	GraphicsCommand* setRasterState = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_RASTER_STATE);
+
+	setBlendState->load(std::make_shared<PipelineSetBlendStateCommand::InitData>(blendState));
+	setDepthState->load(std::make_shared<PipelineSetDepthTestStateCommand::InitData>(depthState));
+	setRasterState->load(std::make_shared<PipelineSetRasterStateCommand::InitData>((rasterState)));
+
+	commandList->queueCommand(setBlendState);
+	commandList->queueCommand(setDepthState);
+	commandList->queueCommand(setRasterState);
 
 	for (auto itr = _opList->begin(); itr != _opList->end(); itr++) {
 		GPUPipelineOP op = *itr;
 		
 		if (op.opType == GPUPIPELINE_OP_TYPE::CLEAR) {
 
-			if(op.resType == SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET)
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new PipelineRenderTargetCommand(RENDER_TARGET_OP_TYPE::CLEAR, SHADER_TYPE::INVALID, -1, false, std::list<IResource*>{op.opTarget}));
+			if (op.resType == SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET) {
+
+				GraphicsCommand* runRTOpCommand = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
+
+				runRTOpCommand->load(std::make_shared<PipelineRenderTargetCommand::InitData>
+					(-1, false, SHADER_TYPE::INVALID, std::list<RenderTarget*>{(RenderTarget*)op.opTarget}, RENDER_TARGET_OP_TYPE::CLEAR));
+
+				commandList->queueCommand(runRTOpCommand);
+			}
 		
-			if (op.resType == SHADER_RESOURCE_TYPE::SHADER_ZBUFFER)
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineClearDepthStencil());
+			if (op.resType == SHADER_RESOURCE_TYPE::SHADER_ZBUFFER) {
+
+				GraphicsCommand* clearDS = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_CLEAR_DEPTH_BUFFER);
+
+				commandList->queueCommand(clearDS);
+			}
 		}
 
 		if (op.opType == GPUPIPELINE_OP_TYPE::SWAPFRAME) {
-			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(new PipelineSwapFrame());
+
+			GraphicsCommand* swapframe = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_SWAPFRAME);
+
+			commandList->queueCommand(swapframe);
 		}
 	}
 }

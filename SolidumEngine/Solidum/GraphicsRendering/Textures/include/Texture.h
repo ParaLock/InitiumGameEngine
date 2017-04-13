@@ -6,22 +6,21 @@
 
 #include "../../../ResourceFramework/include/IResource.h"
 
-class TextureBuilder : public IResourceBuilder {
-public:
-	LPCWSTR _filename;
-
-	TextureBuilder(LPCWSTR filename) {
-		_filename = filename;
-	}
-};
-
 class Texture : public IResource
 {
 public:
 	Texture();
 	~Texture();
 
-	virtual void load(IResourceBuilder* builder) = 0;
+	struct InitData : public IResourceBuilder {
+		LPCWSTR _filename;
+
+		InitData(LPCWSTR filename) {
+			_filename = filename;
+		}
+	};
+
+	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
 	virtual void unload() = 0;
 
 	virtual void loadImage(LPCWSTR filename);

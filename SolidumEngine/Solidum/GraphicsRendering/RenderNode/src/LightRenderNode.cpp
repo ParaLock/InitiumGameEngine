@@ -2,12 +2,10 @@
 
 
 
-LightRenderNode::LightRenderNode(uint64_t id)
+LightRenderNode::LightRenderNode()
 {
-	_id = id;
-
 	_orthoMesh = new mesh();
-	_orthoMesh->load(&meshBuilder(L"gen_ortho_window_mesh", ResourceManagerPool::getInstance()));
+	_orthoMesh->load(std::make_shared<mesh::InitData>(L"gen_ortho_window_mesh", ResourceManagerPool::getInstance()));
 
 	_shader = GraphicsCore::getInstance()->getDefaultShader(DEFAULT_SHADER_TYPE::DEFAULT_LIGHT);
 
@@ -20,23 +18,27 @@ LightRenderNode::~LightRenderNode()
 	delete _orthoMesh;
 }
 
-bool LightRenderNode::isRenderViable()
+void LightRenderNode::load(std::shared_ptr<IResourceBuilder> builder)
 {
-	if (!_renderParams.getPerNodeParam_isVisible())
-		return false;
-	if (_renderParams.getPerNodeParam_Light() == nullptr)
-		return false;
-	if (_renderParams.getPerNodeParam_Mesh() == nullptr)
-		return false;
-	if (_renderParams.getPerNodeParam_RenderCamera() == nullptr)
-		return false;
+	InitData* realBuilder = static_cast<InitData*>(builder.get());
 
-	return true;
+	_id = realBuilder->_id;
+
+	isLoaded = true;
 }
 
-void * LightRenderNode::getVar(std::string varname)
+void LightRenderNode::unload()
 {
-	if (varname == "IS_SHADOW_CASTER") {
+	isLoaded = false;
+}
+
+void LightRenderNode::updateParameter(std::string varName, void * data)
+{
+}
+
+void * LightRenderNode::getParameter(std::string varName)
+{
+	if (varName == "IS_SHADOW_CASTER") {
 
 		bool caster = _renderParams.getPerNodeParam_Light()->getIsShadowCaster();
 
@@ -46,11 +48,23 @@ void * LightRenderNode::getVar(std::string varname)
 	return nullptr;
 }
 
+bool LightRenderNode::isRenderViable()
+{
+	if (!_renderParams.getPerNodeParam_isVisible())
+		return false;
+	if (_renderParams.getPerNodeParam_Light() == nullptr)
+		return false;
+	if (_renderParams.getGlobalParam_GlobalRenderingCamera() == nullptr)
+		return false;
+
+	return true;
+}
+
 void LightRenderNode::render()
 {
-	if (isRenderViable()) {
+	GraphicsCommandList* commandList = new GraphicsCommandList();
 
-		_isVisible = _renderParams.getPerNodeParam_isVisible();
+	if (isRenderViable()) {
 
 		Light* light = _renderParams.getPerNodeParam_Light();
 
@@ -71,27 +85,51 @@ void LightRenderNode::render()
 			static Matrix4f CworldMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getWorldMatrix();
 			static Matrix4f CmodelMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getModelMatrix();
 
-			static Matrix4f CviewProj = Matrix4f::transpose(CviewMatrix * CprojectionMatrix);
+			static Matrix4f lightSpaceMatrix = LprojectionMatrix * LviewMatrix;
 
-			static Matrix4f LviewProj = Matrix4f::transpose(LviewMatrix * LprojectionMatrix);
+			lightSpaceMatrix = Matrix4f::transpose(lightSpaceMatrix);
 
-			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-				new ShaderUpdateCameraUniformsCommand(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader));
+			GraphicsCore* gCore = GraphicsCore::getInstance();
+			GraphicsCommandPool* commandPool = gCore->getGraphicsCommandPool();
 
-			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-				new ShaderUpdateUniformCommand(&CviewProj, "cbuff_camViewProj", _shader));
-		
-			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-				new ShaderUpdateUniformCommand(&LviewProj, "cbuff_lightViewProj", _shader));
-			
-			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-				new ShaderSyncUniforms(_shader));
+			GraphicsCommand* camUpdateNode       =	commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
+            GraphicsCommand* updateUniform       =	commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+			GraphicsCommand* updateLightUniforms =  commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_LIGHT_UNIFORMS);
+			GraphicsCommand* syncUniforms        =	commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
+			GraphicsCommand* drawIndexedModel	 =	commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INDEXED);
+			GraphicsCommand* resetPipeline       =	commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
 
-			GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-				new ShaderUpdateLightUniformsCommand(std::vector<ILight*>{light}, _shader));
+			syncUniforms->load(std::make_shared<ShaderSyncUniforms::InitData>(_shader));
 
+			camUpdateNode->load(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
+				(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader));
 
-			_shader->execute(_orthoMesh->numIndices);
+			updateLightUniforms->load(std::make_shared<ShaderUpdateLightUniformsCommand::InitData>
+				(std::list<ILight*>{light}, _shader));
+
+			updateUniform->load(std::make_shared<ShaderUpdateUniformCommand::InitData>
+				(std::make_pair("cbuff_lightSpaceMatrix", &lightSpaceMatrix), _shader));
+
+			drawIndexedModel->load(std::make_shared<PipelineDrawIndexedCommand::InitData>
+				(0, _orthoMesh->numIndices));
+
+			commandList->queueCommand(camUpdateNode);
+
+			commandList->queueCommand(updateUniform);
+
+			commandList->queueCommand(updateLightUniforms);
+
+			commandList->queueCommand(syncUniforms);
+
+			_shader->execute(commandList);
+
+			commandList->queueCommand(drawIndexedModel);
+			commandList->queueCommand(resetPipeline);
 		}
 	}
+
+	_renderParams.setPerNodeParam_isVisible(false);
+
+	GCLQManager::getInstance()->getPrimaryCommandQueue()->queueCommandList(commandList);
+
 }

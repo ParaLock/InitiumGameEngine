@@ -18,16 +18,7 @@
 
 #include "../../../EventFramework/include/InputEvent.h"
 
-#include "../../../EngineUtils/include/Matrix3x3.h"
-#include "../../../EngineUtils/include/Matrix4x4.h"
-
-#include "../../../EngineUtils/include/Vector4.h"
-#include "../../../EngineUtils/include/Vector3.h"
-#include "../../../EngineUtils/include/Vector2.h"
-
 #define SMOOTHING_FACTOR 100
-
-class IResourceBuilder;
 
 enum CAMERA_MOVE {
 	CAM_RIGHT,
@@ -70,7 +61,7 @@ private:
 
 	Vector2f _previousMousePos;
 
-	void load(IResourceBuilder* builder) { isLoaded = true; };
+	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
 	void unload() { isLoaded = false; };
 
 	void updateParameter(std::string varName, void *data) {};

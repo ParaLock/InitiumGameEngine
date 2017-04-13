@@ -29,6 +29,8 @@ public:
 
 	static std::function<void()> pipeline_clearDepthStencil;
 
+	static std::function<void(float maxDepth, float minDepth, int width, int height)> pipeline_set_viewport;
+
 	static std::function<void()> pipeline_reset;
 
 	static std::function<void()> pipeline_swap_frame;

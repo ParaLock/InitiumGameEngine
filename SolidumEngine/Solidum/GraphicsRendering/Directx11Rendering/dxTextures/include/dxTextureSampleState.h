@@ -13,7 +13,7 @@ public:
 	dxTextureSampleState();
 	~dxTextureSampleState();
 
-	void load(IResourceBuilder *builder);
+	void load(std::shared_ptr<IResourceBuilder> builder);
 	void unload();
 
 	void updateParameter(std::string varName, void *data);

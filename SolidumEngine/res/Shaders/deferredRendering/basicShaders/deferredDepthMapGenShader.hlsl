@@ -13,13 +13,11 @@ struct PixelInputType
 {
     float4 position : SV_POSITION;
     float4 depthPosition : TEXTURE0;
-	float4 worldPos : TEXTURE1;
 };
 
 struct PixelOutputType
 {
 	float4 depth : SV_Target0;
-	float4 lightSpace : SV_Target1;
 };
 
 PixelInputType Vshader(VertexInputType input)
@@ -31,12 +29,9 @@ PixelInputType Vshader(VertexInputType input)
 	matrix FinalworldMatrix = mul(cbuff_OBJSpecificMatrix, cbuff_worldMatrix);
 	
     output.position = mul(input.position, FinalworldMatrix);
-	
-	output.worldPos = output.position;
-	
     output.position = mul(output.position, cbuff_lightViewMatrix);
     output.position = mul(output.position, cbuff_lightProjectionMatrix);
-
+	
 	output.depthPosition = output.position;
 	
 	return output;
@@ -52,8 +47,6 @@ PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 	depthValue = input.depthPosition.z / input.depthPosition.w;
 
 	output.depth = float4(depthValue, depthValue, depthValue, 1.0f);
-	
-	output.lightSpace = input.worldPos;
 	
 	return output;
 }

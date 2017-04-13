@@ -10,9 +10,9 @@ dxTexture::~dxTexture()
 	texture->Release();
 }
 
-void dxTexture::load(IResourceBuilder * builder)
+void dxTexture::load(std::shared_ptr<IResourceBuilder> builder)
 {
-	TextureBuilder* realBuilder = static_cast<TextureBuilder*>(builder);
+	InitData* realBuilder = static_cast<InitData*>(builder.get());
 
 	loadImage(realBuilder->_filename);
 

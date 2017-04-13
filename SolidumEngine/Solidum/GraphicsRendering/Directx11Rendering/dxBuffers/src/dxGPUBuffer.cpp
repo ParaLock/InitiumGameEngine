@@ -11,9 +11,9 @@ dxGPUBuffer::~dxGPUBuffer()
 {
 }
 
-void dxGPUBuffer::load(IResourceBuilder * builder)
+void dxGPUBuffer::load(std::shared_ptr<IResourceBuilder> builder)
 {
-	GPUBufferBuilder *realBuilder = static_cast<GPUBufferBuilder*>(builder);
+	InitData *realBuilder = static_cast<InitData*>(builder.get());
 
 	_size = realBuilder->_size;
 	_type = realBuilder->_type;
@@ -122,7 +122,7 @@ void * dxGPUBuffer::getParameter(std::string varName)
 
 void dxGPUBuffer::swapInternalBuffer(void * pNewBuff)
 {
-	//TEST FUNCTION... I know, it sucks.
+	//TEST FUNCTION... Yup, it sucks.
 	ID3D11Buffer* newBuff = (ID3D11Buffer*)pNewBuff;
 
 	bufferPtr = newBuff;

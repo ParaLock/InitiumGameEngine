@@ -28,7 +28,7 @@ private:
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 
-	void load(IResourceBuilder* builder) { isLoaded = true; };
+	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
 	void unload() { isLoaded = false; };
 public:
 	SunMoonLightingComponent(Light* sun, Light* moon, float speed);

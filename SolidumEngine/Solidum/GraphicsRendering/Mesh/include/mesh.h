@@ -20,29 +20,29 @@
 
 #include "../../ActiveGraphicsAPI.h"
 
-class meshBuilder : public IResourceBuilder {
-public:
-	LPCWSTR _filename;
-	ResourceManagerPool* _managerPool;
-
-	meshBuilder(LPCWSTR filename, ResourceManagerPool* managerPool) {
-		_filename = filename;
-		_managerPool = managerPool;
-	}
-};
-
 class mesh : public IResource
 {
 private:
 	IResource* _vertexBuff;
 	IResource* _indexBuff;
 
-	void generateOrthoWindowMesh(meshBuilder* builder);
 public:
 	mesh();
 	~mesh();
 
-	void load(IResourceBuilder *builder);
+	struct InitData : public IResourceBuilder {
+		LPCWSTR _filename;
+		ResourceManagerPool* _managerPool;
+
+		InitData(LPCWSTR filename, ResourceManagerPool* managerPool) {
+			_filename = filename;
+			_managerPool = managerPool;
+		}
+	};
+
+	void generateOrthoWindowMesh(InitData* builder);
+
+	void load(std::shared_ptr<IResourceBuilder> builder);
 	void unload();
 
 	void updateParameter(std::string varName, void *data) {};

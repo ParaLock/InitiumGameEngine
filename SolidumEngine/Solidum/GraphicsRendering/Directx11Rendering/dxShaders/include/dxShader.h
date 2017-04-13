@@ -28,13 +28,15 @@ private:
 
 	ID3D10Blob *vertexShaderCode, *pixelShaderCode;
 
+	std::function<void()> _shaderBindFunc;
+
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 public:
 	dxShader();
 	~dxShader();
 
-	void load(IResourceBuilder* builder);
+	void load(std::shared_ptr<IResourceBuilder> builder);
 	void unload();
 
 	void attachPipeline(GPUPipeline* pipe);
@@ -43,6 +45,6 @@ public:
 
 	void bind();
 
-	void execute(int numIndices);
+	void execute(GraphicsCommandList* commandList);
 };
 

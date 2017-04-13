@@ -4,20 +4,6 @@
 #include "../../../ResourceFramework/include/IResourceBuilder.h"
 #include "../../../ResourceFramework/include/IResourceManager.h"
 
-class GPUBufferBuilder : public IResourceBuilder {
-public:
-	size_t _size;
-	BUFFER_TYPE _type;
-	BUFFER_CPU_ACCESS _access;
-
-	GPUBufferBuilder(size_t size, BUFFER_TYPE type, BUFFER_CPU_ACCESS access) {
-		_size = size;
-		_type = type;
-		_access = access;
-	}
-};
-
-
 class GPUBuffer : public IResource
 {
 protected:
@@ -29,7 +15,22 @@ public:
 	GPUBuffer();
 	~GPUBuffer();
 
-	virtual void load(IResourceBuilder* builder) = 0;
+	struct InitData : public IResourceBuilder {
+
+		size_t _size;
+		BUFFER_TYPE _type;
+		BUFFER_CPU_ACCESS _access;
+
+		InitData(size_t size, BUFFER_TYPE type, BUFFER_CPU_ACCESS access) {
+
+			_size = size;
+			_type = type;
+			
+			_access = access;
+		}
+	};
+
+	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
 	virtual void unload() = 0;
 
 	virtual void Write(void *pSrc, size_t byteToWrite, size_t offset) = 0;

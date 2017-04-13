@@ -11,7 +11,7 @@ MaterialManager::~MaterialManager()
 {
 }
 
-IResource* MaterialManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
+IResource* MaterialManager::createResource(std::shared_ptr<IResourceBuilder> builder, std::string name, bool loadAsync)
 {
 	IResource* newMat = new Material();
 

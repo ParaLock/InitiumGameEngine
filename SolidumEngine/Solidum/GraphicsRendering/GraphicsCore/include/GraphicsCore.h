@@ -25,13 +25,20 @@
 #include "../../PipelineCommands/include/PipelineFunctions.h"
 
 #include "../../PipelineCommands/include/PipelineCommand.h"
-#include "../../GraphicsCommandQueue/include/GraphicsCommandQueue.h"
-#include "../../GraphicsCommandQueueManager/include/GCQManager.h"
+#include "../../GraphicsCommandListQueue/include/GraphicsCommandListQueue.h"
+#include "../../GraphicsCommandListQueueManager/include/GCLQManager.h"
 
-class GraphicsCore : public IEventListener
+#include "../../RenderNode/include/RenderNodePool.h"
+#include "../../GraphicsCommand/include/GraphicsCommandPool.h"
+
+#include "IGraphicsCore.h"
+
+class RenderNodeFactory;
+
+class GraphicsCore : public IEventListener, public IGraphicsCore
 {
 private:
-	GCQManager* _gcqManager;
+	GCLQManager* _gcqManager;
 
 	dxDeviceManager *_dxManager = nullptr;
 	ResourceManagerPool *_resManagerPool = nullptr;
@@ -43,6 +50,12 @@ private:
 	GPUPipeline* _endFrameState;
 
 	std::map<DEFAULT_SHADER_TYPE, Shader*> _defaultShaders;
+
+	RenderNodeFactory* _renderNodeFactory;
+	RenderNodePool* _renderNodePool;
+
+	GraphicsCommandFactory* _graphicsCommandFactory;
+	GraphicsCommandPool* _graphicsCommandPool;
 
 public:
 	GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool);
@@ -64,6 +77,9 @@ public:
 	void setEndFrameHandler(GPUPipeline* pipe);
 
 	RenderNodeTree* getRenderNodeTree() { return _renderTree; };
+	RenderNodePool* getRenderNodePool() { return _renderNodePool; };
+
+	GraphicsCommandPool* getGraphicsCommandPool() { return _graphicsCommandPool; };
 
 	static GraphicsCore* singletonInstance;
 	static GraphicsCore* getInstance();

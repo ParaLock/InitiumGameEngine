@@ -30,6 +30,8 @@ std::function<void(int,int)> PipelineFunctions::pipeline_drawIndexed;
 
 std::function<void()> PipelineFunctions::pipeline_reset;
 
+std::function<void(float maxDepth, float minDepth, int width, int height)> PipelineFunctions::pipeline_set_viewport;
+
 std::function<void()> PipelineFunctions::pipeline_clearDepthStencil;
 
 std::function<void()> PipelineFunctions::pipeline_swap_frame;

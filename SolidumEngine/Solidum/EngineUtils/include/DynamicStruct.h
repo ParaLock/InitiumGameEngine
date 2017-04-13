@@ -8,19 +8,6 @@
 
 #include "../../ResourceFramework/include/ResourceManagerPool.h"
 
-class DynamicStructBuilder : public IResourceBuilder {
-private:
-public:
-	std::string _name;
-	bool _hasGPUBuff;
-
-	DynamicStructBuilder(std::string name, bool hasGPUBuff) {
-		_name = name;
-		_hasGPUBuff = hasGPUBuff;
-	}
-
-};
-
 class DynamicStructMember {
 private:
 	size_t _size;
@@ -63,7 +50,17 @@ public:
 	DynamicStruct();
 	~DynamicStruct();
 
-	void load(IResourceBuilder* builder);
+	struct InitData : public IResourceBuilder {
+		std::string _name;
+		bool _hasGPUBuff;
+
+		InitData(std::string name, bool hasGPUBuff) {
+			_name = name;
+			_hasGPUBuff = hasGPUBuff;
+		}
+	};
+
+	void load(std::shared_ptr<IResourceBuilder> builder);
 	void unload();
 
 	void addVariable(std::string varName, size_t varSize);

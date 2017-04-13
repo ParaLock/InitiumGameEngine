@@ -38,11 +38,9 @@ void PipelineSRBindCommand::execute()
 
 void PipelineBufferBindCommand::execute()
 {
-	GPUBuffer* gpuBuff = _buffer->getCore<GPUBuffer>();
+	void* pBuff = _buffer->getParameter("BUFFER");
 
-	void* pBuff = gpuBuff->getParameter("BUFFER");
-
-	PipelineFunctions::pipeline_bindBuffer(pBuff, _stride, gpuBuff->getBuffType());
+	PipelineFunctions::pipeline_bindBuffer(pBuff, _stride, _buffType);
 }
 
 void PipelineILBindCommand::execute()
@@ -64,6 +62,7 @@ void PipelineSetDepthTestStateCommand::execute()
 
 void PipelineRenderTargetCommand::execute()
 {
+
 	if (_op == RENDER_TARGET_OP_TYPE::BIND_AS_INPUT) {
 		for each(IResource* rt in _involvedRTList) {
 
@@ -111,7 +110,7 @@ void PipelineDrawIndexedCommand::execute()
 
 void PipelineBindShaderCommand::execute()
 {
-	_bindFunction();
+	__bindFunc();
 }
 
 void PipelineSetRasterStateCommand::execute()
@@ -121,10 +120,17 @@ void PipelineSetRasterStateCommand::execute()
 
 void PipelineSwapFrame::execute()
 {
+
 	PipelineFunctions::pipeline_swap_frame();
 }
 
 void PipelineClearDepthStencil::execute()
 {
 	PipelineFunctions::pipeline_clearDepthStencil();
+}
+
+void PipelineSetViewportCommand::execute()
+{
+	PipelineFunctions::pipeline_set_viewport(_viewport._maxDepth, 
+		_viewport._minDepth, _viewport._width, _viewport._height);
 }

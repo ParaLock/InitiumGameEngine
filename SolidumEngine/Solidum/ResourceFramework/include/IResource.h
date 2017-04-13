@@ -12,7 +12,7 @@ public:
 	IResource();
 	virtual ~IResource();
 
-	virtual void load(IResourceBuilder *builder) = 0;
+	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
 
 	virtual void unload() = 0;
 

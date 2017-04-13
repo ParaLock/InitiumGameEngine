@@ -3,15 +3,17 @@
 
 #include "../../RenderParameters/include/RenderParams.h"
 
-#include "../../GraphicsCommandQueueManager/include/GCQManager.h"
+#include "../../GraphicsCommandListQueueManager/include/GCLQManager.h"
 #include "../../ShaderCommands/include/ShaderCommand.h"
+
+#include "../../../ResourceFramework/include/IResource.h"
 
 class IResource;
 class GPUPipeline;
 class RenderComposite;
 class IShader;
 
-class RenderNode
+class RenderNode : public IResource
 {
 protected:
 	IShader* _shader = nullptr;
@@ -25,12 +27,9 @@ protected:
 	RenderNode* _parent = nullptr;
 	RenderNode* _child = nullptr;
 
-	bool _isVisible = false;
 public:
 	RenderNode();
 	~RenderNode();
-
-	virtual void* getVar(std::string varname) { return nullptr; };
 
 	virtual void updateGlobalRenderParams(GlobalRenderingParams params);
 
@@ -42,12 +41,8 @@ public:
 	void setParent(RenderNode* parent) { _parent = parent; };
 	RenderNode* getParent() { return _parent; };
 
-	void setVisibility(bool isVisible) { _isVisible = isVisible; };
-
 	RENDER_NODE_TYPE getType() { return _type; }
 	RenderParams* getRenderParams() { return &_renderParams; };
-
-	bool getVisibility() { return _isVisible; };
 
 	virtual bool isRenderViable() = 0;
 

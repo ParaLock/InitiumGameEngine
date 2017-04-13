@@ -27,8 +27,15 @@ void SkydomeWeatherComponent::init()
 {
 	uint64_t nodeID = GraphicsCore::getInstance()->getRenderNodeTree()->getUniqueNodeID();
 
-	_parent->getRenderObject()->addGenericRenderNode(new
-		SkyBoxRenderNode(_shader, _weatherApexColor, _weatherCenterColor, nodeID),
+	GraphicsCore* gCore = GraphicsCore::getInstance();
+	RenderNodePool* renderNodePool = gCore->getRenderNodePool();
+
+	RenderNode* skyboxWeatherNode = renderNodePool->getResource(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE);
+
+	skyboxWeatherNode->load(std::make_shared<SkyBoxRenderNode::InitData>
+		(_shader, _weatherApexColor, _weatherCenterColor, nodeID));
+
+	_parent->getRenderObject()->addGenericRenderNode(skyboxWeatherNode,
 			RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index);
 
 	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
@@ -194,7 +201,8 @@ void SkydomeWeatherComponent::updateDayNightCycle(float delta)
 
 	CURRENT_TIME += delta;
 
-
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)->
+		setPerNodeParam_isVisible(true);
 }
 
 void SkydomeWeatherComponent::onEvent(EVENT_PTR evt)

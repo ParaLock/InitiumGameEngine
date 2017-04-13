@@ -9,15 +9,6 @@
 
 #include "ILight.h"
 
-class LightBuilder : public IResourceBuilder {
-public:
-	LIGHT_TYPE _type;
-
-	LightBuilder(LIGHT_TYPE type) {
-		_type = type;
-	}
-};
-
 class Light : public IResource, public ILight
 {
 private:
@@ -52,7 +43,15 @@ public:
 	Light();
 	~Light();
 
-	void load(IResourceBuilder* builder);
+	struct InitData : public IResourceBuilder {
+		LIGHT_TYPE _type;
+
+		InitData(LIGHT_TYPE type) {
+			_type = type;
+		}
+	};
+
+	void load(std::shared_ptr<IResourceBuilder> builder);
 	void unload();
 
     void updateParameter(std::string varName, void *data) {};
@@ -88,5 +87,7 @@ public:
 
 	bool getIsShadowCaster() { return _isShadowCaster; };
 	void setIsShadowCaster(bool isShaderCaster) { _isShadowCaster = isShaderCaster; };
+
+	void updateDirLightProjectionAndView();
 };
 

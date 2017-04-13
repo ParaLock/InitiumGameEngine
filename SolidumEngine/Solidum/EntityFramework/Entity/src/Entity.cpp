@@ -38,7 +38,7 @@ void Entity::addChild(IEntity * entity)
 	_children->push_back(entity);
 }
 
-std::list<IComponent*> * Entity::getComponentsByType(COMPONENT_TYPE type)
+std::list<IComponent*> * Entity::getComponentsByTypeAndIndex(COMPONENT_TYPE type, int index)
 {
 	return _components->at(type);
 }

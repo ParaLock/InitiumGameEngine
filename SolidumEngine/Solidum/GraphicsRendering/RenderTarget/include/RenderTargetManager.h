@@ -12,6 +12,6 @@ public:
 	RenderTargetManager();
 	~RenderTargetManager();
 
-	virtual IResource* createResource(IResourceBuilder* builder, std::string name, bool loadAsync);
+	virtual IResource* createResource(std::shared_ptr<IResourceBuilder> builder, std::string name, bool loadAsync);
 };
 

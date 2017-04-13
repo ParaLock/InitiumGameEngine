@@ -54,6 +54,8 @@ void RenderNodeTree::addNode(RenderNode * node, uint64_t id)
 	}
 	else {
 		_rootNodes->insert({node->getShader(), node});
+
+		int debugPoint = -1;
 	}
 }
 
@@ -77,7 +79,7 @@ void RenderNodeTree::updateNodeVisibility(bool isVisible, uint64_t nodeid)
 	if (itr != _nodeQueryMap->end()) {
 		RenderNode* node = _nodeQueryMap->at(nodeid);
 
-		node->setVisibility(isVisible);
+		node->getRenderParams()->setPerNodeParam_isVisible(isVisible);
 	}
 }
 
@@ -90,7 +92,7 @@ std::vector<RenderNode*> RenderNodeTree::queryAllLights()
 		RenderNode* child = itr->second;
 		while (child != nullptr) {
 
-			if (child->getType() == RENDER_NODE_TYPE::LIGHT_RENDER_NODE && child->getVisibility() == true) {
+			if (child->getType() == RENDER_NODE_TYPE::LIGHT_RENDER_NODE && child->isRenderViable() == true) {
 				lights.push_back(child);
 			}
 
@@ -110,9 +112,9 @@ std::vector<RenderNode*> RenderNodeTree::queryAllShadowCastingLights()
 		RenderNode* child = itr->second;
 		while (child != nullptr) {
 
-			if (child->getType() == RENDER_NODE_TYPE::LIGHT_RENDER_NODE && child->getVisibility() == true) {
+			if (child->getType() == RENDER_NODE_TYPE::LIGHT_RENDER_NODE && child->isRenderViable() == true) {
 
-				bool* isCaster = (bool*)child->getVar("IS_SHADOW_CASTER");
+				bool* isCaster = (bool*)child->getParameter("IS_SHADOW_CASTER");
 
 				if (*isCaster) {
 
@@ -135,7 +137,8 @@ std::vector<RenderNode*> RenderNodeTree::queryAllMeshes()
 		RenderNode* child = itr->second;
 		while (child != nullptr) {
 
-			if (child->getType() == RENDER_NODE_TYPE::MESH_RENDER_NODE && child->getVisibility() == true) {
+			if (child->getType() == RENDER_NODE_TYPE::MESH_RENDER_NODE && child->isRenderViable() == true) {
+				
 				meshes.push_back(child);
 			}
 
@@ -195,5 +198,8 @@ void RenderNodeTree::walkTree()
 		}
 
 		node->render();
+
+
+		int debutPoint = -1;
 	}
 }

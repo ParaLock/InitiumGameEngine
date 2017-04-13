@@ -11,7 +11,7 @@ RenderTargetManager::~RenderTargetManager()
 {
 }
 
-IResource* RenderTargetManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
+IResource* RenderTargetManager::createResource(std::shared_ptr<IResourceBuilder> builder, std::string name, bool loadAsync)
 {
 	IResource* newResource = nullptr;
 
@@ -33,8 +33,6 @@ IResource* RenderTargetManager::createResource(IResourceBuilder * builder, std::
 
 		return newResource;
 	}
-
-	int debugRef = -1;
 
 	return nullptr;
 }

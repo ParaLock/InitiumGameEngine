@@ -2,15 +2,14 @@
 
 #include "../../../EventFramework/include/EventFrameworkCore.h"
 
-#include "../../../GraphicsRendering/GraphicsCore/include/GraphicsCore.h"
-
-#include "../../Entity/include/IEntity.h"
+#include "../../../GraphicsRendering/GraphicsCore/include/IGraphicsCore.h"
 
 #include "../../../GraphicsRendering/EntityRenderObject/include/IEntityRenderObject.h"
 
+#include "../../../ResourceFramework/include/IResource.h"
 #include "IComponent.h"
 
-class Component : public IComponent, public IResource
+class Component : public IResource, public IComponent
 {
 private:
 protected:

@@ -1,6 +1,8 @@
 #pragma once
 #include "../../sysInclude.h"
 
+#include "../include/ResourcePool.h"
+
 #include "IResourceBuilder.h"
 #include "IResource.h"
 
@@ -12,7 +14,7 @@ public:
 	IResourceManager();
 	~IResourceManager();
 
-	virtual IResource* createResource(IResourceBuilder* builder, std::string name, bool loadAsync) = 0;
+	virtual IResource* createResource(std::shared_ptr<IResourceBuilder> builder, std::string name, bool loadAsync) = 0;
 
 	void addResource(IResource* res, std::string name);
 

@@ -12,6 +12,6 @@ public:
 	ShaderManager();
 	~ShaderManager();
 
-	IResource* createResource(IResourceBuilder* builder, std::string name, bool loadAsync);
+	IResource* createResource(std::shared_ptr<IResourceBuilder> builder, std::string name, bool loadAsync);
 };
 

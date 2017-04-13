@@ -11,7 +11,7 @@ InputManager::~InputManager()
 {
 }
 
-IResource * InputManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
+IResource * InputManager::createResource(std::shared_ptr<IResourceBuilder> builder, std::string name, bool loadAsync)
 {
 	InputHandler* handler = new InputHandler();
 

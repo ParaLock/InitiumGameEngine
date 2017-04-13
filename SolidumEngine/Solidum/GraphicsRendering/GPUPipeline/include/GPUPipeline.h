@@ -15,17 +15,11 @@
 
 #include "../../../EngineUtils/include/StringManipulation.h"
 
-#include "../../GraphicsCommandQueue/include/GraphicsCommandQueue.h"
-#include "../../GraphicsCommandQueueManager/include/GCQManager.h"
+#include "../../Window/include/window.h"
 
-class GPUPipelineBuilder : public IResourceBuilder {
-public:
-	LPCWSTR _filename;
+#include "../../GraphicsCommandList/include/GraphicsCommandList.h"
 
-	GPUPipelineBuilder(LPCWSTR filename) {
-		_filename = filename;
-	}
-};
+#include "../../GraphicsCore/include/IGraphicsCore.h"
 
 class GPUPipelineElement {
 public:
@@ -75,7 +69,15 @@ public:
 	GPUPipeline();
 	~GPUPipeline();
 
-	virtual void load(IResourceBuilder* builder);
+	struct InitData : public IResourceBuilder {
+		LPCWSTR _filename;
+
+		InitData(LPCWSTR filename) {
+			_filename = filename;
+		}
+	};
+
+	virtual void load(std::shared_ptr<IResourceBuilder> builder);
 	virtual void unload();
 
 	void reset();
@@ -93,7 +95,7 @@ public:
 
 	void shaderSetVertexInputLayout(IResource* inputLayout) { _currentInputLayout = inputLayout; };
 
-	void applyState();
+	void applyState(GraphicsCommandList* commandList);
 
 	std::map<std::string, DynamicStruct*>* getVarToBuffMap() { return _constantBufferMemberNameMap; };
 };

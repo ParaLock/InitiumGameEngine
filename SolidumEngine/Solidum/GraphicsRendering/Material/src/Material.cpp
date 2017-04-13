@@ -8,9 +8,9 @@ Material::~Material()
 {
 }
 
-void Material::load(IResourceBuilder * builder)
+void Material::load(std::shared_ptr<IResourceBuilder> builder)
 {
-	MaterialBuilder* realBuilder = static_cast<MaterialBuilder*>(builder);
+	InitData* realBuilder = static_cast<InitData*>(builder.get());
 
 	isLoaded = true;
 }

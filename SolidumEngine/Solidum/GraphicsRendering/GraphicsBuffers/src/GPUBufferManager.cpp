@@ -11,7 +11,7 @@ GPUBufferManager::~GPUBufferManager()
 {
 }
 
-IResource* GPUBufferManager::createResource(IResourceBuilder * builder, std::string name, bool loadAsync)
+IResource* GPUBufferManager::createResource(std::shared_ptr<IResourceBuilder> builder, std::string name, bool loadAsync)
 {
 
 	IResource* newResource = nullptr;

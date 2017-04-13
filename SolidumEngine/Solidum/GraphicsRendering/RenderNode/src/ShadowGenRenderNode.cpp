@@ -2,15 +2,28 @@
 
 
 
-ShadowGenRenderNode::ShadowGenRenderNode(IShader* shader, uint64_t id)
+ShadowGenRenderNode::ShadowGenRenderNode()
 {
-
-	_shader = shader;
 }
 
 
 ShadowGenRenderNode::~ShadowGenRenderNode()
 {
+}
+
+void ShadowGenRenderNode::load(std::shared_ptr<IResourceBuilder> builder)
+{
+	InitData* realBuilder = static_cast<InitData*>(builder.get());
+
+	_shader = realBuilder->_shader;
+	_id = realBuilder->_id;
+
+	isLoaded = true;
+}
+
+void ShadowGenRenderNode::unload()
+{
+	isLoaded = false;
 }
 
 bool ShadowGenRenderNode::isRenderViable()
@@ -20,6 +33,10 @@ bool ShadowGenRenderNode::isRenderViable()
 
 void ShadowGenRenderNode::render()
 {
+	int start_s = clock();
+
+	GraphicsCommandList* commandList = new GraphicsCommandList();
+
 	std::vector<RenderNode*> lights = GraphicsCore::getInstance()->
 		getRenderNodeTree()->queryAllShadowCastingLights();
 
@@ -32,51 +49,86 @@ void ShadowGenRenderNode::render()
 
 		if (light->getLight()->getType() == LIGHT_TYPE::DIRECTIONAL_LIGHT) {
 
-
 			for each(RenderNode* meshNode in meshes) {
 
 				MeshRenderNode* mesh = (MeshRenderNode*)meshNode;
 
-				static Matrix4f LprojectionMatrix = Matrix4f::transpose(light->getLight()->getProjectionMatrix());
-				static Matrix4f LviewMatrix = Matrix4f::transpose(light->getLight()->getViewMatrix());
+				if (mesh->isRenderViable()) {
 
+					GraphicsCore* gCore = GraphicsCore::getInstance();
+					GraphicsCommandPool* commandPool = gCore->getGraphicsCommandPool();
 
-				static Vector3f lightPos = light->getLight()->getPosition();
+					GraphicsCommand* camUpdate					= commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
+					GraphicsCommand* updateUniform_LightProj    = commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+					GraphicsCommand* updateUniform_LightView    = commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+					GraphicsCommand* updateUniform_LightPos     = commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new ShaderUpdateCameraUniformsCommand(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader));
+					GraphicsCommand* updateTransform			= commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_TRANSFORM_UNIFORMS);
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new ShaderUpdateUniformCommand(&LprojectionMatrix, "cbuff_lightProjectionMatrix", _shader));
+					GraphicsCommand* syncUniforms				= commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new ShaderUpdateUniformCommand(&LviewMatrix, "cbuff_lightViewMatrix", _shader));
+					GraphicsCommand* drawIndexedModel = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INDEXED);
+					GraphicsCommand* resetPipeline = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new ShaderUpdateUniformCommand(&lightPos, "cbuff_lightPos", _shader));
+					syncUniforms->load(std::make_shared<ShaderSyncUniforms::InitData>(_shader));
 
-				_shader->setMesh(mesh->getMesh());
+					static Matrix4f LprojectionMatrix = Matrix4f::transpose(light->getLight()->getProjectionMatrix());
+					static Matrix4f LviewMatrix = Matrix4f::transpose(light->getLight()->getViewMatrix());
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new ShaderUpdateTransformCommand(mesh->getTransform(), _shader));
+					static Vector3f lightPos = light->getLight()->getPosition();
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new ShaderSyncUniforms(_shader));
+					updateUniform_LightProj->load(std::make_shared<ShaderUpdateUniformCommand::InitData>
+						(std::make_pair("cbuff_lightProjectionMatrix", &LprojectionMatrix), _shader));
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new PipelineSetBlendStateCommand(BLEND_STATE::BLENDING_OFF));
+					updateUniform_LightView->load(std::make_shared<ShaderUpdateUniformCommand::InitData>
+						(std::make_pair("cbuff_lightViewMatrix", &LviewMatrix), _shader));
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new PipelineSetDepthTestStateCommand(DEPTH_TEST_STATE::FULL_ENABLE));
+					updateUniform_LightPos->load(std::make_shared<ShaderUpdateUniformCommand::InitData>
+						(std::make_pair("cbuff_lightPos", &lightPos), _shader));
 
-				GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-					new PipelineSetRasterStateCommand(RASTER_STATE::NORMAL));
+					camUpdate->load(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
+						(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader));
 
-				_shader->execute(mesh->getMesh()->numIndices);
+					updateTransform->load(std::make_shared<ShaderUpdateTransformCommand::InitData>
+						(mesh->getTransform(), _shader));
+
+					drawIndexedModel->load(std::make_shared<PipelineDrawIndexedCommand::InitData>
+						(0, mesh->getMesh()->numIndices));
+
+					commandList->queueCommand(camUpdate);
+
+					commandList->queueCommand(updateUniform_LightProj);
+
+					commandList->queueCommand(updateUniform_LightView);
+
+					commandList->queueCommand(updateUniform_LightPos);
+
+					_shader->setMesh(mesh->getMesh());
+
+					commandList->queueCommand(updateTransform);
+
+					commandList->queueCommand(syncUniforms);
+
+					_shader->getPipeline()->setBlendState(BLEND_STATE::BLENDING_OFF);
+					_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_ENABLE);
+					_shader->getPipeline()->setRasterState(RASTER_STATE::NORMAL);
+
+					_shader->execute(commandList);
+
+					commandList->queueCommand(drawIndexedModel);
+					commandList->queueCommand(resetPipeline);
+				}
 			}
 		}
 	}
 
-	GCQManager::getInstance()->getPrimaryCommandQueue()->queueCommand(
-		new PipelineClearDepthStencil());
+	_renderParams.setPerNodeParam_isVisible(false);
+
+	commandList->queueCommand(new PipelineClearDepthStencil());
+
+	GCLQManager::getInstance()->getPrimaryCommandQueue()->queueCommandList(commandList);
+
+
+	int stop_s = clock();
+	std::cout << "RENDER NODE EXECUTE TIME: " << (stop_s - start_s) / double(CLOCKS_PER_SEC) * 1000 << std::endl;
 }

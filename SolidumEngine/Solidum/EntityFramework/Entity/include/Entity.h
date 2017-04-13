@@ -32,7 +32,7 @@ public:
 	void addComponent(IComponent* comp);
 	void addChild(IEntity* entity);
 
-	std::list<IComponent*>* getComponentsByType(COMPONENT_TYPE type);
+	std::list<IComponent*>* getComponentsByTypeAndIndex(COMPONENT_TYPE type, int index);
 
 	IEntityRenderObject* getRenderObject() { return _renderObject; }
 

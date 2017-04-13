@@ -16,6 +16,6 @@ public:
 	void setLightShader(LIGHT_TYPE light, Shader* shader);
 	Shader* getLightShader(LIGHT_TYPE type);
 
-	IResource* createResource(IResourceBuilder* builder, std::string name, bool loadAsync);
+	IResource* createResource(std::shared_ptr<IResourceBuilder> builder, std::string name, bool loadAsync);
 };
 

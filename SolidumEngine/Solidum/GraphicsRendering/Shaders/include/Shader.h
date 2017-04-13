@@ -3,6 +3,8 @@
 #include "../../../GraphicsRendering/GraphicsBuffers/include/GPUBuffer.h"
 #include "../../../GraphicsRendering/GPUPipeline/include/GPUPipeline.h"
 
+#include "../../../GraphicsRendering/GraphicsCommandList/include/GraphicsCommandList.h"
+
 #include "../../../ResourceFramework/include/IResourceBuilder.h"
 
 #include "../../Lights/include/ILight.h"
@@ -15,17 +17,6 @@
 #include "IShader.h"
 
 #include "../../../ResourceFramework/include/IResource.h"
-
-class ShaderBuilder : public IResourceBuilder {
-public:
-	LPCWSTR _filename;
-	SHADER_RENDER_TYPE _renderType = SHADER_RENDER_TYPE::INVALID;
-
-	ShaderBuilder(LPCWSTR filename, SHADER_RENDER_TYPE renderType) {
-		_filename = filename;
-		_renderType = renderType;
-	};
-};
 
 class MaterialPass;
 
@@ -41,7 +32,18 @@ public:
 	Shader();
 	~Shader();
 
-	virtual void load(IResourceBuilder* builder) = 0;
+	struct InitData : public IResourceBuilder {
+
+		LPCWSTR _filename;
+		SHADER_RENDER_TYPE _renderType = SHADER_RENDER_TYPE::INVALID;
+
+		InitData(LPCWSTR filename, SHADER_RENDER_TYPE renderType) {
+			_filename = filename;
+			_renderType = renderType;
+		};
+	};
+
+	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
 	virtual void unload() = 0;
 
 	void setMiscResourceHook(IResource* res, std::string name);
@@ -65,7 +67,7 @@ public:
 	virtual void attachPipeline(GPUPipeline* pipe) = 0;
 	GPUPipeline* getPipeline() { return _pipelineState; }
 
-	virtual void execute(int numIndices);
+	virtual void execute(GraphicsCommandList* commandList);
 
 	SHADER_RENDER_TYPE getRenderMode() { return _renderType; }
 };

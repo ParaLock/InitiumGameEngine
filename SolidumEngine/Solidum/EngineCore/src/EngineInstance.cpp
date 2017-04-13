@@ -77,7 +77,6 @@ void EngineInstance::update(float delta)
 	for (auto itr = worldEntities.begin(); itr != worldEntities.end(); itr++) {
 		IEntity* entity = itr->second;
 
-
 		entity->update(delta);
 	}
 	
@@ -89,7 +88,7 @@ void EngineInstance::render()
 	IEntity* cameraEntity = _currentWorld->getEntity(_currentWorld->getPrimaryCameraID());
 
 	_graphicsCore->setCurrentRenderingCamera((CameraComponent*)cameraEntity->
-		getComponentsByType(COMPONENT_TYPE::CAMERA_COMPONENT)->front());
+		getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0)->front());
 
 	_graphicsCore->render();
 

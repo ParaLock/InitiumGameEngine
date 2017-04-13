@@ -5,24 +5,15 @@
 
 #include "../../../ResourceFramework/include/IResourceManager.h"
 
+#include "../../../GraphicsRendering/Viewport/include/Viewport.h"
+
 #include "../../ActiveGraphicsAPI.h"
-
-class RenderTargetBuilder : public IResourceBuilder {
-public:
-	int _mipLevel;
-	int _aaSamples;
-	TEX_FORMAT _texFormat;
-
-	RenderTargetBuilder(int mipLevel, int aaSamples, TEX_FORMAT texFormat) {
-		_mipLevel = mipLevel;
-		_aaSamples = aaSamples;
-		_texFormat = texFormat;
-	}
-};
 
 class RenderTarget : public IResource
 {
 protected:
+
+	Viewport _viewPort;
 
 	int _mipLevel;
 	int _aaSamples;
@@ -32,7 +23,26 @@ public:
 	RenderTarget();
 	~RenderTarget();
 
-	virtual void load(IResourceBuilder* builder) = 0;
+	struct InitData : public IResourceBuilder {
+		int _mipLevel;
+		int _aaSamples;
+		TEX_FORMAT _texFormat;
+
+		int _height;
+		int _width;
+
+		InitData(int mipLevel, int aaSamples, TEX_FORMAT texFormat, int height, int width) {
+			_mipLevel = mipLevel;
+			_aaSamples = aaSamples;
+			_texFormat = texFormat;
+			_height = height;
+			_width = width;
+		}
+	};
+
+	Viewport& getViewport() { return _viewPort; }
+
+	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
 	virtual void unload() = 0;
 
 	virtual void Clear(float R, float G, float B, float A) = 0;
