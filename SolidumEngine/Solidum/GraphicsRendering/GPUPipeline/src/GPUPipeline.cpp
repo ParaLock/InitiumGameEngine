@@ -316,14 +316,8 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 {
 	std::list<RenderTarget*> outputRTs;
 
-	IGraphicsCore* gCore = IGraphicsCore::getInstance();
-	GraphicsCommandPool* commandPool = gCore->getGraphicsCommandPool();
-
-	GraphicsCommand* setPTcommand = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_PRIMITIVE_TOPOLOGY);
-
-	setPTcommand->load(std::make_shared<PipelineSetPTCommand::InitData>(PRIMITIVE_TOPOLOGY::TRANGLE_LIST));
-
-	commandList->queueCommand(setPTcommand);
+	commandList->createCommand(std::make_shared<PipelineSetPTCommand::InitData>(PRIMITIVE_TOPOLOGY::TRANGLE_LIST), 
+		GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_PRIMITIVE_TOPOLOGY);
 
 	for (std::map<std::string, GPUPipelineElement*>::iterator itr =
 		_elementList->begin(); itr != _elementList->end(); ++itr)
@@ -335,42 +329,26 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_TEXTURE_HOOK) {
 
-				GraphicsCommand* bindSR = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
-
-				bindSR->load(std::make_shared<PipelineSRBindCommand::InitData>
-					(element->core, element->bindSlot, element->type, element->parentShader));
-
-				commandList->queueCommand(bindSR);
+				commandList->createCommand(std::make_shared<PipelineSRBindCommand::InitData>
+					(element->core, element->bindSlot, element->type, element->parentShader), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
 			}
 
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_TEX_SAMPLER) {
 
-				GraphicsCommand* bindSR = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
-
-				bindSR->load(std::make_shared<PipelineSRBindCommand::InitData>
-					(element->core, element->bindSlot, element->type, element->parentShader));
-
-				commandList->queueCommand(bindSR);
+				commandList->createCommand(std::make_shared<PipelineSRBindCommand::InitData>
+					(element->core, element->bindSlot, element->type, element->parentShader), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
 			}
 
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_CONSTANT_BUFFER) {
 
-				GraphicsCommand* bindSR = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
-
-				bindSR->load(std::make_shared<PipelineSRBindCommand::InitData>
-					(element->core, element->bindSlot, element->type, element->parentShader));
-
-				commandList->queueCommand(bindSR);
+				commandList->createCommand(std::make_shared<PipelineSRBindCommand::InitData>
+					(element->core, element->bindSlot, element->type, element->parentShader), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
 			}
 
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_BUFFER_HOOK) {
 
-				GraphicsCommand* bindBuffercommand = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER);
-
-				bindBuffercommand->load(std::make_shared<PipelineBufferBindCommand::InitData>
-					(element->core->getCore<GPUBuffer>(), 0, _currentInputLayout->getCore<ShaderInputLayout>()->getDataStride()));
-
-				commandList->queueCommand(bindBuffercommand);
+				commandList->createCommand(std::make_shared<PipelineBufferBindCommand::InitData>
+					(element->core->getCore<GPUBuffer>(), 0, _currentInputLayout->getCore<ShaderInputLayout>()->getDataStride()), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER);
 
 			}
 
@@ -379,22 +357,18 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 				{
 					outputRTs.push_back((RenderTarget*)element->core);
 
-					GraphicsCommand* bindViewport = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VIEWPORT_STATE);
-					
 					Viewport rtView = element->core->getCore<RenderTarget>()->getViewport();
 					
-					bindViewport->load(std::make_shared<PipelineSetViewportCommand::InitData>(rtView));
-
-					commandList->queueCommand(bindViewport);
+					commandList->createCommand(std::make_shared<PipelineSetViewportCommand::InitData>(rtView), 
+						GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VIEWPORT_STATE);
 				}
 				else {
 
-					GraphicsCommand* bindRTcommand = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
-
-					bindRTcommand->load(std::make_shared<PipelineRenderTargetCommand::InitData>
-						(element->bindSlot, _outputRTsBindDS, element->parentShader,std::list<RenderTarget*>{ (RenderTarget*)element->core }, RENDER_TARGET_OP_TYPE::BIND_AS_INPUT));
-
-					commandList->queueCommand(bindRTcommand);
+					commandList->createCommand(std::make_shared<PipelineRenderTargetCommand::InitData>
+						  (element->bindSlot, _outputRTsBindDS, element->parentShader, 
+							std::list<RenderTarget*>{ (RenderTarget*)element->core }, 
+							 RENDER_TARGET_OP_TYPE::BIND_AS_INPUT), 
+						      GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
 					
 				}
 			}
@@ -403,31 +377,17 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 
 	if (_currentInputLayout != nullptr) {
 
-		GraphicsCommand* bindIL = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_INPUT_LAYOUT);
-
-		bindIL->load(std::make_shared<PipelineILBindCommand::InitData>(_currentInputLayout));
-
-		commandList->queueCommand(bindIL);
+		commandList->createCommand(std::make_shared<PipelineILBindCommand::InitData>(_currentInputLayout), 
+			GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_INPUT_LAYOUT);
 	}
 
-	GraphicsCommand* bindOutputRTs = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
+	commandList->createCommand(std::make_shared<PipelineRenderTargetCommand::InitData>
+		(-1, _outputRTsBindDS, SHADER_TYPE::INVALID, outputRTs, RENDER_TARGET_OP_TYPE::BIND_AS_OUTPUT), 
+		GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
 
-	bindOutputRTs->load(std::make_shared<PipelineRenderTargetCommand::InitData>
-		(-1, _outputRTsBindDS, SHADER_TYPE::INVALID, outputRTs, RENDER_TARGET_OP_TYPE::BIND_AS_OUTPUT));
-
-	commandList->queueCommand(bindOutputRTs);
-
-	GraphicsCommand* setBlendState = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_BLEND_STATE);
-	GraphicsCommand* setDepthState = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_DEPTH_TEST_STATE);
-	GraphicsCommand* setRasterState = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_RASTER_STATE);
-
-	setBlendState->load(std::make_shared<PipelineSetBlendStateCommand::InitData>(blendState));
-	setDepthState->load(std::make_shared<PipelineSetDepthTestStateCommand::InitData>(depthState));
-	setRasterState->load(std::make_shared<PipelineSetRasterStateCommand::InitData>((rasterState)));
-
-	commandList->queueCommand(setBlendState);
-	commandList->queueCommand(setDepthState);
-	commandList->queueCommand(setRasterState);
+	commandList->createCommand(std::make_shared<PipelineSetBlendStateCommand::InitData>(blendState), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_BLEND_STATE);
+	commandList->createCommand(std::make_shared<PipelineSetDepthTestStateCommand::InitData>(depthState), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_DEPTH_TEST_STATE);
+	commandList->createCommand(std::make_shared<PipelineSetRasterStateCommand::InitData>((rasterState)), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_RASTER_STATE);
 
 	for (auto itr = _opList->begin(); itr != _opList->end(); itr++) {
 		GPUPipelineOP op = *itr;
@@ -436,27 +396,21 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 
 			if (op.resType == SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET) {
 
-				GraphicsCommand* runRTOpCommand = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
-
-				runRTOpCommand->load(std::make_shared<PipelineRenderTargetCommand::InitData>
-					(-1, false, SHADER_TYPE::INVALID, std::list<RenderTarget*>{(RenderTarget*)op.opTarget}, RENDER_TARGET_OP_TYPE::CLEAR));
-
-				commandList->queueCommand(runRTOpCommand);
+				commandList->createCommand(std::make_shared<PipelineRenderTargetCommand::InitData>
+					(-1, false, SHADER_TYPE::INVALID, std::list<RenderTarget*>{(RenderTarget*)op.opTarget},
+						RENDER_TARGET_OP_TYPE::CLEAR), GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
 			}
 		
 			if (op.resType == SHADER_RESOURCE_TYPE::SHADER_ZBUFFER) {
 
-				GraphicsCommand* clearDS = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_CLEAR_DEPTH_BUFFER);
-
-				commandList->queueCommand(clearDS);
+				commandList->createCommand(std::make_shared<IResourceBuilder>(), 
+					GRAPHICS_COMMAND_TYPE::PIPELINE_CLEAR_DEPTH_BUFFER);
 			}
 		}
 
 		if (op.opType == GPUPIPELINE_OP_TYPE::SWAPFRAME) {
 
-			GraphicsCommand* swapframe = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_SWAPFRAME);
-
-			commandList->queueCommand(swapframe);
+			commandList->createCommand(std::make_shared<IResourceBuilder>(), GRAPHICS_COMMAND_TYPE::PIPELINE_SWAPFRAME);
 		}
 	}
 }

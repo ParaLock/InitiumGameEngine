@@ -33,8 +33,6 @@ bool ShadowGenRenderNode::isRenderViable()
 
 void ShadowGenRenderNode::render()
 {
-	int start_s = clock();
-
 	GraphicsCommandList* commandList = new GraphicsCommandList();
 
 	std::vector<RenderNode*> lights = GraphicsCore::getInstance()->
@@ -55,59 +53,30 @@ void ShadowGenRenderNode::render()
 
 				if (mesh->isRenderViable()) {
 
-					GraphicsCore* gCore = GraphicsCore::getInstance();
-					GraphicsCommandPool* commandPool = gCore->getGraphicsCommandPool();
-
-					GraphicsCommand* camUpdate					= commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
-					GraphicsCommand* updateUniform_LightProj    = commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
-					GraphicsCommand* updateUniform_LightView    = commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
-					GraphicsCommand* updateUniform_LightPos     = commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
-
-					GraphicsCommand* updateTransform			= commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_TRANSFORM_UNIFORMS);
-
-					GraphicsCommand* syncUniforms				= commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
-
-					GraphicsCommand* drawIndexedModel = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INDEXED);
-					GraphicsCommand* resetPipeline = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
-
-					syncUniforms->load(std::make_shared<ShaderSyncUniforms::InitData>(_shader));
-
-					static Matrix4f LprojectionMatrix = Matrix4f::transpose(light->getLight()->getProjectionMatrix());
+					static Matrix4f LprojectionMatrix = light->getLight()->getProjectionMatrix();
 					static Matrix4f LviewMatrix = Matrix4f::transpose(light->getLight()->getViewMatrix());
 
 					static Vector3f lightPos = light->getLight()->getPosition();
 
-					updateUniform_LightProj->load(std::make_shared<ShaderUpdateUniformCommand::InitData>
-						(std::make_pair("cbuff_lightProjectionMatrix", &LprojectionMatrix), _shader));
+					commandList->createCommand(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
+						(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
 
-					updateUniform_LightView->load(std::make_shared<ShaderUpdateUniformCommand::InitData>
-						(std::make_pair("cbuff_lightViewMatrix", &LviewMatrix), _shader));
+					commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
+						(std::make_pair("cbuff_lightProjectionMatrix", &LprojectionMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
 
-					updateUniform_LightPos->load(std::make_shared<ShaderUpdateUniformCommand::InitData>
-						(std::make_pair("cbuff_lightPos", &lightPos), _shader));
+					commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
+						(std::make_pair("cbuff_lightViewMatrix", &LviewMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
 
-					camUpdate->load(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
-						(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader));
-
-					updateTransform->load(std::make_shared<ShaderUpdateTransformCommand::InitData>
-						(mesh->getTransform(), _shader));
-
-					drawIndexedModel->load(std::make_shared<PipelineDrawIndexedCommand::InitData>
-						(0, mesh->getMesh()->numIndices));
-
-					commandList->queueCommand(camUpdate);
-
-					commandList->queueCommand(updateUniform_LightProj);
-
-					commandList->queueCommand(updateUniform_LightView);
-
-					commandList->queueCommand(updateUniform_LightPos);
+					commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
+						(std::make_pair("cbuff_lightPos", &lightPos), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
 
 					_shader->setMesh(mesh->getMesh());
 
-					commandList->queueCommand(updateTransform);
+					commandList->createCommand(std::make_shared<ShaderUpdateTransformCommand::InitData>
+						(mesh->getTransform(), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_TRANSFORM_UNIFORMS);
 
-					commandList->queueCommand(syncUniforms);
+					commandList->createCommand(std::make_shared<ShaderSyncUniforms::InitData>
+						(_shader), GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
 
 					_shader->getPipeline()->setBlendState(BLEND_STATE::BLENDING_OFF);
 					_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_ENABLE);
@@ -115,8 +84,10 @@ void ShadowGenRenderNode::render()
 
 					_shader->execute(commandList);
 
-					commandList->queueCommand(drawIndexedModel);
-					commandList->queueCommand(resetPipeline);
+					commandList->createCommand(std::make_shared<PipelineDrawIndexedCommand::InitData>
+						(0, mesh->getMesh()->numIndices), GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INDEXED);
+
+					commandList->createCommand(std::shared_ptr<IResourceBuilder>(), GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
 				}
 			}
 		}
@@ -124,11 +95,7 @@ void ShadowGenRenderNode::render()
 
 	_renderParams.setPerNodeParam_isVisible(false);
 
-	commandList->queueCommand(new PipelineClearDepthStencil());
+	commandList->createCommand(std::shared_ptr<IResourceBuilder>(), GRAPHICS_COMMAND_TYPE::PIPELINE_CLEAR_DEPTH_BUFFER);
 
 	GCLQManager::getInstance()->getPrimaryCommandQueue()->queueCommandList(commandList);
-
-
-	int stop_s = clock();
-	std::cout << "RENDER NODE EXECUTE TIME: " << (stop_s - start_s) / double(CLOCKS_PER_SEC) * 1000 << std::endl;
 }

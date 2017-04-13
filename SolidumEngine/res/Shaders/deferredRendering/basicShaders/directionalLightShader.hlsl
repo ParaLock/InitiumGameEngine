@@ -30,24 +30,24 @@ float4 Pshader(PixelInputType input) : SV_TARGET
 	core.worldPos = worldPos.xyz;
 	core.normal = normals.xyz;
 	
-	float4 lightVertPos = mul(float4(worldPos.xyz, 1), cbuff_lightSpaceMatrix);
+	//float4 lightVertPos = mul(float4(worldPos.xyz, 1), cbuff_lightSpaceMatrix);
 	
-	float3 projCoords = lightVertPos.xyz / lightVertPos.w;
+	//float3 projCoords = lightVertPos.xyz / lightVertPos.w;
 	
-	projCoords = projCoords * 0.5 + 0.5;
+	//projCoords = projCoords * 0.5 + 0.5;
 	
-	float closestDepth = shadowTexture.Sample(ShadowMapSampler, projCoords.xy).r;
+	//float closestDepth = shadowTexture.Sample(ShadowMapSampler, projCoords.xy).r;
 
-    float currentDepth = projCoords.z;
+    //float currentDepth = projCoords.z;
 
-    float bias = 0.005;
-    float shadow = (currentDepth - bias) > closestDepth ? 1.0 : 0.0;
+    //float bias = 0.005;
+    //float shadow = (currentDepth - bias) > closestDepth ? 1.0 : 0.0;
 
-    if(projCoords.z > 1.0) {
-        shadow = 0.0;
-    }
+    //if(projCoords.z > 1.0) {
+    //    shadow = 0.0;
+    //}
 	
-	color = calcLight(light, mat, core) * shadow;
+	color = calcLight(light, mat, core); //* shadow;
 	
 	return color;
 }

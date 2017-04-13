@@ -26,6 +26,7 @@ void GraphicsCommandListQueue::processAllCommands()
 
 		GraphicsCommandList* commandList = *itr;
 
+		commandList->loadCommands();
 		commandList->executeCommands();
 
 		delete commandList;

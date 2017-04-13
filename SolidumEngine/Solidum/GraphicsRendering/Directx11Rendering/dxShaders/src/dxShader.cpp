@@ -204,14 +204,8 @@ void dxShader::bind()
 
 void dxShader::execute(GraphicsCommandList* commandList)
 {
-	GraphicsCore* gCore = GraphicsCore::getInstance();
-	GraphicsCommandPool* commandPool = gCore->getGraphicsCommandPool();
-
-	GraphicsCommand* bindShaders = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SHADERS);
-
-	bindShaders->load(std::make_shared<PipelineBindShaderCommand::InitData>(_shaderBindFunc));
-
-	commandList->queueCommand(bindShaders);
+	commandList->createCommand(std::make_shared<PipelineBindShaderCommand::InitData>(_shaderBindFunc), 
+		GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SHADERS);
 
 	_pipelineState->applyState(commandList);
 }

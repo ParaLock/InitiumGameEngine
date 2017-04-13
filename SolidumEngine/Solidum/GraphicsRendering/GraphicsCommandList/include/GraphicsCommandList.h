@@ -11,14 +11,27 @@
 class GraphicsCommandList
 {
 private:
-	std::list<GraphicsCommand*> _commandList;
+	struct unloadedCommandData {
+		std::shared_ptr<IResourceBuilder> _initData;
+		GRAPHICS_COMMAND_TYPE _type;
+
+		unloadedCommandData(std::shared_ptr<IResourceBuilder> initData, GRAPHICS_COMMAND_TYPE type) {
+			_initData = initData;
+			_type = type;
+		}
+	};
+
+	std::list<unloadedCommandData> _unloadedCommands;
+	std::list<GraphicsCommand*> _loadedCommands;
 public:
 	GraphicsCommandList();
 	~GraphicsCommandList();
 
 	void setRenderStateFlags() {};
 
-	void queueCommand(GraphicsCommand* command);
+	void loadCommands();
+
+	void createCommand(std::shared_ptr<IResourceBuilder> builder, GRAPHICS_COMMAND_TYPE type);
 
 	void executeCommands();
 };

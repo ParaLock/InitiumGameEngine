@@ -89,42 +89,23 @@ void LightRenderNode::render()
 
 			lightSpaceMatrix = Matrix4f::transpose(lightSpaceMatrix);
 
-			GraphicsCore* gCore = GraphicsCore::getInstance();
-			GraphicsCommandPool* commandPool = gCore->getGraphicsCommandPool();
+			commandList->createCommand(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
+				(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
 
-			GraphicsCommand* camUpdateNode       =	commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
-            GraphicsCommand* updateUniform       =	commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
-			GraphicsCommand* updateLightUniforms =  commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_LIGHT_UNIFORMS);
-			GraphicsCommand* syncUniforms        =	commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
-			GraphicsCommand* drawIndexedModel	 =	commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INDEXED);
-			GraphicsCommand* resetPipeline       =	commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
+			commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
+				(std::make_pair("cbuff_lightSpaceMatrix", &lightSpaceMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
 
-			syncUniforms->load(std::make_shared<ShaderSyncUniforms::InitData>(_shader));
+			commandList->createCommand(std::make_shared<ShaderUpdateLightUniformsCommand::InitData>
+				(std::list<ILight*>{light}, _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_LIGHT_UNIFORMS);
 
-			camUpdateNode->load(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
-				(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader));
-
-			updateLightUniforms->load(std::make_shared<ShaderUpdateLightUniformsCommand::InitData>
-				(std::list<ILight*>{light}, _shader));
-
-			updateUniform->load(std::make_shared<ShaderUpdateUniformCommand::InitData>
-				(std::make_pair("cbuff_lightSpaceMatrix", &lightSpaceMatrix), _shader));
-
-			drawIndexedModel->load(std::make_shared<PipelineDrawIndexedCommand::InitData>
-				(0, _orthoMesh->numIndices));
-
-			commandList->queueCommand(camUpdateNode);
-
-			commandList->queueCommand(updateUniform);
-
-			commandList->queueCommand(updateLightUniforms);
-
-			commandList->queueCommand(syncUniforms);
+			commandList->createCommand(std::make_shared<ShaderSyncUniforms::InitData>(_shader), GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
 
 			_shader->execute(commandList);
 
-			commandList->queueCommand(drawIndexedModel);
-			commandList->queueCommand(resetPipeline);
+			commandList->createCommand(std::make_shared<PipelineDrawIndexedCommand::InitData>
+				(0, _orthoMesh->numIndices), GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INDEXED);
+
+			commandList->createCommand(std::make_shared<IResourceBuilder>(), GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
 		}
 	}
 

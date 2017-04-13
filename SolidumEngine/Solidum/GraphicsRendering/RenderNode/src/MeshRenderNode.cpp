@@ -84,87 +84,48 @@ void MeshRenderNode::render()
 					directionalLights.push_back(lightNode->getLight());
 			}
 
-			GraphicsCore* gCore = GraphicsCore::getInstance();
-			GraphicsCommandPool* commandPool = gCore->getGraphicsCommandPool();
-
-			GraphicsCommand* updatePointLights			= commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_LIGHT_UNIFORMS);
-			GraphicsCommand* updateDirectionalLights	= commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_LIGHT_UNIFORMS);
-			GraphicsCommand* updateCameraUniforms		= commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
-			GraphicsCommand* updateTransform			= commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_TRANSFORM_UNIFORMS);
-			GraphicsCommand* syncUniforms				= commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
-
-			GraphicsCommand* setRasterState = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_RASTER_STATE);
-
-			GraphicsCommand* drawIndexedModel			= commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INDEXED);
-			GraphicsCommand* resetPipeline				= commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
-
-			syncUniforms->load(std::make_shared<ShaderSyncUniforms::InitData>(_shader));
-
-			updatePointLights->load(std::make_shared<ShaderUpdateLightUniformsCommand::InitData>(pointLights, _shader));
-			updateDirectionalLights->load(std::make_shared<ShaderUpdateLightUniformsCommand::InitData>(directionalLights, _shader));
-			updateCameraUniforms->load(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader));
-
-			setRasterState->load(std::make_shared<PipelineSetRasterStateCommand::InitData>(RASTER_STATE::NORMAL));
-
-			commandList->queueCommand(updatePointLights);
-			commandList->queueCommand(updateDirectionalLights);
-
-			commandList->queueCommand(updateCameraUniforms);
+			commandList->createCommand(std::make_shared<ShaderUpdateLightUniformsCommand::InitData>(pointLights, _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_LIGHT_UNIFORMS);
+			commandList->createCommand(std::make_shared<ShaderUpdateLightUniformsCommand::InitData>(directionalLights, _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_LIGHT_UNIFORMS);
+			commandList->createCommand(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
 
 			//Hooks must be set in immediate context
 			_shader->setMesh(_mesh);
 			_shader->setModelTexture(_texture);
 			_shader->updateMaterialPassUniforms(_material->getPassList().at(0));
 
-			updateTransform->load(std::make_shared<ShaderUpdateTransformCommand::InitData>(transform, _shader));
+			commandList->createCommand(std::make_shared<ShaderUpdateTransformCommand::InitData>(transform, _shader), 
+				GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_TRANSFORM_UNIFORMS);
 
-			syncUniforms->load(std::make_shared<ShaderSyncUniforms::InitData>(_shader));
-
-			drawIndexedModel->load(std::make_shared<PipelineDrawIndexedCommand::InitData>(0, _mesh->numIndices));
-
-			commandList->queueCommand(updateTransform);
-			commandList->queueCommand(syncUniforms);
+			commandList->createCommand(std::make_shared<ShaderSyncUniforms::InitData>(_shader), 
+				GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
 
 			_shader->getPipeline()->setBlendState(BLEND_STATE::BLENDING_OFF);
 			_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_DISABLE);
 			_shader->getPipeline()->setRasterState(RASTER_STATE::NORMAL);
 
-			commandList->queueCommand(setRasterState);
+			commandList->createCommand(std::make_shared<PipelineSetRasterStateCommand::InitData>(RASTER_STATE::NORMAL), 
+				GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_RASTER_STATE);
 
 			_shader->execute(commandList);
 
-			commandList->queueCommand(drawIndexedModel);
-			commandList->queueCommand(resetPipeline);
+			commandList->createCommand(std::make_shared<PipelineDrawIndexedCommand::InitData>(0, _mesh->numIndices), 
+				GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INDEXED);
+
+			commandList->createCommand(std::make_shared<IResourceBuilder>(), GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
 		}
 		else {
 
-			GraphicsCore* gCore = GraphicsCore::getInstance();
-			GraphicsCommandPool* commandPool = gCore->getGraphicsCommandPool();
-
-			GraphicsCommand* updateCameraUniforms = commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
-			GraphicsCommand* updateTransform = commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_TRANSFORM_UNIFORMS);
-			GraphicsCommand* syncUniforms = commandPool->getResource(GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
-
-			GraphicsCommand* drawIndexedModel = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INDEXED);
-			GraphicsCommand* resetPipeline = commandPool->getResource(GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
-
-			syncUniforms->load(std::make_shared<ShaderSyncUniforms::InitData>(_shader));
-
-			updateCameraUniforms->load(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader));
-
-			updateTransform->load(std::make_shared<ShaderUpdateTransformCommand::InitData>(transform, _shader));
-
-			drawIndexedModel->load(std::make_shared<PipelineDrawIndexedCommand::InitData>(0, _mesh->numIndices));
-
-			commandList->queueCommand(updateCameraUniforms);
+			commandList->createCommand(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
+				(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
 
 			_shader->setMesh(_mesh);
 			_shader->setModelTexture(_texture);
 			_shader->updateMaterialPassUniforms(_material->getPassList().at(0));
 
-			commandList->queueCommand(updateTransform);
+			commandList->createCommand(std::make_shared<ShaderUpdateTransformCommand::InitData>
+				(transform, _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_TRANSFORM_UNIFORMS);
 
-			commandList->queueCommand(syncUniforms);
+			commandList->createCommand(std::make_shared<ShaderSyncUniforms::InitData>(_shader), GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
 
 			if (!_renderParams.getPerNodeParam_DepthTestEnableState()) {
 
@@ -180,8 +141,10 @@ void MeshRenderNode::render()
 
 			_shader->execute(commandList);
 
-			commandList->queueCommand(drawIndexedModel);
-			commandList->queueCommand(resetPipeline);
+			commandList->createCommand(std::make_shared<PipelineDrawIndexedCommand::InitData>
+				(0, _mesh->numIndices), GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INDEXED);
+
+			commandList->createCommand(std::shared_ptr<IResourceBuilder>(), GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
 		}
 	}
 
