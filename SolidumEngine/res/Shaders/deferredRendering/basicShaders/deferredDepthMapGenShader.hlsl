@@ -29,8 +29,8 @@ PixelInputType Vshader(VertexInputType input)
 	matrix FinalworldMatrix = mul(cbuff_OBJSpecificMatrix, cbuff_worldMatrix);
 	
     output.position = mul(input.position, FinalworldMatrix);
-    output.position = mul(output.position, cbuff_lightViewMatrix);
-    output.position = mul(output.position, cbuff_lightProjectionMatrix);
+    output.position = mul(output.position, cbuff_depthLightViewMatrix);
+    output.position = mul(output.position, cbuff_depthLightProjectionMatrix);
 	
 	output.depthPosition = output.position;
 	

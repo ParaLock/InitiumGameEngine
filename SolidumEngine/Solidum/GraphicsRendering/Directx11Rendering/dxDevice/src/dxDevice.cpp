@@ -37,7 +37,7 @@ void dxDevice::Initialize(dxConfigBlock *config)
 		NULL,
 		devConfig->dev.DriverType,
 		NULL,
-		NULL,
+		NULL, //DEBUG FLAG ARG
 		NULL,
 		NULL,
 		devConfig->dev.SDKVersion,

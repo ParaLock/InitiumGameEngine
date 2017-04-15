@@ -20,6 +20,7 @@
 #include <sstream>
 #include <algorithm>
 #include <iterator>
+#include <unordered_map>
 
 #include <ctime>
 
@@ -137,8 +138,9 @@ enum class MATERIAL_TEX {
 	EMESSIVE_PBR_TEXTURE
 };
 
+//ENUM Types are used as resource pool indexes
 enum class GRAPHICS_COMMAND_TYPE {
-	INVALID,
+	INVALID = 0,
 
 	//SHADER COMMANDS
 	SHADER_UPDATE_UNIFORM,

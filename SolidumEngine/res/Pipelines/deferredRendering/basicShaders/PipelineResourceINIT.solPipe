@@ -4,7 +4,7 @@ PIPELINE_INIT
 	INIT GBUFFER normals_gbuff
 	INIT GBUFFER position_gbuff
 	INIT GBUFFER specular_gbuff
-	INIT GBUFFER shadow_map 1024 1024
+	INIT GBUFFER shadow_map 2048 2048
 
 	INIT SAMPLER CLAMP LINEAR shadowMapSampler
 	INIT SAMPLER WRAP LINEAR wrapSampler

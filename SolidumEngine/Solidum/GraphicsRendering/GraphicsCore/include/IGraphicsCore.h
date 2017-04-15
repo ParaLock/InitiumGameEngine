@@ -8,6 +8,7 @@ class Shader;
 class GPUPipeline;
 class RenderNodePool;
 class GraphicsCommandPool;
+class GraphicsCommandFactory;
 
 class IGraphicsCore
 {
@@ -34,6 +35,7 @@ public:
 	virtual RenderNodePool* getRenderNodePool() = 0;
 
 	virtual GraphicsCommandPool* getGraphicsCommandPool() = 0;
+	virtual GraphicsCommandFactory* getGraphicsCommandFactory() = 0;
 
 	static IGraphicsCore* singletonInstance;
 	static IGraphicsCore* getInstance();

@@ -6,8 +6,14 @@
 class GraphicsCommandPool : public ResourcePool<GraphicsCommand, GRAPHICS_COMMAND_TYPE>
 {
 private:
-	std::map<GRAPHICS_COMMAND_TYPE, std::list<GraphicsCommand*>*> _freeList;
+	struct PerTypePool {
+		std::list<int> _freeIndices;
+		std::vector<GraphicsCommand*> _pool;
+	};
+
 	GraphicsCommandFactory* _factory;
+
+	std::vector<PerTypePool*> _commandPools;
 public:
 	GraphicsCommandPool(GraphicsCommandFactory* factory) { _factory = factory; };
 	~GraphicsCommandPool() {};

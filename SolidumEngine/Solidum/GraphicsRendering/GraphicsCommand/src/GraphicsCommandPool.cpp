@@ -1,39 +1,77 @@
 #include "../include/GraphicsCommandPool.h"
 
-void GraphicsCommandPool::allocateResources(GRAPHICS_COMMAND_TYPE type, int numResources)
+void GraphicsCommandPool::allocateResources(GRAPHICS_COMMAND_TYPE type, int numResources) 
 {
-	for (int i = 0; i < numResources; i++) {
-		if (_freeList.find(type) == _freeList.end()) {
-			_freeList.insert({ type, new std::list<GraphicsCommand*>() });
+
+}
+
+GraphicsCommand* GraphicsCommandPool::getResource(GRAPHICS_COMMAND_TYPE type) 
+{
+	IResource* resource = nullptr;
+
+	PerTypePool* properPool;
+
+	int typeIndex = (int)type;
+
+	//Get the correct pool for given type
+	if (_commandPools.size() <= typeIndex) {
+
+		int diff = (typeIndex - _commandPools.size()) + 1;
+
+		for (int i = 0; i <= diff; i++) {
+
+			_commandPools.push_back(new PerTypePool());
 		}
-		_freeList.at(type)->push_back(_factory->createObject(type));
 	}
+	
+	properPool = _commandPools[typeIndex];
+	
+
+	//Get resource from pool
+	if (properPool->_freeIndices.empty()) {
+
+		int newIndex = (properPool->_pool.size() + 1) - 1;
+
+		properPool->_pool.push_back(_factory->createObject(type));
+		properPool->_freeIndices.push_back(newIndex);
+	}
+
+	int newIndex = properPool->_freeIndices.back();
+
+	properPool->_freeIndices.pop_back();
+
+	resource = properPool->_pool[newIndex];
+	resource->setPoolIndex(newIndex);
+	
+
+	return (GraphicsCommand*)resource;
 }
 
-GraphicsCommand* GraphicsCommandPool::getResource(GRAPHICS_COMMAND_TYPE type) {
+void GraphicsCommandPool::releaseResource(GraphicsCommand* res) 
+{
 
-	if (_freeList.find(type) == _freeList.end()) {
+	IResource* resource = (IResource*)res;
 
-		_freeList.insert({ type, new std::list<GraphicsCommand*>() });
+	PerTypePool* properPool;
+
+	int typeIndex = (int)res->getType();
+
+	//Get the correct pool for given type
+	if (_commandPools.size() < typeIndex) {
+
+		int diff = (typeIndex - _commandPools.size()) + 1;
+
+		for (int i = 0; i < diff; i++) {
+			_commandPools.push_back(new PerTypePool());
+		}
+		properPool = _commandPools.back();
+	}
+	else {
+		properPool = _commandPools[typeIndex];
 	}
 
-	if (_freeList.at(type)->size() == 0) {
-		_freeList.at(type)->push_back(_factory->createObject(type));
-	}
+	int index = res->getPoolIndex();
 
-	GraphicsCommand* res = _freeList.at(type)->front();
-
-	_freeList.at(type)->pop_front();
-
-	return res;
-}
-
-void GraphicsCommandPool::releaseResource(GraphicsCommand* res) {
-	res->unload();
-
-	if (_freeList.find(res->getType()) == _freeList.end()) {
-		_freeList.insert({ res->getType(), new std::list<GraphicsCommand*>() });
-	}
-
-	_freeList.at(res->getType())->push_back(res);
+	//Add resource to pool
+	properPool->_freeIndices.push_back(index);
 }

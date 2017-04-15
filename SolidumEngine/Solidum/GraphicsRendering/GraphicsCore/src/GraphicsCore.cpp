@@ -140,6 +140,8 @@ void GraphicsCore::render()
 	_gcqManager->getPrimaryCommandQueue()->queueCommandList(_endsceneCommandList);
 
 	_gcqManager->getPrimaryCommandQueue()->processAllCommands();
+
+	int debugPoint = -1;
 }
 
 void GraphicsCore::setCurrentRenderingCamera(CameraComponent* cam)

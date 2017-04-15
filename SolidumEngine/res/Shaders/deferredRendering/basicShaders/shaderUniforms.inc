@@ -13,6 +13,9 @@ cbuffer MatrixBuffer
 	
 	float4 cbuff_skydomeApexColor;
 	float4 cbuff_skydomeCenterColor;
+	
+	matrix cbuff_depthLightViewMatrix;
+	matrix cbuff_depthLightProjectionMatrix;
 };
 
 cbuffer LightBuffer

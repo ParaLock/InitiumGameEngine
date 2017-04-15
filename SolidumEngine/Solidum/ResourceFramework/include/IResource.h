@@ -7,6 +7,7 @@ class IResource
 {
 private:
 protected:
+	int _poolIndex;
 	volatile bool isLoaded = false;
 public:
 	IResource();
@@ -20,6 +21,9 @@ public:
 	virtual void* getParameter(std::string varName) = 0;
 
 	bool getLoadStatus() { return isLoaded; };
+	int getPoolIndex() { return _poolIndex; }
+
+	void setPoolIndex(int index) { _poolIndex = index; };
 
 	template<typename T>
 	T* getCore() {

@@ -54,7 +54,7 @@ void ShadowGenRenderNode::render()
 				if (mesh->isRenderViable()) {
 
 					static Matrix4f LprojectionMatrix = light->getLight()->getProjectionMatrix();
-					static Matrix4f LviewMatrix = Matrix4f::transpose(light->getLight()->getViewMatrix());
+					static Matrix4f LviewMatrix = light->getLight()->getViewMatrix();
 
 					static Vector3f lightPos = light->getLight()->getPosition();
 
@@ -62,10 +62,10 @@ void ShadowGenRenderNode::render()
 						(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
 
 					commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
-						(std::make_pair("cbuff_lightProjectionMatrix", &LprojectionMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+						(std::make_pair("cbuff_depthLightProjectionMatrix", &LprojectionMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
 
 					commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
-						(std::make_pair("cbuff_lightViewMatrix", &LviewMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+						(std::make_pair("cbuff_depthLightViewMatrix", &LviewMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
 
 					commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
 						(std::make_pair("cbuff_lightPos", &lightPos), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);

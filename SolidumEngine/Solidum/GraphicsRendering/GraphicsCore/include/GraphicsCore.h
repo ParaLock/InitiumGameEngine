@@ -80,6 +80,7 @@ public:
 	RenderNodePool* getRenderNodePool() { return _renderNodePool; };
 
 	GraphicsCommandPool* getGraphicsCommandPool() { return _graphicsCommandPool; };
+	GraphicsCommandFactory* getGraphicsCommandFactory() { return _graphicsCommandFactory; }
 
 	static GraphicsCore* singletonInstance;
 	static GraphicsCore* getInstance();

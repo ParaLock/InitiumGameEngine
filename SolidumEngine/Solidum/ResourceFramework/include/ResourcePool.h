@@ -5,7 +5,6 @@ template<class ResourceType, typename EnumType>
 class ResourcePool
 {
 protected:
-
 public:
 	ResourcePool() {};
 	~ResourcePool() {};
