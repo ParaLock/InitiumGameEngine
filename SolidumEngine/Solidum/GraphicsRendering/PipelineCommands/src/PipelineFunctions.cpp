@@ -14,7 +14,7 @@ std::function<void(int, SHADER_TYPE, void*)> PipelineFunctions::pipeline_bindTex
 std::function<void(int, SHADER_TYPE, void*)> PipelineFunctions::pipeline_bindConstantBuffer;
 
 std::function<void(void* rt, SHADER_TYPE parentShader, int bindSlot)> PipelineFunctions::pipeline_bindRenderTargetAsSR;
-std::function<void(std::vector<void*> renderTargets, bool bindDS)> PipelineFunctions::pipeline_bindRenderTargetAsRT;
+std::function<void(std::vector<void*> renderTargets, void* depthStencil)> PipelineFunctions::pipeline_bindRenderTargetAsRT;
 
 std::function<void(void*, UINT, BUFFER_TYPE)> PipelineFunctions::pipeline_bindBuffer;
 std::function<void(void*)> PipelineFunctions::pipeline_bindInputLayout;
@@ -31,7 +31,5 @@ std::function<void(int,int)> PipelineFunctions::pipeline_drawIndexed;
 std::function<void()> PipelineFunctions::pipeline_reset;
 
 std::function<void(float maxDepth, float minDepth, int width, int height)> PipelineFunctions::pipeline_set_viewport;
-
-std::function<void()> PipelineFunctions::pipeline_clearDepthStencil;
 
 std::function<void()> PipelineFunctions::pipeline_swap_frame;

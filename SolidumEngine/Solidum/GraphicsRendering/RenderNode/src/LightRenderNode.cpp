@@ -76,23 +76,31 @@ void LightRenderNode::render()
 			//Hooks must be set in immediate context
 			_shader->setMesh(_orthoMesh);
 
-			static Matrix4f LprojectionMatrix = light->getProjectionMatrix();
-			static Matrix4f LviewMatrix = light->getViewMatrix();
-			static Matrix4f LmodelMatrix = light->getModelMatrix();
+			float left, right, top, bottom;
+
+			float screen_width = window::getInstance()->screen_width;
+			float screen_height = window::getInstance()->screen_height;
+
+			left = (float)((screen_width / 2) * -1);
+			right = left + (float)screen_width;
+			top = (float)(screen_height / 2);
+			bottom = top - (float)screen_height;
+
+			static Matrix4f LprojectionMatrix = Matrix4f::transpose(light->getProjectionMatrix());
+			static Matrix4f LviewMatrix = Matrix4f::transpose(light->getViewMatrix());
 
 			static Matrix4f CprojectionMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getProjectionMatrix();
 			static Matrix4f CviewMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getViewMatrix();
 			static Matrix4f CworldMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getWorldMatrix();
 			static Matrix4f CmodelMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getModelMatrix();
 
+			static Matrix4f lightSpaceMatrix = LviewMatrix * LprojectionMatrix;
+
 			commandList->createCommand(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
 				(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
 
 			commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
-				(std::make_pair("cbuff_lightViewMatrix", &Matrix4f::transpose(LviewMatrix)), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
-
-			commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
-				(std::make_pair("cbuff_lightProjectionMatrix", &LprojectionMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+				(std::make_pair("cbuff_lightSpaceMatrix", &lightSpaceMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
 
 			commandList->createCommand(std::make_shared<ShaderUpdateLightUniformsCommand::InitData>
 				(std::list<ILight*>{light}, _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_LIGHT_UNIFORMS);

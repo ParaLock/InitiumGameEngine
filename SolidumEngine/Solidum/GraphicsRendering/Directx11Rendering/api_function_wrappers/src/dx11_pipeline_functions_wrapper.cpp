@@ -86,7 +86,7 @@ void dx11_bind_render_target_as_sr(void* rt, SHADER_TYPE parentShader, int bindS
 	}
 }
 
-void dx11_bind_render_targets_as_rt(std::vector<void*> renderTargets, bool bindDS) {
+void dx11_bind_render_targets_as_rt(std::vector<void*> renderTargets, void* depthStencil) {
 
 	ID3D11RenderTargetView **dxRenderTargets = new ID3D11RenderTargetView*[renderTargets.size()];
 
@@ -95,16 +95,9 @@ void dx11_bind_render_targets_as_rt(std::vector<void*> renderTargets, bool bindD
 		dxRenderTargets[i] = (ID3D11RenderTargetView*)renderTargets.at(i);
 	}
 
-	if (bindDS) {
-
-		dxDeviceAccessor::dxEncapsulator->dxDevContext->OMSetRenderTargets(renderTargets.size(),
-			dxRenderTargets, dxDeviceAccessor::dxEncapsulator->depthStencil);
-	}
-	else {
-		dxDeviceAccessor::dxEncapsulator->dxDevContext->OMSetRenderTargets(renderTargets.size(),
-			dxRenderTargets, nullptr);
-	}
-
+	dxDeviceAccessor::dxEncapsulator->dxDevContext->OMSetRenderTargets(renderTargets.size(),
+		dxRenderTargets, (ID3D11DepthStencilView*)depthStencil);
+	
 
 	delete[] dxRenderTargets;
 }
@@ -164,11 +157,6 @@ void dx11_set_raster_state(RASTER_STATE state)
 void dx11_pipeline_draw_indexed(int index, int numIndices)
 {
 	dxDeviceAccessor::dxEncapsulator->dxDevContext->DrawIndexed(numIndices, index, 0);
-}
-
-void dx11_pipeline_clear_depth_stencil()
-{
-	dxDeviceAccessor::dxEncapsulator->clearDepthStencil();
 }
 
 void dx11_pipeline_swapframe() {

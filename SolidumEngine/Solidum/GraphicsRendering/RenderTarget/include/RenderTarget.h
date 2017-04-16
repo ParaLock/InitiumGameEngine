@@ -7,12 +7,13 @@
 
 #include "../../../GraphicsRendering/Viewport/include/Viewport.h"
 
+#include "../../DepthStencil/include/DepthStencil.h"
+
 #include "../../ActiveGraphicsAPI.h"
 
 class RenderTarget : public IResource
 {
 protected:
-
 	Viewport _viewPort;
 
 	int _mipLevel;
@@ -30,6 +31,8 @@ public:
 
 		int _height;
 		int _width;
+
+		bool _createDepthStencil;
 
 		InitData(int mipLevel, int aaSamples, TEX_FORMAT texFormat, int height, int width) {
 			_mipLevel = mipLevel;

@@ -256,6 +256,8 @@ private:
 
 	bool _bindDS;
 
+	DepthStencil* _depthStencil;
+
 	SHADER_TYPE _parentShader;
 
 	std::list<RenderTarget*> _involvedRTList;
@@ -267,19 +269,19 @@ public:
 
 	struct InitData : public IResourceBuilder {
 		int _bindSlot;
-		bool _bindDS;
+		DepthStencil* _depthStencil;
 		SHADER_TYPE _parentShader;
 		std::list<RenderTarget*> _involvedRTList;
 		RENDER_TARGET_OP_TYPE _op;
 
-		InitData(int bindSlot, bool bindDS, SHADER_TYPE parentShader, 
+		InitData(int bindSlot, SHADER_TYPE parentShader, 
 			std::list<RenderTarget*> involvedRTList,
-				RENDER_TARGET_OP_TYPE op) 
+				RENDER_TARGET_OP_TYPE op, 
+			DepthStencil* depthStencil)
 		{
-
+			_depthStencil = depthStencil;
 			_parentShader = parentShader;
 			_bindSlot = bindSlot;
-			_bindDS = bindDS;
 			_involvedRTList = involvedRTList;
 			_op = op;
 		}
@@ -291,8 +293,7 @@ public:
 
 		_parentShader = realBuilder->_parentShader;
 		_bindSlot = realBuilder->_bindSlot;
-		_bindDS = realBuilder->_bindDS;
-
+		_depthStencil = realBuilder->_depthStencil;
 		_involvedRTList = realBuilder->_involvedRTList;
 
 		_op = realBuilder->_op;
@@ -318,10 +319,27 @@ public:
 
 class PipelineClearDepthStencil : public PipelineCommand {
 private:
+	DepthStencil* _ds;
+	float _depth;
 public:
 	PipelineClearDepthStencil() { _type = GRAPHICS_COMMAND_TYPE::PIPELINE_CLEAR_DEPTH_BUFFER; }
 
-	void load(std::shared_ptr<IResourceBuilder> builder) {}
+	struct InitData : public IResourceBuilder {
+		DepthStencil* _ds;
+		float _depth;
+
+		InitData(DepthStencil* ds, float depth) {
+			_ds = ds;
+			_depth = depth;
+		}
+	};
+
+	void load(std::shared_ptr<IResourceBuilder> builder) {
+		InitData* realBuilder = static_cast<InitData*>(builder.get());
+
+		_ds = realBuilder->_ds;
+		_depth = realBuilder->_depth;
+	}
 
 	void execute();
 };

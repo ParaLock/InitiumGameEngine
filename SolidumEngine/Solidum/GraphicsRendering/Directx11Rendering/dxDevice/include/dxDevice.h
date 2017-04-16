@@ -63,9 +63,6 @@ public:
 	ID3D11DeviceContext *dxDevContext;
 	IDXGISwapChain *dxSwapchain;
 
-	D3D11_VIEWPORT meshViewport;
-	D3D11_VIEWPORT lightViewport;
-
 	ID3D11DepthStencilView *depthStencil;
 
 	ID3D11DepthStencilState* depthStencilDisable;

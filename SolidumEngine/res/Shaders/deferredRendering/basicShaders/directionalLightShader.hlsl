@@ -30,8 +30,7 @@ float4 Pshader(PixelInputType input) : SV_TARGET
 	core.worldPos = worldPos.xyz;
 	core.normal = normals.xyz;
 	
-	float4 lightVertPos = mul(float4(worldPos.xyz, 1), cbuff_lightViewMatrix);
-	lightVertPos = mul(lightVertPos, cbuff_lightProjectionMatrix);
+	float4 lightVertPos = mul(float4(worldPos.xyz, 1), cbuff_lightSpaceMatrix);
 	
 	float3 projCoords = lightVertPos.xyz / lightVertPos.w;
 	

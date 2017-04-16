@@ -22,7 +22,7 @@ void dx11_bind_shader_texture(int bindSlot, SHADER_TYPE parentShader, void* pTex
 void dx11_bind_shader_input_layout(void* pInputLayout);
 void dx11_bind_shader_buffer(void* buffer, UINT buffStride, BUFFER_TYPE buffType);
 void dx11_bind_render_target_as_sr(void* rt, SHADER_TYPE parentShader, int bindSlot);
-void dx11_bind_render_targets_as_rt(std::vector<void*> renderTargets, bool bindDS);
+void dx11_bind_render_targets_as_rt(std::vector<void*> renderTargets, void* depthStencil);
 void dx11_set_primitive_topology(PRIMITIVE_TOPOLOGY ptType);
 
 void dx11_set_viewport(float maxDepth, float minDepth, int width, int height);
@@ -33,8 +33,6 @@ void dx11_set_blend_state(BLEND_STATE blendState);
 void dx11_set_raster_state(RASTER_STATE state);
 
 void dx11_pipeline_draw_indexed(int index, int numIndices);
-
-void dx11_pipeline_clear_depth_stencil();
 
 void dx11_pipeline_swapframe();
 void dx11_reset_pipeline();

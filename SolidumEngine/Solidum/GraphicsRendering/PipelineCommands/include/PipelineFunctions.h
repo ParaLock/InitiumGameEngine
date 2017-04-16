@@ -13,7 +13,7 @@ public:
 	static std::function<void(int, SHADER_TYPE, void*)> pipeline_bindConstantBuffer;
 
 	static std::function<void(void* rt, SHADER_TYPE parentShader, int bindSlot)> pipeline_bindRenderTargetAsSR;
-	static std::function<void(std::vector<void*> renderTargets, bool bindDS)> pipeline_bindRenderTargetAsRT;
+	static std::function<void(std::vector<void*> renderTargets, void* depthStencil)> pipeline_bindRenderTargetAsRT;
 
 	static std::function<void(void*, UINT, BUFFER_TYPE)> pipeline_bindBuffer;
 	static std::function<void(void*)> pipeline_bindInputLayout;
@@ -26,8 +26,6 @@ public:
 	static std::function<void(RASTER_STATE)> pipeline_set_raster_state;
 
 	static std::function<void(int, int)> pipeline_drawIndexed;
-
-	static std::function<void()> pipeline_clearDepthStencil;
 
 	static std::function<void(float maxDepth, float minDepth, int width, int height)> pipeline_set_viewport;
 

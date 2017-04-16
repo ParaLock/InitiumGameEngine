@@ -198,7 +198,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(LIGHT_TYPE::POINT_LIGHT, deferredRenderingPointLightShader);
 
 	sunLight->setColor(Vector4f(0.5f, 0.5f, 0.5f, 0.5f));
-	sunLight->setDirection(Vector3f(0.0f, 0.0f, 9.0f));
+	sunLight->setDirection(Vector3f(5.0f, 5.0f, 9.0f));
 	sunLight->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
 	sunLight->setIntensity(0.5f);
 

@@ -26,6 +26,7 @@ EngineInstance::EngineInstance(window* renderWindow)
 	_resManagers->registerResourceManager(new GPUBufferManager(), "GPUBufferManager");
 	_resManagers->registerResourceManager(new LightManager(), "LightManager");
 	_resManagers->registerResourceManager(new InputManager(), "InputHandlerManager");
+	_resManagers->registerResourceManager(new DepthStencilManager(), "DepthStencilManager");
 
 	_resManagers->getResourceManager("InputHandlerManager")->createResource(nullptr, "InputHandler", false);
 

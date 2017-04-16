@@ -110,6 +110,7 @@ void dxRenderTarget::load(std::shared_ptr<IResourceBuilder> builder)
 	result = dxDev->CreateRenderTargetView(_texture, &renderTargetViewDesc, &_renderTarget);
 	dxDev->CreateShaderResourceView(_texture, &shaderResourceViewDesc, &_shaderView);
 
+
 	isLoaded = true;
 }
 

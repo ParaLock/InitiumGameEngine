@@ -5,6 +5,8 @@ PIPELINE_INIT_END
 
 PIPELINE_BEGIN
 
+	BIND DEPTH_STENCIL framebuffer_depth_stencil
+
 	DEPTH_TEST disable
 	BLENDING enable
 	

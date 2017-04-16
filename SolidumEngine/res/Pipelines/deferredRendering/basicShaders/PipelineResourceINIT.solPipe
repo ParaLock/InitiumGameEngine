@@ -1,5 +1,8 @@
 PIPELINE_INIT 
 
+	INIT DEPTH_STENCIL framebuffer_depth_stencil
+	INIT DEPTH_STENCIL shadowmap_depth_stencil 2048 2048
+	
 	INIT GBUFFER color_gbuff
 	INIT GBUFFER normals_gbuff
 	INIT GBUFFER position_gbuff

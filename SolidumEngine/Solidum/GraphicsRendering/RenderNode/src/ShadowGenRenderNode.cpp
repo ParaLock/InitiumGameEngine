@@ -53,19 +53,24 @@ void ShadowGenRenderNode::render()
 
 				if (mesh->isRenderViable()) {
 
-					static Matrix4f LprojectionMatrix = light->getLight()->getProjectionMatrix();
-					static Matrix4f LviewMatrix = light->getLight()->getViewMatrix();
+					CameraComponent* cam = _renderParams.getGlobalParam_GlobalRenderingCamera();
+					Transform* meshTransform = mesh->getRenderParams()->getPerNodeParam_Transform();
+
+					Matrix4f WorldMatrix = cam->getWorldMatrix();
+
+					static Matrix4f LprojectionMatrix = Matrix4f::transpose(light->getLight()->getProjectionMatrix());
+					static Matrix4f LviewMatrix = Matrix4f::transpose(light->getLight()->getViewMatrix());
+					static Matrix4f MModelMatrix = Matrix4f::transpose(meshTransform->getMatrix());
 
 					static Vector3f lightPos = light->getLight()->getPosition();
+
+					static Matrix4f lightSpace = LviewMatrix * LprojectionMatrix * MModelMatrix;
 
 					commandList->createCommand(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
 						(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
 
 					commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
-						(std::make_pair("cbuff_depthLightProjectionMatrix", &LprojectionMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
-
-					commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
-						(std::make_pair("cbuff_depthLightViewMatrix", &LviewMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+						(std::make_pair("cbuff_depthPMV", &lightSpace), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
 
 					commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
 						(std::make_pair("cbuff_lightPos", &lightPos), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
@@ -94,8 +99,6 @@ void ShadowGenRenderNode::render()
 	}
 
 	_renderParams.setPerNodeParam_isVisible(false);
-
-	commandList->createCommand(std::shared_ptr<IResourceBuilder>(), GRAPHICS_COMMAND_TYPE::PIPELINE_CLEAR_DEPTH_BUFFER);
 
 	GCLQManager::getInstance()->getPrimaryCommandQueue()->queueCommandList(commandList);
 }

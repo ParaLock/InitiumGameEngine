@@ -60,7 +60,6 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 		PipelineFunctions::pipeline_swap_frame = dx11_pipeline_swapframe;
 		PipelineFunctions::pipeline_reset = dx11_reset_pipeline;
 
-		PipelineFunctions::pipeline_clearDepthStencil = dx11_pipeline_clear_depth_stencil;
 		PipelineFunctions::pipeline_set_raster_state = dx11_set_raster_state;
 		PipelineFunctions::pipeline_drawIndexed = dx11_pipeline_draw_indexed;
 

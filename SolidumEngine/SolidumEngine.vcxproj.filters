@@ -103,6 +103,9 @@
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommand\include\GraphicsCommandPool.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommand\include\GraphicsCommandFactory.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCore\include\IGraphicsCore.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\DepthStencil\include\DepthStencil.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDepthStencil\include\dxDepthStencil.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\DepthStencil\include\DepthStencilManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -195,5 +198,8 @@
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommand\src\GraphicsCommandFactory.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCore\src\IGraphicsCore.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommand\src\GraphicsCommand.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\DepthStencil\src\DepthStencil.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDepthStencil\src\dxDepthStencil.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\DepthStencil\src\DepthStencilManager.cpp" />
   </ItemGroup>
 </Project>

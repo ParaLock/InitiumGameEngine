@@ -47,8 +47,6 @@ private:
 	int texSamplerCount = 0;
 	int texHookCount = 0;
 
-	bool _outputRTsBindDS = false;
-
 	std::map<std::string, DynamicStruct*> _boundCbuffers;
 
 	std::map<std::string, DynamicStruct*> *_constantBufferMemberNameMap;
@@ -56,6 +54,7 @@ private:
 
 	std::list<GPUPipelineOP> *_opList;
 
+	DepthStencil* _currentDepthStencil = nullptr;
 	IResource* _currentInputLayout = nullptr;
 
 	BLEND_STATE blendState = BLEND_STATE::BLENDING_OFF;

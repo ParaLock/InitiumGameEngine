@@ -7,4 +7,5 @@
 #include "../Solidum/GraphicsRendering/GraphicsBuffers/include/GPUBufferManager.h"
 #include "../Solidum/GraphicsRendering/Material/include/MaterialManager.h"
 #include "../Solidum/GraphicsRendering/Lights/include/LightManager.h"
+#include "../Solidum/GraphicsRendering/DepthStencil/include/DepthStencilManager.h"
 #include "InputHandling\include\InputManager.h"

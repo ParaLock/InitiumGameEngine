@@ -57,13 +57,6 @@ void GPUPipeline::load(std::shared_ptr<IResourceBuilder> builder)
 
 			std::string debugTest = splitStr.at(0);
 
-			if (splitStr.at(0) == "OUTPUT_GBUFFER_GROUP") {
-				if (splitStr.at(1) == "BIND_DS") {
-
-					_outputRTsBindDS = true;
-				}
-			}
-
 			if (splitStr.at(0) == "VS_SHADER_END") {
 				shaderContext = SHADER_TYPE::INVALID;
 			}
@@ -81,6 +74,7 @@ void GPUPipeline::load(std::shared_ptr<IResourceBuilder> builder)
 			}
 
 			if (splitStr.at(0) == "INIT") {
+
 				if (splitStr.at(1) == "GBUFFER") {
 
 					if (splitStr.size() >= 4) {
@@ -90,6 +84,7 @@ void GPUPipeline::load(std::shared_ptr<IResourceBuilder> builder)
 								std::stoi(splitStr.at(4)), std::stoi(splitStr.at(3))), splitStr.at(2), false);
 					}
 					else {
+						
 						ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->createResource(
 							std::make_shared<RenderTarget::InitData>(1, 1, TEX_FORMAT::RGBA_32BIT_FLOAT,
 								window::getInstance()->screen_height, window::getInstance()->screen_width), splitStr.at(2), false);
@@ -97,6 +92,7 @@ void GPUPipeline::load(std::shared_ptr<IResourceBuilder> builder)
 				}
 
 				if (splitStr.at(1) == "SAMPLER") {
+
 					TEX_ADDR_MODES addrMode;
 					TEX_FILTERS filterType;
 
@@ -118,6 +114,21 @@ void GPUPipeline::load(std::shared_ptr<IResourceBuilder> builder)
 					ResourceManagerPool::getInstance()->getResourceManager("TextureSamplerManager")->createResource(std::make_shared<TextureSampler::InitData>
 						(filterType, ANISOTRPHIC_FILTER_LEVELS::NO_ANISOTROPHIC_FILTERING, addrMode), splitStr.at(4), false);
 				}
+
+				if (splitStr.at(1) == "DEPTH_STENCIL") {
+
+					if (splitStr.size() >= 4) {
+
+						ResourceManagerPool::getInstance()->getResourceManager("DepthStencilManager")->createResource(
+							std::make_shared<DepthStencil::InitData>(std::stoi(splitStr.at(3)), std::stoi(splitStr.at(4))), splitStr.at(2), false);
+					}
+					else {
+
+						ResourceManagerPool::getInstance()->getResourceManager("DepthStencilManager")->createResource(
+							std::make_shared<DepthStencil::InitData>(window::getInstance()->screen_width, window::getInstance()->screen_height), splitStr.at(2), false);
+					}
+
+				}
 			}
 
 
@@ -134,25 +145,33 @@ void GPUPipeline::load(std::shared_ptr<IResourceBuilder> builder)
 
 					IResource* res = ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->getResource(splitStr.at(3));
 
-
 					attachResource(res, splitStr.at(3), SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET, shaderContext, false);
 				}
+
+				if (splitStr.at(1) == "DEPTH_STENCIL") {
+
+					IResource* res = ResourceManagerPool::getInstance()->getResourceManager("DepthStencilManager")->getResource(splitStr.at(2));
+
+					attachResource(res, splitStr.at(2), SHADER_RESOURCE_TYPE::SHADER_DEPTH_STENCIL, shaderContext, false);
+				
+					_currentDepthStencil = (DepthStencil*)res;
+				}
+
 				if (splitStr.at(1) == "TEXTURE_HOOK") {
 
-					attachResource(nullptr,
-						splitStr.at(2), SHADER_RESOURCE_TYPE::SHADER_TEXTURE_HOOK, shaderContext, false);
+					attachResource(nullptr, splitStr.at(2), SHADER_RESOURCE_TYPE::SHADER_TEXTURE_HOOK, shaderContext, false);
 				}
 
 				if (splitStr.at(1) == "BUFFER_HOOK") {
 
-					attachResource(nullptr,
-						splitStr.at(2), SHADER_RESOURCE_TYPE::SHADER_BUFFER_HOOK, shaderContext, false);
+					attachResource(nullptr, splitStr.at(2), SHADER_RESOURCE_TYPE::SHADER_BUFFER_HOOK, shaderContext, false);
 				}
 
 				if (splitStr.at(1) == "SAMPLER") {
 
-					attachResource(ResourceManagerPool::getInstance()->getResourceManager("TextureSamplerManager")->getResource(splitStr.at(2)),
-						splitStr.at(2), SHADER_RESOURCE_TYPE::SHADER_TEX_SAMPLER, shaderContext, false);
+					IResource* res = ResourceManagerPool::getInstance()->getResourceManager("TextureSamplerManager")->getResource(splitStr.at(2));
+
+					attachResource(res, splitStr.at(2), SHADER_RESOURCE_TYPE::SHADER_TEX_SAMPLER, shaderContext, false);
 				}
 			}
 
@@ -175,6 +194,7 @@ void GPUPipeline::load(std::shared_ptr<IResourceBuilder> builder)
 				}
 
 				if (splitStr.at(2) == "SWAPFRAME") {
+
 					op.opType = GPUPIPELINE_OP_TYPE::SWAPFRAME;
 				}
 
@@ -185,8 +205,11 @@ void GPUPipeline::load(std::shared_ptr<IResourceBuilder> builder)
 					op.opTarget = ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->getResource(splitStr.at(4));
 				}
 
-				if (splitStr.at(3) == "ZBUFFER") {
-					op.resType = SHADER_RESOURCE_TYPE::SHADER_ZBUFFER;
+				if (splitStr.at(3) == "DEPTH_STENCIL") {
+
+					op.resType = SHADER_RESOURCE_TYPE::SHADER_DEPTH_STENCIL;
+
+					op.opTarget = ResourceManagerPool::getInstance()->getResourceManager("DepthStencilManager")->getResource(splitStr.at(4));
 				}
 
 
@@ -330,25 +353,29 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_TEXTURE_HOOK) {
 
 				commandList->createCommand(std::make_shared<PipelineSRBindCommand::InitData>
-					(element->core, element->bindSlot, element->type, element->parentShader), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
+					(element->core, element->bindSlot, element->type, element->parentShader), 
+					  GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
 			}
 
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_TEX_SAMPLER) {
 
 				commandList->createCommand(std::make_shared<PipelineSRBindCommand::InitData>
-					(element->core, element->bindSlot, element->type, element->parentShader), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
+					(element->core, element->bindSlot, element->type, element->parentShader), 
+					  GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
 			}
 
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_CONSTANT_BUFFER) {
 
 				commandList->createCommand(std::make_shared<PipelineSRBindCommand::InitData>
-					(element->core, element->bindSlot, element->type, element->parentShader), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
+					(element->core, element->bindSlot, element->type, element->parentShader), 
+					  GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
 			}
 
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_BUFFER_HOOK) {
 
 				commandList->createCommand(std::make_shared<PipelineBufferBindCommand::InitData>
-					(element->core->getCore<GPUBuffer>(), 0, _currentInputLayout->getCore<ShaderInputLayout>()->getDataStride()), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER);
+					(element->core->getCore<GPUBuffer>(), 0, _currentInputLayout->getCore<ShaderInputLayout>()->getDataStride()), 
+					  GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER);
 
 			}
 
@@ -359,16 +386,17 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 
 					Viewport rtView = element->core->getCore<RenderTarget>()->getViewport();
 					
-					commandList->createCommand(std::make_shared<PipelineSetViewportCommand::InitData>(rtView), 
-						GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VIEWPORT_STATE);
+					commandList->createCommand(std::make_shared<PipelineSetViewportCommand::InitData>
+						(rtView), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VIEWPORT_STATE);
 				}
 				else {
 
 					commandList->createCommand(std::make_shared<PipelineRenderTargetCommand::InitData>
-						  (element->bindSlot, _outputRTsBindDS, element->parentShader, 
+						  (element->bindSlot, element->parentShader, 
 							std::list<RenderTarget*>{ (RenderTarget*)element->core }, 
-							 RENDER_TARGET_OP_TYPE::BIND_AS_INPUT), 
-						      GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
+							 RENDER_TARGET_OP_TYPE::BIND_AS_INPUT,
+							  _currentDepthStencil),
+				     GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
 					
 				}
 			}
@@ -382,8 +410,9 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 	}
 
 	commandList->createCommand(std::make_shared<PipelineRenderTargetCommand::InitData>
-		(-1, _outputRTsBindDS, SHADER_TYPE::INVALID, outputRTs, RENDER_TARGET_OP_TYPE::BIND_AS_OUTPUT), 
-		GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
+		(-1, SHADER_TYPE::INVALID, outputRTs, RENDER_TARGET_OP_TYPE::BIND_AS_OUTPUT, 
+			_currentDepthStencil),
+			GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
 
 	commandList->createCommand(std::make_shared<PipelineSetBlendStateCommand::InitData>(blendState), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_BLEND_STATE);
 	commandList->createCommand(std::make_shared<PipelineSetDepthTestStateCommand::InitData>(depthState), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_DEPTH_TEST_STATE);
@@ -397,20 +426,21 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 			if (op.resType == SHADER_RESOURCE_TYPE::SHADER_RENDER_TARGET) {
 
 				commandList->createCommand(std::make_shared<PipelineRenderTargetCommand::InitData>
-					(-1, false, SHADER_TYPE::INVALID, std::list<RenderTarget*>{(RenderTarget*)op.opTarget},
-						RENDER_TARGET_OP_TYPE::CLEAR), GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
+					(-1, SHADER_TYPE::INVALID, std::list<RenderTarget*>{(RenderTarget*)op.opTarget},
+						RENDER_TARGET_OP_TYPE::CLEAR, nullptr), GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);
 			}
 		
-			if (op.resType == SHADER_RESOURCE_TYPE::SHADER_ZBUFFER) {
-
-				commandList->createCommand(std::make_shared<IResourceBuilder>(), 
-					GRAPHICS_COMMAND_TYPE::PIPELINE_CLEAR_DEPTH_BUFFER);
+			if (op.resType == SHADER_RESOURCE_TYPE::SHADER_DEPTH_STENCIL) {
+				
+				commandList->createCommand(std::make_shared<PipelineClearDepthStencil::InitData>((DepthStencil*)op.opTarget, 1.0f), 
+				    GRAPHICS_COMMAND_TYPE::PIPELINE_CLEAR_DEPTH_BUFFER);
 			}
 		}
 
 		if (op.opType == GPUPIPELINE_OP_TYPE::SWAPFRAME) {
 
-			commandList->createCommand(std::make_shared<IResourceBuilder>(), GRAPHICS_COMMAND_TYPE::PIPELINE_SWAPFRAME);
+			commandList->createCommand(std::make_shared<IResourceBuilder>(), 
+				GRAPHICS_COMMAND_TYPE::PIPELINE_SWAPFRAME);
 		}
 	}
 }

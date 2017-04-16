@@ -77,9 +77,6 @@ void Shader::updateDeferredLightUniforms(ILight* light)
 	float exponent = light->getAttenuationExponent();
 	float range = light->getRange();
 
-	updateUniform("cbuff_lightViewMatrix", &Matrix4f::transpose(light->getViewMatrix()));
-	updateUniform("cbuff_lightProjectionMatrix", &Matrix4f::transpose(light->getProjectionMatrix()));
-
 	updateUniform("cbuff_lightDirection", &light->getDirection());
 	updateUniform("cbuff_lightPos", &light->getPosition());
 	updateUniform("cbuff_lightColor", &light->getColor());

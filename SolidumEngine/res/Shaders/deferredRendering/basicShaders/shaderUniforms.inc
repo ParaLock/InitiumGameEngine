@@ -14,8 +14,7 @@ cbuffer MatrixBuffer
 	float4 cbuff_skydomeApexColor;
 	float4 cbuff_skydomeCenterColor;
 	
-	matrix cbuff_depthLightViewMatrix;
-	matrix cbuff_depthLightProjectionMatrix;
+	matrix cbuff_depthPMV;
 };
 
 cbuffer LightBuffer
@@ -34,8 +33,7 @@ cbuffer LightBuffer
 	float cbuff_pointLightRange;
 	float3 padding2;
 	
-	matrix cbuff_lightViewMatrix;
-	matrix cbuff_lightProjectionMatrix;
+	matrix cbuff_lightSpaceMatrix;
 };
 
 struct CoreData 

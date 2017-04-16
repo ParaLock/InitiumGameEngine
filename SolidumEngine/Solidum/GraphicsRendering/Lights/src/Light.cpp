@@ -5,9 +5,13 @@ Light::Light()
 	_projectionMatrix = Matrix4f::get_identity();
 	_viewMatrix = Matrix4f::get_identity();
 
-	_projectionMatrix = Matrix4f::get_orthographic(-10, 10, -10, 10, 1.0f, 100.0f);
+	float near_plane = 1.0f, far_plane = 7.5f;
 
-	//_projectionMatrix = Matrix4f::get_perspective(((float)M_PI / 2.0f), 1.0f, 1.0f, 100.0f);
+	//_projectionMatrix = Matrix4f::get_orthographic(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+
+	_projectionMatrix = Matrix4f::get_perspective(((float)M_PI / 2.0f), 1.0f, 1.0f, 100.0f);
+
+	_viewMatrix = Matrix4f::get_lookAt(Vector3f(-2.0f, 4.0f, -1.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
 
 	_isShadowCaster = true;
 }
@@ -74,7 +78,7 @@ Matrix4f Light::getViewMatrix()
 {
 	if (_lightViewMatDirty) {
 
-		_viewMatrix = Matrix4f::get_lookAt(_GenericData._direction, Vector3f(0.0f, 0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
+		//_viewMatrix = Matrix4f::get_lookAt(_GenericData._direction, Vector3f(0.0f, 0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
 
 		_lightViewMatDirty = false;
 	}
