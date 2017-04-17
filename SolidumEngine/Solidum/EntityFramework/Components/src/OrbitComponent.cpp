@@ -2,7 +2,7 @@
 
 
 
-OrbitComponent::OrbitComponent(Vector3f pointToOrbit, float radius, float speed)
+OrbitComponent::OrbitComponent(Vector3f pointToOrbit, float radius, float speed, IEntity* entity)
 {
 	_pointToOrbit = pointToOrbit;
 	_orbitRadius = radius;
@@ -12,6 +12,8 @@ OrbitComponent::OrbitComponent(Vector3f pointToOrbit, float radius, float speed)
 	_orbitAngle = 0.0f;
 
 	setType(COMPONENT_TYPE::ORBIT_COMPONENT);
+
+	_parent = entity;
 }
 
 

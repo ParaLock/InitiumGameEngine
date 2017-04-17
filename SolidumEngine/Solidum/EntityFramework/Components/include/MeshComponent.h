@@ -21,10 +21,8 @@ private:
 	Texture* _tex;
 	Material* _mat;
 public:
-	MeshComponent(mesh* mesh, Texture* tex, Material* mat, int index);
+	MeshComponent(mesh* mesh, Texture* tex, Material* mat, int index, IEntity* entity);
 	~MeshComponent();
-
-	void init();
 
 	void update(float delta);
 	void onEvent(EVENT_PTR evt);

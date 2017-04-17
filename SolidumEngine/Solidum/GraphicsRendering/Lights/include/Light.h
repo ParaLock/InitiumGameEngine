@@ -7,6 +7,10 @@
 
 #include "../../../ResourceFramework/include/IResourceBuilder.h"
 
+#include "../../../PhysicsFramework/include/BoundingSphere.h"
+
+#include "../../GraphicsCore/include/IGraphicsCore.h"
+
 #include "ILight.h"
 
 class Light : public IResource, public ILight
@@ -15,7 +19,7 @@ private:
 
 	LIGHT_TYPE _type;
 
-	Matrix4f _viewMatrix, _projectionMatrix;
+	Matrix4f _viewMatrix, _projectionMatrix, _shadowMatrix;
 	
 	bool _isShadowCaster = false;
 	bool _lightViewMatDirty = false;
@@ -63,6 +67,8 @@ public:
 	void setPosition(Vector3f pos);
 	void setColor(Vector4f color);
 
+	void shadowUpdate(BoundingSphere* worldSphere);
+
 	void setIntensity(float intensity);
 	void setRange(float range) { _GenericData._range = range; };
 	
@@ -84,10 +90,9 @@ public:
 	Matrix4f getViewMatrix();
 	Matrix4f getProjectionMatrix();
 	Matrix4f getModelMatrix();
+	Matrix4f getShadowMatrix() { return _shadowMatrix; };
 
 	bool getIsShadowCaster() { return _isShadowCaster; };
 	void setIsShadowCaster(bool isShaderCaster) { _isShadowCaster = isShaderCaster; };
-
-	void updateDirLightProjectionAndView();
 };
 

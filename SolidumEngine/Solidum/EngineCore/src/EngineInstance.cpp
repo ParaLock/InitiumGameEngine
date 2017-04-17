@@ -1,12 +1,7 @@
 #include "../include/EngineInstance.h"
 
-
-
 EngineInstance::EngineInstance(window* renderWindow)
 {
-
-
-
 	_eventFrameworkCore = new EventFrameworkCore();
 
 	_eventFrameworkCore->registerGlobalEventHub(new EventHub(), "ComponentEventHub");
@@ -48,6 +43,7 @@ EngineInstance::~EngineInstance()
 void EngineInstance::loadWorld(World * world)
 {
 	_currentWorld = world;
+	_graphicsCore->setWorldBoundingSphere(world->getBoundingSphere());
 }
 
 void EngineInstance::executionCycle()
@@ -95,6 +91,7 @@ void EngineInstance::render()
 
 	_currentWindow->update();
 }
+
 
 void EngineInstance::start()
 {

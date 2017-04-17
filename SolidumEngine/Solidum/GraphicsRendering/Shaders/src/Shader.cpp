@@ -181,7 +181,7 @@ void Shader::updateCameraUniforms(CameraComponent* cam)
 	updateUniform("cbuff_viewMatrix", &Matrix4f::transpose(cam->getViewMatrix()));
 	updateUniform("cbuff_projectionMatrix", &Matrix4f::transpose(cam->getProjectionMatrix()));
 	updateUniform("cbuff_worldMatrix", &Matrix4f::transpose(cam->getWorldMatrix()));
-	updateUniform("cbuff_orthoProjection", &cam->getOrthoProjectionMatrix());
+	updateUniform("cbuff_orthoProjection", &Matrix4f::transpose(cam->getOrthoProjectionMatrix()));
 	updateUniform("cbuff_camViewStart", &Matrix4f::transpose(cam->getStartViewMatrix()));
 }
 

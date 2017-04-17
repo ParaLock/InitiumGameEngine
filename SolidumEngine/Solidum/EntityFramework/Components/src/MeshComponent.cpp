@@ -1,7 +1,7 @@
 #include "../include/MeshComponent.h"
 
 
-MeshComponent::MeshComponent(mesh* mesh, Texture* tex, Material* mat, int index)
+MeshComponent::MeshComponent(mesh* mesh, Texture* tex, Material* mat, int index, IEntity* entity)
 {
 	_index = index;
 
@@ -9,21 +9,18 @@ MeshComponent::MeshComponent(mesh* mesh, Texture* tex, Material* mat, int index)
 	_tex = tex;
 	_mat = mat;
 
+	_parent = entity;
+
 	setType(COMPONENT_TYPE::MESH_COMPONENT);
+
+	//Static meshes are always index + 1
+	_parent->getRenderObject()->addStaticGeometry(_mesh, _index + 1);
+	_parent->getRenderObject()->addTexture(_tex, _index + 1);
+	_parent->getRenderObject()->addMaterial(_mat, _index + 1);
 }
 
 MeshComponent::~MeshComponent()
 {
-}
-
-void MeshComponent::init()
-{
-	if (_parent != nullptr) {
-		//Static meshes are always index + 1
-		_parent->getRenderObject()->addStaticGeometry(_mesh, _index + 1);
-		_parent->getRenderObject()->addTexture(_tex, _index + 1);
-		_parent->getRenderObject()->addMaterial(_mat, _index + 1);
-	}
 }
 
 void MeshComponent::update(float delta)

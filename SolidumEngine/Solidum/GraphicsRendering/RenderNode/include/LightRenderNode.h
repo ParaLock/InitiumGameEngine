@@ -33,7 +33,7 @@ public:
 	void updateParameter(std::string varName, void *data);
 	void* getParameter(std::string varName);
 
-	ILight* getLight() { return _renderParams.getPerNodeParam_Light(); }
+	ILight* getLight() { return (ILight*)_renderParams.getPerNodeParam_Light(); }
 
 	bool isRenderViable();
 

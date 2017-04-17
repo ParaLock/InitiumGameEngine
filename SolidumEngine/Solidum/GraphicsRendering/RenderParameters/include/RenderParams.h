@@ -9,10 +9,13 @@ class Texture;
 class Material;
 class mesh;
 class Light;
+class BoundingSphere;
 
 struct GlobalRenderingParams {
 	Vector4f _ambientLightLevel;
 	CameraComponent* _globalRenderingCamera = nullptr;
+
+	BoundingSphere* _worldBoundingSphere;
 };
 
 struct LocalRenderingParams {
@@ -43,12 +46,14 @@ public:
 	RenderParams();
 	~RenderParams();
 
+	void setGlobalParam_WorldBoundingSphere(BoundingSphere* boundingSphere) { global_params._worldBoundingSphere = boundingSphere; }
 	void setGlobalParam_AmbientLight(Vector4f color) { global_params._ambientLightLevel = color; };
 	void setGlobalParam_GlobalRenderingCamera(CameraComponent* cam) { global_params._globalRenderingCamera = cam; }
 
 	void setPerNodeParam_skydomeCenterColor(Vector4f color) { local_params._skydomeCenterColor = color; };
 	void setPerNodeParam_skydomeApexColor(Vector4f cam) { local_params._skydomeApexColor = cam; }
 
+	BoundingSphere* getGlobalParam_WorldBoundingSphere() { return global_params._worldBoundingSphere; }
 	Vector4f getGlobalParam_AmbientLight() { return global_params._ambientLightLevel; }
 	CameraComponent* getGlobalParam_GlobalRenderingCamera() { return global_params._globalRenderingCamera; }
 

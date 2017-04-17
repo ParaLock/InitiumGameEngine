@@ -25,7 +25,7 @@ private:
 	void* getParameter(std::string varName) { return nullptr; };
 
 public:
-	OrbitComponent(Vector3f pointToOrbit, float radius, float speed);
+	OrbitComponent(Vector3f pointToOrbit, float radius, float speed, IEntity* entity);
 	~OrbitComponent();
 
 	void onEvent(EVENT_PTR evt) {};

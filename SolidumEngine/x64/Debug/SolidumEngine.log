@@ -1,5 +1,84 @@
-﻿  LightRenderNode.cpp
+﻿  main.cpp
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\main.cpp(49): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\main.cpp(33): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(240): note: see declaration of 'freopen'
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\resourceframework\include\resourcepool.h(35): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\resourceframework\include\resourcepool.h(25): note: while compiling class template member function 'RenderNode *ResourcePool<RenderNode,RENDER_NODE_TYPE,RenderNodeFactory>::getResource(EnumType)'
+          with
+          [
+              EnumType=RENDER_NODE_TYPE
+          ]
+  c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\main.cpp(292): note: see reference to function template instantiation 'RenderNode *ResourcePool<RenderNode,RENDER_NODE_TYPE,RenderNodeFactory>::getResource(EnumType)' being compiled
+          with
+          [
+              EnumType=RENDER_NODE_TYPE
+          ]
+  c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\include\rendernodepool.h(10): note: see reference to class template instantiation 'ResourcePool<RenderNode,RENDER_NODE_TYPE,RenderNodeFactory>' being compiled
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\resourceframework\include\resourcepool.h(49): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  ShadowGenRenderNode.cpp
+  Entity.cpp
+  SunMoonLightingComponent.cpp
+  SkydomeWeatherComponent.cpp
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\resourceframework\include\resourcepool.h(35): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\resourceframework\include\resourcepool.h(25): note: while compiling class template member function 'RenderNode *ResourcePool<RenderNode,RENDER_NODE_TYPE,RenderNodeFactory>::getResource(EnumType)'
+          with
+          [
+              EnumType=RENDER_NODE_TYPE
+          ]
+  c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\entityframework\components\src\skydomeweathercomponent.cpp(27): note: see reference to function template instantiation 'RenderNode *ResourcePool<RenderNode,RENDER_NODE_TYPE,RenderNodeFactory>::getResource(EnumType)' being compiled
+          with
+          [
+              EnumType=RENDER_NODE_TYPE
+          ]
+  c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\include\rendernodepool.h(10): note: see reference to class template instantiation 'ResourcePool<RenderNode,RENDER_NODE_TYPE,RenderNodeFactory>' being compiled
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\resourceframework\include\resourcepool.h(49): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  OrbitComponent.cpp
+  MoveComponent.cpp
+  MeshComponent.cpp
+  LightComponent.cpp
+  CameraComponent.cpp
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\entityframework\components\src\cameracomponent.cpp(49): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\entityframework\components\src\cameracomponent.cpp(50): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\entityframework\components\src\cameracomponent.cpp(52): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\entityframework\components\src\cameracomponent.cpp(71): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\entityframework\components\src\cameracomponent.cpp(153): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+  Generating Code...
+  Compiling...
+  World.cpp
+  ShaderManager.cpp
+  Shader.cpp
+  SkyBoxRenderNode.cpp
+  RenderNodePool.cpp
+  RenderNodeFactory.cpp
+  MeshRenderNode.cpp
+  LightRenderNode.cpp
 c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\lightrendernode.cpp(81): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
 c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\lightrendernode.cpp(82): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+  MaterialManager.cpp
+  Material.cpp
+  GraphicsCore.cpp
+  EntityRenderObject.cpp
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\resourceframework\include\resourcepool.h(35): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\resourceframework\include\resourcepool.h(25): note: while compiling class template member function 'RenderNode *ResourcePool<RenderNode,RENDER_NODE_TYPE,RenderNodeFactory>::getResource(EnumType)'
+          with
+          [
+              EnumType=RENDER_NODE_TYPE
+          ]
+  c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\entityrenderobject\src\entityrenderobject.cpp(20): note: see reference to function template instantiation 'RenderNode *ResourcePool<RenderNode,RENDER_NODE_TYPE,RenderNodeFactory>::getResource(EnumType)' being compiled
+          with
+          [
+              EnumType=RENDER_NODE_TYPE
+          ]
+  c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\include\rendernodepool.h(10): note: see reference to class template instantiation 'ResourcePool<RenderNode,RENDER_NODE_TYPE,RenderNodeFactory>' being compiled
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\resourceframework\include\resourcepool.h(49): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  dxShader.cpp
+  IComponent.cpp
+  Component.cpp
+  EngineInstance.cpp
+c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\enginecore\src\engineinstance.cpp(55): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
 c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\lightrendernode.cpp(45): warning C4172: returning address of local variable or temporary: caster
+  Skipping... (no relevant changes detected)
+  LightManager.cpp
+  Light.cpp
   SolidumEngine.vcxproj -> C:\Users\natha\Documents\Visual Studio 2015\Projects\SolidumEngine\x64\Debug\SolidumEngine.exe

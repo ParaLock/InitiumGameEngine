@@ -20,10 +20,8 @@ private:
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 public:
-	LightComponent(Light* light, int index);
+	LightComponent(Light* light, int index, IEntity* entity);
 	~LightComponent();
-
-	void init();
 
 	void update(float delta);
 

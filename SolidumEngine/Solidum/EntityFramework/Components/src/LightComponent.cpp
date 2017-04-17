@@ -2,7 +2,7 @@
 
 
 
-LightComponent::LightComponent(Light* light, int index)
+LightComponent::LightComponent(Light* light, int index, IEntity* entity)
 {
 	setType(COMPONENT_TYPE::LIGHT_COMPONENT);
 
@@ -11,6 +11,10 @@ LightComponent::LightComponent(Light* light, int index)
 	_parentTransformDirty = true;
 
 	_light = light;
+
+	_parent = entity;
+
+	_parent->getRenderObject()->addLight(_light, _index);
 }
 
 
@@ -18,30 +22,21 @@ LightComponent::~LightComponent()
 {
 }
 
-void LightComponent::init()
-{
-	if(_parent != nullptr)
-		_parent->getRenderObject()->addLight(_light, _index);
-}
-
 void LightComponent::update(float delta)
 {
-	if (_parentTransformDirty && _parent != nullptr) {
+	if (_parentTransformDirty) {
 
 		_parentTransformDirty = false; 
 		_parent->getTransform()->setPos(_light->getPosition());
 	}
 
 	_light->setPosition(_parent->getTransform()->getPos());
-	
-	if (_parent != nullptr) {
 
-		_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, _index)->
-			setPerNodeParam_Transform(_parent->getTransform());
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, _index)->
+		setPerNodeParam_Transform(_parent->getTransform());
 
-		_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, _index)->
-			setPerNodeParam_isVisible(true);
-	}
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, _index)->
+		setPerNodeParam_isVisible(true);
 }
 
 void LightComponent::onEvent(EVENT_PTR evt)

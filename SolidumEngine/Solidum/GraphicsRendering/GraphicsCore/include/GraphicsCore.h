@@ -34,6 +34,7 @@
 #include "IGraphicsCore.h"
 
 class RenderNodeFactory;
+class BoundingSphere;
 
 class GraphicsCore : public IEventListener, public IGraphicsCore
 {
@@ -81,6 +82,8 @@ public:
 
 	GraphicsCommandPool* getGraphicsCommandPool() { return _graphicsCommandPool; };
 	GraphicsCommandFactory* getGraphicsCommandFactory() { return _graphicsCommandFactory; }
+
+	void setWorldBoundingSphere(BoundingSphere* boundingSphere) { _globalRenderingParameters._worldBoundingSphere = boundingSphere; }
 
 	static GraphicsCore* singletonInstance;
 	static GraphicsCore* getInstance();

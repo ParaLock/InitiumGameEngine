@@ -1,7 +1,7 @@
 #include "../include/MoveComponent.h"
 
 
-MoveComponent::MoveComponent(Vector3f startPos, float movementSpeed, bool keyboardControl, KEY_FUNCTION_MAP* keyMap)
+MoveComponent::MoveComponent(Vector3f startPos, float movementSpeed, bool keyboardControl, KEY_FUNCTION_MAP* keyMap, IEntity* entity)
 {
 	setType(COMPONENT_TYPE::MOVE_COMPONENT);
 
@@ -14,6 +14,8 @@ MoveComponent::MoveComponent(Vector3f startPos, float movementSpeed, bool keyboa
 	_movementSpeed = movementSpeed;
 
 	_keyFuncMap = keyMap;
+
+	_parent = entity;
 }
 
 MoveComponent::~MoveComponent()
@@ -29,10 +31,9 @@ void MoveComponent::update(float delta)
 		_parent->getTransform()->setPos(finalPos);
 
 	}
-	else if(_parent != nullptr) {
 
-		_parent->getTransform()->setPos(_vPos);
-	}
+	_parent->getTransform()->setPos(_vPos);
+	
 }
 
 void MoveComponent::onEvent(EVENT_PTR evt)

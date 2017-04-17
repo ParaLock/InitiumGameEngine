@@ -47,6 +47,8 @@ void ShadowGenRenderNode::render()
 
 		if (light->getLight()->getType() == LIGHT_TYPE::DIRECTIONAL_LIGHT) {
 
+			light->getLight()->shadowUpdate(_renderParams.getGlobalParam_WorldBoundingSphere());
+
 			for each(RenderNode* meshNode in meshes) {
 
 				MeshRenderNode* mesh = (MeshRenderNode*)meshNode;
@@ -56,21 +58,23 @@ void ShadowGenRenderNode::render()
 					CameraComponent* cam = _renderParams.getGlobalParam_GlobalRenderingCamera();
 					Transform* meshTransform = mesh->getRenderParams()->getPerNodeParam_Transform();
 
-					Matrix4f WorldMatrix = cam->getWorldMatrix();
-
-					static Matrix4f LprojectionMatrix = Matrix4f::transpose(light->getLight()->getProjectionMatrix());
-					static Matrix4f LviewMatrix = Matrix4f::transpose(light->getLight()->getViewMatrix());
-					static Matrix4f MModelMatrix = Matrix4f::transpose(meshTransform->getMatrix());
 
 					static Vector3f lightPos = light->getLight()->getPosition();
 
-					static Matrix4f lightSpace = LviewMatrix * LprojectionMatrix * MModelMatrix;
+					static Matrix4f LShadowMatrix = light->getLight()->getShadowMatrix();
+
+					static Matrix4f LprojectionMatrix = Matrix4f::transpose(light->getLight()->getProjectionMatrix());
+
+					static Matrix4f LviewMatrix = Matrix4f::transpose(light->getLight()->getViewMatrix());
 
 					commandList->createCommand(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
 						(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
 
 					commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
-						(std::make_pair("cbuff_depthPMV", &lightSpace), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+						(std::make_pair("cbuff_lightDepthProjection", &LprojectionMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+
+					commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
+						(std::make_pair("cbuff_lightDepthView", &LviewMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
 
 					commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
 						(std::make_pair("cbuff_lightPos", &lightPos), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
@@ -84,8 +88,8 @@ void ShadowGenRenderNode::render()
 						(_shader), GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
 
 					_shader->getPipeline()->setBlendState(BLEND_STATE::BLENDING_OFF);
-					_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_ENABLE);
-					_shader->getPipeline()->setRasterState(RASTER_STATE::NORMAL);
+					_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_DISABLE);
+					_shader->getPipeline()->setRasterState(RASTER_STATE::DISABLE_TRIANGLE_CULL);
 
 					_shader->execute(commandList);
 

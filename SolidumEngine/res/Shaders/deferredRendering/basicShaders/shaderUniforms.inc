@@ -1,3 +1,4 @@
+
 cbuffer MatrixBuffer
 {
 	float3 cbuff_eyePos;
@@ -14,7 +15,8 @@ cbuffer MatrixBuffer
 	float4 cbuff_skydomeApexColor;
 	float4 cbuff_skydomeCenterColor;
 	
-	matrix cbuff_depthPMV;
+	matrix cbuff_lightDepthProjection;
+	matrix cbuff_lightDepthView;
 };
 
 cbuffer LightBuffer

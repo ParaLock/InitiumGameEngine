@@ -2,7 +2,7 @@
 
 
 
-SkydomeWeatherComponent::SkydomeWeatherComponent(IShader* shader, Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, int index)
+SkydomeWeatherComponent::SkydomeWeatherComponent(IShader* shader, Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, int index, IEntity* entity)
 {
 	_index = index;
 
@@ -16,15 +16,9 @@ SkydomeWeatherComponent::SkydomeWeatherComponent(IShader* shader, Texture* tex, 
 	_skydome = skydome;
 
 	setType(COMPONENT_TYPE::SKYBOX_WEATHER_COMPONENT);
-}
 
+	_parent = entity;
 
-SkydomeWeatherComponent::~SkydomeWeatherComponent()
-{
-}
-
-void SkydomeWeatherComponent::init()
-{
 	uint64_t nodeID = GraphicsCore::getInstance()->getRenderNodeTree()->getUniqueNodeID();
 
 	GraphicsCore* gCore = GraphicsCore::getInstance();
@@ -36,7 +30,7 @@ void SkydomeWeatherComponent::init()
 		(_shader, _weatherApexColor, _weatherCenterColor, nodeID));
 
 	_parent->getRenderObject()->addGenericRenderNode(skyboxWeatherNode,
-			RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index);
+		RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index);
 
 	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
 		->setPerNodeParam_MeshTexture(_tex);
@@ -46,6 +40,11 @@ void SkydomeWeatherComponent::init()
 
 	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
 		->setPerNodeParam_RenderCamera(_cam);
+}
+
+
+SkydomeWeatherComponent::~SkydomeWeatherComponent()
+{
 }
 
 void SkydomeWeatherComponent::update(float delta)

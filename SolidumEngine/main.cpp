@@ -46,6 +46,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	World* world = new World;
 
+	world->setBoundingSphere(new BoundingSphere(Vector3f(0,0,0), std::sqrt(10 * 10 + 15 * 15)));
+
+	solidum->loadWorld(world);
+
 	ResourceManagerPool* resManagerPool = solidum->getResourceManagerPool();
 
 	//** RESOURCE LOADING **//
@@ -198,7 +202,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	ResourceManagerPool::getInstance()->getResourceManagerSpecific<LightManager>("LightManager")->setLightShader(LIGHT_TYPE::POINT_LIGHT, deferredRenderingPointLightShader);
 
 	sunLight->setColor(Vector4f(0.5f, 0.5f, 0.5f, 0.5f));
-	sunLight->setDirection(Vector3f(5.0f, 5.0f, 9.0f));
+	sunLight->setDirection(Vector3f(-0.707f, -0.707f, 0));
 	sunLight->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
 	sunLight->setIntensity(0.5f);
 
@@ -236,51 +240,51 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	pointLight3->setRange(60.5f);
 
 	Entity* globalWorldLighting = new Entity();
-	globalWorldLighting->addComponent(new SunMoonLightingComponent(sunLight, moonLight, 0.1f));
+	globalWorldLighting->addComponent(new SunMoonLightingComponent(sunLight, moonLight, 0.1f, globalWorldLighting));
 
 	Entity* sun = new Entity();
-	sun->addComponent(new LightComponent(sunLight, 0));
+	sun->addComponent(new LightComponent(sunLight, 0, sun));
 
 
 	Entity* pointLight1Entity = new Entity();
 
-	pointLight1Entity->addComponent(new MoveComponent(Vector3f(4.0f, 0.01f, -1.8f), 0.5, false, moveKeyConfig2));
-	pointLight1Entity->addComponent(new LightComponent(pointLight1, 0));
+	pointLight1Entity->addComponent(new MoveComponent(Vector3f(4.0f, 0.01f, -1.8f), 0.5, false, moveKeyConfig2, pointLight1Entity));
+	pointLight1Entity->addComponent(new LightComponent(pointLight1, 0, pointLight1Entity));
 
 	Entity* pointLight2Entity = new Entity();
 
-	pointLight2Entity->addComponent(new MoveComponent(Vector3f(0.2f, 0.01f, -5.0f), 0.5, false, moveKeyConfig1));
-	pointLight2Entity->addComponent(new LightComponent(pointLight2, 0));
+	pointLight2Entity->addComponent(new MoveComponent(Vector3f(0.2f, 0.01f, -5.0f), 0.5, false, moveKeyConfig1, pointLight2Entity));
+	pointLight2Entity->addComponent(new LightComponent(pointLight2, 0, pointLight2Entity));
 
 	Entity* pointLight3Entity = new Entity();
 
-	pointLight3Entity->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, 0));
-	pointLight3Entity->addComponent(new MoveComponent(Vector3f(-0.2f, 0.01f, 8.0f), 0.5, false, moveKeyConfig1));
-	pointLight3Entity->addComponent(new LightComponent(pointLight3, 0));
+	pointLight3Entity->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, 0, pointLight3Entity));
+	pointLight3Entity->addComponent(new MoveComponent(Vector3f(-0.2f, 0.01f, 8.0f), 0.5, false, moveKeyConfig1, pointLight3Entity));
+	pointLight3Entity->addComponent(new LightComponent(pointLight3, 0, pointLight3Entity));
 
 	Entity* hammer = new Entity();
 
-	hammer->addComponent(new MeshComponent(cubeMesh, metalTex, brickMaterial, 0));
+	hammer->addComponent(new MeshComponent(cubeMesh, metalTex, brickMaterial, 0, hammer));
 
 	Entity* cube = new Entity();
 
-	cube->addComponent(new MoveComponent(Vector3f(0, 5.0f, -3.0f), 0.5, true, moveKeyConfig1));
-	cube->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, 0));
+	cube->addComponent(new MoveComponent(Vector3f(0, 5.0f, -3.0f), 0.5, true, moveKeyConfig1, cube));
+	cube->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, 0, cube));
 
 	Entity* plane = new Entity();
 
-	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, moveKeyConfig1));
-	plane->addComponent(new MeshComponent(planeMesh, bricksTex, brickMaterial, 0));
+	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, moveKeyConfig1, plane));
+	plane->addComponent(new MeshComponent(planeMesh, bricksTex, brickMaterial, 0, plane));
 
 	Entity* camera = new Entity();
 
-	camera->addComponent(new CameraComponent(0.1f, 1000.0f));
+	camera->addComponent(new CameraComponent(0.1f, 1000.0f, camera));
 
 	Entity* sky = new Entity();
 
 	sky->addComponent(new SkydomeWeatherComponent(skydomeShader, skydomeCubeMap, skydomeMesh,
 		(CameraComponent*)camera->getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0)->front(),
-		Vector4f(0.1f, 0.1f, 0.1f, 1.0f), Vector4f(0.1f, 0.1f, 0.1f, 1.0f), 0));
+		Vector4f(0.1f, 0.1f, 0.1f, 1.0f), Vector4f(0.1f, 0.1f, 0.1f, 1.0f), 0, sky));
 
 	//Create Shadow generator
 	RenderNodeTree* tree = solidum->getGraphicsSubsystem()->getRenderNodeTree();
@@ -304,8 +308,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	world->addEntity(plane, 0100);
 	world->addEntity(sky, 0101);
 	world->addEntity(cube, 0110);
-
-	solidum->loadWorld(world);
 
 	solidum->getGraphicsSubsystem()->setEndFrameHandler(deferredRenderingEndscenePipelineState);
 

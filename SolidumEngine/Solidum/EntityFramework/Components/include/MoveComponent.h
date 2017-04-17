@@ -37,10 +37,8 @@ private:
 protected:
 
 public:
-	MoveComponent(Vector3f startPos, float movementSpeed, bool keyboardControl, KEY_FUNCTION_MAP* keyMap);
+	MoveComponent(Vector3f startPos, float movementSpeed, bool keyboardControl, KEY_FUNCTION_MAP* keyMap, IEntity* entity);
 	~MoveComponent();
-
-	void init() {};
 
 	void update(float delta);
 

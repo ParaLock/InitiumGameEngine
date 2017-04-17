@@ -68,10 +68,8 @@ private:
 	void* getParameter(std::string varName) { return nullptr; };
 
 public:
-	CameraComponent(float near_value, float far_value);
+	CameraComponent(float near_value, float far_value, IEntity* entity);
 	~CameraComponent();
-
-	void init() {}
 
 	void onEvent(EVENT_PTR evt);
 

@@ -21,10 +21,6 @@ Entity::~Entity()
 
 void Entity::addComponent(IComponent * comp)
 {
-	comp->setParent(this);
-
-	comp->init();
-
 	if (_components->operator[](comp->getType()) == nullptr) 
 		_components->operator[](comp->getType()) = new std::list<IComponent*>;
 

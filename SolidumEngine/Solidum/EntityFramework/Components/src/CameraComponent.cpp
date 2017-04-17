@@ -1,6 +1,6 @@
 #include "../include/CameraComponent.h"
 
-CameraComponent::CameraComponent(float near_value, float far_value) :
+CameraComponent::CameraComponent(float near_value, float far_value, IEntity* entity) :
 	_dV(Vector3f(0, 0, 1)),
 	_dU(Vector3f(0, 1, 0)),
 	_up(Vector3f(0, 1, 0)),
@@ -12,6 +12,8 @@ CameraComponent::CameraComponent(float near_value, float far_value) :
 	_pitch(0)
 {
 	setType(COMPONENT_TYPE::CAMERA_COMPONENT);
+
+	_parent = entity;
 
 	EventFrameworkCore::getInstance()->getGlobalEventHub("InputEventHub")->subscribeListener(this);
 
@@ -28,14 +30,14 @@ CameraComponent::CameraComponent(float near_value, float far_value) :
 
 	float left, right, top, bottom;
 
-	_projectionMatrix = Matrix4f::get_perspective(45, aspect, near_value, far_value);
+	_projectionMatrix = Matrix4f::get_perspectiveRH(45, aspect, near_value, far_value);
 
 	left = (float)((screen_width / 2) * -1);
 	right = left + (float)screen_width;
 	top = (float)(screen_height / 2);
 	bottom = top - (float)screen_height;
 
-	_orthoProjectionMatrix = Matrix4f::get_orthographic(left, right, bottom, top, near_value, far_value);
+	_orthoProjectionMatrix = Matrix4f::get_orthographicRH(left, right, bottom, top, near_value, far_value);
 
 	_movementStore[0] = 0;
 	_movementStore[1] = 0;
@@ -242,7 +244,7 @@ void CameraComponent::update(float delta)
 
 	_view = _eye + _view;
 
-	_viewMatrix = Matrix4f::get_lookAt(_eye, _view, _up);
+	_viewMatrix = Matrix4f::get_lookAtLH(_eye, _view, _up);
 
 	camTimer.reset();
 

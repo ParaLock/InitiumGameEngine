@@ -1,6 +1,6 @@
 #pragma once
 #include "../../sysInclude.h"
-
+#include "../../PhysicsFramework/include/BoundingSphere.h"
 #include "../../EntityFramework/Entity/include/Entity.h"
 
 class WorldAttributes {
@@ -13,6 +13,8 @@ private:
 	uint64_t _primaryCameraID;
 
 	std::map<uint64_t, IEntity*> _entities;
+
+	BoundingSphere* _boundingSphere;
 public:
 	World();
 	~World();
@@ -27,5 +29,8 @@ public:
 	uint64_t getPrimaryCameraID() { return _primaryCameraID; };
 
 	const std::map<uint64_t, IEntity*>& getEntities();
+
+	void setBoundingSphere(BoundingSphere* boundingSphere) { _boundingSphere = boundingSphere; }
+	BoundingSphere* getBoundingSphere() { return _boundingSphere; }
 };
 

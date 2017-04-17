@@ -9,6 +9,7 @@ class GPUPipeline;
 class RenderNodePool;
 class GraphicsCommandPool;
 class GraphicsCommandFactory;
+class World;
 
 class IGraphicsCore
 {

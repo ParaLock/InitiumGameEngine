@@ -4,14 +4,7 @@ Light::Light()
 {
 	_projectionMatrix = Matrix4f::get_identity();
 	_viewMatrix = Matrix4f::get_identity();
-
-	float near_plane = 1.0f, far_plane = 7.5f;
-
-	//_projectionMatrix = Matrix4f::get_orthographic(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-
-	_projectionMatrix = Matrix4f::get_perspective(((float)M_PI / 2.0f), 1.0f, 1.0f, 100.0f);
-
-	_viewMatrix = Matrix4f::get_lookAt(Vector3f(-2.0f, 4.0f, -1.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
+	_shadowMatrix = Matrix4f::get_identity();
 
 	_isShadowCaster = true;
 }
@@ -54,6 +47,48 @@ void Light::setColor(Vector4f color) {
 	_GenericData._color = color;
 }
 
+void Light::shadowUpdate(BoundingSphere * worldSphere)
+{
+
+	if (_type == LIGHT_TYPE::DIRECTIONAL_LIGHT) {
+
+		auto sceneBoundsRadius = worldSphere->getRadius();
+		auto sceneBoundsCenter = worldSphere->getCenter();
+
+		auto lightDir = _GenericData._direction;
+
+		auto midMult = lightDir * -2.0f;
+
+		auto lightPos = midMult * sceneBoundsRadius;
+		auto targetPos = sceneBoundsCenter;
+		auto up = Vector3f(0, 1, 0);
+
+		auto v = Matrix4f::get_lookAtLH(lightPos, targetPos, up);
+
+		auto sphereCenterLS = Matrix4f::transform(targetPos, v);
+
+		auto l = sphereCenterLS[0] - sceneBoundsRadius;
+		auto b = sphereCenterLS[1] - sceneBoundsRadius;
+		auto n = sphereCenterLS[2] - sceneBoundsRadius;
+		auto r = sphereCenterLS[0] + sceneBoundsRadius;
+		auto t = sphereCenterLS[1] + sceneBoundsRadius;
+		auto f = sphereCenterLS[2] + sceneBoundsRadius;
+
+		auto p = Matrix4f::get_orthographicOffCenterLH(l, r, b, t, n, f);
+
+		//p = Matrix4f::get_perspective(((float)M_PI / 2.0f), 1.0f, 1.0f, 100.0f);
+
+
+		auto s = v * p;
+
+		_viewMatrix = v;
+		_projectionMatrix = p;
+
+
+		_shadowMatrix = s;
+	}
+}
+
 void Light::setIntensity(float intensity)
 {
 	_GenericData._intensity = intensity;
@@ -76,13 +111,6 @@ void Light::setAttenuationExponent(float exponent)
 
 Matrix4f Light::getViewMatrix()
 {
-	if (_lightViewMatDirty) {
-
-		//_viewMatrix = Matrix4f::get_lookAt(_GenericData._direction, Vector3f(0.0f, 0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f));
-
-		_lightViewMatDirty = false;
-	}
-
 	return _viewMatrix;
 }
 
@@ -94,9 +122,4 @@ Matrix4f Light::getProjectionMatrix()
 Matrix4f Light::getModelMatrix()
 {
 	return Matrix4f::get_translation(_GenericData._pos);
-}
-
-void Light::updateDirLightProjectionAndView()
-{
-
 }

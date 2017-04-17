@@ -56,7 +56,7 @@ private:
 	CameraComponent* _cam;
 	int _index;
 public:
-	SkydomeWeatherComponent(IShader* shader, Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, int index);
+	SkydomeWeatherComponent(IShader* shader, Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, int index, IEntity* entity);
 	~SkydomeWeatherComponent();
 
 	void init();

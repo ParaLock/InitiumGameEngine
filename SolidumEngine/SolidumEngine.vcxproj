@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\PhysicsFramework\include\BoundingSphere.h" />
     <ClInclude Include="Solidum\GraphicsRendering\DepthStencil\include\DepthStencilManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDepthStencil\include\dxDepthStencil.h" />
     <ClInclude Include="Solidum\GraphicsRendering\DepthStencil\include\DepthStencil.h" />
@@ -126,6 +127,7 @@
     <ClInclude Include="Solidum\EntityFramework\Components\include\SunMoonLightingComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\PhysicsFramework\src\BoundingSphere.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\DepthStencil\src\DepthStencilManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDepthStencil\src\dxDepthStencil.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\DepthStencil\src\DepthStencil.cpp" />

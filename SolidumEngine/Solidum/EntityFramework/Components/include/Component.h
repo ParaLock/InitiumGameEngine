@@ -24,8 +24,6 @@ public:
 	Component();
 	~Component();
 
-	virtual void init() = 0;
-
 	COMPONENT_TYPE getType() { return _type; }
 
 	virtual void update(float delta) = 0;

@@ -41,6 +41,8 @@ public:
 	void update(float delta);
 	void render();
 
+	World* getWorld() { return _currentWorld; }
+
 	EventFrameworkCore* getEventFrameworkCore() { return _eventFrameworkCore; };
 	GraphicsCore* getGraphicsSubsystem() { return _graphicsCore; };
 	ResourceManagerPool* getResourceManagerPool() { return _resManagers; }

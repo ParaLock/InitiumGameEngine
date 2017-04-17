@@ -182,7 +182,7 @@ public:
 	}
 
 
-	inline static Matrix4x4<T> get_perspective(T fov, T aspectRatio, T zNear, T zFar)
+	inline static Matrix4x4<T> get_perspectiveLH(T fov, T aspectRatio, T zNear, T zFar)
 	{
 		Matrix4x4<T> result;
 
@@ -199,7 +199,24 @@ public:
 		return result;
 	}
 
-	inline static Matrix4x4<T> get_orthographic(T left, T right, T bottom, T top, T Near, T Far)
+	inline static Matrix4x4<T> get_perspectiveRH(T fov, T aspectRatio, T zNear, T zFar)
+	{
+		Matrix4x4<T> result;
+
+		result = Matrix4x4<T>::get_identity();
+
+		const T zRange = zNear - zFar;
+		const T tanHalfFOV = tanf(fov / T(2));
+
+		result[0][0] = T(1) / (tanHalfFOV * aspectRatio); result[1][0] = T(0);   result[2][0] = T(0);            result[3][0] = T(0);
+		result[0][1] = T(0);                   result[1][1] = T(1) / tanHalfFOV; result[2][1] = T(0);            result[3][1] = T(0);
+		result[0][2] = T(0);                   result[1][2] = T(0);            result[2][2] = (-zNear - zFar) / zRange; result[3][2] = T(2)*zFar*zNear / zRange;
+		result[0][3] = T(0);                   result[1][3] = T(0);            result[2][3] = T(1);            result[3][3] = T(0);
+
+		return result;
+	}
+
+	inline static Matrix4x4<T> get_orthographicLH(T left, T right, T bottom, T top, T Near, T Far)
 	{
 		Matrix4x4<T> result;
 
@@ -209,15 +226,85 @@ public:
 		const T height = (top - bottom);
 		const T depth = (Far - Near);
 
-		result[0][0] = T(2) / width; result[1][0] = T(0);        result[2][0] = T(0);        result[3][0] = -(right + left) / width;
-		result[0][1] = T(0);       result[1][1] = T(2) / height; result[2][1] = T(0);        result[3][1] = -(top + bottom) / height;
-		result[0][2] = T(0);       result[1][2] = T(0);        result[2][2] = T(-2) / depth; result[3][2] = -(Far + Near) / depth;
-		result[0][3] = T(0);       result[1][3] = T(0);        result[2][3] = T(0);        result[3][3] = T(1);
+		result[0][0] = T(2) / width; result[1][0] = T(0);        result[2][0] = T(0);          result[3][0] = 0;
+		result[0][1] = T(0);       result[1][1] = T(2) / height; result[2][1] = T(0);          result[3][1] = 0;
+		result[0][2] = T(0);       result[1][2] = T(0);          result[2][2] = T(1) /(Far-Near);  result[3][2] = 0;
+		result[0][3] = T(0);       result[1][3] = T(0);          result[2][3] = Near/(Near-Far);          result[3][3] = T(1);
 
 		return result;
 	}
 
-	inline static Matrix4x4<T> get_lookAt(Vector3<T> eye, Vector3<T> at, Vector3<T> up)
+	inline static Matrix4x4<T> get_orthographicRH(T left, T right, T bottom, T top, T Near, T Far)
+	{
+		Matrix4x4<T> result;
+
+		result = Matrix4x4<T>::get_identity();
+
+		const T width = (right - left);
+		const T height = (top - bottom);
+		const T depth = (Far - Near);
+
+		result[0][0] = T(2) / width; result[1][0] = T(0);        result[2][0] = T(0);				result[3][0] = 0;
+		result[0][1] = T(0);       result[1][1] = T(2) / height; result[2][1] = T(0);				result[3][1] = 0;
+		result[0][2] = T(0);       result[1][2] = T(0);        result[2][2] = T(1) / (Near-Far);	result[3][2] = 0;
+		result[0][3] = T(0);       result[1][3] = T(0);        result[2][3] = Near/(Near-Far);		result[3][3] = T(1);
+
+		return result;
+	}
+
+	inline static Matrix4x4<T> get_orthographicOffCenterRH(T left, T right, T bottom, T top, T Near, T Far) {
+
+		Matrix4x4<T> result;
+
+		result = Matrix4x4<T>::get_identity();
+
+		const T width = (right - left);
+		const T height = (top - bottom);
+
+		const T depth = (Far - Near);
+
+		result[0][0] = T(2 / (right - left));					result[1][0] = T(0);									result[2][0] = T(0);				 result[3][0] = T(0);
+		result[0][1] = T(0);								result[1][1] = T(2 / (top - bottom));						result[2][1] = T(0);				 result[3][1] = T(0);
+		result[0][2] = T(0);								result[1][2] = T(0);									result[2][2] = T(1 / (Near - Far));		 result[3][2] = T(0);
+		result[0][3] = T((1 + right) / (1 - right));        result[1][3] = T((top + bottom) / (bottom - top));			result[2][3] = T(Near / (Near - Far));	 result[3][3] = T(1);
+
+		return result;
+	}
+
+	inline static Matrix4x4<T> get_orthographicOffCenterLH(T left, T right, T bottom, T top, T Near, T Far) {
+		
+		Matrix4x4<T> result;
+
+		result = Matrix4x4<T>::get_identity();
+
+		result[0][0] = T(2 / (right - 1));					result[1][0] = T(0);									result[2][0] = T(0);				 result[3][0] = T(0);
+		result[0][1] = T(0);								result[1][1] = T(2/(top-bottom));						result[2][1] = T(0);				 result[3][1] = T(0);
+		result[0][2] = T(0);								result[1][2] = T(0);									result[2][2] = T(1/(Far-Near));		 result[3][2] = T(0);
+		result[0][3] = T((1 + right) / (1 - right));        result[1][3] = T((top+bottom)/(bottom-top));			result[2][3] = T(Near /(Near-Far));	 result[3][3] = T(1);
+
+		return result;
+	}
+
+
+
+	inline static Matrix4x4<T> get_lookAtRH(Vector3<T> eye, Vector3<T> at, Vector3<T> up)
+	{
+		Matrix4x4<T> result;
+
+		Vector3<T> zaxis = Vector3<T>::normalize(eye - at);
+		Vector3<T> xaxis = Vector3<T>::normalize(Vector3<T>::cross_product(up, zaxis));
+		Vector3<T> yaxis = Vector3<T>::cross_product(zaxis, xaxis);
+
+
+		result[0][0] = xaxis[0];			result[0][1] = yaxis[0];			result[0][2] = zaxis[0];			result[0][3] = 0;
+		result[1][0] = xaxis[1];			result[1][1] = yaxis[1];			result[1][2] = zaxis[1];			result[1][3] = 0;
+		result[2][0] = xaxis[2];			result[2][1] = yaxis[2];			result[2][2] = zaxis[2];			result[2][3] = 0;
+		result[3][0] = -Vector3<T>::dot_product(xaxis, eye);	result[3][1] = -Vector3<T>::dot_product(yaxis, eye);	result[3][2] = -Vector3<T>::dot_product(zaxis, eye);	result[3][3] = 1;
+
+		return result;
+	}
+
+	inline static Matrix4x4<T> get_lookAtLH(Vector3<T> eye, Vector3<T> at, Vector3<T> up)
 	{
 		Matrix4x4<T> result;
 
@@ -229,7 +316,7 @@ public:
 		result[0][0] = xaxis[0];			result[0][1] = yaxis[0];			result[0][2] = zaxis[0];			result[0][3] = 0;
 		result[1][0] = xaxis[1];			result[1][1] = yaxis[1];			result[1][2] = zaxis[1];			result[1][3] = 0;
 		result[2][0] = xaxis[2];			result[2][1] = yaxis[2];			result[2][2] = zaxis[2];			result[2][3] = 0;
-		result[3][0] = -Vector3<T>::dot_product(eye, xaxis);	result[3][1] = -Vector3<T>::dot_product(eye, yaxis);	result[3][2] = -Vector3<T>::dot_product(eye, zaxis);	result[3][3] = 1;
+		result[3][0] = -Vector3<T>::dot_product(xaxis, eye);	result[3][1] = -Vector3<T>::dot_product(yaxis, eye);	result[3][2] = -Vector3<T>::dot_product(zaxis, eye);	result[3][3] = 1;
 
 		return result;
 	}

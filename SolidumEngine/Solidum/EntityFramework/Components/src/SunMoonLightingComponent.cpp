@@ -2,7 +2,7 @@
 
 
 
-SunMoonLightingComponent::SunMoonLightingComponent(Light* sun, Light* moon, float speed)
+SunMoonLightingComponent::SunMoonLightingComponent(Light* sun, Light* moon, float speed, IEntity* entity)
 {
 	_sun = sun;
 	_moon = moon;
@@ -10,6 +10,8 @@ SunMoonLightingComponent::SunMoonLightingComponent(Light* sun, Light* moon, floa
 	setType(COMPONENT_TYPE::SUN_COMPONENT);
 
 	_speed = speed;
+
+	_parent = entity;
 }
 
 

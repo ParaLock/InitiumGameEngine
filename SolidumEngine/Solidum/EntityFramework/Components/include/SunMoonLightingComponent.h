@@ -31,7 +31,7 @@ private:
 	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
 	void unload() { isLoaded = false; };
 public:
-	SunMoonLightingComponent(Light* sun, Light* moon, float speed);
+	SunMoonLightingComponent(Light* sun, Light* moon, float speed, IEntity* entity);
 	~SunMoonLightingComponent();
 
 	void init() {};
