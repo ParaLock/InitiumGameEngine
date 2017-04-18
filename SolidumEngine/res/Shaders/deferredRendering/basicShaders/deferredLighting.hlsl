@@ -26,6 +26,16 @@ SamplerState SampleTypePoint : register(s1);
 
 static const float bias = 0.001f;
 
+float linstep(float min, float max, float v) 
+{
+	return clamp((v - min) / (max - min), 0, 1);
+}
+
+float ReduceLightBleeding(float p_max, float Amount) 
+{
+	return linstep(Amount, 1, p_max);
+}
+
 float chebyshevUpperBound(float2 moments, float ourdepth)
 {
 	if (moments.x < ourdepth)
@@ -36,6 +46,8 @@ float chebyshevUpperBound(float2 moments, float ourdepth)
 	
 	float d = ourdepth - moments.x;
 	float p_max = variance / (variance + d*d);
+	
+	p_max = ReduceLightBleeding(p_max, 0.05f);
 	
 	return p_max;
 }

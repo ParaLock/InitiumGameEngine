@@ -190,6 +190,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	moveKeyConfig1->insert({ KEY_MAP::DOWN, MOVE_FUNCTION::MOVE_DOWN });
 	moveKeyConfig1->insert({ KEY_MAP::LEFT, MOVE_FUNCTION::MOVE_LEFT });
 	moveKeyConfig1->insert({ KEY_MAP::RIGHT, MOVE_FUNCTION::MOVE_RIGHT });
+	moveKeyConfig1->insert({ KEY_MAP::U, MOVE_FUNCTION::MOVE_FORWARD });
+	moveKeyConfig1->insert({ KEY_MAP::Y, MOVE_FUNCTION::MOVE_BACKWARD });
 
 	moveKeyConfig2->insert({ KEY_MAP::I, MOVE_FUNCTION::MOVE_UP });
 	moveKeyConfig2->insert({ KEY_MAP::K, MOVE_FUNCTION::MOVE_DOWN });
@@ -268,7 +270,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	Entity* cube = new Entity();
 
-	cube->addComponent(new MoveComponent(Vector3f(0, 5.0f, -3.0f), 0.5, true, moveKeyConfig1, cube));
+	cube->addComponent(new MoveComponent(Vector3f(0, 5.0f, 0), 0.5, true, moveKeyConfig1, cube));
 	cube->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, 0, cube));
 
 	Entity* plane = new Entity();
