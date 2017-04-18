@@ -26,6 +26,20 @@ SamplerState SampleTypePoint : register(s1);
 
 static const float bias = 0.001f;
 
+float chebyshevUpperBound(float2 moments, float ourdepth)
+{
+	if (moments.x < ourdepth)
+		return 1.0;
+	
+	float variance = moments.y - (moments.x*moments.x);
+	variance = max(variance,0.0000244);
+	
+	float d = ourdepth - moments.x;
+	float p_max = variance / (variance + d*d);
+	
+	return p_max;
+}
+
 float4 calcLight(BaseLightData light, MaterialData mat, CoreData coreData) 
 {						
 	float diffuseFactor = dot(coreData.normal.xyz, -light.lightDirection);

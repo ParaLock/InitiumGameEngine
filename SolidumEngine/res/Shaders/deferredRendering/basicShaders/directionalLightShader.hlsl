@@ -35,21 +35,17 @@ float4 Pshader(PixelInputType input) : SV_TARGET
 	
 	float bias = 0.005*tan(acos(0));
 	bias = clamp(bias, 0,0.01);
-	
+
 	lightVertPos = mul(float4(worldPos.xyz, 1), cbuff_lightViewMatrix);
 	lightVertPos = mul(lightVertPos, cbuff_lightProjectionMatrix);
 	
 	float2 ShadowTexC = 0.5f * lightVertPos.xy / lightVertPos.w + float2(0.5, 0.5);
 	ShadowTexC.y = 1.0f - ShadowTexC.y;
 	
-	float shadowdepth = shadowTexture.Sample( ShadowMapSampler, ShadowTexC ).r;
+	float2 shadowdepth = shadowTexture.Sample( ShadowMapSampler, ShadowTexC ).rg;
 	float ourdepth = (1 - (lightVertPos.z / lightVertPos.w));
 
-	float shadow = 1;
-	
-	if (shadowdepth - bias > ourdepth) {
-		shadow = 0;
-	}
+	float shadow = chebyshevUpperBound(shadowdepth, ourdepth);
 	
 	color = calcLight(light, mat, core) * shadow;
 	
