@@ -1,25 +1,12 @@
 #include "deferredLighting.hlsl"
 
-static const float SMAP_SIZE = 2048.0f;
-static const float SMAP_DX = 1.0f / SMAP_SIZE;
-
-SamplerComparisonState samShadow
-{
-    Filter   = COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
-    AddressU = BORDER;
-    AddressV = BORDER;
-    AddressW = BORDER;
-    BorderColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-
-    ComparisonFunc = LESS;
-};
-
 float4 Pshader(PixelInputType input) : SV_TARGET
 {
 	float4 color;
 	float4 normals;
 	float4 worldPos;
 	float4 specuColor;
+	float4 lightVertPos;
 	
 	color = colorTexture.Sample(SampleTypePoint, input.tex);
 	normals = normalTexture.Sample(SampleTypePoint, input.tex);
@@ -44,34 +31,27 @@ float4 Pshader(PixelInputType input) : SV_TARGET
 	core.worldPos = worldPos.xyz;
 	core.normal = normals.xyz;
 	
-	float4 lightVertPos = mul(float4(worldPos.xyz, 1), cbuff_lightSpaceMatrix);
+	//const float bias = 0.001f;
 	
-	float3 shadowPosH = lightVertPos.xyz / lightVertPos.w;
+	float bias = 0.005*tan(acos(0));
+	bias = clamp(bias, 0,0.01);
 	
-	shadowPosH = shadowPosH * 0.5 + 0.5;
+	lightVertPos = mul(float4(worldPos.xyz, 1), cbuff_lightViewMatrix);
+	lightVertPos = mul(lightVertPos, cbuff_lightProjectionMatrix);
 	
-	float depth = shadowPosH.z;
+	float2 ShadowTexC = 0.5f * lightVertPos.xy / lightVertPos.w + float2(0.5, 0.5);
+	ShadowTexC.y = 1.0f - ShadowTexC.y;
 	
-	const float dx = SMAP_DX;
+	float shadowdepth = shadowTexture.Sample( ShadowMapSampler, ShadowTexC ).r;
+	float ourdepth = (1 - (lightVertPos.z / lightVertPos.w));
+
+	float shadow = 1;
 	
-	float percentLit = 0.0f;
-    const float2 offsets[9] = 
-    {
-        float2(-dx,  -dx), float2(0.0f,  -dx), float2(dx,  -dx),
-        float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
-        float2(-dx,  +dx), float2(0.0f,  +dx), float2(dx,  +dx)
-    };
+	if (shadowdepth - bias > ourdepth) {
+		shadow = 0;
+	}
 	
-	[unroll]
-    for(int i = 0; i < 9; ++i)
-    {
-        percentLit += shadowTexture.SampleCmpLevelZero(samShadow, 
-            shadowPosH.xy + offsets[i], depth).r;
-    }
-	
-	float final = percentLit /= 9.0f;
-	
-	color = calcLight(light, mat, core) * final;
+	color = calcLight(light, mat, core) * shadow;
 	
 	return color;
 }

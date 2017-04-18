@@ -22,6 +22,10 @@ Texture2D shadowTexture : register(t4);
 SamplerState ShadowMapSampler : register(s0);
 SamplerState SampleTypePoint : register(s1);
 
+#define EPSILON 0.00001
+
+static const float bias = 0.001f;
+
 float4 calcLight(BaseLightData light, MaterialData mat, CoreData coreData) 
 {						
 	float diffuseFactor = dot(coreData.normal.xyz, -light.lightDirection);

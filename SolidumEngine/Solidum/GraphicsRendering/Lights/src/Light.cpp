@@ -76,9 +76,6 @@ void Light::shadowUpdate(BoundingSphere * worldSphere)
 
 		auto p = Matrix4f::get_orthographicOffCenterLH(l, r, b, t, n, f);
 
-		//p = Matrix4f::get_perspective(((float)M_PI / 2.0f), 1.0f, 1.0f, 100.0f);
-
-
 		auto s = v * p;
 
 		_viewMatrix = v;

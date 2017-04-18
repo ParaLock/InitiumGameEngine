@@ -44,7 +44,7 @@ PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 	float depthValue;
 	float4 color;
 	
-	depthValue = input.depthPosition.z / input.depthPosition.w;
+	depthValue = 1-(input.depthPosition.z / input.depthPosition.w);
 
 	output.depth = float4(depthValue, depthValue, depthValue, 1.0f);
 	

@@ -88,8 +88,8 @@ void ShadowGenRenderNode::render()
 						(_shader), GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
 
 					_shader->getPipeline()->setBlendState(BLEND_STATE::BLENDING_OFF);
-					_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_DISABLE);
-					_shader->getPipeline()->setRasterState(RASTER_STATE::DISABLE_TRIANGLE_CULL);
+					_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_ENABLE);
+					_shader->getPipeline()->setRasterState(RASTER_STATE::NORMAL);
 
 					_shader->execute(commandList);
 

@@ -266,7 +266,7 @@ public:
 		result[0][0] = T(2 / (right - left));					result[1][0] = T(0);									result[2][0] = T(0);				 result[3][0] = T(0);
 		result[0][1] = T(0);								result[1][1] = T(2 / (top - bottom));						result[2][1] = T(0);				 result[3][1] = T(0);
 		result[0][2] = T(0);								result[1][2] = T(0);									result[2][2] = T(1 / (Near - Far));		 result[3][2] = T(0);
-		result[0][3] = T((1 + right) / (1 - right));        result[1][3] = T((top + bottom) / (bottom - top));			result[2][3] = T(Near / (Near - Far));	 result[3][3] = T(1);
+		result[0][3] = T((left + right) / (left - right));        result[1][3] = T((top + bottom) / (bottom - top));			result[2][3] = T(Near / (Near - Far));	 result[3][3] = T(1);
 
 		return result;
 	}
@@ -277,10 +277,10 @@ public:
 
 		result = Matrix4x4<T>::get_identity();
 
-		result[0][0] = T(2 / (right - 1));					result[1][0] = T(0);									result[2][0] = T(0);				 result[3][0] = T(0);
-		result[0][1] = T(0);								result[1][1] = T(2/(top-bottom));						result[2][1] = T(0);				 result[3][1] = T(0);
-		result[0][2] = T(0);								result[1][2] = T(0);									result[2][2] = T(1/(Far-Near));		 result[3][2] = T(0);
-		result[0][3] = T((1 + right) / (1 - right));        result[1][3] = T((top+bottom)/(bottom-top));			result[2][3] = T(Near /(Near-Far));	 result[3][3] = T(1);
+		result[0][0] = T(2 / (right - left));					  result[1][0] = T(0);									result[2][0] = T(0);				 result[3][0] = T(0);
+		result[0][1] = T(0);									  result[1][1] = T(2/(top-bottom));						result[2][1] = T(0);				 result[3][1] = T(0);
+		result[0][2] = T(0);									  result[1][2] = T(0);									result[2][2] = T(1/(Far-Near));		 result[3][2] = T(0);
+		result[0][3] = T((left + right) / (left - right));        result[1][3] = T((top+bottom)/(bottom-top));			result[2][3] = T(Near /(Near-Far));	 result[3][3] = T(1);
 
 		return result;
 	}
@@ -313,9 +313,9 @@ public:
 		Vector3<T> yaxis = Vector3<T>::cross_product(zaxis, xaxis);
 
 
-		result[0][0] = xaxis[0];			result[0][1] = yaxis[0];			result[0][2] = zaxis[0];			result[0][3] = 0;
-		result[1][0] = xaxis[1];			result[1][1] = yaxis[1];			result[1][2] = zaxis[1];			result[1][3] = 0;
-		result[2][0] = xaxis[2];			result[2][1] = yaxis[2];			result[2][2] = zaxis[2];			result[2][3] = 0;
+		result[0][0] = xaxis[0];								result[0][1] = yaxis[0];								result[0][2] = zaxis[0];								result[0][3] = 0;
+		result[1][0] = xaxis[1];								result[1][1] = yaxis[1];								result[1][2] = zaxis[1];								result[1][3] = 0;
+		result[2][0] = xaxis[2];								result[2][1] = yaxis[2];								result[2][2] = zaxis[2];								result[2][3] = 0;
 		result[3][0] = -Vector3<T>::dot_product(xaxis, eye);	result[3][1] = -Vector3<T>::dot_product(yaxis, eye);	result[3][2] = -Vector3<T>::dot_product(zaxis, eye);	result[3][3] = 1;
 
 		return result;

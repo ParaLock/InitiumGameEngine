@@ -89,6 +89,8 @@ void LightRenderNode::render()
 			static Matrix4f LprojectionMatrix = Matrix4f::transpose(light->getProjectionMatrix());
 			static Matrix4f LviewMatrix = Matrix4f::transpose(light->getViewMatrix());
 
+			static Matrix4f ShadowMatrix = light->getShadowMatrix();
+
 			static Matrix4f CprojectionMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getProjectionMatrix();
 			static Matrix4f CviewMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getViewMatrix();
 			static Matrix4f CworldMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getWorldMatrix();
@@ -104,7 +106,11 @@ void LightRenderNode::render()
 				(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
 
 			commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
-				(std::make_pair("cbuff_lightSpaceMatrix", &lightSpaceMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+				(std::make_pair("cbuff_lightViewMatrix", &LviewMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+
+			commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
+				(std::make_pair("cbuff_lightProjectionMatrix", &LprojectionMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+
 
 			commandList->createCommand(std::make_shared<ShaderUpdateLightUniformsCommand::InitData>
 				(std::list<ILight*>{light}, _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_LIGHT_UNIFORMS);

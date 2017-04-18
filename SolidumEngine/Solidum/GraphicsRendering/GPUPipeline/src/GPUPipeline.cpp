@@ -2,6 +2,16 @@
 
 
 
+TEX_FORMAT GPUPipeline::getTexTypeFromToken(std::string token)
+{
+	if (token == "R24G8_TYPLESS") {
+		return TEX_FORMAT::R24G8_TYPLESS;
+	}
+	if (token == "RGBA_32BIT_FLOAT") {
+		return TEX_FORMAT::RGBA_32BIT_FLOAT;
+	}
+}
+
 GPUPipeline::GPUPipeline()
 {
 	_elementList = new std::map<std::string, GPUPipelineElement*>;
@@ -76,19 +86,26 @@ void GPUPipeline::load(std::shared_ptr<IResourceBuilder> builder)
 			if (splitStr.at(0) == "INIT") {
 
 				if (splitStr.at(1) == "GBUFFER") {
+					int height = 1;
+					int width = 1;
+
+					TEX_FORMAT rtTexFormat = TEX_FORMAT::RGBA_32BIT_FLOAT;
 
 					if (splitStr.size() >= 4) {
 
-						ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->createResource(
-							std::make_shared<RenderTarget::InitData>(1, 1, TEX_FORMAT::RGBA_32BIT_FLOAT,
-								std::stoi(splitStr.at(4)), std::stoi(splitStr.at(3))), splitStr.at(2), false);
+						height = std::stoi(splitStr.at(4));
+						width = std::stoi(splitStr.at(3));
+
 					}
 					else {
-						
-						ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->createResource(
-							std::make_shared<RenderTarget::InitData>(1, 1, TEX_FORMAT::RGBA_32BIT_FLOAT,
-								window::getInstance()->screen_height, window::getInstance()->screen_width), splitStr.at(2), false);
+						height = window::getInstance()->screen_height;
+						width = window::getInstance()->screen_width;
+					
 					}
+
+					ResourceManagerPool::getInstance()->getResourceManager("RenderTargetManager")->createResource(
+						std::make_shared<RenderTarget::InitData>(1, 1, rtTexFormat,
+							height, width), splitStr.at(2), false);
 				}
 
 				if (splitStr.at(1) == "SAMPLER") {

@@ -35,7 +35,8 @@ cbuffer LightBuffer
 	float cbuff_pointLightRange;
 	float3 padding2;
 	
-	matrix cbuff_lightSpaceMatrix;
+	matrix cbuff_lightProjectionMatrix;
+	matrix cbuff_lightViewMatrix;
 };
 
 struct CoreData 

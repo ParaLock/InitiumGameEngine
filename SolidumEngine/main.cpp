@@ -46,7 +46,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	World* world = new World;
 
-	world->setBoundingSphere(new BoundingSphere(Vector3f(0,0,0), std::sqrt(10 * 10 + 15 * 15)));
+	world->setBoundingSphere(new BoundingSphere(Vector3f(0,0,0), std::sqrt(2.5 * 2.5 + 4.5 * 4.5)));
 
 	solidum->loadWorld(world);
 
@@ -204,7 +204,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	sunLight->setColor(Vector4f(0.5f, 0.5f, 0.5f, 0.5f));
 	sunLight->setDirection(Vector3f(-0.707f, -0.707f, 0));
 	sunLight->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
-	sunLight->setIntensity(0.5f);
+	sunLight->setIntensity(2.9f);
 
 	pointLight1->setColor(Vector4f(0.5f, 2.5f, 0.5f, 0.5f));
 	pointLight1->setDirection(Vector3f(0.0f, 0.0f, 0.0f));

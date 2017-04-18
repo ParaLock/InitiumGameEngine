@@ -11,5 +11,11 @@ public:
 
 	static std::string ws2s(const std::wstring& wstr);
 
+	static bool is_number(const std::string& s)
+	{
+		return !s.empty() && std::find_if(s.begin(),
+			s.end(), [](char c) { return !isdigit(c); }) == s.end();
+	}
+
 };
 

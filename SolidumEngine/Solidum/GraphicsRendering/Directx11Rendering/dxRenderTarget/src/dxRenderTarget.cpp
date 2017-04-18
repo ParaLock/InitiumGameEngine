@@ -86,6 +86,13 @@ void dxRenderTarget::load(std::shared_ptr<IResourceBuilder> builder)
 
 		textureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		break;
+	case TEX_FORMAT::R24G8_TYPLESS:
+		textureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+
+		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+
+		renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		break;
 	}
 
 	textureDesc.Width = realBuilder->_width;
