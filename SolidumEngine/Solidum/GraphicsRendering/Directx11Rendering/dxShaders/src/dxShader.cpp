@@ -123,7 +123,7 @@ void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode
 		shaderCode->GetBufferSize(), IID_ID3D11ShaderReflection,
 		(void**) &pReflector);
 
-	IResource* newLayout = new dxShaderInputLayout();
+	ShaderInputLayout* newLayout = new dxShaderInputLayout();
 
 	if (!FAILED(hr)) {
 		D3D11_SHADER_DESC desc;
@@ -133,7 +133,6 @@ void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode
 
 			D3D11_SIGNATURE_PARAMETER_DESC input_desc;
 			pReflector->GetInputParameterDesc(i, &input_desc);
-
 			newLayout->getCore<dxShaderInputLayout>()->addInput(input_desc.ComponentType, input_desc.SemanticName, input_desc.SemanticIndex, input_desc.Mask);
 		}
 

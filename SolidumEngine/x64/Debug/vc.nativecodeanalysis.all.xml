@@ -1,0 +1,1829 @@
+﻿<?xml version="1.0" encoding="utf-8"?><DEFECTS><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\engineutils\include\</FILEPATH>
+      <FILENAME>stringmanipulation.h</FILENAME>
+      <LINE>17</LINE>
+      <COLUMN>40</COLUMN>
+    </SFA>
+    <DEFECTCODE>6330</DEFECTCODE>
+    <DESCRIPTION>'char' passed as _Param_(1) when 'unsigned char' is required in call to 'isdigit'.</DESCRIPTION>
+    <FUNCTION>StringManipulation::is_number::&lt;lambda_05f92d95afe9a9f91ec687d11e5c2b07&gt;::()</FUNCTION>
+    <DECORATED>??R&lt;lambda_05f92d95afe9a9f91ec687d11e5c2b07&gt;@@QEBA_ND@Z</DECORATED>
+    <FUNCLINE>17</FUNCLINE>
+    <PATH />
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\</FILEPATH>
+      <FILENAME>rendernodefactory.cpp</FILENAME>
+      <LINE>42</LINE>
+      <COLUMN>1</COLUMN>
+    </SFA>
+    <DEFECTCODE>6001</DEFECTCODE>
+    <DESCRIPTION>Using uninitialized memory 'renderNode'.</DESCRIPTION>
+    <FUNCTION>RenderNodeFactory::createObject</FUNCTION>
+    <DECORATED>?createObject@RenderNodeFactory@@UEAAPEAVRenderNode@@W4RENDER_NODE_TYPE@@@Z</DECORATED>
+    <FUNCLINE>14</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>3</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\</FILEPATH>
+        <FILENAME>rendernodefactory.cpp</FILENAME>
+        <LINE>16</LINE>
+        <COLUMN>13</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'renderNode' is not initialized</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\</FILEPATH>
+        <FILENAME>rendernodefactory.cpp</FILENAME>
+        <LINE>18</LINE>
+        <COLUMN>9</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Assume switch ( 'type' ) resolves to case POST_FX_RENDER_NODE: </MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\</FILEPATH>
+        <FILENAME>rendernodefactory.cpp</FILENAME>
+        <LINE>32</LINE>
+        <COLUMN>1</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\</FILEPATH>
+        <FILENAME>rendernodefactory.cpp</FILENAME>
+        <LINE>40</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\</FILEPATH>
+        <FILENAME>rendernodefactory.cpp</FILENAME>
+        <LINE>42</LINE>
+        <COLUMN>1</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'renderNode' is used, but may not have been initialized</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\api_function_wrappers\src\</FILEPATH>
+      <FILENAME>dx11_pipeline_functions_wrapper.cpp</FILENAME>
+      <LINE>95</LINE>
+      <COLUMN>21</COLUMN>
+    </SFA>
+    <DEFECTCODE>6386</DEFECTCODE>
+    <DESCRIPTION>Buffer overrun while writing to 'dxRenderTargets':  the writable size is 'renderTargets.public: unsigned __int64 __cdecl std::vector&lt;void *,class std::allocator&lt;void *&gt; &gt;::size(void)const ()*8' bytes, but '16' bytes might be written.</DESCRIPTION>
+    <FUNCTION>dx11_bind_render_targets_as_rt</FUNCTION>
+    <DECORATED>?dx11_bind_render_targets_as_rt@@YAXV?$vector@PEAXV?$allocator@PEAX@std@@@std@@PEAX@Z</DECORATED>
+    <FUNCLINE>89</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\api_function_wrappers\src\</FILEPATH>
+        <FILENAME>dx11_pipeline_functions_wrapper.cpp</FILENAME>
+        <LINE>91</LINE>
+        <COLUMN>24</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'dxRenderTargets' is a 8 byte array</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\api_function_wrappers\src\</FILEPATH>
+        <FILENAME>dx11_pipeline_functions_wrapper.cpp</FILENAME>
+        <LINE>93</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\api_function_wrappers\src\</FILEPATH>
+        <FILENAME>dx11_pipeline_functions_wrapper.cpp</FILENAME>
+        <LINE>93</LINE>
+        <COLUMN>22</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume 'i&lt;renderTargets.size()')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\api_function_wrappers\src\</FILEPATH>
+        <FILENAME>dx11_pipeline_functions_wrapper.cpp</FILENAME>
+        <LINE>95</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\api_function_wrappers\src\</FILEPATH>
+        <FILENAME>dx11_pipeline_functions_wrapper.cpp</FILENAME>
+        <LINE>93</LINE>
+        <COLUMN>47</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'i' may equal 1</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\api_function_wrappers\src\</FILEPATH>
+        <FILENAME>dx11_pipeline_functions_wrapper.cpp</FILENAME>
+        <LINE>93</LINE>
+        <COLUMN>22</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Continue this loop, (assume 'i&lt;renderTargets.size()')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\api_function_wrappers\src\</FILEPATH>
+        <FILENAME>dx11_pipeline_functions_wrapper.cpp</FILENAME>
+        <LINE>95</LINE>
+        <COLUMN>21</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'i' is an In/Out argument to 'std::vector&lt;void *,std::allocator&lt;void *&gt; &gt;::at' (declared at c:\program files (x86)\microsoft visual studio 14.0\vc\include\vector:1204)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\api_function_wrappers\src\</FILEPATH>
+        <FILENAME>dx11_pipeline_functions_wrapper.cpp</FILENAME>
+        <LINE>95</LINE>
+        <COLUMN>21</COLUMN>
+        <KEYEVENT>
+          <ID>6</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>Invalid write to 'dxRenderTargets[1]', (writable range is 0 to 0)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+      <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+      <LINE>179</LINE>
+      <COLUMN>16</COLUMN>
+    </SFA>
+    <DEFECTCODE>28020</DEFECTCODE>
+    <DESCRIPTION>The expression '0&lt;=_Param_(2)&amp;&amp;_Param_(2)&lt;=32' is not true at this call.</DESCRIPTION>
+    <FUNCTION>dxShaderInputLayout::generateInputLayout</FUNCTION>
+    <DECORATED>?generateInputLayout@dxShaderInputLayout@@UEAAXXZ</DECORATED>
+    <FUNCLINE>45</FUNCLINE>
+    <PATH>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>47</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>49</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>51</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>53</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>55</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>57</LINE>
+        <COLUMN>53</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>58</LINE>
+        <COLUMN>68</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>58</LINE>
+        <COLUMN>42</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>60</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>62</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>74</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>53</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>34</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>66</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>67</LINE>
+        <COLUMN>51</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>73</LINE>
+        <COLUMN>30</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>75</LINE>
+        <COLUMN>45</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>76</LINE>
+        <COLUMN>46</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>78</LINE>
+        <COLUMN>42</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>79</LINE>
+        <COLUMN>47</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>80</LINE>
+        <COLUMN>53</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>82</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>84</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>90</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>96</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>102</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>109</LINE>
+        <COLUMN>39</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>111</LINE>
+        <COLUMN>58</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>111</LINE>
+        <COLUMN>39</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>111</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>113</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>32</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>38</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>52</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>60</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>81</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>117</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>58</LINE>
+        <COLUMN>80</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>58</LINE>
+        <COLUMN>42</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>60</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>62</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>74</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>53</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>34</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>66</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>70</LINE>
+        <COLUMN>51</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>73</LINE>
+        <COLUMN>30</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>75</LINE>
+        <COLUMN>45</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>76</LINE>
+        <COLUMN>46</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>78</LINE>
+        <COLUMN>42</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>79</LINE>
+        <COLUMN>47</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>80</LINE>
+        <COLUMN>53</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>82</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>84</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>90</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>96</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>102</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>109</LINE>
+        <COLUMN>39</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>111</LINE>
+        <COLUMN>58</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>111</LINE>
+        <COLUMN>39</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>111</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>113</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>32</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>38</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>52</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>60</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>81</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>117</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>58</LINE>
+        <COLUMN>80</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>58</LINE>
+        <COLUMN>42</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>58</LINE>
+        <COLUMN>34</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>118</LINE>
+        <COLUMN>1</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>121</LINE>
+        <COLUMN>1</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>124</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>125</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>127</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>132</LINE>
+        <COLUMN>2</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>129</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>148</LINE>
+        <COLUMN>62</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>148</LINE>
+        <COLUMN>40</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>148</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>150</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>152</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>153</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>154</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>156</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>159</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>160</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>161</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>162</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>163</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>164</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>165</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>166</LINE>
+        <COLUMN>53</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>166</LINE>
+        <COLUMN>32</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>166</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>167</LINE>
+        <COLUMN>11</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>170</LINE>
+        <COLUMN>12</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>172</LINE>
+        <COLUMN>20</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>173</LINE>
+        <COLUMN>23</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>165</LINE>
+        <COLUMN>18</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>164</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>160</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>174</LINE>
+        <COLUMN>1</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>176</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>179</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+      <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+      <LINE>70</LINE>
+      <COLUMN>51</COLUMN>
+    </SFA>
+    <DEFECTCODE>6386</DEFECTCODE>
+    <DESCRIPTION>Buffer overrun while writing to 'inputLayoutDesc':  the writable size is 'public: unsigned __int64 __cdecl std::list&lt;class ShaderInputLayoutElement *,class std::allocator&lt;class ShaderInputLayoutElement *&gt; &gt;::size(void)const ()*32' bytes, but '64' bytes might be written.</DESCRIPTION>
+    <FUNCTION>dxShaderInputLayout::generateInputLayout</FUNCTION>
+    <DECORATED>?generateInputLayout@dxShaderInputLayout@@UEAAXXZ</DECORATED>
+    <FUNCLINE>45</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>47</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>49</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>51</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>53</LINE>
+        <COLUMN>26</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'inputLayoutDesc' is an array of 1 elements (32 bytes)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>55</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>57</LINE>
+        <COLUMN>53</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>58</LINE>
+        <COLUMN>68</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>58</LINE>
+        <COLUMN>42</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this loop, (assume '(bool)=itr!=(), (), (bool)')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>60</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>62</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>74</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>53</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>34</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>66</LINE>
+        <COLUMN>19</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Enter this branch, (assume 'elementCount==0')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>67</LINE>
+        <COLUMN>51</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>73</LINE>
+        <COLUMN>30</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>75</LINE>
+        <COLUMN>45</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>76</LINE>
+        <COLUMN>46</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>78</LINE>
+        <COLUMN>42</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>79</LINE>
+        <COLUMN>47</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>80</LINE>
+        <COLUMN>53</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>82</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>84</LINE>
+        <COLUMN>21</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'element-&gt;_mask==1' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>90</LINE>
+        <COLUMN>26</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'element-&gt;_mask&lt;=3' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>96</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>102</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>109</LINE>
+        <COLUMN>39</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>111</LINE>
+        <COLUMN>58</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>111</LINE>
+        <COLUMN>39</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>111</LINE>
+        <COLUMN>21</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>113</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>32</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>38</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>52</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>60</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>81</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>114</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>117</LINE>
+        <COLUMN>14</COLUMN>
+        <KEYEVENT>
+          <ID>6</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'elementCount' may equal 1</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>58</LINE>
+        <COLUMN>80</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>58</LINE>
+        <COLUMN>42</COLUMN>
+        <KEYEVENT>
+          <ID>7</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Continue this loop, (assume '(bool)=itr!=(), (), (bool)')</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>60</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>62</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>74</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>53</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>34</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>66</LINE>
+        <COLUMN>19</COLUMN>
+        <KEYEVENT>
+          <ID>8</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'elementCount==0' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>70</LINE>
+        <COLUMN>51</COLUMN>
+        <KEYEVENT>
+          <ID>9</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>Invalid write to 'inputLayoutDesc[1]', (writable range is 0 to 0)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+      <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+      <LINE>109</LINE>
+      <COLUMN>39</COLUMN>
+    </SFA>
+    <DEFECTCODE>6001</DEFECTCODE>
+    <DESCRIPTION>Using uninitialized memory 'elementFormat'.</DESCRIPTION>
+    <FUNCTION>dxShaderInputLayout::generateInputLayout</FUNCTION>
+    <DECORATED>?generateInputLayout@dxShaderInputLayout@@UEAAXXZ</DECORATED>
+    <FUNCLINE>45</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>3</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>47</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>49</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>51</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>53</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>55</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>57</LINE>
+        <COLUMN>53</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>58</LINE>
+        <COLUMN>68</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>58</LINE>
+        <COLUMN>42</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>60</LINE>
+        <COLUMN>26</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>62</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>74</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>53</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>34</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>16</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>66</LINE>
+        <COLUMN>19</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>67</LINE>
+        <COLUMN>51</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>73</LINE>
+        <COLUMN>30</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>75</LINE>
+        <COLUMN>45</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>76</LINE>
+        <COLUMN>46</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>78</LINE>
+        <COLUMN>42</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>79</LINE>
+        <COLUMN>47</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>80</LINE>
+        <COLUMN>53</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>82</LINE>
+        <COLUMN>14</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'elementFormat' is not initialized</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>84</LINE>
+        <COLUMN>21</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'element-&gt;_mask==1' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>90</LINE>
+        <COLUMN>26</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'element-&gt;_mask&lt;=3' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>96</LINE>
+        <COLUMN>26</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'element-&gt;_mask&lt;=7' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>102</LINE>
+        <COLUMN>26</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume 'element-&gt;_mask&lt;=15' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\directx11rendering\dxshaders\src\</FILEPATH>
+        <FILENAME>dxshaderinputlayout.cpp</FILENAME>
+        <LINE>109</LINE>
+        <COLUMN>39</COLUMN>
+        <KEYEVENT>
+          <ID>6</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'elementFormat' is used, but may not have been initialized</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+      <FILENAME>gpupipeline.cpp</FILENAME>
+      <LINE>233</LINE>
+      <COLUMN>12</COLUMN>
+    </SFA>
+    <DEFECTCODE>6001</DEFECTCODE>
+    <DESCRIPTION>Using uninitialized memory 'op'.</DESCRIPTION>
+    <FUNCTION>GPUPipeline::load</FUNCTION>
+    <DECORATED>?load@GPUPipeline@@UEAAXV?$shared_ptr@VIResourceBuilder@@@std@@@Z</DECORATED>
+    <FUNCLINE>30</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>3</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>32</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>34</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>36</LINE>
+        <COLUMN>13</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>38</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>40</LINE>
+        <COLUMN>27</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>42</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>47</LINE>
+        <COLUMN>7</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>49</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>57</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>59</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>60</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>62</LINE>
+        <COLUMN>34</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>14</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>64</LINE>
+        <COLUMN>23</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>66</LINE>
+        <COLUMN>28</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>68</LINE>
+        <COLUMN>15</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>70</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>74</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>78</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>82</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>86</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>152</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>195</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>197</LINE>
+        <COLUMN>18</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'op' is not initialized</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>199</LINE>
+        <COLUMN>9</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>201</LINE>
+        <COLUMN>23</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>205</LINE>
+        <COLUMN>22</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>208</LINE>
+        <COLUMN>23</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '==(*splitStr.at(2), "CLEAR")' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>213</LINE>
+        <COLUMN>23</COLUMN>
+        <KEYEVENT>
+          <ID>4</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>218</LINE>
+        <COLUMN>23</COLUMN>
+        <KEYEVENT>
+          <ID>5</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '==(*splitStr.at(3), "GBUFFER")' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>225</LINE>
+        <COLUMN>23</COLUMN>
+        <KEYEVENT>
+          <ID>6</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Skip this branch, (assume '&lt;branch condition&gt;' is false)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>233</LINE>
+        <COLUMN>12</COLUMN>
+        <KEYEVENT>
+          <ID>7</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'op' is an In/Out argument to 'GPUPipeline::attachOP' (declared at c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\include\gpupipeline.h:95)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\gpupipeline\src\</FILEPATH>
+        <FILENAME>gpupipeline.cpp</FILENAME>
+        <LINE>233</LINE>
+        <COLUMN>12</COLUMN>
+        <KEYEVENT>
+          <ID>8</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'op' is used, but may not have been initialized</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\</FILEPATH>
+      <FILENAME>main.cpp</FILENAME>
+      <LINE>25</LINE>
+      <COLUMN>18</COLUMN>
+    </SFA>
+    <DEFECTCODE>28251</DEFECTCODE>
+    <DESCRIPTION>Inconsistent annotation for 'WinMain': this instance has no annotations. See c:\program files (x86)\windows kits\8.1\include\um\winbase.h(905). </DESCRIPTION>
+    <FUNCTION>WinMain</FUNCTION>
+    <DECORATED>WinMain</DECORATED>
+    <FUNCLINE>25</FUNCLINE>
+    <PATH />
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\</FILEPATH>
+      <FILENAME>main.cpp</FILENAME>
+      <LINE>33</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>Return value ignored: 'freopen'.</DESCRIPTION>
+    <FUNCTION>WinMain</FUNCTION>
+    <DECORATED>WinMain</DECORATED>
+    <FUNCLINE>25</FUNCLINE>
+    <PATH />
+  </DEFECT></DEFECTS>

@@ -38,6 +38,8 @@ public:
 
 	virtual void swapInternalBuffer(void *pNewBuff) = 0;
 
+	size_t getSize() { return _size; }
+
 	BUFFER_TYPE getBuffType() { return _type; };
 };
 

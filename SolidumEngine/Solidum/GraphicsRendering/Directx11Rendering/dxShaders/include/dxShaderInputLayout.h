@@ -9,6 +9,7 @@ class dxShaderInputLayout : public ShaderInputLayout
 {
 private:
 	ID3D11InputLayout* _inputLayout;
+	D3D11_INPUT_ELEMENT_DESC *inputLayoutDesc;
 public:
 	dxShaderInputLayout();
 	~dxShaderInputLayout();

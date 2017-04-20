@@ -38,9 +38,13 @@ void PipelineSRBindCommand::execute()
 
 void PipelineBufferBindCommand::execute()
 {
-	void* pBuff = _buffer->getParameter("BUFFER");
+	std::vector<void*> _rawBuffers;
 
-	PipelineFunctions::pipeline_bindBuffer(pBuff, _stride, _buffType);
+	for each(GPUBuffer* buff in _buffers) {
+		_rawBuffers.push_back(buff->getParameter("BUFFER"));
+	}
+
+	PipelineFunctions::pipeline_bindBuffer(_rawBuffers, _strides, _buffType);
 }
 
 void PipelineILBindCommand::execute()

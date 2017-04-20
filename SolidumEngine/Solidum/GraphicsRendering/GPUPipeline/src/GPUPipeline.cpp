@@ -10,6 +10,7 @@ TEX_FORMAT GPUPipeline::getTexTypeFromToken(std::string token)
 	if (token == "RGBA_32BIT_FLOAT") {
 		return TEX_FORMAT::RGBA_32BIT_FLOAT;
 	}
+	return TEX_FORMAT::INVALID;
 }
 
 GPUPipeline::GPUPipeline()
@@ -391,8 +392,11 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 			if (element->type == SHADER_RESOURCE_TYPE::SHADER_BUFFER_HOOK) {
 
 				commandList->createCommand(std::make_shared<PipelineBufferBindCommand::InitData>
-					(element->core->getCore<GPUBuffer>(), 0, _currentInputLayout->getCore<ShaderInputLayout>()->getDataStride()), 
-					  GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER);
+					(std::vector<GPUBuffer*> {element->core->getCore<GPUBuffer>()}, 
+					 std::vector<UINT> {0}, 
+					 std::vector<UINT>{_currentInputLayout->getCore<ShaderInputLayout>()->getDataStride()}),
+					
+					 GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER);
 
 			}
 

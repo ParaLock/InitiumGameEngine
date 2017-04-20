@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\engineutils\include\</FILEPATH>
+      <FILENAME>stringmanipulation.h</FILENAME>
+      <LINE>17</LINE>
+      <COLUMN>40</COLUMN>
+    </SFA>
+    <DEFECTCODE>6330</DEFECTCODE>
+    <DESCRIPTION>'char' passed as _Param_(1) when 'unsigned char' is required in call to 'isdigit'.</DESCRIPTION>
+    <FUNCTION>StringManipulation::is_number::&lt;lambda_582c4824243eac57e36de7a7d506343a&gt;::()</FUNCTION>
+    <DECORATED>??R&lt;lambda_582c4824243eac57e36de7a7d506343a&gt;@@QEBA_ND@Z</DECORATED>
+    <FUNCLINE>17</FUNCLINE>
+    <PATH />
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\</FILEPATH>
+      <FILENAME>main.cpp</FILENAME>
+      <LINE>25</LINE>
+      <COLUMN>18</COLUMN>
+    </SFA>
+    <DEFECTCODE>28251</DEFECTCODE>
+    <DESCRIPTION>Inconsistent annotation for 'WinMain': this instance has no annotations. See c:\program files (x86)\windows kits\8.1\include\um\winbase.h(905). </DESCRIPTION>
+    <FUNCTION>WinMain</FUNCTION>
+    <DECORATED>WinMain</DECORATED>
+    <FUNCLINE>25</FUNCLINE>
+    <PATH />
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\</FILEPATH>
+      <FILENAME>main.cpp</FILENAME>
+      <LINE>33</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>Return value ignored: 'freopen'.</DESCRIPTION>
+    <FUNCTION>WinMain</FUNCTION>
+    <DECORATED>WinMain</DECORATED>
+    <FUNCLINE>25</FUNCLINE>
+    <PATH />
+  </DEFECT>
+</DEFECTS>

@@ -14,7 +14,7 @@ public:
 
 	UINT _index;
 	std::string _semantic;
-
+	INPUT_LAYOUT_ELEMENT_CLASS _class = INPUT_LAYOUT_ELEMENT_CLASS::PER_VERTEX_DATA;
 	BYTE _mask;
 
 	int _type;
@@ -23,7 +23,7 @@ public:
 class ShaderInputLayout : public IResource
 {
 protected:
-	std::list<ShaderInputLayoutElement*> *_inputLayoutElementList;
+	std::vector<ShaderInputLayoutElement*> *_inputLayoutElementList;
 
 	std::string _name;
 
@@ -49,6 +49,8 @@ public:
 	virtual void generateInputLayout() = 0;
 
 	std::string getName() { return _name; };
+
+	std::vector<ShaderInputLayoutElement*>* getElementList() { return _inputLayoutElementList; }
 
 	UINT getDataStride() {return _dataStride; };
 };

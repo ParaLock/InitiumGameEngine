@@ -50,21 +50,19 @@ void dxGPUBuffer::load(std::shared_ptr<IResourceBuilder> builder)
 		break;
 	}
 
-	if (!(16 % _size) == 0) {
+	//if (_type == BUFFER_TYPE::SHADER_BUFF && !(16 % _size) == 0) {
 
-		bd.ByteWidth = _size;
+	//	std::wstring errorMsg = L"DX CBUFFER ERROR: Padding in-correct: ";
 
-		bd.Usage = D3D11_USAGE_DYNAMIC;
+	//	MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+	//	return;
+	//}
 
-		result = dxDev->CreateBuffer(&bd, NULL, &bufferPtr);
-	}
-	else {
+	bd.ByteWidth = _size;
 
-		std::wstring errorMsg = L"DX CBUFFER ERROR: Padding in-correct: ";
+	bd.Usage = D3D11_USAGE_DYNAMIC;
 
-		MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
-		return;
-	}
+	result = dxDev->CreateBuffer(&bd, NULL, &bufferPtr);
 
 	isLoaded = true;
 }

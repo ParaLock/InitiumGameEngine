@@ -4,16 +4,16 @@
 
 dxShaderInputLayout::dxShaderInputLayout()
 {
-	_inputLayoutElementList = new std::list<ShaderInputLayoutElement*>;
+	_inputLayoutElementList = new std::vector<ShaderInputLayoutElement*>;
+	inputLayoutDesc = nullptr;
 	//_name = name;
 }
 
 
 dxShaderInputLayout::~dxShaderInputLayout()
 {
-	for (std::list<ShaderInputLayoutElement*>::iterator itr
-		= _inputLayoutElementList->begin(); itr != _inputLayoutElementList->end(); itr++) {
-		delete *itr;
+	for (int i = 0; i < _inputLayoutElementList->size(); i++) {
+		delete _inputLayoutElementList->operator[](i);
 	}
 
 	delete _inputLayoutElementList;
@@ -44,32 +44,32 @@ void dxShaderInputLayout::addInput(int type, std::string name, UINT index, BYTE 
 
 void dxShaderInputLayout::generateInputLayout()
 {
+	if (inputLayoutDesc != nullptr)
+		delete inputLayoutDesc;
+
 	int elementCount = 0;
 
 	std::string inputElements = "";
 	
 	std::string elementName = "";
 
-	D3D11_INPUT_ELEMENT_DESC *inputLayoutDesc = new D3D11_INPUT_ELEMENT_DESC[_inputLayoutElementList->size()];
+	inputLayoutDesc = new D3D11_INPUT_ELEMENT_DESC[_inputLayoutElementList->size()];
 
 	int debugref = -1;
 
-	for (std::list<ShaderInputLayoutElement*>::iterator itr 
-		= _inputLayoutElementList->begin(); itr != _inputLayoutElementList->end(); itr++) 
+	for (int i = 0; i < _inputLayoutElementList->size(); i++)
 	{
-		ShaderInputLayoutElement* element = *itr;
+		ShaderInputLayoutElement* element = _inputLayoutElementList->operator[](i);
 
 		elementName = element->_semantic;
 
 		std::transform(elementName.begin(), elementName.end(), elementName.begin(), ::tolower);
 
-		if (elementCount == 0) {
-			inputLayoutDesc[elementCount].AlignedByteOffset = 0;
-		}
-		else {
-			inputLayoutDesc[elementCount].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-		}
+		inputLayoutDesc[elementCount].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 
+		if (elementCount == 0)
+			inputLayoutDesc[elementCount].AlignedByteOffset = 0;
+		
 		D3D_REGISTER_COMPONENT_TYPE elementType = static_cast<D3D_REGISTER_COMPONENT_TYPE>(element->_type);
 
 		inputLayoutDesc[elementCount].SemanticName = element->_semantic.c_str();
@@ -113,13 +113,20 @@ void dxShaderInputLayout::generateInputLayout()
 		inputElements += "float"; 
 		inputElements = inputElements + ' ' + elementName + " : " + element->_semantic + "; ";
 
+		switch (element->_class) {
+			case INPUT_LAYOUT_ELEMENT_CLASS::PER_INSTANCE_DATA:
+				inputLayoutDesc[elementCount].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+				inputLayoutDesc[elementCount].InstanceDataStepRate = 1;
+				inputLayoutDesc[elementCount].AlignedByteOffset = 0;
+				break;
+			case INPUT_LAYOUT_ELEMENT_CLASS::PER_VERTEX_DATA:
+				inputLayoutDesc[elementCount].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+				inputLayoutDesc[elementCount].InstanceDataStepRate = 0;
+				break;
+		}
 
 		elementCount++;
 	}
-
-
-	_dataStride;
-
 
 	ID3D11VertexShader *vertexShader;
 	ID3D10Blob *vertexShaderCode;

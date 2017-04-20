@@ -20,7 +20,7 @@ void dx11_bind_shader_texture_sampler(int bindSlot, SHADER_TYPE parentShader, vo
 void dx11_bind_shader_constant_buffer(int bindSlot, SHADER_TYPE parentShader, void* pConstBuffer);
 void dx11_bind_shader_texture(int bindSlot, SHADER_TYPE parentShader, void* pTexture);
 void dx11_bind_shader_input_layout(void* pInputLayout);
-void dx11_bind_shader_buffer(void* buffer, UINT buffStride, BUFFER_TYPE buffType);
+void dx11_bind_shader_buffer(std::vector<void*> buffers, std::vector<UINT> buffStrides, BUFFER_TYPE buffType);
 void dx11_bind_render_target_as_sr(void* rt, SHADER_TYPE parentShader, int bindSlot);
 void dx11_bind_render_targets_as_rt(std::vector<void*> renderTargets, void* depthStencil);
 void dx11_set_primitive_topology(PRIMITIVE_TOPOLOGY ptType);

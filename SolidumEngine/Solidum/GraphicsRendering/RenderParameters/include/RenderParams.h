@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../EngineUtils/include/Vector4.h"
+#include "../../../sysInclude.h"
 
 
 class CameraComponent;
@@ -11,11 +11,12 @@ class mesh;
 class Light;
 class BoundingSphere;
 
+struct UniqueRenderParams {};
+
 struct GlobalRenderingParams {
 	Vector4f _ambientLightLevel;
 	CameraComponent* _globalRenderingCamera = nullptr;
-
-	BoundingSphere* _worldBoundingSphere;
+	BoundingSphere* _worldBoundingSphere = nullptr;
 };
 
 struct LocalRenderingParams {
@@ -35,6 +36,8 @@ struct LocalRenderingParams {
 	Vector4f _skydomeCenterColor;
 
 	Transform* _transform = nullptr;
+
+	std::shared_ptr<UniqueRenderParams> _customParams;
 };
 
 class RenderParams
@@ -82,6 +85,9 @@ public:
 	Material* getPerNodeParam_MeshMaterial() { return local_params._meshMat; }
 	mesh* getPerNodeParam_Mesh() { return local_params._mesh; }
 	Light* getPerNodeParam_Light() { return local_params._light; }
+
+	void setCustomRenderParams(std::shared_ptr<UniqueRenderParams> params) { local_params._customParams = params; }
+	std::shared_ptr<UniqueRenderParams> getCustomRenderParams() { return local_params._customParams; }
 
 	GlobalRenderingParams getAllGlobalParams() { return global_params; };
 	LocalRenderingParams getAllLocalParams() { return local_params; };

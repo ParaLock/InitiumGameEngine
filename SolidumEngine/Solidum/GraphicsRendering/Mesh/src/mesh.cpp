@@ -16,10 +16,20 @@ void mesh::load(std::shared_ptr<IResourceBuilder> builder)
 
 	LPCWSTR fileName = realBuilder->_filename;
 
+	float left, right, top, bottom;
+
+	int screen_width = window::getInstance()->screen_width;
+	int screen_height = window::getInstance()->screen_height;
+
+	left = (float)((screen_width / 2) * -1);
+	right = left + (float)screen_width;
+	top = (float)(screen_height / 2);
+	bottom = top - (float)screen_height;
+
 	if (fileName == L"gen_ortho_window_mesh") {
-		generateOrthoWindowMesh(realBuilder);
+		generatePlaneMesh(top, bottom, left, right);
 	}
-	else {
+	else if(fileName != L"null") {
 		std::shared_ptr<meshLoader> pMeshLoader;
 
 		std::string stlStr = CW2A(fileName);
@@ -165,26 +175,15 @@ void mesh::calcTangentsAndBiNormals(
 }
 
 
-void mesh::generateOrthoWindowMesh(InitData* builder)
+void mesh::generatePlaneMesh(float top, float bottom, float left, float right)
 {
-
-	int screen_width = window::getInstance()->screen_width;
-	int screen_height = window::getInstance()->screen_height;
-
 	int m_vertexCount, m_indexCount;
-
-	float left, right, top, bottom;
 
 	LIGHT_VERTEX* vertices;
 
 	unsigned long* indices;
 
 	int i;
-
-	left = (float)((screen_width / 2) * -1);
-	right = left + (float)screen_width;
-	top = (float)(screen_height / 2);
-	bottom = top - (float)screen_height;
 
 	m_vertexCount = 6;
 	m_indexCount = m_vertexCount;
@@ -216,12 +215,12 @@ void mesh::generateOrthoWindowMesh(InitData* builder)
 		indices[i] = i;
 	}
 
-	std::string stlStr = CW2A(builder->_filename);
+	std::string stlStr = std::to_string(getRandomNumber());
 
-	_indexBuff = builder->_managerPool->getResourceManager("GPUBufferManager")->createResource(std::make_shared<GPUBuffer::InitData>
+	_indexBuff = ResourceManagerPool::getInstance()->getResourceManager("GPUBufferManager")->createResource(std::make_shared<GPUBuffer::InitData>
 		(m_indexCount * sizeof(unsigned long), BUFFER_TYPE::INDEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE), stlStr + "index_buffer", false)->getCore<GPUBuffer>();
 
-	_vertexBuff = builder->_managerPool->getResourceManager("GPUBufferManager")->createResource(std::make_shared<GPUBuffer::InitData>
+	_vertexBuff = ResourceManagerPool::getInstance()->getResourceManager("GPUBufferManager")->createResource(std::make_shared<GPUBuffer::InitData>
 		(m_vertexCount * sizeof(LIGHT_VERTEX), BUFFER_TYPE::VERTEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE), stlStr + "vertex_buffer", false)->getCore<GPUBuffer>();
 
 

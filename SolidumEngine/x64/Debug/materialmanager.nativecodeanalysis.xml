@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\engineutils\include\</FILEPATH>
+      <FILENAME>stringmanipulation.h</FILENAME>
+      <LINE>17</LINE>
+      <COLUMN>40</COLUMN>
+    </SFA>
+    <DEFECTCODE>6330</DEFECTCODE>
+    <DESCRIPTION>'char' passed as _Param_(1) when 'unsigned char' is required in call to 'isdigit'.</DESCRIPTION>
+    <FUNCTION>StringManipulation::is_number::&lt;lambda_1f2d7efcaea2eff3a47577f2aff21a54&gt;::()</FUNCTION>
+    <DECORATED>??R&lt;lambda_1f2d7efcaea2eff3a47577f2aff21a54&gt;@@QEBA_ND@Z</DECORATED>
+    <FUNCLINE>17</FUNCLINE>
+    <PATH />
+  </DEFECT>
+</DEFECTS>

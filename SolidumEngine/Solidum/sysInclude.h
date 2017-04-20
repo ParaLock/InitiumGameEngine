@@ -57,6 +57,11 @@
 #define SSTR( x ) static_cast< std::ostringstream & >( \
         ( std::ostringstream() << std::dec << x ) ).str()
 
+enum class INPUT_LAYOUT_ELEMENT_CLASS {
+	PER_VERTEX_DATA,
+	PER_INSTANCE_DATA
+};
+
 enum class RASTER_STATE {
 	NORMAL,
 	DISABLE_TRIANGLE_CULL
@@ -106,6 +111,7 @@ enum class BUFFER_TYPE {
 	VERTEX_BUFF,
 	INDEX_BUFF,
 	SHADER_BUFF,
+	INSTANCE_BUFF,
 	INVALID
 };
 

@@ -55,7 +55,7 @@ private:
 	std::list<GPUPipelineOP> *_opList;
 
 	DepthStencil* _currentDepthStencil = nullptr;
-	IResource* _currentInputLayout = nullptr;
+	ShaderInputLayout* _currentInputLayout = nullptr;
 
 	BLEND_STATE blendState = BLEND_STATE::BLENDING_OFF;
 	DEPTH_TEST_STATE depthState = DEPTH_TEST_STATE::FULL_DISABLE;
@@ -94,9 +94,11 @@ public:
 
 	void attachOP(GPUPipelineOP op);
 
-	void shaderSetVertexInputLayout(IResource* inputLayout) { _currentInputLayout = inputLayout; };
+	void shaderSetVertexInputLayout(ShaderInputLayout* inputLayout) { _currentInputLayout = inputLayout; };
 
 	void applyState(GraphicsCommandList* commandList);
+
+	ShaderInputLayout* getInputLayout() { return _currentInputLayout; }
 
 	std::map<std::string, DynamicStruct*>* getVarToBuffMap() { return _constantBufferMemberNameMap; };
 };

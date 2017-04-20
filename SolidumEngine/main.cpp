@@ -206,7 +206,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	sunLight->setColor(Vector4f(0.5f, 0.5f, 0.5f, 0.5f));
 	sunLight->setDirection(Vector3f(-0.707f, -0.707f, 0));
 	sunLight->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
-	sunLight->setIntensity(2.9f);
+	sunLight->setIntensity(1.9f);
 
 	pointLight1->setColor(Vector4f(0.5f, 2.5f, 0.5f, 0.5f));
 	pointLight1->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
@@ -276,7 +276,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Entity* plane = new Entity();
 
 	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, moveKeyConfig1, plane));
-	plane->addComponent(new MeshComponent(planeMesh, bricksTex, brickMaterial, 0, plane));
+	plane->addComponent(new MeshComponent(planeMesh, bricksTex, woodMaterial, 0, plane));
 
 	Entity* camera = new Entity();
 
@@ -296,9 +296,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	shadowGenNode->load(std::make_shared<ShadowGenRenderNode::InitData>
 		(shadowMapGenShader, tree->getUniqueNodeID()));
 
-	tree->addNode(shadowGenNode, 2222);
+	tree->addNode(shadowGenNode, shadowGenNode->getID());
 
-	hammer->addChild(pointLight1Entity);
+	//hammer->addChild(pointLight1Entity);
 
 	world->addPrimaryCamera(camera, 0000);
 	

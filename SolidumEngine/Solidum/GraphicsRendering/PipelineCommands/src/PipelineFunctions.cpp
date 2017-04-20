@@ -16,7 +16,7 @@ std::function<void(int, SHADER_TYPE, void*)> PipelineFunctions::pipeline_bindCon
 std::function<void(void* rt, SHADER_TYPE parentShader, int bindSlot)> PipelineFunctions::pipeline_bindRenderTargetAsSR;
 std::function<void(std::vector<void*> renderTargets, void* depthStencil)> PipelineFunctions::pipeline_bindRenderTargetAsRT;
 
-std::function<void(void*, UINT, BUFFER_TYPE)> PipelineFunctions::pipeline_bindBuffer;
+std::function<void(std::vector<void*> buffers, std::vector<UINT> buffStrides, BUFFER_TYPE buffType)> PipelineFunctions::pipeline_bindBuffer;
 std::function<void(void*)> PipelineFunctions::pipeline_bindInputLayout;
 
 std::function<void(PRIMITIVE_TOPOLOGY)> PipelineFunctions::pipeline_setPrimitiveTopology;

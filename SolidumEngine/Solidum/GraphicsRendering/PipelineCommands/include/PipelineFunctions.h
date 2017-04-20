@@ -15,7 +15,7 @@ public:
 	static std::function<void(void* rt, SHADER_TYPE parentShader, int bindSlot)> pipeline_bindRenderTargetAsSR;
 	static std::function<void(std::vector<void*> renderTargets, void* depthStencil)> pipeline_bindRenderTargetAsRT;
 
-	static std::function<void(void*, UINT, BUFFER_TYPE)> pipeline_bindBuffer;
+	static std::function<void(std::vector<void*> buffers, std::vector<UINT> buffStrides, BUFFER_TYPE buffType)> pipeline_bindBuffer;
 	static std::function<void(void*)> pipeline_bindInputLayout;
 
 	static std::function<void(PRIMITIVE_TOPOLOGY)> pipeline_setPrimitiveTopology;

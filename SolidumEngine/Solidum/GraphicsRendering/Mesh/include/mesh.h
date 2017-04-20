@@ -40,7 +40,7 @@ public:
 		}
 	};
 
-	void generateOrthoWindowMesh(InitData* builder);
+	void generatePlaneMesh(float top, float bottom, float left, float right);
 
 	void load(std::shared_ptr<IResourceBuilder> builder);
 	void unload();
@@ -95,6 +95,6 @@ public:
 	VERTEX *meshVertices;
 	DWORD *meshIndices;
 	
-	IResource* getVertexBuff() { return _vertexBuff; }
-	IResource* getIndexBuff() { return _indexBuff; }
+	GPUBuffer* getVertexBuff() { return (GPUBuffer*)_vertexBuff; }
+	GPUBuffer* getIndexBuff() { return (GPUBuffer*)_indexBuff; }
 };

@@ -69,39 +69,42 @@ public:
 
 class PipelineBufferBindCommand : public PipelineCommand {
 private:
-	GPUBuffer* _buffer;
+	std::vector<GPUBuffer*> _buffers;
 	
-	UINT _offset;
-	UINT _stride;
+	std::vector<UINT> _offsets;
+	std::vector<UINT> _strides;
 	BUFFER_TYPE _buffType;
 public:
 	PipelineBufferBindCommand() { _type = GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER; }
 	
 
 	struct InitData : public IResourceBuilder {
-		GPUBuffer* _buffer;
-		BUFFER_TYPE _gpuBufferType;
 
-		UINT _offset;
-		UINT _stride;
+		std::vector<GPUBuffer*> _buffers;
 
-		InitData(GPUBuffer* buffer, UINT offset, UINT stride) {
-			_gpuBufferType = buffer->getBuffType();
+		std::vector<UINT> _offsets;
+		std::vector<UINT> _strides;
+		BUFFER_TYPE _buffType;
 
-			_buffer = buffer;
-			_offset = offset;
-			_stride = stride;
+		InitData(std::vector<GPUBuffer*> buffers, std::vector<UINT> offsets, std::vector<UINT> strides) {
+			
+			_buffType = buffers.at(0)->getBuffType();
+			
+			
+			_buffers = buffers;
+			_offsets = offsets;
+			_strides = strides;
 		}
 	};
 
 	void load(std::shared_ptr<IResourceBuilder> builder) {
 		InitData* realBuilder = static_cast<InitData*>(builder.get());
 
-		_buffType = realBuilder->_gpuBufferType;
+		_buffType = realBuilder->_buffType;
 
-		_buffer = realBuilder->_buffer;
-		_offset = realBuilder->_offset;
-		_stride = realBuilder->_stride;
+		_buffers = realBuilder->_buffers;
+		_offsets = realBuilder->_offsets;
+		_strides = realBuilder->_strides;
 	}
 
 	void unload() { _buffType = BUFFER_TYPE::INVALID; }

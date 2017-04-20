@@ -186,3 +186,4 @@ public:
 };
 
 typedef Vector4<float> Vector4f;
+typedef Vector4<int> Vector4i;

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\engineutils\include\</FILEPATH>
+      <FILENAME>stringmanipulation.h</FILENAME>
+      <LINE>17</LINE>
+      <COLUMN>40</COLUMN>
+    </SFA>
+    <DEFECTCODE>6330</DEFECTCODE>
+    <DESCRIPTION>'char' passed as _Param_(1) when 'unsigned char' is required in call to 'isdigit'.</DESCRIPTION>
+    <FUNCTION>StringManipulation::is_number::&lt;lambda_05f92d95afe9a9f91ec687d11e5c2b07&gt;::()</FUNCTION>
+    <DECORATED>??R&lt;lambda_05f92d95afe9a9f91ec687d11e5c2b07&gt;@@QEBA_ND@Z</DECORATED>
+    <FUNCLINE>17</FUNCLINE>
+    <PATH />
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\</FILEPATH>
+      <FILENAME>rendernodefactory.cpp</FILENAME>
+      <LINE>42</LINE>
+      <COLUMN>1</COLUMN>
+    </SFA>
+    <DEFECTCODE>6001</DEFECTCODE>
+    <DESCRIPTION>Using uninitialized memory 'renderNode'.</DESCRIPTION>
+    <FUNCTION>RenderNodeFactory::createObject</FUNCTION>
+    <DECORATED>?createObject@RenderNodeFactory@@UEAAPEAVRenderNode@@W4RENDER_NODE_TYPE@@@Z</DECORATED>
+    <FUNCLINE>14</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>3</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\</FILEPATH>
+        <FILENAME>rendernodefactory.cpp</FILENAME>
+        <LINE>16</LINE>
+        <COLUMN>13</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>declaration</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'renderNode' is not initialized</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\</FILEPATH>
+        <FILENAME>rendernodefactory.cpp</FILENAME>
+        <LINE>18</LINE>
+        <COLUMN>9</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>Assume switch ( 'type' ) resolves to case POST_FX_RENDER_NODE: </MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\</FILEPATH>
+        <FILENAME>rendernodefactory.cpp</FILENAME>
+        <LINE>32</LINE>
+        <COLUMN>1</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\</FILEPATH>
+        <FILENAME>rendernodefactory.cpp</FILENAME>
+        <LINE>40</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\natha\documents\visual studio 2015\projects\solidumengine\solidumengine\solidum\graphicsrendering\rendernode\src\</FILEPATH>
+        <FILENAME>rendernodefactory.cpp</FILENAME>
+        <LINE>42</LINE>
+        <COLUMN>1</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'renderNode' is used, but may not have been initialized</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT>
+</DEFECTS>

@@ -49,22 +49,38 @@ void dx11_bind_shader_input_layout(void* pInputLayout) {
 		IASetInputLayout((ID3D11InputLayout*)pInputLayout);
 }
 
-void dx11_bind_shader_buffer(void* buffer, UINT buffStride, BUFFER_TYPE buffType) {
-
-	ID3D11Buffer *gpuBuffPtr = (ID3D11Buffer*)buffer;
+void dx11_bind_shader_buffer(std::vector<void*> buffers, std::vector<UINT> buffStrides, BUFFER_TYPE buffType) {
 
 	if (buffType == BUFFER_TYPE::INDEX_BUFF) {
 
 		dxDeviceAccessor::dxEncapsulator->dxDevContext->
-			IASetIndexBuffer(gpuBuffPtr, DXGI_FORMAT_R32_UINT, 0);
+			IASetIndexBuffer((ID3D11Buffer*)buffers.at(0), DXGI_FORMAT_R32_UINT, 0);
 	}
 	if (buffType == BUFFER_TYPE::VERTEX_BUFF) {
 
+		ID3D11Buffer **_dxBuffers = new ID3D11Buffer*[buffers.size()];
+		UINT          *_buffStrides = new UINT[buffStrides.size()];
+
+		for (size_t i = 0; i < buffers.size(); i++) {
+
+			_dxBuffers[i] = (ID3D11Buffer*)buffers.at(i);
+		}
+
+		for (size_t i = 0; i < buffStrides.size(); i++) {
+
+			_buffStrides[i] = buffStrides.at(i);
+		}
+
+
 		UINT offset = 0;
-		UINT stride = buffStride;
+		UINT _numbuffers = buffers.size();
 
 		dxDeviceAccessor::dxEncapsulator->dxDevContext->
-			IASetVertexBuffers(0, 1, &gpuBuffPtr, &stride, &offset);
+			IASetVertexBuffers(0, _numbuffers, _dxBuffers, _buffStrides, &offset);
+
+
+		delete _dxBuffers;
+		delete _buffStrides;
 
 	}
 }
