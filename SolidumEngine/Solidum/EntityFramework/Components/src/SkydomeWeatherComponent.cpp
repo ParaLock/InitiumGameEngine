@@ -29,8 +29,7 @@ SkydomeWeatherComponent::SkydomeWeatherComponent(IShader* shader, Texture* tex, 
 	skyboxWeatherNode->load(std::make_shared<SkyBoxRenderNode::InitData>
 		(_shader, _weatherApexColor, _weatherCenterColor, nodeID));
 
-	_parent->getRenderObject()->addGenericRenderNode(skyboxWeatherNode,
-		RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index);
+	_parent->getRenderObject()->addGenericRenderNode(skyboxWeatherNode, _index);
 
 	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
 		->setPerNodeParam_MeshTexture(_tex);

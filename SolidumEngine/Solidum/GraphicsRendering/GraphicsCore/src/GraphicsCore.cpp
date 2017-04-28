@@ -23,6 +23,9 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 	_graphicsCommandFactory = new GraphicsCommandFactory();
 	_graphicsCommandPool = new GraphicsCommandPool(_graphicsCommandFactory);
 
+	_particleFactory = new ParticleFactory();
+	_particlePool = new ParticlePool(_particleFactory);
+
 	_renderTree = new RenderNodeTree();
 
 	_gcqManager = new GCLQManager();
@@ -35,6 +38,7 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::SKYBOX_RENDERING);
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::FORWARD_RENDERING);
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING);
+	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::PARTICLE_RENDERING);
 	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT);
 
 	_renderTree->setExecutionOrder(renderExecutionOrder);
@@ -62,6 +66,7 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 
 		PipelineFunctions::pipeline_set_raster_state = dx11_set_raster_state;
 		PipelineFunctions::pipeline_drawIndexed = dx11_pipeline_draw_indexed;
+		PipelineFunctions::pipeline_drawInstanced = dx11_pipeline_draw_instanced;
 
 		PipelineFunctions::pipeline_set_viewport = dx11_set_viewport;
 

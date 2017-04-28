@@ -48,18 +48,19 @@ void EngineInstance::loadWorld(World * world)
 
 void EngineInstance::executionCycle()
 {
-	_engineTick.startTimer();
 
 	while (engineActive) {
 
-		update(_engineTick.getElapsedTimeSeconds());
+		float t = (float)_engineTick.getElapsedTimeSeconds();
+
+		update(t);
 
 		render();
 
 		if (GetAsyncKeyState(VK_ESCAPE)) {
 
 			stop();
-
+			
 			cleanup();
 		}
 

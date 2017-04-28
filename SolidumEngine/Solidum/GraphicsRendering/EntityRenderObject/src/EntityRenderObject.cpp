@@ -83,13 +83,13 @@ void EntityRenderObject::addAnimatedMesh(mesh * animation, int animationMeshInde
 {
 }
 
-void EntityRenderObject::addGenericRenderNode(RenderNode * renderNode, RENDER_NODE_TYPE type, int genericNodeIndex)
+void EntityRenderObject::addGenericRenderNode(RenderNode * renderNode, int genericNodeIndex)
 {
-	if (_renderResources.find(type) == _renderResources.end()) {
-		_renderResources.insert({ type, new std::map<int, uint64_t> });
+	if (_renderResources.find(renderNode->getType()) == _renderResources.end()) {
+		_renderResources.insert({ renderNode->getType(), new std::map<int, uint64_t> });
 	}
 
-	_renderResources[type]->insert({ genericNodeIndex, renderNode->getID() });
+	_renderResources[renderNode->getType()]->insert({ genericNodeIndex, renderNode->getID() });
 	
 	RenderNodeTree* tree = GraphicsCore::getInstance()->getRenderNodeTree();
 	

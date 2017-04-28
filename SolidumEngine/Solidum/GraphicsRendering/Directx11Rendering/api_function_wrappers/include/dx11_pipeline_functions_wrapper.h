@@ -33,6 +33,7 @@ void dx11_set_blend_state(BLEND_STATE blendState);
 void dx11_set_raster_state(RASTER_STATE state);
 
 void dx11_pipeline_draw_indexed(int index, int numIndices);
+void dx11_pipeline_draw_instanced(int indexCountPerInstance, int instanceCount);
 
 void dx11_pipeline_swapframe();
 void dx11_reset_pipeline();

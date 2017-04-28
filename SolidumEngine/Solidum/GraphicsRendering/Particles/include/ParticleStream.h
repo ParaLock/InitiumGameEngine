@@ -4,22 +4,33 @@
 class Texture;
 
 struct ParticleBatch {
-	int _numParticles;
 	Texture* _particleTex;
-	ParticleShape _shape;
 
-	std::list<Particle*> _particleList;
+	std::list<Particle*> _particlesToRender;
 };
 
 class ParticleStream
 {
 private:
+	std::list<ParticleBatch> _batches;
 public:
 	ParticleStream();
 	~ParticleStream();
 
-	bool isEmpty();
+	void pushBatch(ParticleBatch batch) { _batches.push_back(batch); }
 
-	ParticleBatch getNextBatch() { return ParticleBatch(); };
+	bool isEmpty() { return _batches.empty(); };
+
+	ParticleBatch getBatch() {
+
+		if (!isEmpty()) {
+			ParticleBatch batch = _batches.front();
+			_batches.pop_front();
+			
+			return batch;
+		}
+
+		return ParticleBatch();
+	};
 };
 

@@ -2,7 +2,7 @@
 
 struct VertexInputType
 {
-	float4 position : POSITION;
+	float3 position : POSITION;
 	float3 normal : NORMAL;
 	float2 tex : TEXCOORD;
 	float3 binormal : BINORMAL;
@@ -13,8 +13,8 @@ struct PixelInputType
 {
 	float4 position : SV_POSITION;
 	float3 normal : NORMAL;
-	float4 worldPos : TEXCOORD0;
-	float2 tex : TEXCOORD1;
+	float4 worldPos : WORLDPOS;
+	float2 tex : TEXCOORD;
 	float3 binormal : BINORMAL;
 	float3 tangent : TANGENT;
 };
@@ -32,11 +32,13 @@ PixelInputType Vshader(VertexInputType input)
 {
 	PixelInputType output;
 
-	input.position.w = 1.0f;
+	float4 pos = float4(input.position, 1.0f);
+	
+	pos.w = 1.0f;
 
 	matrix FinalworldMatrix = mul(cbuff_OBJSpecificMatrix, cbuff_worldMatrix);
 
-	output.position = mul(input.position, FinalworldMatrix);
+	output.position = mul(pos, FinalworldMatrix);
 	
 	output.worldPos = output.position;
 	
@@ -63,6 +65,7 @@ Texture2D mat_tex_pbr_emessive : register(t4);
 Texture2D mat_tex_pbr_roughness : register(t5);
 
 SamplerState SampleTypeWrap : register(s0);
+SamplerState SampleTypePoint : register(s1);
 
 PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 {

@@ -6,6 +6,7 @@
 #include "MeshRenderNode.h"
 #include "ShadowGenRenderNode.h"
 #include "SkyBoxRenderNode.h"
+#include "../../Particles/include/ParticleRenderNode.h"
 
 #include "../../../ResourceFramework/include/ResourceFactory.h"
 

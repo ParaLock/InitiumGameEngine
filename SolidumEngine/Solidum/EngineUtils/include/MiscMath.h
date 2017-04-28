@@ -7,8 +7,7 @@ T clip(const T& n, const T& lower, const T& upper) {
 }
 
 static int getRandomNumber() {
-	srand((unsigned)time(0));
-	int random_integer = rand();
+	int random_integer = rand() % 100;
 
 	return random_integer;
 }

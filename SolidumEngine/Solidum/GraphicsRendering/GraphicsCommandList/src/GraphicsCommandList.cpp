@@ -23,6 +23,7 @@ void GraphicsCommandList::loadCommands()
 
 	for each(auto unloadedCommand in _unloadedCommands) {
 		GraphicsCommand* command = commandPool->getResource(unloadedCommand._type);
+
 		command->load(unloadedCommand._initData);
 		_loadedCommands.push_back(command);
 	}

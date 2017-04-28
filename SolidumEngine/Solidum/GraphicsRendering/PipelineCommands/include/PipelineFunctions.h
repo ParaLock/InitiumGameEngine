@@ -26,6 +26,7 @@ public:
 	static std::function<void(RASTER_STATE)> pipeline_set_raster_state;
 
 	static std::function<void(int, int)> pipeline_drawIndexed;
+	static std::function<void(int, int)> pipeline_drawInstanced;
 
 	static std::function<void(float maxDepth, float minDepth, int width, int height)> pipeline_set_viewport;
 

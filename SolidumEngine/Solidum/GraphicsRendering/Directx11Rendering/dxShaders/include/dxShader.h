@@ -30,6 +30,8 @@ private:
 
 	std::function<void()> _shaderBindFunc;
 
+	bool _genInputLayout = false;
+
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 public:

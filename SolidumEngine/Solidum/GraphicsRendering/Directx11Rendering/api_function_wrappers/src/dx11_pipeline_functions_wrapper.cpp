@@ -61,6 +61,8 @@ void dx11_bind_shader_buffer(std::vector<void*> buffers, std::vector<UINT> buffS
 		ID3D11Buffer **_dxBuffers = new ID3D11Buffer*[buffers.size()];
 		UINT          *_buffStrides = new UINT[buffStrides.size()];
 
+		ZeroMemory(_buffStrides, sizeof(UINT) * buffStrides.size());
+
 		for (size_t i = 0; i < buffers.size(); i++) {
 
 			_dxBuffers[i] = (ID3D11Buffer*)buffers.at(i);
@@ -72,11 +74,11 @@ void dx11_bind_shader_buffer(std::vector<void*> buffers, std::vector<UINT> buffS
 		}
 
 
-		UINT offset = 0;
+		UINT offset[] = {0, 0, 0, 0, 0, 0, 0, 0};
 		UINT _numbuffers = buffers.size();
 
 		dxDeviceAccessor::dxEncapsulator->dxDevContext->
-			IASetVertexBuffers(0, _numbuffers, _dxBuffers, _buffStrides, &offset);
+			IASetVertexBuffers(0, _numbuffers, _dxBuffers, _buffStrides, offset);
 
 
 		delete _dxBuffers;
@@ -173,6 +175,14 @@ void dx11_set_raster_state(RASTER_STATE state)
 void dx11_pipeline_draw_indexed(int index, int numIndices)
 {
 	dxDeviceAccessor::dxEncapsulator->dxDevContext->DrawIndexed(numIndices, index, 0);
+}
+
+void dx11_pipeline_draw_instanced(int indexCountPerInstance, int instanceCount)
+{
+	UINT _indexCountPerInstance = indexCountPerInstance;
+	UINT _instanceCount = instanceCount;
+
+	dxDeviceAccessor::dxEncapsulator->dxDevContext->DrawIndexedInstanced(_indexCountPerInstance, _instanceCount, 0, 0, 0);
 }
 
 void dx11_pipeline_swapframe() {

@@ -129,7 +129,7 @@ void MeshRenderNode::render()
 
 			if (!_renderParams.getPerNodeParam_DepthTestEnableState()) {
 
-				_shader->getPipeline()->setBlendState(BLEND_STATE::PASS_BLENDING);
+				_shader->getPipeline()->setBlendState(BLEND_STATE::ALPHA_BLENDING);
 				_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_ENABLE);
 				_shader->getPipeline()->setRasterState(RASTER_STATE::DISABLE_TRIANGLE_CULL);
 

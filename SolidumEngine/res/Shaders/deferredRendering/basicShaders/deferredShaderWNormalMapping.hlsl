@@ -13,8 +13,8 @@ struct PixelInputType
 {
 	float4 position : SV_POSITION;
 	float3 normal : NORMAL;
-	float4 worldPos : TEXCOORD0;
-	float2 tex : TEXCOORD1;
+	float4 worldPos : WORLDPOS;
+	float2 tex : TEXCOORD;
 	float3 binormal : BINORMAL;
 	float3 tangent : TANGENT;
 };

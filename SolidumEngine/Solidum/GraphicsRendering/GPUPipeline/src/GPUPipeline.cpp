@@ -247,7 +247,7 @@ void GPUPipeline::load(std::shared_ptr<IResourceBuilder> builder)
 			if (splitStr.at(0) == "BLENDING") {
 				if (splitStr.at(1) == "enable") {
 
-					blendState = BLEND_STATE::LIGHT_BLENDING;
+					blendState = BLEND_STATE::ALPHA_BLENDING;
 				}
 				else {
 					blendState = BLEND_STATE::BLENDING_OFF;

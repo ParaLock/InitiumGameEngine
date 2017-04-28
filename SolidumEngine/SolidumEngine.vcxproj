@@ -19,10 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\GraphicsRendering\Particles\include\InsertionSort.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Particles\include\ParticlePool.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Particles\include\ParticleFactory.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Particles\include\ParticleStream.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Particles\include\Particle.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Particles\include\ParticleRenderNode.h" />
-    <ClInclude Include="Solidum\EntityFramework\Components\include\ParticleEmiterComponent.h" />
+    <ClInclude Include="Solidum\EntityFramework\Components\include\ParticleEmitterComponent.h" />
     <ClInclude Include="Solidum\PhysicsFramework\include\BoundingSphere.h" />
     <ClInclude Include="Solidum\GraphicsRendering\DepthStencil\include\DepthStencilManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDepthStencil\include\dxDepthStencil.h" />
@@ -131,10 +134,13 @@
     <ClInclude Include="Solidum\EntityFramework\Components\include\SunMoonLightingComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\GraphicsRendering\Particles\src\InsertionSort.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Particles\src\ParticlePool.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Particles\src\ParticleFactory.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Particles\src\ParticleStream.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Particles\src\Particle.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Particles\src\ParticleRenderNode.cpp" />
-    <ClCompile Include="Solidum\EntityFramework\Components\src\ParticleEmiterComponent.cpp" />
+    <ClCompile Include="Solidum\EntityFramework\Components\src\ParticleEmitterComponent.cpp" />
     <ClCompile Include="Solidum\PhysicsFramework\src\BoundingSphere.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\DepthStencil\src\DepthStencilManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDepthStencil\src\dxDepthStencil.cpp" />

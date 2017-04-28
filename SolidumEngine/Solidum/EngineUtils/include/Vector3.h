@@ -186,16 +186,10 @@ public:
 		return result;
 	};
 
-	//inline static Vector3<T> rotate(Quaternion<T>& rotation, Vector3<T>& angle) {
-
-	//	Quaternion<T> conjugateQ = Quaternion<T>::conjugate(rotation);
-
-	//	Quaternion<T> w = rotation * angle * conjugateQ;
-
-	//	Vector3<T> ret(w[0], w[1], w[2]);
-
-	//	return ret;
-	//}
+	inline static T distance_between(const Vector3<T>& vec1, const Vector3<T>& vec2) {
+		const Vector3<T> diff = vec1 - vec2;
+		return Vector3<T>::length(diff);
+	}
 
 	inline static Vector3<T> rotate(T angle, const Vector3<T>& axis, const Vector3<T>& vec) {
 

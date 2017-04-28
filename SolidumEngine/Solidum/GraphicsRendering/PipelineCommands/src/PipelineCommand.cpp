@@ -141,3 +141,8 @@ void PipelineSetViewportCommand::execute()
 	PipelineFunctions::pipeline_set_viewport(_viewport._maxDepth, 
 		_viewport._minDepth, _viewport._width, _viewport._height);
 }
+
+void PipelineDrawInstancedCommand::execute()
+{
+	PipelineFunctions::pipeline_drawInstanced(_numIndices, _numInstances);
+}

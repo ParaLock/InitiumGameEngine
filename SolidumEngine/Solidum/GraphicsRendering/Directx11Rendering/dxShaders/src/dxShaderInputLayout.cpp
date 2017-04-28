@@ -37,7 +37,7 @@ void * dxShaderInputLayout::getParameter(std::string varName)
 
 void dxShaderInputLayout::addInput(int type, std::string name, UINT index, BYTE mask)
 {
-	ShaderInputLayoutElement *newElement = new ShaderInputLayoutElement(name, type, index, mask);
+	ShaderInputLayoutElement *newElement = new ShaderInputLayoutElement(name, type, index, mask, false);
 
 	_inputLayoutElementList->push_back(newElement);
 }
@@ -49,13 +49,14 @@ void dxShaderInputLayout::generateInputLayout()
 
 	int elementCount = 0;
 
+	_dataStride = 0;
+	_numInstanceElements = 0;
+
 	std::string inputElements = "";
 	
 	std::string elementName = "";
 
 	inputLayoutDesc = new D3D11_INPUT_ELEMENT_DESC[_inputLayoutElementList->size()];
-
-	int debugref = -1;
 
 	for (int i = 0; i < _inputLayoutElementList->size(); i++)
 	{
@@ -73,7 +74,7 @@ void dxShaderInputLayout::generateInputLayout()
 		D3D_REGISTER_COMPONENT_TYPE elementType = static_cast<D3D_REGISTER_COMPONENT_TYPE>(element->_type);
 
 		inputLayoutDesc[elementCount].SemanticName = element->_semantic.c_str();
-		inputLayoutDesc[elementCount].SemanticIndex = element->_index;
+		inputLayoutDesc[elementCount].SemanticIndex = 0;
 
 		inputLayoutDesc[elementCount].InputSlot = 0;
 		inputLayoutDesc[elementCount].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
@@ -101,29 +102,37 @@ void dxShaderInputLayout::generateInputLayout()
 		}
 		else if (element->_mask <= 15)
 		{
-			if (elementType == D3D_REGISTER_COMPONENT_UINT32) { elementFormat = DXGI_FORMAT_R32G32B32_UINT; _dataStride += sizeof(UINT[3]); }
-			else if (elementType == D3D_REGISTER_COMPONENT_SINT32) { elementFormat = DXGI_FORMAT_R32G32B32_SINT; _dataStride += sizeof(INT[3]); }
-			else if (elementType == D3D_REGISTER_COMPONENT_FLOAT32) { elementFormat = DXGI_FORMAT_R32G32B32_FLOAT; _dataStride += sizeof(FLOAT[3]); }
+			if (elementType == D3D_REGISTER_COMPONENT_UINT32) { elementFormat = DXGI_FORMAT_R32G32B32A32_UINT; _dataStride += sizeof(UINT[4]); }
+			else if (elementType == D3D_REGISTER_COMPONENT_SINT32) { elementFormat = DXGI_FORMAT_R32G32B32A32_SINT; _dataStride += sizeof(INT[4]); }
+			else if (elementType == D3D_REGISTER_COMPONENT_FLOAT32) { elementFormat = DXGI_FORMAT_R32G32B32A32_FLOAT; _dataStride += sizeof(FLOAT[4]); }
 		}
 
 		inputLayoutDesc[elementCount].Format = elementFormat;
 
-		std::random_shuffle(elementName.begin(), elementName.end());
-
-		inputElements += "float"; 
-		inputElements = inputElements + ' ' + elementName + " : " + element->_semantic + "; ";
-
 		switch (element->_class) {
 			case INPUT_LAYOUT_ELEMENT_CLASS::PER_INSTANCE_DATA:
+				inputLayoutDesc[elementCount].InputSlot = 1;
 				inputLayoutDesc[elementCount].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
 				inputLayoutDesc[elementCount].InstanceDataStepRate = 1;
-				inputLayoutDesc[elementCount].AlignedByteOffset = 0;
-				break;
-			case INPUT_LAYOUT_ELEMENT_CLASS::PER_VERTEX_DATA:
-				inputLayoutDesc[elementCount].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-				inputLayoutDesc[elementCount].InstanceDataStepRate = 0;
+				if (!element->_hardCodedIndex) {
+
+					inputLayoutDesc[elementCount].SemanticIndex = _numInstanceElements + 1;
+					
+					if (_numInstanceElements == 0) { inputLayoutDesc[elementCount].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT; }
+					else { inputLayoutDesc[elementCount].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT; };
+
+					_numInstanceElements++;			
+				}
+				
 				break;
 		}
+
+
+		std::random_shuffle(elementName.begin(), elementName.end());
+
+		inputElements += "float";
+		inputElements = inputElements + ' ' + elementName + " : " + element->_semantic + std::to_string(inputLayoutDesc[elementCount].SemanticIndex) + "; ";
+
 
 		elementCount++;
 	}
@@ -186,4 +195,6 @@ void dxShaderInputLayout::generateInputLayout()
 	ILCreateResult = dxDeviceAccessor::dxEncapsulator->dxDev->
 		CreateInputLayout(inputLayoutDesc, elementCount, vertexShaderCode->GetBufferPointer(),
 			vertexShaderCode->GetBufferSize(), &_inputLayout);
+
+	int debug = -1;
 }

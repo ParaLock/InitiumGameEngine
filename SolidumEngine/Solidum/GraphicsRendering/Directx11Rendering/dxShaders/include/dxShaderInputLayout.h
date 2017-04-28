@@ -8,8 +8,9 @@ class IResourceBuilder;
 class dxShaderInputLayout : public ShaderInputLayout
 {
 private:
-	ID3D11InputLayout* _inputLayout;
-	D3D11_INPUT_ELEMENT_DESC *inputLayoutDesc;
+	ID3D11InputLayout* _inputLayout = nullptr;
+	D3D11_INPUT_ELEMENT_DESC *inputLayoutDesc = nullptr;
+	int _numInstanceElements = 0;
 public:
 	dxShaderInputLayout();
 	~dxShaderInputLayout();

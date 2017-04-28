@@ -14,6 +14,7 @@
 #include "Solidum\EntityFramework\Components\include\SkydomeWeatherComponent.h"
 #include "Solidum\EntityFramework\Components\include\OrbitComponent.h"
 #include "Solidum\EntityFramework\Components\include\SunMoonLightingComponent.h"
+#include "Solidum\EntityFramework\Components\include\ParticleEmitterComponent.h"
 #include "Solidum\GraphicsRendering\RenderNode\include\ShadowGenRenderNode.h"
 
 #include "Solidum\InputHandling\include\InputHandler.h"
@@ -27,6 +28,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	LPSTR lpCmdLine,
 	int nCmdShow)
 {
+	srand((unsigned)time(NULL));
 
 	AllocConsole();
 
@@ -74,6 +76,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	GPUPipeline* skyRenderingPipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(std::make_shared<GPUPipeline::InitData>
 		(L"./res/Pipelines/deferredRendering/basicShaders/skyPipeline.solPipe"), "sky_pipeline_state", false)->getCore<GPUPipeline>();
+
+	GPUPipeline* particlePipeline = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(std::make_shared<GPUPipeline::InitData>
+		(L"./res/Pipelines/deferredRendering/basicShaders/ParticleRenderPipeline.solPipe"), "particle_pipeline_state", false)->getCore<GPUPipeline>();
+
 
 	//GPUPipeline* forwardRenderingEndscenePipelineState = resManagerPool->getResourceManager("GPUPipelineManager")->createResource(&GPUPipelineBuilder
 	//	(L"./res/Pipelines/forwardRendering/basicShaders/endScene_pipeline.solPipe", GraphicsCore::getInstance()->getPipelineCommandQueue()), "endscene_pipeline_state", false)->getCore<GPUPipeline>();
@@ -126,23 +132,32 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Texture* skydomeCubeMap = resManagerPool->getResourceManager("TextureManager")->createResource(std::make_shared<Texture::InitData>
 		(L"./res/Textures/cubemaps/sunsetcube1024.dds"), "cube_map", false)->getCore<Texture>();
 
+	Texture* fireTexture = resManagerPool->getResourceManager("TextureManager")->createResource(std::make_shared<Texture::InitData>
+		(L"./res/Textures/diffuse/particleAtlas.png"), "fire_tex", false)->getCore<Texture>();
+
+
 	Shader* deferredRenderingShaderWNormalMapping = resManagerPool->getResourceManager("ShaderManager")->createResource(std::make_shared<Shader::InitData>
-		(L"./res/Shaders/deferredRendering/basicShaders/deferredShaderWNormalMapping.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING), "deferred_geometry_shader_normal_mapping", false)->getCore<Shader>();
+		(L"./res/Shaders/deferredRendering/basicShaders/deferredShaderWNormalMapping.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING, true), "deferred_geometry_shader_normal_mapping", false)->getCore<Shader>();
 
 	Shader* deferredRenderingShader = resManagerPool->getResourceManager("ShaderManager")->createResource(std::make_shared<Shader::InitData>
-		(L"./res/Shaders/deferredRendering/basicShaders/deferredShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING), "deferred_geometry_shader", false)->getCore<Shader>();
+		(L"./res/Shaders/deferredRendering/basicShaders/deferredShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING, true), "deferred_geometry_shader", false)->getCore<Shader>();
 
 	Shader* deferredRenderingDirectionalLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(std::make_shared<Shader::InitData>
-		(L"./res/Shaders/deferredRendering/basicShaders/directionalLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "directional_light_shader", false)->getCore<Shader>();
+		(L"./res/Shaders/deferredRendering/basicShaders/directionalLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT, true), "directional_light_shader", false)->getCore<Shader>();
 
 	Shader* deferredRenderingPointLightShader = resManagerPool->getResourceManager("ShaderManager")->createResource(std::make_shared<Shader::InitData>
-		(L"./res/Shaders/deferredRendering/basicShaders/pointLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT), "point_light_shader", false)->getCore<Shader>();
+		(L"./res/Shaders/deferredRendering/basicShaders/pointLightShader.hlsl", SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT, true), "point_light_shader", false)->getCore<Shader>();
 
 	Shader* skydomeShader = resManagerPool->getResourceManager("ShaderManager")->createResource(std::make_shared<Shader::InitData>
-		(L"./res/Shaders/deferredRendering/basicShaders/skyShader.hlsl", SHADER_RENDER_TYPE::SKYBOX_RENDERING), "sky_shader", false)->getCore<Shader>();
+		(L"./res/Shaders/deferredRendering/basicShaders/skyShader.hlsl", SHADER_RENDER_TYPE::SKYBOX_RENDERING, true), "sky_shader", false)->getCore<Shader>();
 
 	Shader* shadowMapGenShader = resManagerPool->getResourceManager("ShaderManager")->createResource(std::make_shared<Shader::InitData>
-		(L"./res/Shaders/deferredRendering/basicShaders/deferredDepthMapGenShader.hlsl", SHADER_RENDER_TYPE::SHADOW_MAP_RENDERING), "shadow_map_gen_shader", false)->getCore<Shader>();
+		(L"./res/Shaders/deferredRendering/basicShaders/deferredDepthMapGenShader.hlsl", SHADER_RENDER_TYPE::SHADOW_MAP_RENDERING, true), "shadow_map_gen_shader", false)->getCore<Shader>();
+
+	Shader* particleShader = resManagerPool->getResourceManager("ShaderManager")->createResource(std::make_shared<Shader::InitData>
+		(L"./res/Shaders/deferredRendering/basicShaders/particleShader.hlsl", SHADER_RENDER_TYPE::PARTICLE_RENDERING, false), "particle_shader", false)->getCore<Shader>();
+
+	particleShader->attachPipeline(particlePipeline);
 
 	solidum->getGraphicsSubsystem()->registerDefaultShader(DEFAULT_SHADER_TYPE::DEFAULT_MESH, deferredRenderingShader);
 	solidum->getGraphicsSubsystem()->registerDefaultShader(DEFAULT_SHADER_TYPE::DEFAULT_LIGHT, deferredRenderingPointLightShader);
@@ -247,7 +262,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Entity* sun = new Entity();
 	sun->addComponent(new LightComponent(sunLight, 0, sun));
 
-
 	Entity* pointLight1Entity = new Entity();
 
 	pointLight1Entity->addComponent(new MoveComponent(Vector3f(4.0f, 0.01f, -1.8f), 0.5, false, moveKeyConfig2, pointLight1Entity));
@@ -298,10 +312,18 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	tree->addNode(shadowGenNode, shadowGenNode->getID());
 
+	Entity* particleEmitter1Entity = new Entity();
+	particleEmitter1Entity->addComponent(new MoveComponent(Vector3f(0, 8.0f, 0), 0.5, true, moveKeyConfig1, particleEmitter1Entity));
+
+	particleEmitter1Entity->addComponent(new ParticleEmitterComponent(500, 4.5, -0.5, 3, 10000, 4, particleShader, fireTexture,
+		(CameraComponent*)camera->getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0), 
+		particleEmitter1Entity));
+
 	//hammer->addChild(pointLight1Entity);
 
 	world->addPrimaryCamera(camera, 0000);
 	
+	world->addEntity(particleEmitter1Entity, 5964);
 	world->addEntity(sun, 3333);
 	world->addEntity(pointLight2Entity, 0001);
 	world->addEntity(pointLight3Entity, 0010);

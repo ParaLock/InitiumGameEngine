@@ -76,16 +76,6 @@ void LightRenderNode::render()
 			//Hooks must be set in immediate context
 			_shader->setMesh(_orthoMesh);
 
-			float left, right, top, bottom;
-
-			float screen_width = window::getInstance()->screen_width;
-			float screen_height = window::getInstance()->screen_height;
-
-			left = (float)((screen_width / 2) * -1);
-			right = left + (float)screen_width;
-			top = (float)(screen_height / 2);
-			bottom = top - (float)screen_height;
-
 			static Matrix4f LprojectionMatrix = Matrix4f::transpose(light->getProjectionMatrix());
 			static Matrix4f LviewMatrix = Matrix4f::transpose(light->getViewMatrix());
 
@@ -101,6 +91,8 @@ void LightRenderNode::render()
 			t[1][1] = 0.5f, t[2][2] = -0.5f, t[3][3] = 1.0f, t[4][1] = 0.5f, t[4][2] = 0.5f, t[4][4] = 1.0f;
 
 			static Matrix4f lightSpaceMatrix = LviewMatrix * LprojectionMatrix;
+
+			_shader->getPipeline()->setBlendState(BLEND_STATE::ADDITIVE_BLENDING);
 
 			commandList->createCommand(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
 				(_renderParams.getGlobalParam_GlobalRenderingCamera(), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);

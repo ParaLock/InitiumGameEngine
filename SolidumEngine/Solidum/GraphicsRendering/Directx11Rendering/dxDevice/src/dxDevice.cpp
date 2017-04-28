@@ -227,42 +227,33 @@ void dxDevice::InitializeBlendStates()
 {
 	HRESULT result;
 
-	D3D11_BLEND_DESC lightBlendStateDesc;
-	ZeroMemory(&lightBlendStateDesc, sizeof(D3D11_BLEND_DESC));
+	D3D11_BLEND_DESC alphaBlendDesc;
+	ZeroMemory(&alphaBlendDesc, sizeof(D3D11_BLEND_DESC));
 	
-	lightBlendStateDesc.RenderTarget[0].BlendEnable = TRUE;
-	lightBlendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	lightBlendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	lightBlendStateDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	lightBlendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-	lightBlendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-	lightBlendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	lightBlendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	alphaBlendDesc.RenderTarget[0].BlendEnable = TRUE;
+	alphaBlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	alphaBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	alphaBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	alphaBlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	alphaBlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	alphaBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	alphaBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 
-	result = dxDev->CreateBlendState(&lightBlendStateDesc, &lightBlendState);
+	result = dxDev->CreateBlendState(&alphaBlendDesc, &alphaBlending);
 
-	D3D11_BLEND_DESC passBlendStateDesc;
-	ZeroMemory(&passBlendStateDesc, sizeof(D3D11_BLEND_DESC));
+	D3D11_BLEND_DESC additiveBlendingDesc;
+	ZeroMemory(&additiveBlendingDesc, sizeof(D3D11_BLEND_DESC));
 
-	passBlendStateDesc.RenderTarget[0].BlendEnable = TRUE;
-	passBlendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	passBlendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	passBlendStateDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	passBlendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-	passBlendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-	passBlendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	passBlendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	additiveBlendingDesc.RenderTarget[0].BlendEnable = TRUE;
+	additiveBlendingDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	additiveBlendingDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	additiveBlendingDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	additiveBlendingDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	additiveBlendingDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	additiveBlendingDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	additiveBlendingDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 
-	passBlendStateDesc.RenderTarget[3].BlendEnable = TRUE;
-	passBlendStateDesc.RenderTarget[3].BlendOp = D3D11_BLEND_OP_ADD;
-	passBlendStateDesc.RenderTarget[3].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	passBlendStateDesc.RenderTarget[3].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	passBlendStateDesc.RenderTarget[3].SrcBlend = D3D11_BLEND_ONE;
-	passBlendStateDesc.RenderTarget[3].DestBlend = D3D11_BLEND_ONE;
-	passBlendStateDesc.RenderTarget[3].SrcBlendAlpha = D3D11_BLEND_ONE;
-	passBlendStateDesc.RenderTarget[3].DestBlendAlpha = D3D11_BLEND_ONE;
-
-	result = dxDev->CreateBlendState(&passBlendStateDesc, &passBlendState);
+	result = dxDev->CreateBlendState(&additiveBlendingDesc, &additiveBlending);
 
 	D3D11_BLEND_DESC BlendDisableDesc;
 	ZeroMemory(&BlendDisableDesc, sizeof(D3D11_BLEND_DESC));
@@ -329,11 +320,11 @@ void dxDevice::setBlendState(BLEND_STATE state)
 	case BLEND_STATE::BLENDING_OFF:
 		dxDevContext->OMSetBlendState(blendDisable, 0, 0xffffffff);
 		break;
-	case BLEND_STATE::LIGHT_BLENDING:
-		dxDevContext->OMSetBlendState(lightBlendState, 0, 0xffffffff);
+	case BLEND_STATE::ALPHA_BLENDING:
+		dxDevContext->OMSetBlendState(alphaBlending, 0, 0xffffffff);
 		break;
-	case BLEND_STATE::PASS_BLENDING:
-		dxDevContext->OMSetBlendState(passBlendState, 0, 0xffffffff);
+	case BLEND_STATE::ADDITIVE_BLENDING:
+		dxDevContext->OMSetBlendState(additiveBlending, 0, 0xffffffff);
 		break;
 	default:
 		break;

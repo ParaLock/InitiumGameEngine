@@ -2,7 +2,7 @@
 
 struct VertexInputType
 {
-    float4 position : POSITION;
+    float3 position : POSITION;
 	float3 normal : NORMAL;
 	float2 tex : TEXCOORD;
 	float3 binormal : BINORMAL;
@@ -12,7 +12,7 @@ struct VertexInputType
 struct PixelInputType
 {
     float4 position : SV_POSITION;
-    float4 depthPosition : TEXTURE0;
+    float4 depthPosition : TEXTURE;
 };
 
 struct PixelOutputType
@@ -24,11 +24,15 @@ PixelInputType Vshader(VertexInputType input)
 {
     PixelInputType output;
     
-    input.position.w = 1.0f;
+   //input.position.w = 1.0f;
 	
 	matrix WMMatrix = mul(cbuff_OBJSpecificMatrix, cbuff_worldMatrix);
 	
-	output.position = mul(input.position, WMMatrix);
+	float4 pos = float4(input.position, 1.0f);
+	
+	pos.w = 1.0f;
+	
+	output.position = mul(pos, WMMatrix);
 	output.position = mul(output.position, cbuff_lightDepthView);
 	output.position = mul(output.position, cbuff_lightDepthProjection);
 	

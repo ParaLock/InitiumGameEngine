@@ -19,6 +19,8 @@ void dxShader::load(std::shared_ptr<IResourceBuilder> builder)
 
 	_renderType = realBuilder->_renderType;
 
+	_genInputLayout = realBuilder->_genInputLayout;
+
 	ID3DBlob* errorBlob = nullptr;
 	HRESULT result;
 
@@ -135,8 +137,9 @@ void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode
 			pReflector->GetInputParameterDesc(i, &input_desc);
 			newLayout->getCore<dxShaderInputLayout>()->addInput(input_desc.ComponentType, input_desc.SemanticName, input_desc.SemanticIndex, input_desc.Mask);
 		}
-
-		newLayout->getCore<dxShaderInputLayout>()->generateInputLayout();
+		
+		if(_genInputLayout)
+			newLayout->getCore<dxShaderInputLayout>()->generateInputLayout();
 
 		if (shaderType == SHADER_TYPE::VERTEX_SHADER) {
 

@@ -47,14 +47,14 @@ public:
 		{
 			for (unsigned int j = 0; j < 4; j++)
 			{
-				if (i == j && i != 4 - 1)
+				if (i == j && i != 3)
 					result[i][j] = r[i];
 				else
 					result[i][j] = T(0);
 			}
 		}
 
-		result[4 - 1][4 - 1] = T(1);
+		result[3][3] = T(1);
 
 		return result;
 	}
@@ -97,6 +97,18 @@ public:
 
 		return _result;
 	}
+
+	inline static Matrix4x4<T> get_rotationY(float angle) {
+		Matrix4x4<T> _result = Matrix4x4<T>::get_identity();
+
+		_result[1][1] = cos(angle);
+		_result[2][2] = cos(angle);
+		_result[1][2] = -sin(angle);
+		_result[2][1] = sin(angle);
+
+		return _result;
+	}
+
 
 	inline static Matrix4x4<T> get_translation(const Vector3<T>& r)
 	{
@@ -160,27 +172,31 @@ public:
 		return ret;
 	}
 
-	inline static Matrix4x4<T> rotation_from_vectors(const Vector3<T>& n, const Vector3<T>& v, const Vector3<T>& u)
+	inline static Matrix4x4<T> rotate(Vector3<T> forward, Vector3<T> up, Matrix4x4<T> mat)
 	{
-		Matrix4x4<T> mat;
+		Vector3<T> f = Vector3<T>::normalize(forward);
 
-		mat[0][0] = u[0];   mat[1][0] = u[1];   mat[2][0] = u[2];   mat[3][0] = T(0);
-		mat[0][1] = v[0];   mat[1][1] = v[1];   mat[2][1] = v[2];   mat[3][1] = T(0);
-		mat[0][2] = n[0];   mat[1][2] = n[1];   mat[2][2] = n[2];   mat[3][2] = T(0);
-		mat[0][3] = T(0);   mat[1][3] = T(0);   mat[2][3] = T(0);   mat[3][3] = T(1);
+		Vector3<T> r = Vector3<T>::normalize(up);
+
+		r = Vector3<T>::cross_product(r, f);
+
+		Vector3f u = Vector3<T>::cross_product(f, r);
+
+		return rotate(f, u, r, mat);
+	}
+
+	inline static Matrix4x4<T> rotate(Vector3<T> forward, Vector3<T> up, Vector3<T> right, Matrix4x4<T> mat)
+	{
+		Vector3<T> f = forward;
+		Vector3<T> r = right;
+		Vector3<T> u = up;
+
+		mat[0][0] = r[0];	mat[0][1] = r[1];	mat[0][2] = r[2];
+		mat[1][0] = u[0];	mat[1][1] = u[1];	mat[1][2] = u[2];	
+		mat[2][0] = f[0];	mat[2][1] = f[1];	mat[2][2] = f[2];
 
 		return mat;
 	}
-
-	inline static Matrix4x4<T> rotation_from_direction(const Vector3<T>& forward, const Vector3<T>& up, const Matrix4x4<T>& mat)
-	{
-		Vector3<T> n = Vector3<T>::normalize(forward);
-		Vector3<T> u = Vector3<T>(Vector3<T>::cross_product(Vector3<T>::normalize(up), n));
-		Vector3<T> v = Vector3<T>::cross_product(n, u);
-
-		return Vector3<T>::init_rotation_from_vectors(n, v, u, mat);
-	}
-
 
 	inline static Matrix4x4<T> get_perspectiveLH(T fov, T aspectRatio, T zNear, T zFar)
 	{

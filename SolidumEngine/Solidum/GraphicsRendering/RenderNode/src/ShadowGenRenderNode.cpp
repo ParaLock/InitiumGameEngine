@@ -15,6 +15,7 @@ void ShadowGenRenderNode::load(std::shared_ptr<IResourceBuilder> builder)
 {
 	InitData* realBuilder = static_cast<InitData*>(builder.get());
 
+
 	_shader = realBuilder->_shader;
 	_id = realBuilder->_id;
 

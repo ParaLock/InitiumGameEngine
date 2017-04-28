@@ -31,6 +31,9 @@ RenderNode * RenderNodeFactory::createObject(RENDER_NODE_TYPE type)
 		break;
 	case RENDER_NODE_TYPE::POST_FX_RENDER_NODE:
 		break;
+	case RENDER_NODE_TYPE::PARTICLE_EMITTER_RENDER_NODE:
+		renderNode = new ParticleRenderNode();	
+		break;
 	default:
 		renderNode = nullptr;
 		break;

@@ -10,7 +10,3 @@ ParticleStream::ParticleStream()
 ParticleStream::~ParticleStream()
 {
 }
-
-bool ParticleStream::isEmpty() {
-	return true;
-}

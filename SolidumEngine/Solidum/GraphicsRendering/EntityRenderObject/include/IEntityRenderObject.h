@@ -20,7 +20,7 @@ public:
 	virtual void addStaticGeometry(mesh* model, int meshIndex) = 0;
 	virtual void addAnimatedMesh(mesh* animation, int animationMeshIndex) = 0;
 
-	virtual void addGenericRenderNode(RenderNode* renderNode, RENDER_NODE_TYPE type, int genericNodeIndex) = 0;
+	virtual void addGenericRenderNode(RenderNode* renderNode, int genericNodeIndex) = 0;
 
 	virtual RenderParams* updateRenderNodeParams(RENDER_NODE_TYPE objtype, int index) = 0;
 };

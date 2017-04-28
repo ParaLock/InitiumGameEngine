@@ -31,9 +31,13 @@
 #include "../../RenderNode/include/RenderNodePool.h"
 #include "../../GraphicsCommand/include/GraphicsCommandPool.h"
 
+#include "../../Particles/include/ParticlePool.h"
+#include "../../Particles/include/ParticleFactory.h"
+
 #include "IGraphicsCore.h"
 
 class RenderNodeFactory;
+class ParticlePool;
 class BoundingSphere;
 
 class GraphicsCore : public IEventListener, public IGraphicsCore
@@ -57,6 +61,9 @@ private:
 
 	GraphicsCommandFactory* _graphicsCommandFactory;
 	GraphicsCommandPool* _graphicsCommandPool;
+
+	ParticleFactory* _particleFactory;
+	ParticlePool* _particlePool;
 
 public:
 	GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool);
@@ -82,6 +89,8 @@ public:
 
 	GraphicsCommandPool* getGraphicsCommandPool() { return _graphicsCommandPool; };
 	GraphicsCommandFactory* getGraphicsCommandFactory() { return _graphicsCommandFactory; }
+
+	ParticlePool* getParticlePool() { return _particlePool; }
 
 	void setWorldBoundingSphere(BoundingSphere* boundingSphere) { _globalRenderingParameters._worldBoundingSphere = boundingSphere; }
 

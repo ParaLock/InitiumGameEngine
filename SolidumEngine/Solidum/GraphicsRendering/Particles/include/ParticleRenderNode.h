@@ -11,24 +11,30 @@
 #include "../../../ResourceFramework/include/IResourceBuilder.h"
 
 struct ParticleEmitterRenderNodeParams : public UniqueRenderParams {
+
+	int _maxParticles = 0;
+
 	IShader* _particleRenderShader = nullptr;
 	ParticleStream* _particles = nullptr;
-
 	GPUBuffer* _particleInstanceBuffer = nullptr;
-
-	std::map<ParticleShape, mesh*> _particleMeshCache;
 };
 
 class ParticleRenderNode : public RenderNode
 {
 private:
+	struct ParticleInstanceData {
+		
+		Vector2f _texOffset1;
+		Vector2f _texOffset2;
+		Vector2f _texCoordInfo;
+		Matrix4f _mvMatrix;
+
+	};
+
+	ParticleInstanceData* _particleDataCPUBuffer;
 public:
 	ParticleRenderNode();
 	~ParticleRenderNode();
-
-	struct ParticleInstanceData {
-		Vector3f _position;
-	};
 
 	struct InitData : public IResourceBuilder {
 		IShader* _shader;
@@ -49,6 +55,8 @@ public:
 	void* getParameter(std::string varName) { return nullptr; };
 
 	bool isRenderViable();
+
+	Matrix4f createParticleMVMatrix(Vector3f pos, float rotation, float scale);
 
 	void render();
 };

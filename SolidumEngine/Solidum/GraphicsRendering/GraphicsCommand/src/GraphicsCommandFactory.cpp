@@ -77,6 +77,9 @@ GraphicsCommand * GraphicsCommandFactory::createObject(GRAPHICS_COMMAND_TYPE typ
 	case GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SHADERS:
 		command = new PipelineBindShaderCommand();
 		break;
+	case GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INSTANCED:
+		command = new PipelineDrawInstancedCommand();
+		break;
 	case GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INDEXED:
 		command = new PipelineDrawIndexedCommand();
 		break;

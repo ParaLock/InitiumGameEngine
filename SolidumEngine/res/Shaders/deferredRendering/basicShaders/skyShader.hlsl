@@ -13,8 +13,8 @@ struct PixelInputType
 {
 	float4 PosH : SV_POSITION;
     float3 PosL : POSITION;
-	float4 apexColor : TEXCOORD0;
-	float4 centerColor : TEXCOORD1;
+	float4 apexColor : APEX_COLOR;
+	float4 centerColor : CENTER_COLOR;
 };
 
 struct PixelOutputType

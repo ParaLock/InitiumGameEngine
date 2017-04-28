@@ -9,6 +9,7 @@ class GPUPipeline;
 class RenderNodePool;
 class GraphicsCommandPool;
 class GraphicsCommandFactory;
+class ParticlePool;
 class World;
 
 class IGraphicsCore
@@ -37,6 +38,8 @@ public:
 
 	virtual GraphicsCommandPool* getGraphicsCommandPool() = 0;
 	virtual GraphicsCommandFactory* getGraphicsCommandFactory() = 0;
+
+	virtual ParticlePool* getParticlePool() = 0;
 
 	static IGraphicsCore* singletonInstance;
 	static IGraphicsCore* getInstance();

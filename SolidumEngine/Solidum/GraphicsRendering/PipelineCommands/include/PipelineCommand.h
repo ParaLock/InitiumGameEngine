@@ -406,6 +406,36 @@ public:
 
 };
 
+class PipelineDrawInstancedCommand : public PipelineCommand {
+private:
+	int _numInstances;
+	int _numIndices;
+public:
+	PipelineDrawInstancedCommand() { _type = GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INSTANCED; }
+
+	struct InitData : public IResourceBuilder {
+		int _numIndices;
+		int _numInstances;
+
+		InitData(int numIndices, int numInstances) {
+
+			_numIndices = numIndices;
+			_numInstances = numInstances;
+		}
+	};
+
+	void load(std::shared_ptr<IResourceBuilder> builder) {
+		InitData* realBuilder = static_cast<InitData*>(builder.get());
+
+		_numInstances = realBuilder->_numInstances;
+		_numIndices = realBuilder->_numIndices;
+	}
+
+	void execute();
+
+};
+
+
 class PipelineStateResetCommand : public PipelineCommand {
 private:
 public:

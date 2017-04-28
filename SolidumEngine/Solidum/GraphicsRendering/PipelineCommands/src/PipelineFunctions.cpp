@@ -27,6 +27,7 @@ std::function<void(BLEND_STATE)> PipelineFunctions::pipeline_set_blend_state;
 std::function<void(RASTER_STATE)> PipelineFunctions::pipeline_set_raster_state;
 
 std::function<void(int,int)> PipelineFunctions::pipeline_drawIndexed;
+std::function<void(int, int)> PipelineFunctions::pipeline_drawInstanced;
 
 std::function<void()> PipelineFunctions::pipeline_reset;
 

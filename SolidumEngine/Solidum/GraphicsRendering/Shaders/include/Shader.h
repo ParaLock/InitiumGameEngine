@@ -36,10 +36,12 @@ public:
 
 		LPCWSTR _filename;
 		SHADER_RENDER_TYPE _renderType = SHADER_RENDER_TYPE::INVALID;
+		bool _genInputLayout = false;
 
-		InitData(LPCWSTR filename, SHADER_RENDER_TYPE renderType) {
+		InitData(LPCWSTR filename, SHADER_RENDER_TYPE renderType, bool genInputLayout) {
 			_filename = filename;
 			_renderType = renderType;
+			_genInputLayout = genInputLayout;
 		};
 	};
 

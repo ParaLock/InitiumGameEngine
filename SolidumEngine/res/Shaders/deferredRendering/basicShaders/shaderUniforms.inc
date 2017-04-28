@@ -1,6 +1,7 @@
 
 cbuffer MatrixBuffer
 {
+	matrix cbuff_OBJSpecificMatrix;
 	float3 cbuff_eyePos;
 	float padding;
 	matrix cbuff_worldMatrix;
@@ -8,7 +9,6 @@ cbuffer MatrixBuffer
 	matrix cbuff_camViewStart;
 	matrix cbuff_projectionMatrix;
 	matrix cbuff_orthoProjection;
-	matrix cbuff_OBJSpecificMatrix;
 	
 	float4x4 cbuff_skydomeWorldViewProj;
 	

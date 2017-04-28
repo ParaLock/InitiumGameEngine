@@ -23,7 +23,7 @@ public:
 	void addStaticGeometry(mesh* model, int meshIndex);
 	void addAnimatedMesh(mesh* animation, int animationMeshIndex);
 
-	void addGenericRenderNode(RenderNode* renderNode, RENDER_NODE_TYPE type, int genericNodeIndex);
+	void addGenericRenderNode(RenderNode* renderNode, int genericNodeIndex);
 
 	RenderParams* updateRenderNodeParams(RENDER_NODE_TYPE objtype, int index);
 };

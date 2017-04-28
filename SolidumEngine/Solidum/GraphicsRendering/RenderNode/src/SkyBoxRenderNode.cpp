@@ -22,6 +22,8 @@ void SkyBoxRenderNode::load(std::shared_ptr<IResourceBuilder> builder)
 	_skydomeApexColor = realBuilder->_apexColor;
 	_skydomeCenterColor = realBuilder->_centerColor;
 
+	_type = RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE;
+
 	isLoaded = true;
 }
 

@@ -59,8 +59,6 @@ public:
 	SkydomeWeatherComponent(IShader* shader, Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, int index, IEntity* entity);
 	~SkydomeWeatherComponent();
 
-	void init();
-
 	void update(float delta);
 
 	void onEvent(EVENT_PTR evt);

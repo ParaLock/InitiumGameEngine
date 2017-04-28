@@ -5,12 +5,15 @@
 
 class ShaderInputLayoutElement {
 public:
-	ShaderInputLayoutElement(std::string semantic, int type, UINT index, BYTE mask) {
+	ShaderInputLayoutElement(std::string semantic, int type, UINT index, BYTE mask, bool hardCodedIndex) {
 		_semantic = semantic;
 		_type = type;
 		_index = index;
 		_mask = mask;
+		_hardCodedIndex = hardCodedIndex;
 	}
+
+	bool _hardCodedIndex;
 
 	UINT _index;
 	std::string _semantic;

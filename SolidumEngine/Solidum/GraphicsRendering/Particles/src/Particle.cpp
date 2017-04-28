@@ -4,6 +4,7 @@
 
 Particle::Particle()
 {
+	_type = PARTICLE_TYPE::STANDARD;
 }
 
 

@@ -67,6 +67,8 @@ public:
 
 		IResource* resource = (IResource*)res;
 
+		resource->unload();
+
 		PerTypePool* properPool;
 
 		int typeIndex = (int)res->getType();

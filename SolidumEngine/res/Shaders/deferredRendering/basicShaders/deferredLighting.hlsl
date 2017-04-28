@@ -2,15 +2,15 @@
 
 struct VertexInputType
 {
-	float4 position : POSITION;
+	float3 position : POSITION;
 	float2 tex : TEXCOORD;
 };
 
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
-	float2 tex : TEXCOORD0;
-	float3 viewPos : TEXCOORD1;
+	float2 tex : TEXCOORD;
+	float3 viewPos : VIEWPOS;
 };
 
 Texture2D colorTexture : register(t0);
@@ -96,9 +96,11 @@ PixelInputType Vshader(VertexInputType input)
 	
 	output.viewPos = cbuff_eyePos.xyz - worldPos.xyz;
 	
-	input.position.w = 1.0f;
+	float4 pos = float4(input.position, 1.0f);
 	
-	output.position = mul(input.position, cbuff_worldMatrix);
+	pos.w = 1.0f;
+	
+	output.position = mul(pos, cbuff_worldMatrix);
 	output.position = mul(output.position, cbuff_camViewStart);
 	output.position = mul(output.position, cbuff_orthoProjection);
 
