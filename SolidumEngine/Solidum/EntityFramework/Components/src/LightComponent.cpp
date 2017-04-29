@@ -8,8 +8,6 @@ LightComponent::LightComponent(Light* light, int index, IEntity* entity)
 
 	_index = index;
 
-	_parentTransformDirty = true;
-
 	_light = light;
 
 	_parent = entity;
@@ -24,13 +22,9 @@ LightComponent::~LightComponent()
 
 void LightComponent::update(float delta)
 {
-	if (_parentTransformDirty) {
-
-		_parentTransformDirty = false; 
-		_parent->getTransform()->setPos(_light->getPosition());
-	}
-
 	_light->setPosition(_parent->getTransform()->getPos());
+
+	Vector3f pos = _parent->getTransform()->getPos();
 
 	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, _index)->
 		setPerNodeParam_Transform(_parent->getTransform());

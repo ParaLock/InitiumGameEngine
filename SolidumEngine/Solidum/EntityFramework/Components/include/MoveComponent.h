@@ -25,6 +25,8 @@ class MoveComponent : public Component
 private:
 	Vector3f _vPos;
 
+	Vector3f _parentPrevPos;
+
 	float _movementSpeed = 0.0f;
 
 	KEY_FUNCTION_MAP* _keyFuncMap;

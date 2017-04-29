@@ -4,13 +4,15 @@
 ParticleEmitterComponent::ParticleEmitterComponent(
 	float pps, float speed, float gravityComplient,
 	float particleLifeLength, int maxParticles, int texNumRows, Shader* shader,
-	Texture* tex, CameraComponent* cam,
+	Texture* tex, BLEND_STATE state, CameraComponent* cam,
 	IEntity* entity)
 {
 
 	_particleLifeTime = particleLifeLength;
 	_particleTex = tex;
 	
+	_blendState = state;
+
 	_gravityComplient = gravityComplient;
 
 	_texNumRows = texNumRows;
@@ -21,6 +23,8 @@ ParticleEmitterComponent::ParticleEmitterComponent(
 	_cam = cam;
 
 	_parent = entity;
+
+	_type = COMPONENT_TYPE::PARTICLE_COMPONENT;
 
 	_stream = new ParticleStream();
 
@@ -38,10 +42,25 @@ ParticleEmitterComponent::ParticleEmitterComponent(
 	_particleQuad = (mesh*)ResourceManagerPool::getInstance()->getResourceManager("meshManager")->
 		createResource(std::make_shared<mesh::InitData>(L"null", nullptr), stlStr + "particle_quad", false);
 
-	_particleQuad->generatePlaneMesh(0.52, -0.52, 0.52, -0.52);
+	float texWidth = tex->getWidth();
+	float texHeight = tex->getHeight();
+
+	float area = (texWidth * texHeight) / (texNumRows * texNumRows);
+
+	float particleSideLength = sqrt(area);
+
+	float left, right, top, bottom;
+
+	left = (float)((particleSideLength / 2) * -1);
+	right = left + (float)particleSideLength;
+	top = (float)(particleSideLength / 2);
+	bottom = top - (float)particleSideLength;
+
+	_particleQuad->generatePlaneMesh(-0.52, 0.52, 0.52, -0.52);
 
 	node->getRenderParams()->setPerNodeParam_Mesh(_particleQuad);
 	node->getRenderParams()->setPerNodeParam_Transform(_parent->getTransform());
+	node->getRenderParams()->setPerNodeParam_BlendState(_blendState);
 
 	ParticlePool* particlePool = IGraphicsCore::getInstance()->getParticlePool();
 	
@@ -72,7 +91,7 @@ Particle* ParticleEmitterComponent::emitParticle(Vector3f center)
 
 	newParticle->_isAlive = true;
 
-	newParticle->_scale = 0.1f;
+	newParticle->_scale = 5.0f;
 
 	newParticle->_elapsedTime = 0;
 	newParticle->_lifeLength = _particleLifeTime;

@@ -25,23 +25,14 @@ MeshComponent::~MeshComponent()
 
 void MeshComponent::update(float delta)
 {
-	if (_parent != nullptr) {
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::MESH_RENDER_NODE, _index + 1)->
+		setPerNodeParam_Transform(_parent->getTransform());
 
-		Transform* transform = _parent->getTransform();
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::MESH_RENDER_NODE, _index + 1)->
+		setPerNodeParam_isVisible(true);
 
-		_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::MESH_RENDER_NODE, _index + 1)->
-			setPerNodeParam_Transform(_parent->getTransform());
-
-		_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::MESH_RENDER_NODE, _index + 1)->
-			setPerNodeParam_isVisible(true);
-
-		_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::MESH_RENDER_NODE, _index + 1)->
-			setPerNodeParam_DepthTestEnableState(true);
-
-
-		int debugPoint = -1;
-		
-	}
+	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::MESH_RENDER_NODE, _index + 1)->
+		setPerNodeParam_DepthTestEnableState(true);
 }
 
 void MeshComponent::onEvent(EVENT_PTR evt)

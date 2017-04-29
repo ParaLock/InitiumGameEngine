@@ -36,9 +36,6 @@ void Light::setDirection(Vector3f dir) {
 }
 
 void Light::setPosition(Vector3f pos) {
-
-	_lightViewMatDirty = true;
-
 	_GenericData._pos = pos;
 }
 

@@ -174,7 +174,7 @@ void ParticleRenderNode::render() {
 
 			commandList->createCommand(std::make_shared<ShaderSyncUniforms::InitData>(_shader), GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
 
-			_shader->getPipeline()->setBlendState(BLEND_STATE::ALPHA_BLENDING);
+			_shader->getPipeline()->setBlendState(_renderParams.getPerNodeParam_BlendState());
 			_shader->getPipeline()->setDepthTestState(DEPTH_TEST_STATE::FULL_DISABLE);
 			_shader->getPipeline()->setRasterState(RASTER_STATE::DISABLE_TRIANGLE_CULL);
 

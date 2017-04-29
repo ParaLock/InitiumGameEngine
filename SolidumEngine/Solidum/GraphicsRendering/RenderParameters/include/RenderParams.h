@@ -26,6 +26,8 @@ struct LocalRenderingParams {
 	Material* _meshMat = nullptr;
 	mesh* _mesh = nullptr;
 
+	BLEND_STATE _blendState = BLEND_STATE::INVALID;
+
 	bool _useForwardRendering;
 	CameraComponent* _renderCamera = nullptr;
 
@@ -73,6 +75,8 @@ public:
 	void setPerNodeParam_Mesh(mesh* modelMesh) { local_params._mesh = modelMesh; }
 	void setPerNodeParam_Light(Light* light) { local_params._light = light; }
 
+	void setPerNodeParam_BlendState(BLEND_STATE state) { local_params._blendState = state; }
+
 	void setPerNodeParam_isVisible(bool isVisible) { local_params._isVisible = isVisible; }
 
 	CameraComponent* getPerNodeParam_RenderCamera() { return local_params._renderCamera; };
@@ -80,6 +84,8 @@ public:
 	Transform* getPerNodeParam_Transform() { return local_params._transform; }
 	bool getPerNodeParam_DepthTestEnableState() { return local_params._depthTestEnabled; }
 	bool getPerNodeParam_isVisible() { return local_params._isVisible; }
+
+	BLEND_STATE getPerNodeParam_BlendState() { return local_params._blendState; }
 
 	Texture* getPerNodeParam_MeshTexture() { return local_params._meshTex; }
 	Material* getPerNodeParam_MeshMaterial() { return local_params._meshMat; }

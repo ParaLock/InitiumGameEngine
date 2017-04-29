@@ -56,6 +56,8 @@ bool LightRenderNode::isRenderViable()
 		return false;
 	if (_renderParams.getGlobalParam_GlobalRenderingCamera() == nullptr)
 		return false;
+	if (_renderParams.getPerNodeParam_Transform() == nullptr)
+		return false;
 
 	return true;
 }
@@ -102,7 +104,6 @@ void LightRenderNode::render()
 
 			commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
 				(std::make_pair("cbuff_lightProjectionMatrix", &LprojectionMatrix), _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
-
 
 			commandList->createCommand(std::make_shared<ShaderUpdateLightUniformsCommand::InitData>
 				(std::list<ILight*>{light}, _shader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_LIGHT_UNIFORMS);

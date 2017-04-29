@@ -132,6 +132,16 @@ public:
 		return result;
 	}
 
+	inline static Vector3<T> getPos(Matrix4x4<T> mat) {
+		Vector3<T> pos;
+
+		pos[0] = mat[3][0];
+		pos[1] = mat[3][1];
+		pos[2] = mat[3][2];
+
+		return pos;
+	}
+
 	inline static Matrix4x4<T> transpose(const Matrix4x4<T>& mat)
 	{
 		Matrix4x4<T> t;

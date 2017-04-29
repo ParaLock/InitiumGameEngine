@@ -31,6 +31,8 @@ private:
 
 	mesh* _particleQuad;
 
+	BLEND_STATE _blendState;
+
 	float _particleLifeTime;
 	float _gravityComplient;
 	float _pps;
@@ -62,7 +64,7 @@ public:
 	ParticleEmitterComponent(
 		float pps, float speed, float gravityComplient, 
 		float particleLifeLength, int maxParticles, int texNumRows, Shader* shader,
-		Texture* tex, CameraComponent* cam,
+		Texture* tex, BLEND_STATE state, CameraComponent* cam,
 		IEntity* entity);
 
 	~ParticleEmitterComponent();

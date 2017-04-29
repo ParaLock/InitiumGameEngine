@@ -249,7 +249,7 @@ void dxDevice::InitializeBlendStates()
 	additiveBlendingDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	additiveBlendingDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	additiveBlendingDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-	additiveBlendingDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	additiveBlendingDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 	additiveBlendingDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	additiveBlendingDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 

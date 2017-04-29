@@ -41,9 +41,6 @@ std::list<IComponent*> * Entity::getComponentsByTypeAndIndex(COMPONENT_TYPE type
 
 void Entity::update(float delta)
 {
-	if (_parent != nullptr) 
-		_transform->setPos(_parent->getTransform()->getPos());
-
 	for (auto itr = _components->begin(); itr != _components->end(); itr++) {
 		
 		for (auto compItr = _components->at(itr->first)->begin();
@@ -61,6 +58,8 @@ void Entity::update(float delta)
 
 		child->update(delta);
 	}
-
 	
+	if (_parent != nullptr)
+		_transform->setPos(_parent->getTransform()->getPos() + _transform->getPos());
+
 }

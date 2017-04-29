@@ -24,16 +24,18 @@ MoveComponent::~MoveComponent()
 
 void MoveComponent::update(float delta)
 {
+	Vector3f finalPos = _vPos;
+
 	if (_parent->getParent() != nullptr) {
 
-		Vector3f finalPos = _vPos + _parent->getParent()->getTransform()->getPos();
+		Vector3f currentParentPos = _parent->getParent()->getTransform()->getPos();
 
-		_parent->getTransform()->setPos(finalPos);
+		finalPos += currentParentPos;
 
+		_parentPrevPos = currentParentPos;
 	}
 
-	_parent->getTransform()->setPos(_vPos);
-	
+	_parent->getTransform()->setPos(finalPos);
 }
 
 void MoveComponent::onEvent(EVENT_PTR evt)

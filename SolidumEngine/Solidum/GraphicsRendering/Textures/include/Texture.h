@@ -8,6 +8,9 @@
 
 class Texture : public IResource
 {
+protected:
+	int _width = 0;
+	int _height = 0;
 public:
 	Texture();
 	~Texture();
@@ -22,6 +25,9 @@ public:
 
 	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
 	virtual void unload() = 0;
+
+	int getHeight() { return _height; }
+	int getWidth() { return _width; }
 
 	virtual void loadImage(LPCWSTR filename);
 };

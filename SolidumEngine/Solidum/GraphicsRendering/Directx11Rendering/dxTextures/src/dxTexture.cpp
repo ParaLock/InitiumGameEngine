@@ -35,6 +35,16 @@ void dxTexture::loadImage(LPCWSTR filename)
 		&texture,
 		NULL);
 
+	ID3D11Texture2D *pTextureInterface = 0;
+	ID3D11Resource *res;
+	texture->GetResource(&res);
+	res->QueryInterface<ID3D11Texture2D>(&pTextureInterface);
+	D3D11_TEXTURE2D_DESC desc;
+	pTextureInterface->GetDesc(&desc);
+
+	_width = desc.Width;
+	_height = desc.Height;
+
 	int debugRef = -1;
 }
 
