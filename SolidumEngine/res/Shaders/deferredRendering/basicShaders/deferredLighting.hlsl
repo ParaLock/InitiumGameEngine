@@ -36,6 +36,18 @@ float ReduceLightBleeding(float p_max, float Amount)
 	return linstep(Amount, 1, p_max);
 }
 
+float3 Uncharted2Tonemap(float3 x) {
+
+	float A = 0.15;
+	float B = 0.50;
+	float C = 0.10;
+	float D = 0.20;
+	float E = 0.02;
+	float F = 0.30;
+
+    return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;
+}
+
 float chebyshevUpperBound(float2 moments, float ourdepth)
 {
 	if (moments.x < ourdepth)

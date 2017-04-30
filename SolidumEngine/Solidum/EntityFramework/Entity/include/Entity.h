@@ -36,7 +36,7 @@ public:
 
 	IEntityRenderObject* getRenderObject() { return _renderObject; }
 
-	void setParent(IEntity* parent) { _parent = parent; };
+	void setParent(IEntity* parent);
 	IEntity* getParent() { return _parent; }
 	
 	Transform* getTransform() { return _transform; }

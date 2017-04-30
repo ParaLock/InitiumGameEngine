@@ -88,6 +88,8 @@ void LightRenderNode::render()
 			static Matrix4f CworldMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getWorldMatrix();
 			static Matrix4f CmodelMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getModelMatrix();
 
+			Vector3f lightPos = light->getPosition();
+
 			Matrix4f t = Matrix4f::get_identity();
 
 			t[1][1] = 0.5f, t[2][2] = -0.5f, t[3][3] = 1.0f, t[4][1] = 0.5f, t[4][2] = 0.5f, t[4][4] = 1.0f;

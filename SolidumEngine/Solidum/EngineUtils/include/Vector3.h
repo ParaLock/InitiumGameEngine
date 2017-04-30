@@ -49,6 +49,10 @@ public:
 		return result;
 	}
 
+	inline Vector3<T> operator-() const {
+		return Vector3<T>(-d[0], -d[1], -d[2]);
+	}
+
 	inline Vector3<T> operator*(const T& r) const
 	{
 		Vector3<T> result;

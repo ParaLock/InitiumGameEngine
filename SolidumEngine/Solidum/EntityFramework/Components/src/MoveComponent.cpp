@@ -24,18 +24,13 @@ MoveComponent::~MoveComponent()
 
 void MoveComponent::update(float delta)
 {
-	Vector3f finalPos = _vPos;
+	Vector3f diff = Vector3f(0,0,0);
 
-	if (_parent->getParent() != nullptr) {
-
-		Vector3f currentParentPos = _parent->getParent()->getTransform()->getPos();
-
-		finalPos += currentParentPos;
-
-		_parentPrevPos = currentParentPos;
+	if (_parent->getParent()) {
+		diff = Matrix4f::getPos(_parent->getParent()->getTransform()->getGlobalTransform());
 	}
 
-	_parent->getTransform()->setPos(finalPos);
+	_parent->getTransform()->setPosition(_vPos + diff);
 }
 
 void MoveComponent::onEvent(EVENT_PTR evt)

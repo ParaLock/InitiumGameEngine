@@ -11,7 +11,7 @@ public:
 	T m[4][4];
 
 	Matrix4x4<T>() {
-
+		
 	}
 
 	Matrix4x4<T>(const Matrix4x4<T>& r)
@@ -19,6 +19,94 @@ public:
 		for (unsigned int i = 0; i < 4; i++)
 			for (unsigned int j = 0; j < 4; j++)
 				(*this)[i][j] = r[i][j];
+	}
+
+	inline Matrix4x4<T> operator*(const T& f) const
+	{
+		Matrix4x4<T> r;
+
+		r.m[0][0] = m[0][0] * f;
+		r.m[0][1] = m[0][1] * f;
+		r.m[0][2] = m[0][2] * f;
+		r.m[0][3] = m[0][3] * f;
+
+		r.m[1][0] = m[1][0] * f;
+		r.m[1][1] = m[1][1] * f;
+		r.m[1][2] = m[1][2] * f;
+		r.m[1][3] = m[1][3] * f;
+
+		r.m[2][0] = m[2][0] * f;
+		r.m[2][1] = m[2][1] * f;
+		r.m[2][2] = m[2][2] * f;
+		r.m[2][3] = m[2][3] * f;
+
+		r.m[3][0] = m[3][0] * f;
+		r.m[3][1] = m[3][1] * f;
+		r.m[3][2] = m[3][2] * f;
+		r.m[3][3] = m[3][3] * f;
+
+		return r;
+	}
+
+	//inline Matrix4x4<T> operator*(const Matrix4x4<T>& t) const
+	//{
+	//	Matrix4x4<T> r;
+
+	//	for (int i = 0; i < 4; i++)
+	//	{
+	//		for (int j = 0; j < 4; j++)
+	//			r[i][j] = m[0][j] * t[i][0] + m[1][j] * t[i][1] + m[2][j] * t[i][2] + m[3][j] * t[i][3];
+	//	}
+
+	//	return r;
+	//}
+
+	inline Matrix4x4<T> operator-(const Vector3<T>& t) const {
+
+		m[3][0] += v.x;
+		m[3][1] += v.y;
+		m[3][2] += v.z;
+
+		return *this;
+	}
+
+	inline Matrix4x4<T> operator-(const Matrix4x4<T>& t) const {
+
+		Matrix4x4<T> r;
+
+		r.m[0][0] = m[0][0] - t.m[0][0];
+		r.m[0][1] = m[0][1] - t.m[0][1];
+		r.m[0][2] = m[0][2] - t.m[0][2];
+		r.m[0][3] = m[0][3] - t.m[0][3];
+
+		r.m[1][0] = m[1][0] - t.m[1][0];
+		r.m[1][1] = m[1][1] - t.m[1][1];
+		r.m[1][2] = m[1][2] - t.m[1][2];
+		r.m[1][3] = m[1][3] - t.m[1][3];
+
+		r.m[2][0] = m[2][0] - t.m[2][0];
+		r.m[2][1] = m[2][1] - t.m[2][1];
+		r.m[2][2] = m[2][2] - t.m[2][2];
+		r.m[2][3] = m[2][3] - t.m[2][3];
+
+		r.m[3][0] = m[3][0] - t.m[3][0];
+		r.m[3][1] = m[3][1] - t.m[3][1];
+		r.m[3][2] = m[3][2] - t.m[3][2];
+		r.m[3][3] = m[3][3] - t.m[3][3];
+
+		return r;
+	}
+
+	inline Vector3<T> operator*(const Vector3<T>& v) const
+	{
+
+		Vector3<T> vecResult;
+
+		vecResult[0] = m[0][0] * v[0] + m[1][0] * v[1] + m[2][0] * v[2] + m[3][0];
+		vecResult[1] = m[0][1] * v[0] + m[1][1] * v[1] + m[2][1] * v[2] + m[3][1];
+		vecResult[2] = m[0][2] * v[0] + m[1][2] * v[1] + m[2][2] * v[2] + m[3][2];
+
+		return vecResult;
 	}
 
 	inline static Matrix4x4<T> get_identity()
@@ -364,150 +452,29 @@ public:
 		return result;
 	}
 
-	inline static Matrix4x4<T> invert(Matrix4x4<T> mat) {
+	inline static Matrix4x4<T> set_pos(const Vector3<T>& pos, const Matrix4x4<T>& mat) {
 
+		Matrix4x4<T> result = mat;
 
-		Matrix4x4<T> result = Matrix4x4<T>::get_identity();
-
-		float temp[16];
-		float elements[16];
-
-		int lim = 4 * 4;
-
-		for (int i = 0; i < lim; i++) {
-			temp[i] = 0;
-			elements[i] = 0;
-		}
-
-
-		for (int q = 0; q < lim; ++q) {
-			elements[q] = mat[q / 4][q%4];
-		}
-
-		temp[0] = elements[5] * elements[10] * elements[15] -
-			elements[5] * elements[11] * elements[14] -
-			elements[9] * elements[6] * elements[15] +
-			elements[9] * elements[7] * elements[14] +
-			elements[13] * elements[6] * elements[11] -
-			elements[13] * elements[7] * elements[10];
-
-		temp[4] = -elements[4] * elements[10] * elements[15] +
-			elements[4] * elements[11] * elements[14] +
-			elements[8] * elements[6] * elements[15] -
-			elements[8] * elements[7] * elements[14] -
-			elements[12] * elements[6] * elements[11] +
-			elements[12] * elements[7] * elements[10];
-
-		temp[8] = elements[4] * elements[9] * elements[15] -
-			elements[4] * elements[11] * elements[13] -
-			elements[8] * elements[5] * elements[15] +
-			elements[8] * elements[7] * elements[13] +
-			elements[12] * elements[5] * elements[11] -
-			elements[12] * elements[7] * elements[9];
-
-		temp[12] = -elements[4] * elements[9] * elements[14] +
-			elements[4] * elements[10] * elements[13] +
-			elements[8] * elements[5] * elements[14] -
-			elements[8] * elements[6] * elements[13] -
-			elements[12] * elements[5] * elements[10] +
-			elements[12] * elements[6] * elements[9];
-
-		temp[1] = -elements[1] * elements[10] * elements[15] +
-			elements[1] * elements[11] * elements[14] +
-			elements[9] * elements[2] * elements[15] -
-			elements[9] * elements[3] * elements[14] -
-			elements[13] * elements[2] * elements[11] +
-			elements[13] * elements[3] * elements[10];
-
-		temp[5] = elements[0] * elements[10] * elements[15] -
-			elements[0] * elements[11] * elements[14] -
-			elements[8] * elements[2] * elements[15] +
-			elements[8] * elements[3] * elements[14] +
-			elements[12] * elements[2] * elements[11] -
-			elements[12] * elements[3] * elements[10];
-
-		temp[9] = -elements[0] * elements[9] * elements[15] +
-			elements[0] * elements[11] * elements[13] +
-			elements[8] * elements[1] * elements[15] -
-			elements[8] * elements[3] * elements[13] -
-			elements[12] * elements[1] * elements[11] +
-			elements[12] * elements[3] * elements[9];
-
-		temp[13] = elements[0] * elements[9] * elements[14] -
-			elements[0] * elements[10] * elements[13] -
-			elements[8] * elements[1] * elements[14] +
-			elements[8] * elements[2] * elements[13] +
-			elements[12] * elements[1] * elements[10] -
-			elements[12] * elements[2] * elements[9];
-
-		temp[2] = elements[1] * elements[6] * elements[15] -
-			elements[1] * elements[7] * elements[14] -
-			elements[5] * elements[2] * elements[15] +
-			elements[5] * elements[3] * elements[14] +
-			elements[13] * elements[2] * elements[7] -
-			elements[13] * elements[3] * elements[6];
-
-		temp[6] = -elements[0] * elements[6] * elements[15] +
-			elements[0] * elements[7] * elements[14] +
-			elements[4] * elements[2] * elements[15] -
-			elements[4] * elements[3] * elements[14] -
-			elements[12] * elements[2] * elements[7] +
-			elements[12] * elements[3] * elements[6];
-
-		temp[10] = elements[0] * elements[5] * elements[15] -
-			elements[0] * elements[7] * elements[13] -
-			elements[4] * elements[1] * elements[15] +
-			elements[4] * elements[3] * elements[13] +
-			elements[12] * elements[1] * elements[7] -
-			elements[12] * elements[3] * elements[5];
-
-		temp[14] = -elements[0] * elements[5] * elements[14] +
-			elements[0] * elements[6] * elements[13] +
-			elements[4] * elements[1] * elements[14] -
-			elements[4] * elements[2] * elements[13] -
-			elements[12] * elements[1] * elements[6] +
-			elements[12] * elements[2] * elements[5];
-
-		temp[3] = -elements[1] * elements[6] * elements[11] +
-			elements[1] * elements[7] * elements[10] +
-			elements[5] * elements[2] * elements[11] -
-			elements[5] * elements[3] * elements[10] -
-			elements[9] * elements[2] * elements[7] +
-			elements[9] * elements[3] * elements[6];
-
-		temp[7] = elements[0] * elements[6] * elements[11] -
-			elements[0] * elements[7] * elements[10] -
-			elements[4] * elements[2] * elements[11] +
-			elements[4] * elements[3] * elements[10] +
-			elements[8] * elements[2] * elements[7] -
-			elements[8] * elements[3] * elements[6];
-
-		temp[11] = -elements[0] * elements[5] * elements[11] +
-			elements[0] * elements[7] * elements[9] +
-			elements[4] * elements[1] * elements[11] -
-			elements[4] * elements[3] * elements[9] -
-			elements[8] * elements[1] * elements[7] +
-			elements[8] * elements[3] * elements[5];
-
-		temp[15] = elements[0] * elements[5] * elements[10] -
-			elements[0] * elements[6] * elements[9] -
-			elements[4] * elements[1] * elements[10] +
-			elements[4] * elements[2] * elements[9] +
-			elements[8] * elements[1] * elements[6] -
-			elements[8] * elements[2] * elements[5];
-
-		float determinant = elements[0] * temp[0] + elements[1] * temp[4] + elements[2] * temp[8] + elements[3] * temp[12];
-		determinant = 1.0f / determinant;
-
-		for (int i = 0; i < 4 * 4; i++)
-			elements[i] = temp[i] * determinant;
-
-		for (int i = 0; i <4; i++)
-			for (int j = 0; j < 4; j++)
-				result[i][j] = temp[(j * 4) + i];
-
+		result[3][0] = pos[0];
+		result[3][1] = pos[1];
+		result[3][2] = pos[2];
 
 		return result;
+	}
+
+	inline static Matrix4x4<T> invert(const Matrix4x4<T>& mat) {
+
+		Matrix4x4<T> M = Matrix4x4<T>::get_identity();
+
+		for (int i = 0; i < 3; i++)
+			for (int j = 0; j < 3; j++)
+				M[i][j] = mat[j][i];
+
+		M = Matrix4x4<T>::set_pos(-(M*Matrix4x4<T>::getPos(mat)), M);
+
+		return M;
+
 	}
 
 	inline void set(unsigned int x, unsigned int y, T val) { m[x][y] = val; }

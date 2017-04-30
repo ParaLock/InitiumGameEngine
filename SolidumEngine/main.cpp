@@ -245,7 +245,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	pointLight2->setColor(Vector4f(0.5f, 0.5f, 2.5f, 0.5f));
 	pointLight2->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
-	pointLight2->setPosition(Vector3f(9.0f, 9.0f, 9.0f));
+	pointLight2->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
 	pointLight2->setIntensity(5.0f);
 
 	pointLight2->setAttenuationLinear(0);
@@ -288,7 +288,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	pointLight3Entity->addComponent(new LightComponent(pointLight3, 0, pointLight3Entity));
 
 	Entity* fireLightEntity = new Entity();
-	fireLightEntity->addComponent(new MoveComponent(Vector3f(0.0f, 10.0f, 0.0f), 0.5, false, moveKeyConfig1, fireLightEntity));
+	fireLightEntity->addComponent(new MoveComponent(Vector3f(0.0f, 3.0f, 0.0f), 0.5, false, moveKeyConfig1, fireLightEntity));
 	fireLightEntity->addComponent(new LightComponent(fireLight, 0, fireLightEntity));
 
 	Entity* hammer = new Entity();

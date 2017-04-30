@@ -86,7 +86,6 @@ bool ParticleRenderNode::isRenderViable()
 Matrix4f ParticleRenderNode::createParticleMVMatrix(Vector3f pos, float rotation, float scale)
 {
 	Matrix4f viewMatrix = _renderParams.getGlobalParam_GlobalRenderingCamera()->getViewMatrix();
-	Matrix4f projection = _renderParams.getGlobalParam_GlobalRenderingCamera()->getProjectionMatrix();
 	Matrix4f world = _renderParams.getGlobalParam_GlobalRenderingCamera()->getWorldMatrix();
 
 	Matrix4f modelMatrix = Matrix4f::get_identity();

@@ -77,8 +77,10 @@ void Shader::updateDeferredLightUniforms(ILight* light)
 	float exponent = light->getAttenuationExponent();
 	float range = light->getRange();
 
+	Vector3f pos = light->getPosition();
+
 	updateUniform("cbuff_lightDirection", &light->getDirection());
-	updateUniform("cbuff_lightPos", &light->getPosition());
+	updateUniform("cbuff_lightPos", &pos);
 	updateUniform("cbuff_lightColor", &light->getColor());
 	updateUniform("cbuff_lightIntensity", &intensity);
 	updateUniform("cbuff_pointLightRange", &range);
@@ -172,7 +174,7 @@ void Shader::updateDirectionalLightsForwardRendering(std::vector<ILight*> dirLig
 
 void Shader::updateModelUniforms(Transform* transform)
 {
-	updateUniform("cbuff_OBJSpecificMatrix", &Matrix4f::transpose(transform->getMatrix()));
+	updateUniform("cbuff_OBJSpecificMatrix", &Matrix4f::transpose(transform->getGlobalTransform()));
 }
 
 void Shader::updateCameraUniforms(CameraComponent* cam)

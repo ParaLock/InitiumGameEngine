@@ -33,5 +33,4 @@ void OrbitComponent::update(float delta)
 
 	Matrix4f finalMatrix =  matRot * matTrans;
 
-	_parent->getTransform()->setMatrix(finalMatrix);
 }

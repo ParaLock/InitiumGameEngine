@@ -22,9 +22,7 @@ LightComponent::~LightComponent()
 
 void LightComponent::update(float delta)
 {
-	_light->setPosition(_parent->getTransform()->getPos());
-
-	Vector3f pos = _parent->getTransform()->getPos();
+	_light->setPosition(Matrix4f::getPos(_parent->getTransform()->getGlobalTransform()));
 
 	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, _index)->
 		setPerNodeParam_Transform(_parent->getTransform());
