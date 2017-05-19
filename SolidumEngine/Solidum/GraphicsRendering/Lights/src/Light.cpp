@@ -25,6 +25,7 @@ void Light::load(std::shared_ptr<IResourceBuilder> builder)
 
 void Light::unload()
 {
+
 	isLoaded = false;
 }
 

@@ -22,13 +22,16 @@ LightComponent::~LightComponent()
 
 void LightComponent::update(float delta)
 {
+	RenderParams* params = nullptr;
+
 	_light->setPosition(Matrix4f::getPos(_parent->getTransform()->getGlobalTransform()));
 
-	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, _index)->
-		setPerNodeParam_Transform(_parent->getTransform());
+	IEntityRenderObject* renderObject = _parent->getRenderObject();
+	 
+	params = renderObject->updateRenderNodeParams(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, _index);
 
-	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, _index)->
-		setPerNodeParam_isVisible(true);
+	params->setPerNodeParam_Transform(_parent->getTransform());
+	params->setPerNodeParam_isVisible(true);
 }
 
 void LightComponent::onEvent(EVENT_PTR evt)

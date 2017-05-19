@@ -31,8 +31,6 @@ float4 Pshader(PixelInputType input) : SV_TARGET
 	core.worldPos = worldPos.xyz;
 	core.normal = normals.xyz;
 	
-	//const float bias = 0.001f;
-	
 	float bias = 0.005*tan(acos(0));
 	bias = clamp(bias, 0,0.01);
 

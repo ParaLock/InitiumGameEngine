@@ -15,36 +15,52 @@ void dxShader::load(std::shared_ptr<IResourceBuilder> builder)
 
 	Shader::InitData* realBuilder = static_cast<Shader::InitData*>(builder.get());
 
-	LPCWSTR shaderFilename = realBuilder->_filename;
-
-	_renderType = realBuilder->_renderType;
-
 	_genInputLayout = realBuilder->_genInputLayout;
 
-	ID3DBlob* errorBlob = nullptr;
+	ID3DBlob* errorBlob;
 	HRESULT result;
 
 	ID3D11Device *dxDev = dxDeviceAccessor::dxEncapsulator->dxDev;
 
-	result = D3DX11CompileFromFile(shaderFilename, 0, 0, "Vshader", "vs_5_0", 0, 0, 0, &vertexShaderCode, &errorBlob, 0);
-	if (FAILED(result))
-	{
-		if (errorBlob)
-		{
-			std::wstring errorMsg = L"SHADER COMPILE ERROR: ";
-			errorMsg += shaderFilename;
-			errorMsg += L"\n";
-			errorMsg += L"HLSL ERR: ";
-			std::string compileErrStr((char*)errorBlob->GetBufferPointer());
-			std::wstring tmp;
-			tmp.assign(compileErrStr.begin(), compileErrStr.end());
-			errorMsg += tmp;
+	HRESULT compileResult;
+
+	std::string shaderCode = realBuilder->_shaderCode;
+
+	compileResult = D3DCompile(shaderCode.c_str(), shaderCode.size(),
+		0, 0, NULL, "Vshader", "vs_5_0", D3DCOMPILE_DEBUG, 0, &vertexShaderCode, &errorBlob);
+
+	if (FAILED(compileResult)) {
+		std::wstring errorMsg = L"SHADER COMPILE ERROR: ";
+		errorMsg += L"\n";
+		errorMsg += L"HLSL ERR: ";
+		std::string compileErrStr((char*)errorBlob->GetBufferPointer());
+		std::wstring tmp;
+		tmp.assign(compileErrStr.begin(), compileErrStr.end());
+		errorMsg += tmp;
 
 
-			MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
-			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
-			errorBlob->Release();
-		}
+		MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+
+		OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+		errorBlob->Release();
+	}
+
+	compileResult = D3DCompile(shaderCode.c_str(), shaderCode.size(),
+		0, 0, NULL, "Pshader", "ps_5_0", D3DCOMPILE_DEBUG, 0, &pixelShaderCode, &errorBlob);
+
+	if (FAILED(compileResult)) {
+		std::wstring errorMsg = L"SHADER COMPILE ERROR: ";
+		errorMsg += L"\n";
+		errorMsg += L"HLSL ERR: ";
+		std::string compileErrStr((char*)errorBlob->GetBufferPointer());
+		std::wstring tmp;
+		tmp.assign(compileErrStr.begin(), compileErrStr.end());
+		errorMsg += tmp;
+
+		MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
+
+		OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+		errorBlob->Release();
 	}
 	
 	result = dxDev->CreateVertexShader(vertexShaderCode->GetBufferPointer(), vertexShaderCode->GetBufferSize(), NULL, &vertexShader);
@@ -52,35 +68,11 @@ void dxShader::load(std::shared_ptr<IResourceBuilder> builder)
 	{
 
 		std::wstring errorMsg = L"Vertex SHADER CREATION FAILED: ";
-		errorMsg += shaderFilename;
 		errorMsg += L"\n";
 
 		MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
 
 		std::cout << "DX SHADER: VS CREATION FAILED" << std::endl;
-	}
-
-	result = D3DX11CompileFromFile(shaderFilename, 0, 0, "Pshader", "ps_5_0", 0, 0, 0, &pixelShaderCode, &errorBlob, 0);
-	if (FAILED(result))
-	{
-		if (errorBlob)
-		{
-			std::wstring errorMsg = L"SHADER COMPILE ERROR: ";
-			errorMsg += shaderFilename;
-			errorMsg += L"\n";
-			errorMsg += L"HLSL ERR: ";
-			std::string compileErrStr((char*)errorBlob->GetBufferPointer());
-			std::wstring tmp;
-			tmp.assign(compileErrStr.begin(), compileErrStr.end());
-			errorMsg += tmp;
-
-
-			MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
-			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
-
-			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
-			errorBlob->Release();
-		}
 	}
 
 
@@ -90,12 +82,14 @@ void dxShader::load(std::shared_ptr<IResourceBuilder> builder)
 		std::cout << "DX SHADER: PS CREATION FAILED" << std::endl;
 
 		std::wstring errorMsg = L"Pixel SHADER CREATION FAILED: ";
-		errorMsg += shaderFilename;
 		errorMsg += L"\n";
 
 		MessageBox(window::getInstance()->hWnd, errorMsg.c_str(), L"ERROR", MB_OK);
 		OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 	}
+
+	enumerateResources(SHADER_TYPE::PIXEL_SHADER, pixelShaderCode);
+	enumerateResources(SHADER_TYPE::VERTEX_SHADER, vertexShaderCode);
 
 	isLoaded = true;
 }
@@ -103,19 +97,6 @@ void dxShader::load(std::shared_ptr<IResourceBuilder> builder)
 void dxShader::unload()
 {
 	isLoaded = false;
-}
-
-void dxShader::attachPipeline(GPUPipeline* pipe)
-{
-	if (pipe != _pipelineState) {
-
-		_pipelineState = pipe;
-
-		enumerateResources(SHADER_TYPE::VERTEX_SHADER, vertexShaderCode);
-		enumerateResources(SHADER_TYPE::PIXEL_SHADER, pixelShaderCode);
-
-		_constantBufferMemberNameMap = _pipelineState->getVarToBuffMap();
-	}
 }
 
 void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode)
@@ -143,7 +124,8 @@ void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode
 
 		if (shaderType == SHADER_TYPE::VERTEX_SHADER) {
 
-			_pipelineState->shaderSetVertexInputLayout(newLayout);
+			_vertexInputLayout = newLayout;
+
 		}
 		else {
 			delete newLayout;
@@ -187,12 +169,11 @@ void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode
 
 				for (int q = 0; q < BufferLayout.Variables.size(); q++) {
 					cbuff->addVariable(BufferLayout.Variables.at(q).Name, BufferLayout.Variables.at(q).Size);
+					
+					_varNameToConstantBuffer.insert({ BufferLayout.Variables.at(q).Name, std::make_pair(shaderType, cbuff) });
 				}
 
 				cbuff->initMemory();
-
-				_pipelineState->attachResource(cbuff, BufferLayout.Description.Name,
-					SHADER_RESOURCE_TYPE::SHADER_CONSTANT_BUFFER, shaderType, false);
 			}
 		}
 	}
@@ -208,6 +189,4 @@ void dxShader::execute(GraphicsCommandList* commandList)
 {
 	commandList->createCommand(std::make_shared<PipelineBindShaderCommand::InitData>(_shaderBindFunc), 
 		GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SHADERS);
-
-	_pipelineState->applyState(commandList);
 }

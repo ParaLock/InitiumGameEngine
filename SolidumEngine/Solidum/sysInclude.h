@@ -22,6 +22,8 @@
 #include <iterator>
 #include <unordered_map>
 
+#include <set>
+
 #include <ctime>
 #include <time.h> 
 
@@ -40,6 +42,8 @@
 #include "../Solidum/EngineUtils/include/Vector2.h"
 #include "../Solidum/EngineUtils/include/Vector3.h"
 #include "../Solidum/EngineUtils/include/Vector4.h"
+
+#include "EngineUtils\include\EnumString.h"
 
 #include "atlstr.h"
 
@@ -155,8 +159,6 @@ enum class GRAPHICS_COMMAND_TYPE {
 	SHADER_UPDATE_MATERIAL_PASS_UNIFORMS,
 	SHADER_UPDATE_CAMERA_UNIFORMS,
 	SHADER_UPDATE_TRANSFORM_UNIFORMS,
-	SHADER_UPDATE_MESH,
-	SHADER_UPDATE_MODEL_TEX,
 	SHADER_SYNC_UNIFORMS,
 
 	//PIPELINE COMMANDS
@@ -190,34 +192,54 @@ enum class RENDER_NODE_TYPE {
 	PARTICLE_EMITTER_RENDER_NODE
 };
 
-enum class SHADER_RENDER_TYPE {
+enum class RENDERER_TYPE {
 	INVALID,
-	DEFERRED_RENDERING,
-	DEFERRED_RENDERING_LIGHT,
-	FORWARD_RENDERING,
+	GEOMETRY_DEFERRED_RENDERER,
+	GEOMETRY_FORWARD_RENDERER,
+	LIGHT_RENDERER,
 	MULTI_PASS_RENDERING,
-	SKYBOX_RENDERING,
-	PARTICLE_RENDERING,
-	SHADOW_MAP_RENDERING
+	SKY_RENDERER,
+	PARTICLE_RENDERER,
+	SHADOW_RENDERER
 };
 
-enum class SHADER_TYPE {
-	INVALID,
+enum SHADER_TYPE {
+	INVALID_ST,
 	PIXEL_SHADER,
 	VERTEX_SHADER,
 	GEOMETRY_SHADER
 };
 
-enum class SHADER_RESOURCE_TYPE {
-	INVALID,
-	SHADER_TEX_SAMPLER,
-	SHADER_RENDER_TARGET,
-	SHADER_DEPTH_STENCIL,
-	SHADER_CONSTANT_BUFFER,
-	SHADER_INPUT_LAYOUT,
-	SHADER_BUFFER_HOOK,
-	SHADER_TEXTURE_HOOK
+Begin_Enum_String(SHADER_TYPE)
+{
+	Enum_String(PIXEL_SHADER);
+	Enum_String(VERTEX_SHADER);
+	Enum_String(GEOMETRY_SHADER);
+}
+End_Enum_String;
+
+enum SHADER_RESOURCE_TYPE {
+	INVALID_SR,
+	TEXTURE_SAMPLER,
+	RENDER_TARGET,
+	DEPTH_STENCIL,
+	CONSTANT_BUFFER,
+	INPUT_LAYOUT,
+	GPU_BUFFER,
+	TEXTURE
 };
+
+Begin_Enum_String(SHADER_RESOURCE_TYPE)
+{
+	Enum_String(TEXTURE_SAMPLER);
+	Enum_String(RENDER_TARGET);
+	Enum_String(DEPTH_STENCIL);
+	Enum_String(CONSTANT_BUFFER);
+	Enum_String(INPUT_LAYOUT);
+	Enum_String(GPU_BUFFER);
+	Enum_String(TEXTURE);
+}
+End_Enum_String;
 
 enum class COMPONENT_TYPE {
 	MOVE_COMPONENT,
@@ -235,10 +257,17 @@ enum class DEFAULT_SHADER_TYPE {
 	DEFAULT_LIGHT
 };
 
-enum class GPUPIPELINE_OP_TYPE {
+enum PIPELINE_OP_TYPE {
 	CLEAR,
 	SWAPFRAME
 };
+
+Begin_Enum_String(PIPELINE_OP_TYPE)
+{
+	Enum_String(CLEAR);
+	Enum_String(SWAPFRAME);
+}
+End_Enum_String;
 
 enum class PRIMITIVE_TOPOLOGY {
 	INVALID,
@@ -258,9 +287,23 @@ enum class RENDER_TARGET_OP_TYPE {
 
 #define MAX_FORWARD_RENDERING_LIGHTS 10
 
-class IEvent;
+class Event;
 
-typedef std::shared_ptr<IEvent> EVENT_PTR;
+typedef std::shared_ptr<Event> EVENT_PTR;
+
+struct ParticleInstanceData {
+
+	Vector2f _texOffset1;
+	Vector2f _texOffset2;
+	Vector2f _texCoordInfo;
+	Matrix4f _mvMatrix;
+
+};
+
+struct RendererSpecificIOHookData {
+	SHADER_TYPE _shaderType;
+	SHADER_RESOURCE_TYPE _shaderResType;
+};
 
 struct VERTEX { Vector3f Pos; Vector3f Normal; Vector2f TexCoords; Vector3f biNormal; Vector3f Tangent; };
 struct LIGHT_VERTEX { Vector3f position; Vector2f texture; };

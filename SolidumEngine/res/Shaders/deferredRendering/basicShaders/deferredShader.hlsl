@@ -21,10 +21,10 @@ struct PixelInputType
 
 struct PixelOutputType
 {
-	float4 color : SV_Target0;
-	float4 normal : SV_Target1;
-	float4 position : SV_Target2;
-	float4 specularColor : SV_Target3;
+	float4 color : !% PIXEL_SHADER gbuff_colors !%
+	float4 normal : !% PIXEL_SHADER gbuff_normals !%
+	float4 position : !% PIXEL_SHADER gbuff_positions !%
+	float4 specularColor : !% PIXEL_SHADER gbuff_specular !%
 };
 
 
@@ -32,7 +32,7 @@ PixelInputType Vshader(VertexInputType input)
 {
 	PixelInputType output;
 
-	float4 pos = float4(input.position, 1.0f);
+	float4 pos = float4(input.position, 1);
 	
 	pos.w = 1.0f;
 
@@ -55,17 +55,17 @@ PixelInputType Vshader(VertexInputType input)
 	return output;
 }
 
-Texture2D colorTexture : register(t0);
+Texture2D colorTexture : !% PIXEL_SHADER color_texture !%
 
-Texture2D mat_tex_albedo : register(t1);
-Texture2D mat_tex_normal : register(t2);
-Texture2D mat_tex_specular : register(t3);
+Texture2D mat_tex_albedo : !% PIXEL_SHADER mat_tex_albedo !%
+Texture2D mat_tex_normal : !% PIXEL_SHADER mat_tex_normal !%
+Texture2D mat_tex_specular : !% PIXEL_SHADER mat_tex_specular !%
 
-Texture2D mat_tex_pbr_emessive : register(t4);
-Texture2D mat_tex_pbr_roughness : register(t5);
+Texture2D mat_tex_pbr_emessive : !% PIXEL_SHADER mat_tex_pbr_emessive !%
+Texture2D mat_tex_pbr_roughness : !% PIXEL_SHADER mat_tex_pbr_roughness !%
 
-SamplerState SampleTypeWrap : register(s0);
-SamplerState SampleTypePoint : register(s1);
+SamplerState SampleTypeWrap : !% PIXEL_SHADER SampleTypeWrap !%
+SamplerState SampleTypePoint : !% PIXEL_SHADER SampleTypePoint!%
 
 PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 {
@@ -86,5 +86,6 @@ PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 	output.specularColor.xyz = cbuff_specularColor.xyz;
 	
 	output.specularColor.w = cbuff_specularPower;
+	
 	return output;
 }

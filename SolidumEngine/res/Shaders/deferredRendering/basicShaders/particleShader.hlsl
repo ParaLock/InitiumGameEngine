@@ -23,10 +23,7 @@ struct PixelInputType
 
 struct PixelOutputType
 {
-	float4 color : SV_Target0;
-	float4 normal : SV_Target1;
-	float4 position : SV_Target2;
-	float4 specularColor : SV_Target3;
+	float4 color : !% PIXEL_SHADER gbuff_colors !%
 };
 
 PixelInputType Vshader(VertexInputType input)
@@ -53,9 +50,10 @@ PixelInputType Vshader(VertexInputType input)
 	return output;
 }
 
-Texture2D colorTexture : register(t0);
-SamplerState SampleTypeWrap : register(s0);
-SamplerState SampleTypePoint : register(s1);
+Texture2D colorTexture : !% PIXEL_SHADER particle_texture !%
+
+SamplerState SampleTypeWrap : !% PIXEL_SHADER SampleTypeWrap !%
+SamplerState SampleTypePoint : !% PIXEL_SHADER SampleTypePoint!%
 
 PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 {

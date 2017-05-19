@@ -13,16 +13,16 @@ struct PixelInputType
 	float3 viewPos : VIEWPOS;
 };
 
-Texture2D colorTexture : register(t0);
-Texture2D normalTexture : register(t1);
-Texture2D positionTexture : register(t2);
-Texture2D specularColorTexture : register(t3);
-Texture2D shadowTexture : register(t4);
+Texture2D colorTexture : !% PIXEL_SHADER gbuff_colors !%
+Texture2D normalTexture : !% PIXEL_SHADER gbuff_normals !%
+Texture2D positionTexture : !% PIXEL_SHADER gbuff_positions !%
+Texture2D specularColorTexture : !% PIXEL_SHADER gbuff_specular !%
+Texture2D shadowTexture : !% PIXEL_SHADER shadowmap !%
 
-SamplerState ShadowMapSampler : register(s0);
-SamplerState SampleTypePoint : register(s1);
+SamplerState ShadowMapSampler : !% PIXEL_SHADER SampleTypeWrap !%
+SamplerState SampleTypePoint : !% PIXEL_SHADER SampleTypePoint !%
 
-#define EPSILON 0.00001
+static const float EPSILON = 0.00001;
 
 static const float bias = 0.001f;
 

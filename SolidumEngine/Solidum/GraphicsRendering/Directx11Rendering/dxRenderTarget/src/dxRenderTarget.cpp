@@ -2,6 +2,8 @@
 
 dxRenderTarget::dxRenderTarget()
 {
+	_aaSamples = 1;
+	_mipLevel = 1;
 }
 
 dxRenderTarget::dxRenderTarget(ID3D11RenderTargetView * rt, ID3D11Texture2D * rtTex, Viewport& view)
@@ -44,8 +46,6 @@ void dxRenderTarget::load(std::shared_ptr<IResourceBuilder> builder)
 {
 	InitData* realBuilder = static_cast<InitData*>(builder.get());
 
-	_aaSamples = realBuilder->_aaSamples;
-	_mipLevel = realBuilder->_mipLevel;
 	_texFormat = realBuilder->_texFormat;
 
 	ID3D11Device *dxDev = dxDeviceAccessor::dxEncapsulator->dxDev;
@@ -103,15 +103,15 @@ void dxRenderTarget::load(std::shared_ptr<IResourceBuilder> builder)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	textureDesc.MipLevels = _mipLevel;
-	textureDesc.SampleDesc.Count = _aaSamples;
+	textureDesc.MipLevels = 1;
+	textureDesc.SampleDesc.Count = 1;
 
 	renderTargetViewDesc.Format = textureDesc.Format;
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 
 	shaderResourceViewDesc.Format = textureDesc.Format;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-	shaderResourceViewDesc.Texture2D.MipLevels = _mipLevel;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
 	result = dxDev->CreateTexture2D(&textureDesc, NULL, &_texture);
 	result = dxDev->CreateRenderTargetView(_texture, &renderTargetViewDesc, &_renderTarget);

@@ -5,6 +5,12 @@
 #include "../../RenderNode/include/LightRenderNode.h"
 #include "../../RenderNode/include/MeshRenderNode.h"
 
+#include "../../RenderNodeTree/include/RenderNodeTree.h"
+
+#include "../../GraphicsCore/include/IGraphicsCore.h"
+
+#include "../../RenderNode/include/RenderNodePool.h"
+
 #include "IEntityRenderObject.h"
 
 typedef std::map<int, uint64_t>* ENTITY_INDEXED_RENDER_RESOURCE;

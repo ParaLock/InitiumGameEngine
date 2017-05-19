@@ -19,10 +19,7 @@ struct PixelInputType
 
 struct PixelOutputType
 {
-	float4 color : SV_Target0;
-	float4 normal : SV_Target1;
-	float4 position : SV_Target2;
-	float4 specularColor : SV_Target3;
+	float4 color : !% PIXEL_SHADER gbuff_colors !%
 };
 
 PixelInputType Vshader(VertexInputType input)
@@ -39,9 +36,9 @@ PixelInputType Vshader(VertexInputType input)
 	return output;
 }
 
-TextureCube skyCube : register(t0);
+TextureCube skyCube : !% PIXEL_SHADER skymap_texture !%
 
-SamplerState SampleTypeWrap : register(s0);
+SamplerState SampleTypeWrap : !% PIXEL_SHADER SampleTypeWrap !%
 
 PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 {

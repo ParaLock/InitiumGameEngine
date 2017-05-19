@@ -1,6 +1,4 @@
 #pragma once
-#include "../../../EventFramework/include/IEvent.h"
-#include "../../../EventFramework/include/InputEvent.h"
 
 #include "../../../GraphicsRendering/Transform/include/Transform.h"
 
@@ -11,6 +9,8 @@
 #include "../../../GraphicsRendering/Particles/include/ParticleStream.h"
 
 #include "../../../GraphicsRendering/RenderNode/include/RenderNodePool.h"
+
+#include "../../../GraphicsRendering/Particles/include/ParticlePool.h"
 
 #include "CameraComponent.h"
 
@@ -63,7 +63,7 @@ private:
 public:
 	ParticleEmitterComponent(
 		float pps, float speed, float gravityComplient, 
-		float particleLifeLength, int maxParticles, int texNumRows, Shader* shader,
+		float particleLifeLength, int maxParticles, int texNumRows,
 		Texture* tex, BLEND_STATE state, CameraComponent* cam,
 		IEntity* entity);
 

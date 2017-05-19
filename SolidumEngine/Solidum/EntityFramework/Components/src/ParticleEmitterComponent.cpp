@@ -3,7 +3,7 @@
 
 ParticleEmitterComponent::ParticleEmitterComponent(
 	float pps, float speed, float gravityComplient,
-	float particleLifeLength, int maxParticles, int texNumRows, Shader* shader,
+	float particleLifeLength, int maxParticles, int texNumRows,
 	Texture* tex, BLEND_STATE state, CameraComponent* cam,
 	IEntity* entity)
 {
@@ -35,7 +35,7 @@ ParticleEmitterComponent::ParticleEmitterComponent(
 
 	_parent->getRenderObject()->addGenericRenderNode(node, 0);
 
-	node->load(std::make_shared<ParticleRenderNode::InitData>(shader, _stream, 4000));
+	node->load(std::make_shared<ParticleRenderNode::InitData>(_stream, 4000));
 
 	std::string stlStr = std::to_string(getRandomNumber());
 

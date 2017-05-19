@@ -11,19 +11,21 @@ StringManipulation::~StringManipulation()
 {
 }
 
-std::vector<std::string> StringManipulation::split(std::string * text, char sep)
+std::vector<std::string> StringManipulation::split(std::string * s, const char* delim)
 {
-	text->erase(std::remove(text->begin(), text->end(), '\t'), text->end());
+	s->erase(std::remove(s->begin(), s->end(), '\t'), s->end());
 
 	std::vector<std::string> tokens;
-	std::size_t start = 0, end = 0;
 
-	while ((end = text->find(sep, start)) != std::string::npos) {
-		tokens.push_back(text->substr(start, end - start));
-		start = end + 1;
+	char * dup = strdup(s->c_str());
+	char * token = strtok(dup, delim);
+	while (token != NULL) {
+		tokens.push_back(std::string(token));
+		token = strtok(NULL, delim);
 	}
 
-	tokens.push_back(text->substr(start));
+	free(dup);
+
 	return tokens;
 }
 

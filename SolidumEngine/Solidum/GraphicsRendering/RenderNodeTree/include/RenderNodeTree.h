@@ -9,16 +9,12 @@ class RenderNodeTree : public IRenderNodeTree
 {
 private:
 	std::map<uint64_t, RenderNode*>* _nodeQueryMap;
-	std::map<IShader*, RenderNode*>* _rootNodes;
-
-	std::vector<SHADER_RENDER_TYPE> _renderOrder;
+	std::map<RENDER_NODE_TYPE, RenderNode*>* _rootNodes;
 public:
 	RenderNodeTree();
 	~RenderNodeTree();
 
 	uint64_t getUniqueNodeID();
-
-	void setExecutionOrder(std::vector<SHADER_RENDER_TYPE> order);
 
 	void addNode(RenderNode* node, uint64_t id);
 
@@ -26,11 +22,9 @@ public:
 
 	void updateNodeVisibility(bool isVisible, uint64_t nodeid);
 
-	RenderParams* getRenderNodeParams(uint64_t nodeid) { return _nodeQueryMap->operator[](nodeid)->getRenderParams(); };
+	RenderParams* getRenderNodeParams(uint64_t nodeid);
 
-	std::vector<RenderNode*> queryAllLights();
-	std::vector<RenderNode*> queryAllShadowCastingLights();
-	std::vector<RenderNode*> queryAllMeshes();
+	std::list<RenderNode*> queryNodesByType(RENDER_NODE_TYPE type);
 
 	void removeNode(uint64_t id);
 

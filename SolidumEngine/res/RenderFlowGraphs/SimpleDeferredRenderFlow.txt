@@ -1,0 +1,130 @@
+RESOURCE_INITIALIZATION_BEGIN
+
+	INIT DEPTH_STENCIL framebuffer_depth_stencil
+	INIT DEPTH_STENCIL shadowmap_depth_stencil 1024 1024 
+	
+	INIT RENDER_TARGET color_gbuff
+	INIT RENDER_TARGET normals_gbuff
+	INIT RENDER_TARGET position_gbuff
+	INIT RENDER_TARGET specular_gbuff
+	INIT RENDER_TARGET shadow_map 1024 1024 
+
+	INIT TEXTURE_SAMPLER CLAMP LINEAR shadowMapSampler
+	INIT TEXTURE_SAMPLER WRAP LINEAR wrapSampler
+	INIT TEXTURE_SAMPLER WRAP LINEAR pointSampler
+
+RESOURCE_INITIALIZATION_END
+
+RENDERING_BEGIN
+	
+	NODE 0
+	
+		CORE_NAME sky_renderer
+		
+		EDGES_BEGIN
+		
+			INPUT TEXTURE 0 skymap_texture
+	
+			INPUT TEXTURE_SAMPLER 0 wrapSampler
+			INPUT TEXTURE_SAMPLER 1 pointSampler
+	
+			OUTPUT DEPTH_STENCIL 0 framebuffer_depth_stencil
+	
+			OUTPUT RENDER_TARGET 0 color_gbuff
+			
+		EDGES_END
+
+	NODE_END
+	
+	NODE 1
+	
+		CORE_NAME shadow_mapping
+		
+		EDGES_BEGIN
+		
+			OUTPUT DEPTH_STENCIL 0 shadowmap_depth_stencil
+		
+			INPUT TEXTURE_SAMPLER 0 wrapSampler
+			INPUT TEXTURE_SAMPLER 1 pointSampler
+	
+			OUTPUT RENDER_TARGET 0 shadow_map
+			
+		EDGES_END
+
+	NODE_END
+		
+	NODE 2
+	
+		CORE_NAME static_mesh_deferred_renderer
+		
+		EDGES_BEGIN
+			OUTPUT DEPTH_STENCIL 0 framebuffer_depth_stencil
+
+			OUTPUT RENDER_TARGET 0 color_gbuff
+			OUTPUT RENDER_TARGET 1 normals_gbuff
+			OUTPUT RENDER_TARGET 2 position_gbuff
+			OUTPUT RENDER_TARGET 3 specular_gbuff
+			
+			INPUT TEXTURE_SAMPLER 0 wrapSampler
+			INPUT TEXTURE_SAMPLER 1 pointSampler
+			
+		EDGES_END
+		
+	NODE_END
+		
+		
+	NODE 3
+	
+		CORE_NAME particle_renderer
+		
+		EDGES_BEGIN
+			OUTPUT DEPTH_STENCIL 0 framebuffer_depth_stencil
+
+			OUTPUT RENDER_TARGET 0 color_gbuff
+			
+			INPUT TEXTURE_SAMPLER 0 wrapSampler
+			INPUT TEXTURE_SAMPLER 1 pointSampler
+			
+		EDGES_END
+		
+	NODE_END
+		
+	NODE 4
+	
+		CORE_NAME light_renderer
+		
+		EDGES_BEGIN
+			OUTPUT DEPTH_STENCIL 0 framebuffer_depth_stencil
+		
+			INPUT RENDER_TARGET 0 color_gbuff
+			INPUT RENDER_TARGET 1 normals_gbuff
+			INPUT RENDER_TARGET 2 position_gbuff
+			INPUT RENDER_TARGET 3 specular_gbuff
+			INPUT RENDER_TARGET 4 shadow_map
+			
+			OUTPUT RENDER_TARGET 5 framebuffer
+			
+			INPUT TEXTURE_SAMPLER 0 wrapSampler
+			INPUT TEXTURE_SAMPLER 1 pointSampler
+		EDGES_END
+		
+	NODE_END
+	
+RENDERING_END
+
+END_SCENE_OPERATIONS_BEGIN
+
+	OP SWAPFRAME RENDER_TARGET framebuffer
+
+	OP CLEAR RENDER_TARGET color_gbuff
+	OP CLEAR RENDER_TARGET normals_gbuff
+	OP CLEAR RENDER_TARGET position_gbuff
+
+	OP CLEAR RENDER_TARGET shadow_map
+	OP CLEAR RENDER_TARGET framebuffer
+	
+	OP CLEAR DEPTH_STENCIL framebuffer_depth_stencil
+	OP CLEAR DEPTH_STENCIL shadowmap_depth_stencil
+	
+
+END_SCENE_OPERATIONS_END

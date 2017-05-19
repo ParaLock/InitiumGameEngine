@@ -20,14 +20,11 @@ void Material::unload()
 	isLoaded = false;
 }
 
-void Material::createPass(std::string name, Shader * shader, GPUPipeline * pipeline)
+void Material::createPass(std::string name, Shader * shader)
 {
 	MaterialPass* newPass = new MaterialPass;
 
-	shader->attachPipeline(pipeline);
-	
 	newPass->setShader(shader);
-	newPass->setGPUPipeline(pipeline);
 
 	_passes.insert({name, newPass });
 }

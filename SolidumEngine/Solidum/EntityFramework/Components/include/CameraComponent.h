@@ -4,11 +4,11 @@
 
 #include "Component.h"
 
+#include "./../../../sysInclude.h"
+
 #include "../../../GraphicsRendering/Window/include/window.h"
 
 #include "../../../EngineUtils/include/Timer.h"
-
-#include "./../../../sysInclude.h"
 
 #include "../../../ResourceFramework/include/IResource.h"
 
@@ -16,7 +16,7 @@
 
 #include "../../../EventFramework/include/EventFrameworkCore.h"
 
-#include "../../../EventFramework/include/InputEvent.h"
+#include "../../../InputHandling/include/InputHandler.h"
 
 #define SMOOTHING_FACTOR 100
 

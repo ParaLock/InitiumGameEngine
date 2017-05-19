@@ -34,6 +34,14 @@
 #include "../../Particles/include/ParticlePool.h"
 #include "../../Particles/include/ParticleFactory.h"
 
+#include "../../Renderers/include/LightRenderer.h"
+#include "../../Renderers/include/GeometryDeferredRenderer.h"
+#include "../../Renderers/include/ShadowMapRenderer.h"
+#include "../../Renderers/include/SkyRenderer.h"
+#include "../../Renderers/include/ParticleRenderer.h"
+
+#include "../../RenderFlowGraph/include/RenderFlowGraph.h"
+
 #include "IGraphicsCore.h"
 
 class RenderNodeFactory;
@@ -43,6 +51,8 @@ class BoundingSphere;
 class GraphicsCore : public IEventListener, public IGraphicsCore
 {
 private:
+	std::map<std::string, Renderer*> _registeredRenderers;
+
 	GCLQManager* _gcqManager;
 
 	dxDeviceManager *_dxManager = nullptr;
@@ -52,9 +62,13 @@ private:
 
 	GlobalRenderingParams _globalRenderingParameters;
 
+	GraphicsCommandList* _primaryCommandList;
+
 	GPUPipeline* _endFrameState;
 
 	std::map<DEFAULT_SHADER_TYPE, Shader*> _defaultShaders;
+
+	RenderFlowGraph* _primaryFlowGraph;
 
 	RenderNodeFactory* _renderNodeFactory;
 	RenderNodePool* _renderNodePool;
@@ -69,9 +83,6 @@ public:
 	GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool);
 	~GraphicsCore();
 
-	void registerDefaultShader(DEFAULT_SHADER_TYPE type, Shader* shader);
-	Shader* getDefaultShader(DEFAULT_SHADER_TYPE type);
-
 	void beginFrame();
 
 	void endFrame();
@@ -82,17 +93,20 @@ public:
 
 	void onEvent(EVENT_PTR evt);
 
-	void setEndFrameHandler(GPUPipeline* pipe);
-
 	RenderNodeTree* getRenderNodeTree() { return _renderTree; };
 	RenderNodePool* getRenderNodePool() { return _renderNodePool; };
 
 	GraphicsCommandPool* getGraphicsCommandPool() { return _graphicsCommandPool; };
 	GraphicsCommandFactory* getGraphicsCommandFactory() { return _graphicsCommandFactory; }
 
+	void registerRenderer(Renderer* newRenderer);
+	void setPrimaryRenderFlowGraph(RenderFlowGraph* graph);
+
 	ParticlePool* getParticlePool() { return _particlePool; }
 
 	void setWorldBoundingSphere(BoundingSphere* boundingSphere) { _globalRenderingParameters._worldBoundingSphere = boundingSphere; }
+
+	GPUPipeline* getEndscenePSO() { return _endFrameState; }
 
 	static GraphicsCore* singletonInstance;
 	static GraphicsCore* getInstance();

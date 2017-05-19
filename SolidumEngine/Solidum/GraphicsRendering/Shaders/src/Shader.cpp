@@ -11,29 +11,12 @@ Shader::~Shader()
 {
 }
 
-void Shader::setMiscResourceHook(IResource * res, std::string name)
+void Shader::updateMaterialPassUniforms(MaterialPass* pass, RenderFlowGraphIOInterface* ioInterface)
 {
-	_pipelineState->setHookResource(res, name);
-}
-
-void Shader::setMesh(mesh* newMesh)
-{
-	_pipelineState->setHookResource(newMesh->getIndexBuff(), "index_buffer");
-	_pipelineState->setHookResource(newMesh->getVertexBuff(), "vertex_buffer");
-}
-
-void Shader::setModelTexture(Texture * tex)
-{
-	_pipelineState->setHookResource(tex, "model_tex");
-}
-
-void Shader::updateMaterialPassUniforms(MaterialPass* pass)
-{
-	_pipelineState->setHookResource(nullptr, "mat_tex_albedo");
-	_pipelineState->setHookResource(nullptr, "mat_tex_normal");
-	_pipelineState->setHookResource(nullptr, "mat_tex_specular");
-	_pipelineState->setHookResource(nullptr, "mat_tex_pbr_emessive");
-	_pipelineState->setHookResource(nullptr, "mat_tex_pbr_roughness");
+	ioInterface->assignHookResourceByName("mat_tex_albedo", nullptr);
+	ioInterface->assignHookResourceByName("mat_tex_specular", nullptr);
+	ioInterface->assignHookResourceByName("mat_tex_pbr_emessive", nullptr);
+	ioInterface->assignHookResourceByName("mat_tex_pbr_roughness", nullptr);
 
 	float specPower = pass->getSpecularPower();
 	float specIntensity= pass->getSpecularIntensity();
@@ -49,19 +32,19 @@ void Shader::updateMaterialPassUniforms(MaterialPass* pass)
 		switch (itr->first)
 		{
 		case MATERIAL_TEX::ALBEDO_MAT_TEXTURE:
-			_pipelineState->setHookResource(itr->second, "mat_tex_albedo");
+			ioInterface->assignHookResourceByName("mat_tex_albedo", itr->second);
 			break;
 		case MATERIAL_TEX::NORMAL_MAT_TEXTURE:
-			_pipelineState->setHookResource(itr->second, "mat_tex_normal");
+			ioInterface->assignHookResourceByName("mat_tex_normal", itr->second);
 			break;
 		case MATERIAL_TEX::SPECULAR_MAT_TEXTURE:
-			_pipelineState->setHookResource(itr->second, "mat_tex_specular");
+			ioInterface->assignHookResourceByName("mat_tex_specular", itr->second);
 			break;
 		case MATERIAL_TEX::EMESSIVE_PBR_TEXTURE:
-			_pipelineState->setHookResource(itr->second, "mat_tex_pbr_emessive");
+			ioInterface->assignHookResourceByName("mat_tex_pbr_emessive", itr->second);
 			break;
 		case MATERIAL_TEX::ROUGHNESS_PBR_TEXTURE:
-			_pipelineState->setHookResource(itr->second, "mat_tex_pbr_roughness");
+			ioInterface->assignHookResourceByName("mat_tex_pbr_roughness", itr->second);
 			break;
 		default:
 			break;
@@ -194,34 +177,20 @@ void Shader::execute(GraphicsCommandList* commandList)
 
 void Shader::updateUniform(std::string varName, void * pData)
 {
-	auto itr = _constantBufferMemberNameMap->find(varName);
+	auto itr = _varNameToConstantBuffer.find(varName);
 
-	if (itr != _constantBufferMemberNameMap->end()) {
+	if (itr != _varNameToConstantBuffer.end()) {
 
-		DynamicStruct* varsBuff = _constantBufferMemberNameMap->at(varName);
+		DynamicStruct* varsBuff = _varNameToConstantBuffer.at(varName).second;
 
 		varsBuff->updateVar(varName, pData);
-	}
-	else {
-		int test = -1;
 	}
 }
 
 void Shader::updateGPU()
 {
-	DynamicStruct* previous = nullptr;
-
-	std::vector<DynamicStruct*> activeGeneralDataBuffers;
-
-	for (auto itr = _constantBufferMemberNameMap->begin(); itr != _constantBufferMemberNameMap->end(); itr++) {
-
-		if (itr->second != previous)
-			activeGeneralDataBuffers.push_back(itr->second);
-
-		previous = itr->second;
-	}
-
-	for (unsigned int i = 0; i < activeGeneralDataBuffers.size(); ++i) {
-		activeGeneralDataBuffers[i]->updateGPU();
+	for (auto itr = _varNameToConstantBuffer.begin(); itr != _varNameToConstantBuffer.end(); itr++) {
+		DynamicStruct* buff = itr->second.second;
+		buff->updateGPU();
 	}
 }

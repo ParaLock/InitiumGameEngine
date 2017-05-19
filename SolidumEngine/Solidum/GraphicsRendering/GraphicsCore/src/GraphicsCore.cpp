@@ -15,6 +15,8 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 	else
 		return;
 
+	EventFrameworkCore::getInstance()->registerGlobalEventHub(new EventHub(), "RenderFlowGraphEventHub");
+
 	ActiveGraphicsAPI::setCurrentAPI(api);
 
 	_renderNodeFactory = new RenderNodeFactory();
@@ -33,15 +35,7 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 	_gcqManager->createCommandQueue("primaryGraphicsCommandQueue");
 	_gcqManager->setPrimaryCommandQueue("primaryGraphicsCommandQueue");
 
-	std::vector<SHADER_RENDER_TYPE> renderExecutionOrder;
-	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::SHADOW_MAP_RENDERING);
-	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::SKYBOX_RENDERING);
-	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::FORWARD_RENDERING);
-	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING);
-	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::PARTICLE_RENDERING);
-	renderExecutionOrder.push_back(SHADER_RENDER_TYPE::DEFERRED_RENDERING_LIGHT);
-
-	_renderTree->setExecutionOrder(renderExecutionOrder);
+	_endFrameState = new GPUPipeline();
 
 	EventFrameworkCore::getInstance()->getGlobalEventHub("ComponentEventHub")->subscribeListener(this);
 
@@ -111,16 +105,6 @@ GraphicsCore::~GraphicsCore()
 		delete _renderTree;
 }
 
-void GraphicsCore::registerDefaultShader(DEFAULT_SHADER_TYPE type, Shader * shader)
-{
-	_defaultShaders.insert({type, shader});
-}
-
-Shader * GraphicsCore::getDefaultShader(DEFAULT_SHADER_TYPE type)
-{
-	return _defaultShaders[type];
-}
-
 void GraphicsCore::beginFrame()
 {
 }
@@ -137,15 +121,25 @@ void GraphicsCore::render()
 
 	_renderTree->walkTree();
 
+	GraphicsCommandList* primaryCommandList = new GraphicsCommandList();
 	GraphicsCommandList* _endsceneCommandList = new GraphicsCommandList();
+
+	auto& renderOrder = _primaryFlowGraph->getNodeExecutionOrder();
+
+	for each(std::string rendererName in renderOrder) {
+
+		Renderer* activeRenderer = _registeredRenderers.at(rendererName);
+		activeRenderer->gatherAndPrepareNodes(_renderTree);
+		activeRenderer->processNodes(primaryCommandList);
+	}
 
 	_endFrameState->applyState(_endsceneCommandList);
 
 	_gcqManager->getPrimaryCommandQueue()->queueCommandList(_endsceneCommandList);
+	_gcqManager->getPrimaryCommandQueue()->queueCommandList(primaryCommandList);
+
 
 	_gcqManager->getPrimaryCommandQueue()->processAllCommands();
-
-	int debugPoint = -1;
 }
 
 void GraphicsCore::setCurrentRenderingCamera(CameraComponent* cam)
@@ -157,7 +151,12 @@ void GraphicsCore::onEvent(EVENT_PTR evt)
 {
 }
 
-void GraphicsCore::setEndFrameHandler(GPUPipeline * pipe)
+void GraphicsCore::registerRenderer(Renderer * newRenderer)
 {
-	_endFrameState = pipe;
+	_registeredRenderers.insert({newRenderer->getName(), newRenderer});
+}
+
+void GraphicsCore::setPrimaryRenderFlowGraph(RenderFlowGraph * graph)
+{
+	_primaryFlowGraph = graph;
 }

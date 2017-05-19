@@ -74,19 +74,23 @@ void InputHandler::onEvent(EVENT_PTR evt)
 
 void InputHandler::update()
 {
-	EVENT_PTR inputEventPtr = std::make_shared<InputEvent>();
+	InputEvtData _hotEventData;
 
-	InputEvent *inputEvent = inputEventPtr->getEvent<InputEvent>();
+	EVENT_PTR inputEventPtr = std::make_shared<Event>();
+
+	inputEventPtr.get()->setType(EVENT_TYPE::INPUT_EVENT);
 
 	std::list<KEY_MAP> keys = getPressedKeys();
 
 	if (keys.size() > 0) {
-		inputEvent->setPressedKeys(keys);
+		_hotEventData.setPressedKeys(keys);
 	}
 	
 	std::pair<unsigned long, unsigned long> mousePos = getMousePos();
 
-	inputEvent->setMousePos(mousePos);
+	_hotEventData.setMousePos(mousePos);
+
+	inputEventPtr.get()->setData(std::make_shared<InputEvtData>(_hotEventData));
 
 	EventFrameworkCore::getInstance()->
 		getGlobalEventHub("InputEventHub")->publishEvent(inputEventPtr);

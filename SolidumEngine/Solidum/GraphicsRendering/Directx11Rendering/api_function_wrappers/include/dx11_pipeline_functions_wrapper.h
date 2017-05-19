@@ -9,7 +9,7 @@
 
 #include "../../../Textures/include/TextureSampler.h"
 #include "../../../../EngineUtils/include/DynamicStruct.h"
-#include "../../../../GraphicsRendering/Textures/include/Texture.h"
+#include "../../dxTextures/include/dxTexture.h"
 #include "../../../Shaders/include/ShaderInputLayout.h"
 #include "../../../GraphicsBuffers/include/GPUBuffer.h"
 #include "../../../RenderTarget/include/RenderTarget.h"

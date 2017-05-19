@@ -31,8 +31,8 @@ private:
 
 	IResource* _sr;
 
-	SHADER_RESOURCE_TYPE _resourceType = SHADER_RESOURCE_TYPE::INVALID;
-	SHADER_TYPE _parentShader = SHADER_TYPE::INVALID;
+	SHADER_RESOURCE_TYPE _resourceType = SHADER_RESOURCE_TYPE::INVALID_SR;
+	SHADER_TYPE _parentShader = SHADER_TYPE::INVALID_ST;
 public:
 
 	PipelineSRBindCommand() { _type = GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR; }

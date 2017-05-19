@@ -34,7 +34,7 @@ void mesh::load(std::shared_ptr<IResourceBuilder> builder)
 
 		std::string stlStr = CW2A(fileName);
 
-		std::vector<std::string> splitFilename = StringManipulation::split(&stlStr, '.');
+		std::vector<std::string> splitFilename = StringManipulation::split(&stlStr, ".");
 
 		pMeshLoader = std::shared_ptr<meshLoaderOBJ>(new meshLoaderOBJ());
 

@@ -1,7 +1,6 @@
 #pragma once
 #include "../../../sysInclude.h"
 #include "../../../GraphicsRendering/GraphicsBuffers/include/GPUBuffer.h"
-#include "../../../GraphicsRendering/GPUPipeline/include/GPUPipeline.h"
 
 #include "../../../GraphicsRendering/GraphicsCommandList/include/GraphicsCommandList.h"
 
@@ -10,9 +9,10 @@
 #include "../../Lights/include/ILight.h"
 #include "../../Material/include/Material.h"
 #include "../../Transform/include/Transform.h"
-#include "../../Mesh/include/mesh.h"
 
 #include "../../../EntityFramework/Components/include/CameraComponent.h"
+
+#include "../../RenderFlowGraph/include/RenderFlowGraphIOInterface.h"
 
 #include "IShader.h"
 
@@ -23,24 +23,21 @@ class MaterialPass;
 class Shader : public IShader, public IResource
 {
 protected:
-	std::map<std::string, DynamicStruct*> *_constantBufferMemberNameMap;
+	ShaderInputLayout* _vertexInputLayout;
 
-	SHADER_RENDER_TYPE _renderType;
-
-	GPUPipeline* _pipelineState = nullptr;
+	std::map<std::string, std::pair<SHADER_TYPE, DynamicStruct*>> _varNameToConstantBuffer;
 public:
 	Shader();
 	~Shader();
 
 	struct InitData : public IResourceBuilder {
 
-		LPCWSTR _filename;
-		SHADER_RENDER_TYPE _renderType = SHADER_RENDER_TYPE::INVALID;
+		std::string& _shaderCode;
 		bool _genInputLayout = false;
 
-		InitData(LPCWSTR filename, SHADER_RENDER_TYPE renderType, bool genInputLayout) {
-			_filename = filename;
-			_renderType = renderType;
+		InitData(std::string& shaderCode, bool genInputLayout) :
+			_shaderCode(shaderCode)
+		{
 			_genInputLayout = genInputLayout;
 		};
 	};
@@ -48,13 +45,8 @@ public:
 	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
 	virtual void unload() = 0;
 
-	void setMiscResourceHook(IResource* res, std::string name);
+	void updateMaterialPassUniforms(MaterialPass* pass, RenderFlowGraphIOInterface* ioInterface);
 
-	void setMesh(mesh* newMesh);
-
-	void setModelTexture(Texture* tex);
-
-	void updateMaterialPassUniforms(MaterialPass* pass);
 	void updateDeferredLightUniforms(ILight* light);
 
 	void updatePointLightsForwardRendering(std::vector<ILight*> pointLights);
@@ -63,14 +55,13 @@ public:
 	void updateModelUniforms(Transform* transform);
 	void updateCameraUniforms(CameraComponent* cam);
 
+	ShaderInputLayout* getInputLayout() { return _vertexInputLayout; }
+
+	const std::map<std::string, std::pair<SHADER_TYPE, DynamicStruct*>>& getConstantBuffers() { return _varNameToConstantBuffer; }
+
 	void updateUniform(std::string varName, void * pData);
 	void updateGPU();
 
-	virtual void attachPipeline(GPUPipeline* pipe) = 0;
-	GPUPipeline* getPipeline() { return _pipelineState; }
-
 	virtual void execute(GraphicsCommandList* commandList);
-
-	SHADER_RENDER_TYPE getRenderMode() { return _renderType; }
 };
 

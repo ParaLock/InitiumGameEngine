@@ -34,7 +34,7 @@ public:
 
 class GPUPipelineOP {
 public:
-	GPUPIPELINE_OP_TYPE opType;
+	PIPELINE_OP_TYPE opType;
 	SHADER_RESOURCE_TYPE resType;
 
 	IResource* opTarget;
@@ -43,13 +43,6 @@ public:
 class GPUPipeline : public IResource
 {
 private:
-	int renderTargetCount = 0;
-	int texSamplerCount = 0;
-	int texHookCount = 0;
-
-	std::map<std::string, DynamicStruct*> _boundCbuffers;
-
-	std::map<std::string, DynamicStruct*> *_constantBufferMemberNameMap;
 	std::map<std::string, GPUPipelineElement*> *_elementList;
 
 	std::list<GPUPipelineOP> *_opList;
@@ -63,8 +56,6 @@ private:
 
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
-
-	TEX_FORMAT getTexTypeFromToken(std::string token);
 
 public:
 	GPUPipeline();
@@ -87,10 +78,8 @@ public:
 	void setDepthTestState(DEPTH_TEST_STATE state);
 	void setBlendState(BLEND_STATE state);
 
-	void setHookResource(IResource* res, std::string name);
-
-	void attachResource(IResource* res, std::string name, SHADER_RESOURCE_TYPE type,
-		SHADER_TYPE parentShader, bool rt_isOutput);
+	void attachResource(IResource* res, std::string name, int index, SHADER_RESOURCE_TYPE type,
+		SHADER_TYPE parentShader, bool isOutput);
 
 	void attachOP(GPUPipelineOP op);
 
@@ -99,7 +88,5 @@ public:
 	void applyState(GraphicsCommandList* commandList);
 
 	ShaderInputLayout* getInputLayout() { return _currentInputLayout; }
-
-	std::map<std::string, DynamicStruct*>* getVarToBuffMap() { return _constantBufferMemberNameMap; };
 };
 

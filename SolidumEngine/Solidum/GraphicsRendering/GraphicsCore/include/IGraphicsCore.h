@@ -11,15 +11,13 @@ class GraphicsCommandPool;
 class GraphicsCommandFactory;
 class ParticlePool;
 class World;
+class Renderer;
 
 class IGraphicsCore
 {
 public:
 	IGraphicsCore();
 	~IGraphicsCore();
-
-	virtual void registerDefaultShader(DEFAULT_SHADER_TYPE type, Shader* shader) = 0;
-	virtual Shader* getDefaultShader(DEFAULT_SHADER_TYPE type) = 0;
 
 	virtual void beginFrame() = 0;
 
@@ -31,7 +29,9 @@ public:
 
 	virtual void onEvent(EVENT_PTR evt) = 0;
 
-	virtual void setEndFrameHandler(GPUPipeline* pipe) = 0;
+	virtual void registerRenderer(Renderer* newRenderer) = 0;
+
+	virtual GPUPipeline* getEndscenePSO() = 0;
 
 	virtual RenderNodeTree* getRenderNodeTree() = 0;
 	virtual RenderNodePool* getRenderNodePool() = 0;

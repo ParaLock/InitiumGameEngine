@@ -1,6 +1,5 @@
 #pragma once
-#include "../../../EventFramework/include/IEvent.h"
-#include "../../../EventFramework/include/InputEvent.h"
+#include "../../../EventFramework/include/Event.h"
 
 #include "../../../GraphicsRendering/Transform/include/Transform.h"
 
@@ -8,6 +7,14 @@
 #include "../../../EngineUtils/include/Vector3.h"
 
 #include "../../../GraphicsRendering/RenderNode/include/SkyBoxRenderNode.h"
+
+#include "../../../GraphicsRendering/RenderNode/include/RenderNodePool.h"
+
+#include "../../../GraphicsRendering/RenderNodeTree/include/RenderNodeTree.h"
+
+#include "../../../ResourceFramework/include/IResource.h"
+
+#include "../../../GraphicsRendering/GraphicsCore/include/IGraphicsCore.h"
 
 #include "Component.h"
 
@@ -49,14 +56,12 @@ private:
 	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
 	void unload() { isLoaded = false; };
 
-
-	IShader* _shader;
 	Texture* _tex;
 	mesh* _skydome;
 	CameraComponent* _cam;
 	int _index;
 public:
-	SkydomeWeatherComponent(IShader* shader, Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, int index, IEntity* entity);
+	SkydomeWeatherComponent(Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, int index, IEntity* entity);
 	~SkydomeWeatherComponent();
 
 	void update(float delta);

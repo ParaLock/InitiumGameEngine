@@ -17,15 +17,13 @@ struct PixelInputType
 
 struct PixelOutputType
 {
-	float4 depth : SV_Target0;
+	float4 depth : !% PIXEL_SHADER shadowmap !%
 };
 
 PixelInputType Vshader(VertexInputType input)
 {
     PixelInputType output;
     
-   //input.position.w = 1.0f;
-	
 	matrix WMMatrix = mul(cbuff_OBJSpecificMatrix, cbuff_worldMatrix);
 	
 	float4 pos = float4(input.position, 1.0f);
@@ -49,8 +47,6 @@ PixelOutputType Pshader(PixelInputType input) : SV_TARGET
 	
 	depthValue = 1-(input.depthPosition.z / input.depthPosition.w);
 
-	//depthValue = depthValue * 0.5 + 0.5;	
-	
 	float moment1 = depthValue;
 	float moment2 = depthValue * depthValue;
 	

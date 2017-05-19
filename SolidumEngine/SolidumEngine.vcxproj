@@ -19,6 +19,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\GraphicsRendering\Renderers\include\RendererFactory.h" />
+    <ClInclude Include="Solidum\EngineUtils\include\EnumString.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderFlowGraph\include\RenderFlowGraphIOInterface.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderFlowGraph\include\RenderFlowGraphParser.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Renderers\include\GeometryDeferredRenderer.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderParser.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Renderers\include\RendererDescriptorParser.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderFlowGraph\include\RenderFlowGraphNode.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderFlowGraph\include\RenderFlowGraph.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Renderers\include\SkyRenderer.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Renderers\include\ShadowMapRenderer.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Renderers\include\LightRenderer.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Renderers\include\ParticleRenderer.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Renderers\include\Renderer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Particles\include\InsertionSort.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Particles\include\ParticlePool.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Particles\include\ParticleFactory.h" />
@@ -54,7 +68,6 @@
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\api_function_wrappers\include\dx11_pipeline_functions_wrapper.h" />
     <ClInclude Include="Solidum\GraphicsRendering\PipelineCommands\include\PipelineCommand.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNodeTree\include\IRenderNodeTree.h" />
-    <ClInclude Include="Solidum\EventFramework\include\RenderNodeEvent.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNodeTree\include\RenderNodeTree.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNode\include\LightRenderNode.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNode\include\MeshRenderNode.h" />
@@ -73,12 +86,11 @@
     <ClInclude Include="Solidum\EntityFramework\Components\include\MeshComponent.h" />
     <ClInclude Include="Solidum\EventFramework\include\EventHub.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\MoveComponent.h" />
-    <ClInclude Include="Solidum\EventFramework\include\InputEvent.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\IShader.h" />
     <ClInclude Include="Solidum\InputHandling\include\InputHandler.h" />
     <ClInclude Include="Solidum\InputHandling\include\InputManager.h" />
     <ClInclude Include="Solidum\EventFramework\include\EventFrameworkCore.h" />
-    <ClInclude Include="Solidum\EventFramework\include\IEvent.h" />
+    <ClInclude Include="Solidum\EventFramework\include\Event.h" />
     <ClInclude Include="Solidum\EventFramework\include\IEventListener.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\IComponent.h" />
     <ClInclude Include="Solidum\EntityFramework\Entity\include\Entity.h" />
@@ -132,8 +144,22 @@
     <ClInclude Include="Solidum\WorldSimulation\include\WorldManager.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldCell.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\SunMoonLightingComponent.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Renderers\include\GeometryForwardRenderer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\GraphicsRendering\Renderers\src\RendererFactory.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderFlowGraph\src\RenderFlowGraphIOInterface.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderFlowGraph\src\RenderFlowGraphParser.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Renderers\src\GeometryDeferredRenderer.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderParser.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Renderers\src\RendererDescriptorParser.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderFlowGraph\src\RenderFlowGraphNode.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderFlowGraph\src\RenderFlowGraph.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Renderers\src\SkyRenderer.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Renderers\src\ShadowMapRenderer.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Renderers\src\LightRenderer.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Renderers\src\ParticleRenderer.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Renderers\src\Renderer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Particles\src\InsertionSort.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Particles\src\ParticlePool.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Particles\src\ParticleFactory.cpp" />
@@ -167,7 +193,6 @@
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\api_function_wrappers\src\dx11_pipeline_functions_wrapper.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\PipelineCommands\src\PipelineCommand.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNodeTree\src\IRenderNodeTree.cpp" />
-    <ClCompile Include="Solidum\EventFramework\src\RenderNodeEvent.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNodeTree\src\RenderNodeTree.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\LightRenderNode.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\MeshRenderNode.cpp" />
@@ -179,11 +204,10 @@
     <ClCompile Include="Solidum\EntityFramework\Components\src\MeshComponent.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\EventHub.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\MoveComponent.cpp" />
-    <ClCompile Include="Solidum\EventFramework\src\InputEvent.cpp" />
     <ClCompile Include="Solidum\InputHandling\src\InputHandler.cpp" />
     <ClCompile Include="Solidum\InputHandling\src\InputManager.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\EventFrameworkCore.cpp" />
-    <ClCompile Include="Solidum\EventFramework\src\IEvent.cpp" />
+    <ClCompile Include="Solidum\EventFramework\src\Event.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\IEventListener.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\IComponent.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Entity\src\Entity.cpp" />
@@ -235,6 +259,7 @@
     <ClCompile Include="Solidum\WorldSimulation\src\WorldManager.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldCell.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\SunMoonLightingComponent.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Renderers\src\GeometryForwardRenderer.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{936972AA-1079-49FC-BABD-6CCFB9EE4B9A}</ProjectGuid>

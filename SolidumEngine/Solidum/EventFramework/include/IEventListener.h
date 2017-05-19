@@ -1,7 +1,7 @@
 #pragma once
 #include "../../sysInclude.h"
 
-#include "IEvent.h"
+#include "Event.h"
 
 class IEventListener
 {

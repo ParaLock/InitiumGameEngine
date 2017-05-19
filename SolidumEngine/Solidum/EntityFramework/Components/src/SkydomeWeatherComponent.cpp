@@ -2,14 +2,13 @@
 
 
 
-SkydomeWeatherComponent::SkydomeWeatherComponent(IShader* shader, Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, int index, IEntity* entity)
+SkydomeWeatherComponent::SkydomeWeatherComponent(Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, int index, IEntity* entity)
 {
 	_index = index;
 
 	_weatherApexColor = apexColor;
 	_weatherCenterColor = centerColor;
 
-	_shader = shader;
 	_tex = tex;
 	_cam = cam;
 	_index = index;
@@ -19,15 +18,15 @@ SkydomeWeatherComponent::SkydomeWeatherComponent(IShader* shader, Texture* tex, 
 
 	_parent = entity;
 
-	uint64_t nodeID = GraphicsCore::getInstance()->getRenderNodeTree()->getUniqueNodeID();
+	uint64_t nodeID = IGraphicsCore::getInstance()->getRenderNodeTree()->getUniqueNodeID();
 
-	GraphicsCore* gCore = GraphicsCore::getInstance();
+	IGraphicsCore* gCore = IGraphicsCore::getInstance();
 	RenderNodePool* renderNodePool = gCore->getRenderNodePool();
 
 	RenderNode* skyboxWeatherNode = renderNodePool->getResource(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE);
 
 	skyboxWeatherNode->load(std::make_shared<SkyBoxRenderNode::InitData>
-		(_shader, _weatherApexColor, _weatherCenterColor, nodeID));
+		(_weatherApexColor, _weatherCenterColor, nodeID));
 
 	_parent->getRenderObject()->addGenericRenderNode(skyboxWeatherNode, _index);
 

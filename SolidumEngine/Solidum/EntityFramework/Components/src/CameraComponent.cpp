@@ -74,12 +74,15 @@ float toRadians(float input) {
 
 void CameraComponent::onEvent(EVENT_PTR evt)
 {
+
 	switch (evt.get()->getType())
 	{
-
 		case EVENT_TYPE::INPUT_EVENT: {
-			auto mousePos = evt.get()->getEvent<InputEvent>()->getMousePos();
-			auto keysPressed = evt.get()->getEvent<InputEvent>()->getPressedKeys();
+
+			InputEvtData* evtData = (InputEvtData*)evt.get()->getData().get();
+
+			auto mousePos = evtData->getMousePos();
+			auto keysPressed = evtData->getPressedKeys();
 
 			updateLook((float)mousePos.first, (float)mousePos.second);
 

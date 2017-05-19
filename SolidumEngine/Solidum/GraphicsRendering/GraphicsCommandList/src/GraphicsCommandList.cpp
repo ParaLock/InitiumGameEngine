@@ -17,7 +17,6 @@ GraphicsCommandList::~GraphicsCommandList()
 
 void GraphicsCommandList::loadCommands()
 {
-
 	IGraphicsCore* gCore = IGraphicsCore::getInstance();
 	GraphicsCommandPool* commandPool = gCore->getGraphicsCommandPool();
 

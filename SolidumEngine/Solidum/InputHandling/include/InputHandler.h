@@ -4,13 +4,26 @@
 
 #include "../../EventFramework/include/EventFrameworkCore.h"
 
-#include "../../EventFramework/include/InputEvent.h"
+#include "../../EventFramework/include/Event.h"
 
 #include "../../GraphicsRendering/Window/include/window.h"
 
 
+struct InputEvtData : public EventData {
+
+	std::pair<unsigned long, unsigned long> _mousePos;
+	std::list<KEY_MAP> _keysPressed;
+
+	void setMousePos(std::pair<unsigned long, unsigned long> mousePos) { _mousePos = mousePos; }
+	void setPressedKeys(std::list<KEY_MAP> keysPressed) { _keysPressed = keysPressed; }
+
+	std::pair<unsigned long, unsigned long> getMousePos() { return _mousePos; }
+	std::list<KEY_MAP> getPressedKeys() { return _keysPressed; }
+};
+
 class InputHandler : public IResource, public IEventListener
 {
+private:
 public:
 	InputHandler();
 	~InputHandler();

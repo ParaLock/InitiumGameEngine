@@ -32,12 +32,6 @@ GraphicsCommand * GraphicsCommandFactory::createObject(GRAPHICS_COMMAND_TYPE typ
 	case GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_TRANSFORM_UNIFORMS:
 		command = new ShaderUpdateTransformCommand();
 		break;
-	case GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_MESH:
-		command = new ShaderUpdateModelMeshCommand();
-		break;
-	case GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_MODEL_TEX:
-		command = new ShaderUpdateModelTexCommand();
-		break;
 	case GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS:
 		command = new ShaderSyncUniforms();
 		break;

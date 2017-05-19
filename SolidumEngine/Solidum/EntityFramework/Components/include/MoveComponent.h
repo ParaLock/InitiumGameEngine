@@ -1,6 +1,7 @@
 #pragma once
-#include "../../../EventFramework/include/IEvent.h"
-#include "../../../EventFramework/include/InputEvent.h"
+#include "../../../EventFramework/include/Event.h"
+
+#include "../../../InputHandling/include/InputHandler.h"
 
 #include "../../../GraphicsRendering/Transform/include/Transform.h"
 

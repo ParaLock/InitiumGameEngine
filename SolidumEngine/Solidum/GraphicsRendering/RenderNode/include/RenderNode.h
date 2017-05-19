@@ -11,13 +11,10 @@
 class IResource;
 class GPUPipeline;
 class RenderComposite;
-class IShader;
 
 class RenderNode : public IResource
 {
 protected:
-	IShader* _shader = nullptr;
-
 	uint64_t _id;
 
 	RENDER_NODE_TYPE _type;
@@ -47,7 +44,5 @@ public:
 	virtual bool isRenderViable() = 0;
 
 	uint64_t getID() { return _id; }
-
-	IShader* getShader() { return _shader; }
 };
 

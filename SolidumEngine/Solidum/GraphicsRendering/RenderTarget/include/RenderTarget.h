@@ -25,8 +25,6 @@ public:
 	~RenderTarget();
 
 	struct InitData : public IResourceBuilder {
-		int _mipLevel;
-		int _aaSamples;
 		TEX_FORMAT _texFormat;
 
 		int _height;
@@ -34,9 +32,7 @@ public:
 
 		bool _createDepthStencil;
 
-		InitData(int mipLevel, int aaSamples, TEX_FORMAT texFormat, int height, int width) {
-			_mipLevel = mipLevel;
-			_aaSamples = aaSamples;
+		InitData(TEX_FORMAT texFormat, int height, int width) {
 			_texFormat = texFormat;
 			_height = height;
 			_width = width;

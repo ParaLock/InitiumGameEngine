@@ -3,7 +3,6 @@
 
 #include "../../Mesh/include/mesh.h"
 #include "../../Textures/include/Texture.h"
-#include "../../Shaders/include/Shader.h"
 
 #include "Particle.h"
 #include "ParticleStream.h"
@@ -14,35 +13,24 @@ struct ParticleEmitterRenderNodeParams : public UniqueRenderParams {
 
 	int _maxParticles = 0;
 
-	IShader* _particleRenderShader = nullptr;
 	ParticleStream* _particles = nullptr;
 	GPUBuffer* _particleInstanceBuffer = nullptr;
+	ParticleInstanceData* _particleDataCPUBuffer = nullptr;
+
 };
 
 class ParticleRenderNode : public RenderNode
 {
 private:
-	struct ParticleInstanceData {
-		
-		Vector2f _texOffset1;
-		Vector2f _texOffset2;
-		Vector2f _texCoordInfo;
-		Matrix4f _mvMatrix;
-
-	};
-
-	ParticleInstanceData* _particleDataCPUBuffer;
 public:
 	ParticleRenderNode();
 	~ParticleRenderNode();
 
 	struct InitData : public IResourceBuilder {
-		IShader* _shader;
 		ParticleStream* _particles;
 		int _maxParticles;
 
-		InitData(IShader* shader, ParticleStream* particles, int maxConcurrentParticles) {
-			_shader = shader;
+		InitData(ParticleStream* particles, int maxConcurrentParticles) {
 			_particles = particles;
 			_maxParticles = maxConcurrentParticles;
 		}

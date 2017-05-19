@@ -14,16 +14,15 @@ public:
 	virtual ~IResource();
 
 	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
-
 	virtual void unload() = 0;
 
 	virtual void updateParameter(std::string varName, void *data) = 0;
 	virtual void* getParameter(std::string varName) = 0;
 
-	bool getLoadStatus() { return isLoaded; };
+	bool getLoadStatus() { return isLoaded; }
 	int getPoolIndex() { return _poolIndex; }
 
-	void setPoolIndex(int index) { _poolIndex = index; };
+	void setPoolIndex(int index) { _poolIndex = index; }
 
 	template<typename T>
 	T* getCore() {

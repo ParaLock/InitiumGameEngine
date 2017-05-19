@@ -5,7 +5,7 @@
 RenderNodeTree::RenderNodeTree()
 {
 	_nodeQueryMap = new std::map<uint64_t, RenderNode*>;
-	_rootNodes = new std::map<IShader*, RenderNode*>;
+	_rootNodes = new std::map<RENDER_NODE_TYPE, RenderNode*>;
 }
 
 
@@ -22,41 +22,26 @@ uint64_t RenderNodeTree::getUniqueNodeID()
 	return dist(mt);
 }
 
-void RenderNodeTree::setExecutionOrder(std::vector<SHADER_RENDER_TYPE> order)
-{
-	_renderOrder = order;
-}
-
 void RenderNodeTree::addNode(RenderNode * node, uint64_t id)
 {
 	_nodeQueryMap->insert({id, node});
 
-	auto itr = _rootNodes->find(node->getShader());
-
-	if (itr != _rootNodes->end()) {
-
-		RenderNode* rootNode = _rootNodes->at(node->getShader());
-
-		RenderNode* childNode = rootNode;
-
-		while (true) {
-
-			if (childNode->getChild() != nullptr) {
-				childNode = childNode->getChild();
-			}
-			else {
-				childNode->setChild(node);
-				node->setParent(childNode);
-
-				return;
-			}
-		}
+	auto itr = _rootNodes->find(node->getType());
+	
+	if (itr == _rootNodes->end()) {
+		_rootNodes->insert({ node->getType(), node });
+		return;
 	}
-	else {
-		_rootNodes->insert({node->getShader(), node});
+	
+	RenderNode* root = _rootNodes->at(node->getType());
 
-		int debugPoint = -1;
-	}
+	while (root->getChild() != nullptr)
+		root = root->getChild();
+
+
+	root->setChild(node);
+
+	node->setParent(root);
 }
 
 void RenderNodeTree::updateGlobalRenderParams(GlobalRenderingParams params)
@@ -83,70 +68,40 @@ void RenderNodeTree::updateNodeVisibility(bool isVisible, uint64_t nodeid)
 	}
 }
 
-std::vector<RenderNode*> RenderNodeTree::queryAllLights()
+RenderParams * RenderNodeTree::getRenderNodeParams(uint64_t nodeid)
 {
-	std::vector<RenderNode*> lights;
+	if (_nodeQueryMap->find(nodeid) != _nodeQueryMap->end()) {
+		
+		RenderNode* foundNode = _nodeQueryMap->at(nodeid);
 
-	for (auto itr = _rootNodes->begin(); itr != _rootNodes->end(); itr++) {
+		RenderParams* params = foundNode->getRenderParams();
+		
 
-		RenderNode* child = itr->second;
-		while (child != nullptr) {
-
-			if (child->getType() == RENDER_NODE_TYPE::LIGHT_RENDER_NODE && child->isRenderViable() == true) {
-				lights.push_back(child);
-			}
-
-			child = child->getChild();
-		}
+		return params;
 	}
 
-	return lights;
+	return nullptr;
 }
 
-std::vector<RenderNode*> RenderNodeTree::queryAllShadowCastingLights()
+std::list<RenderNode*> RenderNodeTree::queryNodesByType(RENDER_NODE_TYPE type)
 {
-	std::vector<RenderNode*> lights;
+	std::list<RenderNode*> nodes;
 
 	for (auto itr = _rootNodes->begin(); itr != _rootNodes->end(); itr++) {
 
 		RenderNode* child = itr->second;
 		while (child != nullptr) {
 
-			if (child->getType() == RENDER_NODE_TYPE::LIGHT_RENDER_NODE && child->isRenderViable() == true) {
+			if (child->getType() == type && child->isRenderViable() == true) {
 
-				bool* isCaster = (bool*)child->getParameter("IS_SHADOW_CASTER");
-
-				if (*isCaster) {
-
-					lights.push_back(child);
-				}
-			}
-			child = child->getChild();
-		}
-	}
-
-	return lights;
-}
-
-std::vector<RenderNode*> RenderNodeTree::queryAllMeshes()
-{
-	std::vector<RenderNode*> meshes;
-
-	for (auto itr = _rootNodes->begin(); itr != _rootNodes->end(); itr++) {
-
-		RenderNode* child = itr->second;
-		while (child != nullptr) {
-
-			if (child->getType() == RENDER_NODE_TYPE::MESH_RENDER_NODE && child->isRenderViable() == true) {
-				
-				meshes.push_back(child);
+				nodes.push_back(child);
 			}
 
 			child = child->getChild();
 		}
 	}
 
-	return meshes;
+	return nodes;
 }
 
 void RenderNodeTree::removeNode(uint64_t id)
@@ -176,21 +131,9 @@ void RenderNodeTree::optimize()
 
 void RenderNodeTree::walkTree()
 {
-	std::vector<RenderNode*> _orderedRootNodes;
+	for (auto itr = _rootNodes->begin(); itr != _rootNodes->end(); itr++) {
 
-	for (int i = 0; i < _renderOrder.size(); i++) {
-		for (auto itr = _rootNodes->begin(); itr != _rootNodes->end(); itr++) {
-			RenderNode* node = itr->second;
-
-			if (node->getShader()->getRenderMode() == _renderOrder[i]) {
-				_orderedRootNodes.push_back(node);
-			}
-		}
-	}
-
-	for (int i = 0; i < _orderedRootNodes.size(); i++) {
-
-		RenderNode* node = _orderedRootNodes[i];
+		RenderNode* node = itr->second;
 
 		while (node->getChild() != nullptr) {
 			node->render();
@@ -198,8 +141,5 @@ void RenderNodeTree::walkTree()
 		}
 
 		node->render();
-
-
-		int debutPoint = -1;
 	}
 }

@@ -20,6 +20,40 @@ struct dxConstantBufferLayout {
 };
 
 
+//class HLSLIncludeHandler : public ID3D10Include
+//{
+//public:
+//	HLSLIncludeHandler(std::string& shaderCode)
+//		: _shaderCode(shaderCode) {}
+//	~HLSLIncludeHandler() {}
+//
+//	STDMETHOD(Open)(D3D10_INCLUDE_TYPE IncludeType,
+//		LPCSTR pFileName,
+//		LPCVOID pParentData,
+//		LPCVOID *ppData,
+//		UINT *pByteLen
+//		)
+//	{
+//		std::string source = _shaderCode;
+//
+//		*pByteLen = static_cast<UINT>(source.length());
+//		char* pChar = new char[*pByteLen];
+//		memcpy(pChar, source.c_str(), *pByteLen);
+//		*ppData = pChar;
+//
+//		return S_OK;
+//	}
+//
+//	STDMETHOD(Close)(LPCVOID pData)
+//	{
+//		char* pChar = (char*)pData;
+//		delete[] pChar;
+//		return S_OK;
+//	}
+//protected:
+//	std::string& _shaderCode;
+//};
+
 class dxShader : public Shader
 {
 private:
@@ -40,8 +74,6 @@ public:
 
 	void load(std::shared_ptr<IResourceBuilder> builder);
 	void unload();
-
-	void attachPipeline(GPUPipeline* pipe);
 
 	void enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode);
 

@@ -3,7 +3,6 @@
 
 #include "../../Mesh/include/mesh.h"
 #include "../../Textures/include/Texture.h"
-#include "../../Shaders/include/Shader.h"
 
 #include "../include/LightRenderNode.h"
 

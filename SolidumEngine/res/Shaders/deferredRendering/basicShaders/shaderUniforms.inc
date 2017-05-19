@@ -1,4 +1,3 @@
-
 cbuffer MatrixBuffer
 {
 	matrix cbuff_OBJSpecificMatrix;

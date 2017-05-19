@@ -13,9 +13,9 @@ EntityRenderObject::~EntityRenderObject()
 
 void EntityRenderObject::addLight(ILight * light, int lightIndex)
 {
-	RenderNodeTree* tree = GraphicsCore::getInstance()->getRenderNodeTree();
+	RenderNodeTree* tree = IGraphicsCore::getInstance()->getRenderNodeTree();
 
-	RenderNodePool* renderNodePool = GraphicsCore::getInstance()->getRenderNodePool();
+	RenderNodePool* renderNodePool = IGraphicsCore::getInstance()->getRenderNodePool();
 
 	RenderNode* newNode = renderNodePool->getResource(RENDER_NODE_TYPE::LIGHT_RENDER_NODE);
 
@@ -46,7 +46,7 @@ void EntityRenderObject::addTexture(Texture * tex, int targetMeshIndex)
 
 void EntityRenderObject::addMaterial(Material * mat, int targetMeshIndex)
 {
-	RenderNodeTree* tree = GraphicsCore::getInstance()->getRenderNodeTree();
+	RenderNodeTree* tree = IGraphicsCore::getInstance()->getRenderNodeTree();
 
 	if (_renderResources.find(RENDER_NODE_TYPE::MESH_RENDER_NODE) != _renderResources.end())
 	{
@@ -59,9 +59,9 @@ void EntityRenderObject::addMaterial(Material * mat, int targetMeshIndex)
 
 void EntityRenderObject::addStaticGeometry(mesh * model, int meshIndex)
 {
-	RenderNodeTree* tree = GraphicsCore::getInstance()->getRenderNodeTree();
+	RenderNodeTree* tree = IGraphicsCore::getInstance()->getRenderNodeTree();
 
-	RenderNodePool* renderNodePool = GraphicsCore::getInstance()->getRenderNodePool();
+	RenderNodePool* renderNodePool = IGraphicsCore::getInstance()->getRenderNodePool();
 
 	RenderNode* newNode = renderNodePool->getResource(RENDER_NODE_TYPE::MESH_RENDER_NODE);
 
@@ -91,7 +91,7 @@ void EntityRenderObject::addGenericRenderNode(RenderNode * renderNode, int gener
 
 	_renderResources[renderNode->getType()]->insert({ genericNodeIndex, renderNode->getID() });
 	
-	RenderNodeTree* tree = GraphicsCore::getInstance()->getRenderNodeTree();
+	RenderNodeTree* tree = IGraphicsCore::getInstance()->getRenderNodeTree();
 	
 	tree->addNode(renderNode, renderNode->getID());
 }
@@ -100,10 +100,16 @@ RenderParams* EntityRenderObject::updateRenderNodeParams(RENDER_NODE_TYPE nodeTy
 {
 	if (_renderResources.find(nodeType) != _renderResources.end()) {
 
-		RenderParams* params = GraphicsCore::getInstance()->getRenderNodeTree()->
-			getRenderNodeParams(_renderResources[nodeType]->operator[](index));
+		auto renderNodeByIndex = _renderResources.at(nodeType);
 
-		return params;
+		if (renderNodeByIndex->find(index) != renderNodeByIndex->end()) {
+
+			uint64_t nodeID = renderNodeByIndex->at(index);
+
+			RenderParams* params = IGraphicsCore::getInstance()->getRenderNodeTree()->getRenderNodeParams(nodeID);
+
+			return params;
+		}
 	}
 
 	return nullptr;

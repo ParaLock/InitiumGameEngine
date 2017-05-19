@@ -7,7 +7,7 @@ public:
 	StringManipulation();
 	~StringManipulation();
 
-	static std::vector<std::string> split(std::string * text, char sep);
+	static std::vector<std::string> split(std::string * text, const char* delim);
 
 	static std::string ws2s(const std::wstring& wstr);
 

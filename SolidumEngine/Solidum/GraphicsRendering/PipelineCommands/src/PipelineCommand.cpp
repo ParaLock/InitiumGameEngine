@@ -16,17 +16,17 @@ void PipelineSRBindCommand::execute()
 
 	switch (_resourceType)
 	{
-	case SHADER_RESOURCE_TYPE::SHADER_CONSTANT_BUFFER:
+	case SHADER_RESOURCE_TYPE::CONSTANT_BUFFER:
 
 		PipelineFunctions::pipeline_bindConstantBuffer(_bindSlot, _parentShader, _sr->getParameter("GPUBUFFER"));
 
 		break;
-	case SHADER_RESOURCE_TYPE::SHADER_TEX_SAMPLER:
+	case SHADER_RESOURCE_TYPE::TEXTURE_SAMPLER:
 
 		PipelineFunctions::pipeline_bindTextureSampler(_bindSlot, _parentShader, _sr->getParameter("TEXTURESAMPLER"));
 
 		break;
-	case SHADER_RESOURCE_TYPE::SHADER_TEXTURE_HOOK:
+	case SHADER_RESOURCE_TYPE::TEXTURE:
 
 		PipelineFunctions::pipeline_bindTexture(_bindSlot, _parentShader, _sr->getParameter("TEXTURE"));
 

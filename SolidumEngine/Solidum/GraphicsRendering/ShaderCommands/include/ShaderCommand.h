@@ -47,6 +47,8 @@ public:
 
 class ShaderUpdateLightUniformsCommand : public ShaderCommand {
 private:
+	bool _isDeferred = true;
+
 	std::vector<ILight*> _lights;
 	IShader* _shader;
 public:
@@ -56,14 +58,21 @@ public:
 		std::vector<ILight*> _lights;
 		IShader* _shader;
 
-		InitData(std::list<ILight*> lights, IShader* shader) {
+		bool _isDeferred;
+
+		InitData(std::list<ILight*> lights, IShader* shader, bool isDeferred) {
 			for each(ILight* light in lights) _lights.push_back(light);
 			_shader = shader;
+
+
+			_isDeferred = isDeferred;
 		}
 	};
 
 	void load(std::shared_ptr<IResourceBuilder> builder) {
 		InitData* realBuilder = static_cast<InitData*>(builder.get());
+
+		_isDeferred = realBuilder->_isDeferred;
 
 		_lights = realBuilder->_lights;
 		_shader = realBuilder->_shader;
@@ -76,16 +85,19 @@ class ShaderUpdateMaterialPassUniformsCommand : public ShaderCommand {
 private:
 	MaterialPass* _matPass;
 	IShader* _shader;
+	RenderFlowGraphIOInterface* _ioInterface;
 public:
 	ShaderUpdateMaterialPassUniformsCommand() { _type = GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_MATERIAL_PASS_UNIFORMS; }
 
 	struct InitData : public IResourceBuilder {
+		RenderFlowGraphIOInterface* _ioInterface;
 		MaterialPass* _matPass;
 		IShader* _shader;
 
-		InitData(MaterialPass* matPass, IShader* shader) {
+		InitData(MaterialPass* matPass, IShader* shader, RenderFlowGraphIOInterface* ioInterface) {
 			_matPass = matPass;
 			_shader = shader;
+			_ioInterface = ioInterface;
 		}
 	};
 
@@ -93,6 +105,7 @@ public:
 
 		InitData* realBuilder = static_cast<InitData*>(builder.get());
 
+		_ioInterface = realBuilder->_ioInterface;
 		_matPass = realBuilder->_matPass;
 		_shader = realBuilder->_shader;
 	}
@@ -148,64 +161,6 @@ public:
 		InitData* realBuilder = static_cast<InitData*>(builder.get());
 
 		_transform = realBuilder->_transform;
-		_shader = realBuilder->_shader;
-	}
-
-	void execute();
-};
-
-class ShaderUpdateModelMeshCommand : public ShaderCommand {
-private:
-	mesh* _mesh;
-	IShader* _shader;
-public:
-
-	ShaderUpdateModelMeshCommand() { _type = GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_MESH; }
-
-	struct InitData : public IResourceBuilder {
-
-		mesh* _mesh;
-		IShader* _shader;
-
-		InitData(mesh* mesh, IShader* shader) {
-			_mesh = mesh;
-			_shader = shader;
-		}
-	};
-
-	void load(std::shared_ptr<IResourceBuilder> builder) {
-		InitData* realBuilder = static_cast<InitData*>(builder.get());
-
-		_mesh = realBuilder->_mesh;
-		_shader = realBuilder->_shader;
-	}
-
-	void execute();
-
-};
-
-class ShaderUpdateModelTexCommand : public ShaderCommand {
-private:
-	Texture* _tex;
-	IShader* _shader;
-public:
-	ShaderUpdateModelTexCommand() { _type = GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_MODEL_TEX; }
-
-	struct InitData : public IResourceBuilder {
-
-		Texture* _tex;
-		IShader* _shader;
-
-		InitData(Texture* tex, IShader* shader) {
-			_tex = tex;
-			_shader = shader;
-		}
-	};
-
-	void load(std::shared_ptr<IResourceBuilder> builder) {
-		InitData* realBuilder = static_cast<InitData*>(builder.get());
-
-		_tex = realBuilder->_tex;
 		_shader = realBuilder->_shader;
 	}
 

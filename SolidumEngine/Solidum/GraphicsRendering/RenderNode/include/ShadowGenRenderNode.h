@@ -3,7 +3,6 @@
 
 #include "../../Mesh/include/mesh.h"
 #include "../../Textures/include/Texture.h"
-#include "../../Shaders/include/Shader.h"
 #include "../../../EngineUtils/include/Timer.h"
 
 #include "../../RenderNode/include/LightRenderNode.h"
@@ -19,11 +18,10 @@ public:
 	~ShadowGenRenderNode();
 	
 	struct InitData : public IResourceBuilder {
-		IShader* _shader;
+
 		uint64_t _id;
 
-		InitData(IShader* shader, uint64_t id) {
-			_shader = shader;
+		InitData(uint64_t id) {
 			_id = id;
 		}
 	};

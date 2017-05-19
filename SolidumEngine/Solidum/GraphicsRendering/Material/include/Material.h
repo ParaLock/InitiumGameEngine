@@ -5,8 +5,7 @@
 #include "../../../ResourceFramework/include/IResource.h"
 #include "../../../ResourceFramework/include/IResourceBuilder.h"
 
-#include "../../Shaders/include/Shader.h"
-#include "../../GraphicsCore/include/GraphicsCore.h"
+class Shader;
 
 class MaterialPass {
 private:
@@ -17,7 +16,6 @@ private:
 	float _specularPower;
 
 	Shader* _shader;
-	GPUPipeline* _pipeline;
 
 	Vector4f _specularColor;
 
@@ -43,14 +41,12 @@ public:
 	void setPBREmessiveTexture(Texture* tex);
 
 	void setShader(Shader* shader) { _shader = shader; }
-	void setGPUPipeline(GPUPipeline* pipeline) { _pipeline = pipeline; }
 
 	Vector4f getSpecularColor() { return _specularColor; }
 
 	const std::map<MATERIAL_TEX, Texture*>& getTextures() { return _textures; }
 
 	Shader* getShader() { return _shader; }
-	GPUPipeline* getPipeline() { return _pipeline; }
 };
 
 
@@ -75,7 +71,7 @@ public:
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 
-	void createPass(std::string name, Shader* shader, GPUPipeline* pipeline);
+	void createPass(std::string name, Shader* shader);
 
 	MaterialPass* getPass(std::string name);
 

@@ -120,9 +120,7 @@ void * dxGPUBuffer::getParameter(std::string varName)
 
 void dxGPUBuffer::swapInternalBuffer(void * pNewBuff)
 {
-	//TEST FUNCTION... Yup, it sucks.
-	ID3D11Buffer* newBuff = (ID3D11Buffer*)pNewBuff;
-
-	bufferPtr = newBuff;
+	//TEST FUNCTION... Yup, it sucks xD
+	bufferPtr = (ID3D11Buffer*)pNewBuff;
 }
 
