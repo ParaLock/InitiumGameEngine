@@ -68,6 +68,8 @@ private:
 
 	std::map<DEFAULT_SHADER_TYPE, Shader*> _defaultShaders;
 
+	std::vector<Renderer*> _sortedRenderers;
+
 	RenderFlowGraph* _primaryFlowGraph;
 
 	RenderNodeFactory* _renderNodeFactory;
@@ -101,6 +103,8 @@ public:
 
 	void registerRenderer(Renderer* newRenderer);
 	void setPrimaryRenderFlowGraph(RenderFlowGraph* graph);
+
+	void calculateRenderOrder();
 
 	ParticlePool* getParticlePool() { return _particlePool; }
 

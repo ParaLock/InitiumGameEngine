@@ -124,13 +124,10 @@ void GraphicsCore::render()
 	GraphicsCommandList* primaryCommandList = new GraphicsCommandList();
 	GraphicsCommandList* _endsceneCommandList = new GraphicsCommandList();
 
-	auto& renderOrder = _primaryFlowGraph->getNodeExecutionOrder();
+	for each(Renderer* renderer in _sortedRenderers) {
 
-	for each(std::string rendererName in renderOrder) {
-
-		Renderer* activeRenderer = _registeredRenderers.at(rendererName);
-		activeRenderer->gatherAndPrepareNodes(_renderTree);
-		activeRenderer->processNodes(primaryCommandList);
+		renderer->gatherAndPrepareNodes(_renderTree);
+		renderer->processNodes(primaryCommandList);
 	}
 
 	_endFrameState->applyState(_endsceneCommandList);
@@ -159,4 +156,18 @@ void GraphicsCore::registerRenderer(Renderer * newRenderer)
 void GraphicsCore::setPrimaryRenderFlowGraph(RenderFlowGraph * graph)
 {
 	_primaryFlowGraph = graph;
+}
+
+void GraphicsCore::calculateRenderOrder()
+{
+	if (_primaryFlowGraph != nullptr) {
+
+		auto& renderOrder = _primaryFlowGraph->getNodeExecutionOrder();
+
+		for each(std::string rendererName in renderOrder) {
+
+			Renderer* activeRenderer = _registeredRenderers.at(rendererName);
+			_sortedRenderers.push_back(activeRenderer);
+		}
+	}
 }

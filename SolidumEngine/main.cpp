@@ -82,6 +82,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	solidum->getGraphicsSubsystem()->setPrimaryRenderFlowGraph(simpleDeferredRenderFlow);
 
+	solidum->getGraphicsSubsystem()->calculateRenderOrder();
+
 	Light* sunLight = resManagerPool->getResourceManager("LightManager")->createResource(std::make_shared<Light::InitData>
 		(LIGHT_TYPE::DIRECTIONAL_LIGHT), "sun", false)->getCore<Light>();
 
