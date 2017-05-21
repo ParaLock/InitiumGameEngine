@@ -2,6 +2,8 @@
 #include "../../../sysInclude.h"
 #include "../../../ResourceFramework/include/IResource.h"
 
+#include "ParticleStream.h"
+
 class Particle : public IResource
 {
 private:
@@ -12,7 +14,7 @@ private:
 	void unload() { 
 
 		isLoaded = false; 
-		
+
 		_elapsedTime = 0;
 	};
 
@@ -21,12 +23,14 @@ public:
 	Particle();
 	~Particle();
 
+	int _batchIndex = 0;
+
 	PARTICLE_TYPE getType() { return _type; }
 
 	Vector2f _texOffset1;
 	Vector2f _texOffset2;
 
-	Vector3f _distanceFromCamera;
+	float _distance;
 
 	int _texNumRows;
 

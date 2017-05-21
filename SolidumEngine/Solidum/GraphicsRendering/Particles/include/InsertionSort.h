@@ -9,30 +9,73 @@ public:
 	InsertionSort();
 	~InsertionSort();
 
-	void insertionSort(std::vector<Particle*>* arr) {
+	void particleSelectionSort(std::vector<Particle*>* arr) {
 
-		int i, j;
+		if (arr->size() == 0)
+			return;
 
-		Particle* tmp;
-
-		for (i = 1; i < arr->size(); i++) {
-
-			j = i;
-
-			while (j > 0 && arr[j - 1] > arr[j]) {
-
-				tmp = arr->operator[](j);
-
-				arr[j] = arr[j - 1];
-
-				arr->operator[](j - 1) = tmp;
-
-				j--;
-
+		if (arr->size() == 2) {
+			if (arr->at(0)->_distance < arr->at(1)->_distance) {
+				std::swap(arr->at(0), arr->at(1));
 			}
 
+			return;
 		}
 
+		int i = 0;
+
+		int j = i + 1;
+
+		Particle* temp;
+
+		while (i < arr->size() - 1) {
+			
+			while (j < arr->size() - 1) {
+				if (arr->at(j)->_distance > arr->at(i)->_distance) {
+
+					std::swap(arr->at(i), arr->at(j));
+				}
+				j++;
+			}
+			i++;
+			j = i + 1;
+
+		}
+	}
+
+	void particleBatchSelectionSort(std::vector<std::tuple<std::shared_ptr<ParticleBatch>, RenderNode*>>* arr) {
+
+
+		if (arr->size() == 0)
+			return;
+
+		if (arr->size() == 2) {
+			if (std::get<0>(arr->at(0))->_particlesToRender->front()->_distance < std::get<0>(arr->at(1))->_particlesToRender->front()->_distance) {
+				std::swap(arr->at(0), arr->at(1));
+			}
+
+			return;
+		}
+
+		int i = 0;
+
+		int j = i + 1;
+
+		Particle* temp;
+
+		while (i < arr->size() - 1) {
+
+			while (j < arr->size() - 1) {
+				if (std::get<0>(arr->at(j))->_particlesToRender->front()->_distance > std::get<0>(arr->at(i))->_particlesToRender->front()->_distance) {
+
+					std::swap(arr->at(i), arr->at(j));
+				}
+				j++;
+			}
+			i++;
+			j = i + 1;
+
+		}
 	}
 };
 

@@ -190,8 +190,8 @@ public:
 		return result;
 	};
 
-	inline static T distance_between(const Vector3<T>& vec1, const Vector3<T>& vec2) {
-		const Vector3<T> diff = vec1 - vec2;
+	inline static T distance_between(Vector3<T>& vec1, Vector3<T>& vec2) {
+		Vector3<T>& diff = vec1 - vec2;
 		return Vector3<T>::length(diff);
 	}
 

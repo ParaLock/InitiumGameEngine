@@ -12,6 +12,8 @@
 #include "../../GraphicsCommandList/include/GraphicsCommandList.h"
 #include "../../RenderNodeTree/include/IRenderNodeTree.h"
 
+#include "../../Particles/include/InsertionSort.h"
+
 #include "../../Particles/include/ParticleRenderNode.h"
 
 #include "../../GraphicsCore/include/IGraphicsCore.h"

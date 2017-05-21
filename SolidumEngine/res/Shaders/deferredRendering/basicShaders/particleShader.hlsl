@@ -55,7 +55,7 @@ Texture2D colorTexture : !% PIXEL_SHADER particle_texture !%
 SamplerState SampleTypeWrap : !% PIXEL_SHADER SampleTypeWrap !%
 SamplerState SampleTypePoint : !% PIXEL_SHADER SampleTypePoint!%
 
-PixelOutputType Pshader(PixelInputType input) : SV_TARGET
+PixelOutputType Pshader(PixelInputType input)
 {
 	PixelOutputType output;
 	

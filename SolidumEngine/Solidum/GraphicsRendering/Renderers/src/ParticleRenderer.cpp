@@ -90,100 +90,170 @@ void ParticleRenderer::gatherAndPrepareNodes(IRenderNodeTree * tree)
 
 void ParticleRenderer::processNodes(GraphicsCommandList * commandList)
 {
+	struct SceneParticles {
+
+		std::vector<std::tuple<std::shared_ptr<ParticleBatch>, RenderNode*>> _particleListByBatchIndex;
+
+		std::vector<Particle*> _sortedParticleList;
+	};
+
+	SceneParticles sceneParticles;
+
+	int currentBatchCount = 0;
+
+	//PARTICLE REMOVAL FROM BATCH
 	for each(RenderNode* particleNode in _particleRenderNodes) {
 
-		RenderParams* params = particleNode->getRenderParams();
+		RenderParams* renderParams = particleNode->getRenderParams();
 
-		Matrix4f worldMatrix = params->getGlobalParam_GlobalRenderingCamera()->getWorldMatrix();
-		Matrix4f viewMatrix = params->getGlobalParam_GlobalRenderingCamera()->getViewMatrix();
+		ParticleEmitterRenderNodeParams* particleParams = (ParticleEmitterRenderNodeParams*)renderParams->getCustomRenderParams().get();
 
-		ParticleEmitterRenderNodeParams* particleParams = (ParticleEmitterRenderNodeParams*)params->getCustomRenderParams().get();
+		CameraComponent* cam = renderParams->getGlobalParam_GlobalRenderingCamera();
 
 		while (!particleParams->_particles->isEmpty()) {
 
-			ParticleBatch batch = particleParams->_particles->getBatch();
+			std::shared_ptr<ParticleBatch> batch = particleParams->_particles->getBatch();
 
-			int i = 0;
+			if (batch.get()->_particlesToRender->size() < 2)
+				continue;
 
-			for each(Particle* particle in batch._particlesToRender) {
+			sceneParticles._particleListByBatchIndex.push_back(std::make_tuple(batch, particleNode));
 
-				ParticleInstanceData particleData;
+			for each(Particle* particle in *batch->_particlesToRender) {
 
-				particleData._mvMatrix = Matrix4f::transpose(createParticleMVMatrix(particle->_position, particle->_rotation, particle->_scale, viewMatrix, worldMatrix));
+				sceneParticles._sortedParticleList.push_back(particle);
 
-				particleData._texOffset1 = particle->_texOffset1;
-				particleData._texOffset2 = particle->_texOffset2;
+				particle->_batchIndex = currentBatchCount;
 
-				particleData._texCoordInfo[0] = particle->_texNumRows;
-				particleData._texCoordInfo[1] = particle->_texBlend;
-
-				particleParams->_particleDataCPUBuffer[i] = particleData;
-
-				i++;
+				particle->_distance = Vector3f::distance_between(particle->_position, cam->getPos());
 			}
 
-			particleParams->_particleInstanceBuffer->Write(particleParams->_particleDataCPUBuffer, sizeof(ParticleInstanceData) * particleParams->_maxParticles, 0);
+			batch->_particlesToRender->clear();
 
-			_particleRenderingShader->updateModelUniforms(params->getPerNodeParam_Transform());
-
-			commandList->createCommand(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
-				(params->getGlobalParam_GlobalRenderingCamera(), _particleRenderingShader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
-
-			commandList->createCommand(std::make_shared<PipelineBufferBindCommand::InitData>
-				(std::vector<GPUBuffer*> {params->getPerNodeParam_Mesh()->getIndexBuff()},
-					std::vector<UINT> {0},
-					std::vector<UINT> {0}),
-
-				GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER
-				);
-
-			commandList->createCommand(std::make_shared<PipelineBufferBindCommand::InitData>
-				(std::vector<GPUBuffer*> {params->getPerNodeParam_Mesh()->getVertexBuff(), particleParams->_particleInstanceBuffer},
-					std::vector<UINT> {0, 0},
-					std::vector<UINT> {sizeof(LIGHT_VERTEX), sizeof(ParticleInstanceData)}),
-
-				GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER);
-
-			commandList->createCommand(std::make_shared<ShaderSyncUniforms::InitData>(_particleRenderingShader), GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
-
-			_pipelineState->shaderSetVertexInputLayout(_particleRenderingShader->getInputLayout());
-
-			_pipelineState->setBlendState(params->getPerNodeParam_BlendState());
-			_pipelineState->setDepthTestState(DEPTH_TEST_STATE::FULL_DISABLE);
-			_pipelineState->setRasterState(RASTER_STATE::DISABLE_TRIANGLE_CULL);
-
-			std::set<std::pair<SHADER_TYPE, DynamicStruct*>> singleStructs;
-
-			auto& constantBuffs = _particleRenderingShader->getConstantBuffers();
-
-			for (auto itr = constantBuffs.begin(); itr != constantBuffs.end(); itr++) {
-
-				singleStructs.insert(itr->second);
-			}
-
-			for (auto itr = singleStructs.begin(); itr != singleStructs.end(); itr++) {
-
-				std::pair<SHADER_TYPE, DynamicStruct*> data = *itr;
-
-				DynamicStruct* buff = data.second;
-
-				_pipelineState->attachResource(buff, buff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, data.first, false);
-			}
-
-			_ioInterface->assignHookResourceByName("particle_texture", batch._particleTex);
-
-			rebuildPSO();
-
-			_pipelineState->applyState(commandList);
-
-			_particleRenderingShader->execute(commandList);
-
-			_pipelineState->reset();
-
-			commandList->createCommand(std::make_shared<PipelineDrawInstancedCommand::InitData>(params->getPerNodeParam_Mesh()->numIndices, batch._particlesToRender.size()),
-				GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INSTANCED);
-
-			commandList->createCommand(std::make_shared<IResourceBuilder>(), GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
+			currentBatchCount++;
 		}
+	}
+
+	//PARTICLE SORTING
+	InsertionSort sort;
+
+	sort.particleSelectionSort(&sceneParticles._sortedParticleList);
+
+	//PARTICLE REGROUPING WITH BATCH
+	for each(Particle* particle in sceneParticles._sortedParticleList) {
+
+		ParticleInstanceData particleData;
+
+		std::cout << particle->_distance << std::endl;
+
+		int batchIndex = particle->_batchIndex;
+
+		RenderParams* renderParams = std::get<1>(sceneParticles._particleListByBatchIndex.at(batchIndex))->getRenderParams();
+
+		std::shared_ptr<ParticleBatch> batch = std::get<0>(sceneParticles._particleListByBatchIndex.at(batchIndex));
+
+		Matrix4f worldMatrix = renderParams->getGlobalParam_GlobalRenderingCamera()->getWorldMatrix();
+		Matrix4f viewMatrix = renderParams->getGlobalParam_GlobalRenderingCamera()->getViewMatrix();
+
+		ParticleEmitterRenderNodeParams* particleParams = (ParticleEmitterRenderNodeParams*)renderParams->getCustomRenderParams().get();
+
+		particleData._mvMatrix = Matrix4f::transpose(createParticleMVMatrix(particle->_position, particle->_rotation, particle->_scale, viewMatrix, worldMatrix));
+
+		particleData._texOffset1 = particle->_texOffset1;
+		particleData._texOffset2 = particle->_texOffset2;
+
+		particleData._texCoordInfo[0] = particle->_texNumRows;
+		particleData._texCoordInfo[1] = particle->_texBlend;
+
+		particleParams->_particleDataCPUBuffer[batch->_currentInstanceBuffIndex] = particleData;
+
+		batch->_particlesToRender->push_back(particle);
+
+		batch->_currentInstanceBuffIndex++;
+	}
+
+
+	//ORDER BATCHES BY DISTANCE TO CAMERA
+	sort.particleBatchSelectionSort(&sceneParticles._particleListByBatchIndex);
+
+	//PARTICLE RENDERING
+	for each(std::tuple<std::shared_ptr<ParticleBatch>, RenderNode*> particleDataTuple
+		in sceneParticles._particleListByBatchIndex)
+	{
+
+		RenderNode* renderNode = std::get<1>(particleDataTuple);
+
+		RenderParams* renderParams = renderNode->getRenderParams();
+
+		Matrix4f worldMatrix = renderParams->getGlobalParam_GlobalRenderingCamera()->getWorldMatrix();
+		Matrix4f viewMatrix = renderParams->getGlobalParam_GlobalRenderingCamera()->getViewMatrix();
+
+		ParticleEmitterRenderNodeParams* particleParams = (ParticleEmitterRenderNodeParams*)renderParams->getCustomRenderParams().get();
+
+		std::shared_ptr<ParticleBatch> batch = std::get<0>(particleDataTuple);
+
+		particleParams->_particleInstanceBuffer->Write(particleParams->_particleDataCPUBuffer, sizeof(ParticleInstanceData) * particleParams->_maxParticles, 0);
+
+		_particleRenderingShader->updateModelUniforms(renderParams->getPerNodeParam_Transform());
+
+		commandList->createCommand(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
+			(renderParams->getGlobalParam_GlobalRenderingCamera(), _particleRenderingShader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
+
+		commandList->createCommand(std::make_shared<PipelineBufferBindCommand::InitData>
+			(std::vector<GPUBuffer*> {renderParams->getPerNodeParam_Mesh()->getIndexBuff()},
+				std::vector<UINT> {0},
+				std::vector<UINT> {0}),
+
+			GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER
+			);
+
+		commandList->createCommand(std::make_shared<PipelineBufferBindCommand::InitData>
+			(std::vector<GPUBuffer*> {renderParams->getPerNodeParam_Mesh()->getVertexBuff(), particleParams->_particleInstanceBuffer},
+				std::vector<UINT> {0, 0},
+				std::vector<UINT> {sizeof(LIGHT_VERTEX), sizeof(ParticleInstanceData)}),
+
+			GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER);
+
+		commandList->createCommand(std::make_shared<ShaderSyncUniforms::InitData>(_particleRenderingShader), GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
+
+		_pipelineState->shaderSetVertexInputLayout(_particleRenderingShader->getInputLayout());
+
+		_pipelineState->setBlendState(BLEND_STATE::ADDITIVE_BLENDING);
+		_pipelineState->setDepthTestState(DEPTH_TEST_STATE::LESS_EQUAL);
+		_pipelineState->setRasterState(RASTER_STATE::DISABLE_TRIANGLE_CULL);
+
+		std::set<std::pair<SHADER_TYPE, DynamicStruct*>> singleStructs;
+
+		auto& constantBuffs = _particleRenderingShader->getConstantBuffers();
+
+		for (auto itr = constantBuffs.begin(); itr != constantBuffs.end(); itr++) {
+
+			singleStructs.insert(itr->second);
+		}
+
+		for (auto itr = singleStructs.begin(); itr != singleStructs.end(); itr++) {
+
+			std::pair<SHADER_TYPE, DynamicStruct*> data = *itr;
+
+			DynamicStruct* buff = data.second;
+
+			_pipelineState->attachResource(buff, buff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, data.first, false);
+		}
+
+		_ioInterface->assignHookResourceByName("particle_texture", batch->_particleTex);
+
+		rebuildPSO();
+
+		_pipelineState->applyState(commandList);
+
+		_particleRenderingShader->execute(commandList);
+
+		_pipelineState->reset();
+
+		commandList->createCommand(std::make_shared<PipelineDrawInstancedCommand::InitData>(renderParams->getPerNodeParam_Mesh()->numIndices, std::get<0>(particleDataTuple)->_particlesToRender->size()),
+			GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INSTANCED);
+
+
+		commandList->createCommand(std::make_shared<IResourceBuilder>(), GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
 	}
 }

@@ -1,36 +1,40 @@
 #pragma once
-#include "Particle.h"
+#include "../../../sysInclude.h"
 
 class Texture;
+class Particle;
 
 struct ParticleBatch {
+
 	Texture* _particleTex;
 
-	std::list<Particle*> _particlesToRender;
+	int _currentInstanceBuffIndex = 0;
+
+	std::shared_ptr<std::list<Particle*>> _particlesToRender;
 };
 
 class ParticleStream
 {
 private:
-	std::list<ParticleBatch> _batches;
+	std::list<std::shared_ptr<ParticleBatch>> _batches;
 public:
 	ParticleStream();
 	~ParticleStream();
 
-	void pushBatch(ParticleBatch batch) { _batches.push_back(batch); }
+	void pushBatch(std::shared_ptr<ParticleBatch> batch) { _batches.push_back(batch); }
 
 	bool isEmpty() { return _batches.empty(); };
 
-	ParticleBatch getBatch() {
+	std::shared_ptr<ParticleBatch> getBatch() {
 
 		if (!isEmpty()) {
-			ParticleBatch batch = _batches.front();
+			std::shared_ptr<ParticleBatch> batch = _batches.front();
 			_batches.pop_front();
 			
 			return batch;
 		}
 
-		return ParticleBatch();
+		return nullptr;
 	};
 };
 

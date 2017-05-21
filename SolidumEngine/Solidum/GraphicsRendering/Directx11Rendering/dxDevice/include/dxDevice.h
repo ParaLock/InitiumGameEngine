@@ -72,6 +72,7 @@ public:
 	ID3D11RasterizerState* rasterStateNormalRendering;
 	ID3D11RasterizerState* rasterStateNoCulling;
 
+	ID3D11BlendState *particleBlendingTest;
 	ID3D11BlendState *alphaBlending;
 	ID3D11BlendState *additiveBlending;
 	ID3D11BlendState *blendDisable;

@@ -54,6 +54,7 @@ void LightRenderer::processNodes(GraphicsCommandList * commandList)
 		if (light->getType() == LIGHT_TYPE::DIRECTIONAL_LIGHT) {
 
 			_pipelineState->setBlendState(BLEND_STATE::ADDITIVE_BLENDING);
+			_pipelineState->setDepthTestState(DEPTH_TEST_STATE::FULL_DISABLE);
 
 			commandList->createCommand(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
 				(params->getGlobalParam_GlobalRenderingCamera(), _directionalLightShader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);
@@ -106,6 +107,7 @@ void LightRenderer::processNodes(GraphicsCommandList * commandList)
 		if (light->getType() == LIGHT_TYPE::POINT_LIGHT) {
 
 			_pipelineState->setBlendState(BLEND_STATE::ADDITIVE_BLENDING);
+			_pipelineState->setDepthTestState(DEPTH_TEST_STATE::FULL_DISABLE);
 
 			commandList->createCommand(std::make_shared<ShaderUpdateCameraUniformsCommand::InitData>
 				(params->getGlobalParam_GlobalRenderingCamera(), _pointLightShader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS);

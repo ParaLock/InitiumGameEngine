@@ -172,7 +172,8 @@ Particle * ParticleEmitterComponent::getDeadParticle()
 
 void ParticleEmitterComponent::update(float delta)
 {
-	ParticleBatch batch;
+	std::shared_ptr<ParticleBatch> batch = std::make_shared<ParticleBatch>();
+	batch->_particlesToRender = std::make_shared<std::list<Particle*>>();
 
 	float t = (float)_time.getElapsedTimeSeconds();
 
@@ -211,16 +212,14 @@ void ParticleEmitterComponent::update(float delta)
 		}
 		else {
 
-			if (batch._particlesToRender.size() < _maxParticles)
-				batch._particlesToRender.push_back(particle);
+			if (batch->_particlesToRender.get()->size() < _maxParticles)
+				batch->_particlesToRender.get()->push_back(particle);
 
 			itr++;
 		}
 	}
 
-	//Sort batch._particlesToRender
-
-	batch._particleTex = _particleTex;
+	batch->_particleTex = _particleTex;
 
 	_stream->pushBatch(batch);
 	

@@ -203,7 +203,7 @@ void dxDevice::InitializeDepthStencilStates()
 	ZeroMemory(&depthStencilLessEqualDesc, sizeof(depthStencilLessEqualDesc));
 
 	depthStencilLessEqualDesc.DepthEnable = true;
-	depthStencilLessEqualDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilLessEqualDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 	depthStencilLessEqualDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
 	depthStencilLessEqualDesc.StencilEnable = true;
@@ -226,6 +226,25 @@ void dxDevice::InitializeDepthStencilStates()
 void dxDevice::InitializeBlendStates()
 {
 	HRESULT result;
+
+	D3D11_BLEND_DESC particleBlendTest;
+	ZeroMemory(&particleBlendTest, sizeof(D3D11_BLEND_DESC));
+
+	particleBlendTest.RenderTarget[0].BlendEnable = TRUE;
+	particleBlendTest.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	particleBlendTest.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	particleBlendTest.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+
+	particleBlendTest.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	particleBlendTest.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+
+
+
+	particleBlendTest.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	particleBlendTest.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+
+	result = dxDev->CreateBlendState(&particleBlendTest, &particleBlendingTest);
 
 	D3D11_BLEND_DESC alphaBlendDesc;
 	ZeroMemory(&alphaBlendDesc, sizeof(D3D11_BLEND_DESC));
@@ -317,6 +336,9 @@ void dxDevice::setBlendState(BLEND_STATE state)
 {
 	switch (state)
 	{
+	case BLEND_STATE::PARTICLE_BLENDING_TEST:
+		dxDevContext->OMSetBlendState(particleBlendingTest, 0, 0xffffffff);
+		break;
 	case BLEND_STATE::BLENDING_OFF:
 		dxDevContext->OMSetBlendState(blendDisable, 0, 0xffffffff);
 		break;

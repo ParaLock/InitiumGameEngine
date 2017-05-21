@@ -283,7 +283,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	Entity* particleEmitter1Entity = new Entity();
 	particleEmitter1Entity->addComponent(new MoveComponent(Vector3f(0, 6.0f, 0), 0.5, true, moveKeyConfig1, particleEmitter1Entity));
 	
-	particleEmitter1Entity->addComponent(new ParticleEmitterComponent(110, 4.5, -0.5, 3, 10000, 8, fireTexture, BLEND_STATE::ADDITIVE_BLENDING,
+	particleEmitter1Entity->addComponent(new ParticleEmitterComponent(110, 4.5, -0.5, 3, 220, 8, fireTexture, BLEND_STATE::ADDITIVE_BLENDING,
 		(CameraComponent*)camera->getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0), 
 		particleEmitter1Entity));
 
@@ -294,7 +294,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	particleEmitter2Entity->addComponent(new MoveComponent(Vector3f(-5.0f, 2.0f, 0), 0.5, false, moveKeyConfig1, particleEmitter2Entity));
 
-	particleEmitter2Entity->addComponent(new ParticleEmitterComponent(110, 4.5, -0.5, 3, 10000, 8, smokeTexture, BLEND_STATE::ALPHA_BLENDING,
+	particleEmitter2Entity->addComponent(new ParticleEmitterComponent(110, 4.5, -0.5, 3, 220, 8, smokeTexture, BLEND_STATE::ALPHA_BLENDING,
 		(CameraComponent*)camera->getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0),
 		particleEmitter2Entity));
 

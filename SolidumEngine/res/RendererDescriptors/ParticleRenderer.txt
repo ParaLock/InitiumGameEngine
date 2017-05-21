@@ -12,6 +12,8 @@ RENDERER_DESC_BEGIN
 	
 	INPUT_HOOK TEXTURE 0 particle_texture
 	
+	OUTPUT_HOOK DEPTH_STENCIL 0 framebuffer_depth_stencil
+	
 	OUTPUT_HOOK RENDER_TARGET 0 gbuff_colors
 	
 RENDERER_DESC_END

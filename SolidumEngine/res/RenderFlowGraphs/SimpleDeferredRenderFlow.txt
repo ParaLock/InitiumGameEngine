@@ -4,6 +4,7 @@ RESOURCE_INITIALIZATION_BEGIN
 	INIT DEPTH_STENCIL shadowmap_depth_stencil 1024 1024 
 	
 	INIT RENDER_TARGET color_gbuff
+	INIT RENDER_TARGET particle_test_gbuff
 	INIT RENDER_TARGET normals_gbuff
 	INIT RENDER_TARGET position_gbuff
 	INIT RENDER_TARGET specular_gbuff
@@ -117,6 +118,7 @@ END_SCENE_OPERATIONS_BEGIN
 	OP SWAPFRAME RENDER_TARGET framebuffer
 
 	OP CLEAR RENDER_TARGET color_gbuff
+	OP CLEAR RENDER_TARGET particle_test_gbuff
 	OP CLEAR RENDER_TARGET normals_gbuff
 	OP CLEAR RENDER_TARGET position_gbuff
 
