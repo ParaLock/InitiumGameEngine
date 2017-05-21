@@ -162,6 +162,8 @@ void GraphicsCore::calculateRenderOrder()
 {
 	if (_primaryFlowGraph != nullptr) {
 
+		_sortedRenderers.clear();
+
 		auto& renderOrder = _primaryFlowGraph->getNodeExecutionOrder();
 
 		for each(std::string rendererName in renderOrder) {
