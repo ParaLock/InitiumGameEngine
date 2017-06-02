@@ -3,6 +3,8 @@
 
 #include "Particle.h"
 
+class RenderNode;
+
 class InsertionSort
 {
 public:
@@ -25,8 +27,6 @@ public:
 		int i = 0;
 
 		int j = i + 1;
-
-		Particle* temp;
 
 		while (i < arr->size() - 1) {
 			
@@ -60,8 +60,6 @@ public:
 		int i = 0;
 
 		int j = i + 1;
-
-		Particle* temp;
 
 		while (i < arr->size() - 1) {
 

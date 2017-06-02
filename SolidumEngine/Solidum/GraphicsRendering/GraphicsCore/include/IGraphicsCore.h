@@ -9,9 +9,11 @@ class GPUPipeline;
 class RenderNodePool;
 class GraphicsCommandPool;
 class GraphicsCommandFactory;
+class GraphicsCommandList;
 class ParticlePool;
 class World;
 class Renderer;
+class TaskTree;
 
 class IGraphicsCore
 {
@@ -23,7 +25,9 @@ public:
 
 	virtual void endFrame() = 0;
 
-	virtual void render() = 0;
+	virtual void prepareRender(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline) = 0;
+
+	virtual void render(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline) = 0;
 
 	virtual void setCurrentRenderingCamera(CameraComponent* cam) = 0;
 
@@ -38,6 +42,8 @@ public:
 
 	virtual GraphicsCommandPool* getGraphicsCommandPool() = 0;
 	virtual GraphicsCommandFactory* getGraphicsCommandFactory() = 0;
+
+	virtual TaskTree* getPrimaryTaskTree() = 0;
 
 	virtual ParticlePool* getParticlePool() = 0;
 

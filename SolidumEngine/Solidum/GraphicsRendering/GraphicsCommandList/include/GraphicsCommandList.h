@@ -34,5 +34,7 @@ public:
 	void createCommand(std::shared_ptr<IResourceBuilder> builder, GRAPHICS_COMMAND_TYPE type);
 
 	void executeCommands();
+
+	void reset();
 };
 

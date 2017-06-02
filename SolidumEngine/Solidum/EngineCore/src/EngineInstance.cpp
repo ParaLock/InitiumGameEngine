@@ -28,7 +28,9 @@ EngineInstance::EngineInstance(window* renderWindow)
 	_inputHandler = _resManagers->getResourceManager("InputHandlerManager")->
 		getResource("InputHandler")->getCore<InputHandler>();
 
-	_graphicsCore = new GraphicsCore(DIRECTX11, renderWindow, _resManagers);
+	_primaryTaskTree = new TaskTree;
+
+	_graphicsCore = new GraphicsCore(DIRECTX11, renderWindow, _resManagers, _primaryTaskTree);
 
 	_currentWindow = renderWindow;
 }
@@ -38,6 +40,83 @@ EngineInstance::~EngineInstance()
 {
 	delete _graphicsCore;
 	delete _resManagers;
+}
+
+void EngineInstance::engineHeartbeat()
+{
+	auto& itr = _inflightFrames.begin();
+
+	while (itr != _inflightFrames.end()) {
+
+		FrameTasks& frame = *itr;
+
+		if (frame._renderCMDProcTaskHandle) {
+
+			if (frame._renderCMDProcTaskHandle->_taskComplete == true &&
+				frame._simulationTaskHandle->_taskComplete == true &&
+				frame._renderPreReqTaskHandle->_taskComplete == true)
+			{
+				delete frame._scenePipeline;
+				delete frame._endScenePipeline;
+
+				if (!_inflightFrames.empty()) {
+
+					itr = _inflightFrames.erase(itr);
+				}
+
+				continue;
+			}
+		}
+
+		if (!_inflightFrames.empty())
+			itr++;
+	}
+
+	if (_inflightFrames.empty()) {
+
+		GraphicsCommandList* scenePipeline = new GraphicsCommandList();
+		GraphicsCommandList* endScenePipeline = new GraphicsCommandList();
+
+		FrameTasks newFrame;
+
+		_inflightFrames.push_back(newFrame);
+
+		FrameTasks& currentFrame = _inflightFrames.back();
+
+		currentFrame._scenePipeline = scenePipeline;
+		currentFrame._endScenePipeline = endScenePipeline;
+
+		currentFrame._simulationTaskHandle = _primaryTaskTree->createThreadedTask(
+			std::bind(&EngineInstance::update, this, 17.0f),
+			nullptr, "SimAndPreRenderThread", false, 1, true);
+
+		currentFrame._renderPreReqTaskHandle = _primaryTaskTree->createThreadedTask(
+			std::bind(&GraphicsCore::prepareRender, _graphicsCore, std::ref(currentFrame._endScenePipeline), std::ref(currentFrame._scenePipeline)),
+			nullptr, "SimAndPreRenderThread", false, 1, true);
+
+	}
+	else {
+		FrameTasks& currentFrame = _inflightFrames.back();
+
+		bool simTask_isComplete = currentFrame._simulationTaskHandle->_taskComplete;
+		bool preRenderTask_isComplete = currentFrame._renderPreReqTaskHandle->_taskComplete;
+
+		if (simTask_isComplete && preRenderTask_isComplete) {
+
+			if (!currentFrame._renderCMDProcTaskHandle) {
+
+				currentFrame._renderCMDProcTaskHandle = _primaryTaskTree->createThreadedTask(std::bind(&GraphicsCore::render, _graphicsCore, std::ref(currentFrame._endScenePipeline), std::ref(currentFrame._scenePipeline)),
+					nullptr, "CommandProcessingThread", false, 1, true);
+
+			}
+		}
+	}
+
+	IEntity* cameraEntity = _currentWorld->getEntity(_currentWorld->getPrimaryCameraID());
+
+	_graphicsCore->setCurrentRenderingCamera((CameraComponent*)cameraEntity->
+		getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0)->front());
+
 }
 
 void EngineInstance::loadWorld(World * world)
@@ -51,20 +130,16 @@ void EngineInstance::executionCycle()
 
 	while (engineActive) {
 
-		float t = (float)_engineTick.getElapsedTimeSeconds();
+		_primaryTaskTree->walk();
 
-		update(t);
-
-		render();
+		engineHeartbeat();
 
 		if (GetAsyncKeyState(VK_ESCAPE)) {
 
 			stop();
-			
+				
 			cleanup();
 		}
-
-		_engineTick.reset();
 	}
 }
 
@@ -81,23 +156,10 @@ void EngineInstance::update(float delta)
 	_inputHandler->update();
 }
 
-void EngineInstance::render()
-{
-	IEntity* cameraEntity = _currentWorld->getEntity(_currentWorld->getPrimaryCameraID());
-
-	_graphicsCore->setCurrentRenderingCamera((CameraComponent*)cameraEntity->
-		getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0)->front());
-
-	_graphicsCore->render();
-
-	_currentWindow->update();
-}
-
-
 void EngineInstance::start()
 {
 	engineActive = true;
-
+	
 	executionCycle();
 }
 

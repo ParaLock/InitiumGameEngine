@@ -22,6 +22,10 @@
 #include <iterator>
 #include <unordered_map>
 
+#include <mutex>
+
+#include <chrono>
+
 #include <set>
 
 #include <ctime>
@@ -180,8 +184,19 @@ enum class GRAPHICS_COMMAND_TYPE {
 	PIPELINE_RESET,
 };
 
+enum class TASK_TYPE {
+	NORMAL_TASK
+};
+
+enum class TASK_COMPLETION_STATUS {
+	SUCCESS,
+	FAILURE,
+	RESTART
+};
+
 enum class PARTICLE_TYPE {
-	STANDARD,
+	INVALID,
+	STANDARD
 };
 
 enum class RENDER_NODE_TYPE {

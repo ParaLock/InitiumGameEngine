@@ -8,7 +8,7 @@ GraphicsCore * GraphicsCore::getInstance()
 }
 
 
-GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool)
+GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool, TaskTree* masterTaskTree)
 {	
 	if (singletonInstance == nullptr)
 		singletonInstance = this;
@@ -22,6 +22,8 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 	_renderNodeFactory = new RenderNodeFactory();
 	_renderNodePool = new RenderNodePool(_renderNodeFactory);
 
+	_endFrameState = new GPUPipeline();
+
 	_graphicsCommandFactory = new GraphicsCommandFactory();
 	_graphicsCommandPool = new GraphicsCommandPool(_graphicsCommandFactory);
 
@@ -30,12 +32,7 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 
 	_renderTree = new RenderNodeTree();
 
-	_gcqManager = new GCLQManager();
-
-	_gcqManager->createCommandQueue("primaryGraphicsCommandQueue");
-	_gcqManager->setPrimaryCommandQueue("primaryGraphicsCommandQueue");
-
-	_endFrameState = new GPUPipeline();
+	_primaryTaskTree = masterTaskTree;
 
 	EventFrameworkCore::getInstance()->getGlobalEventHub("ComponentEventHub")->subscribeListener(this);
 
@@ -113,30 +110,30 @@ void GraphicsCore::endFrame()
 {
 }
 
-void GraphicsCore::render()
+void GraphicsCore::prepareRender(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline)
 {
 	_renderTree->updateGlobalRenderParams(_globalRenderingParameters);
-	
+
 	_renderTree->optimize();
 
 	_renderTree->walkTree();
 
-	GraphicsCommandList* primaryCommandList = new GraphicsCommandList();
-	GraphicsCommandList* _endsceneCommandList = new GraphicsCommandList();
-
 	for each(Renderer* renderer in _sortedRenderers) {
 
 		renderer->gatherAndPrepareNodes(_renderTree);
-		renderer->processNodes(primaryCommandList);
+		renderer->processNodes(scenePipeline);
 	}
 
-	_endFrameState->applyState(_endsceneCommandList);
+	_endFrameState->applyState(endscenePipeline);
+}
 
-	_gcqManager->getPrimaryCommandQueue()->queueCommandList(_endsceneCommandList);
-	_gcqManager->getPrimaryCommandQueue()->queueCommandList(primaryCommandList);
+void GraphicsCore::render(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline)
+{
+	scenePipeline->loadCommands();
+	scenePipeline->executeCommands();
 
-
-	_gcqManager->getPrimaryCommandQueue()->processAllCommands();
+	endscenePipeline->loadCommands();
+	endscenePipeline->executeCommands();
 }
 
 void GraphicsCore::setCurrentRenderingCamera(CameraComponent* cam)

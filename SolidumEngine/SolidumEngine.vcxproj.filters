@@ -91,8 +91,6 @@
     <ClInclude Include="Solidum\ResourceFramework\include\ResourcePool.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Viewport\include\Viewport.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandList\include\GraphicsCommandList.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandListQueue\include\GraphicsCommandListQueue.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandListQueueManager\include\GCLQManager.h" />
     <ClInclude Include="Solidum\EntityFramework\Entity\include\EntityComponentSlot.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNode\include\RenderNodePool.h" />
     <ClInclude Include="Solidum\ResourceFramework\include\ResourceFactory.h" />
@@ -127,6 +125,11 @@
     <ClInclude Include="Solidum\GraphicsRendering\RenderFlowGraph\include\RenderFlowGraphIOInterface.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Renderers\include\RendererFactory.h" />
     <ClInclude Include="Solidum\EventFramework\include\Event.h" />
+    <ClInclude Include="Solidum\TaskFramework\include\TaskTree.h" />
+    <ClInclude Include="Solidum\TaskFramework\include\TaskThread.h" />
+    <ClInclude Include="Solidum\TaskFramework\include\Task.h" />
+    <ClInclude Include="Solidum\TaskFramework\include\TaskFactory.h" />
+    <ClInclude Include="Solidum\TaskFramework\include\TaskBarrier.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -207,8 +210,6 @@
     <ClCompile Include="Solidum\GraphicsRendering\EntityRenderObject\src\IEntityRenderObject.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Viewport\src\Viewport.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandList\src\GraphicsCommandList.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandListQueue\src\GraphicsCommandListQueue.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandListQueueManager\src\GCLQManager.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Entity\src\EntityComponentSlot.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\RenderNodePool.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\RenderNodeFactory.cpp" />
@@ -242,5 +243,10 @@
     <ClCompile Include="Solidum\GraphicsRendering\RenderFlowGraph\src\RenderFlowGraphIOInterface.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Renderers\src\RendererFactory.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\Event.cpp" />
+    <ClCompile Include="Solidum\TaskFramework\src\TaskTree.cpp" />
+    <ClCompile Include="Solidum\TaskFramework\src\TaskThread.cpp" />
+    <ClCompile Include="Solidum\TaskFramework\src\Task.cpp" />
+    <ClCompile Include="Solidum\TaskFramework\src\TaskFactory.cpp" />
+    <ClCompile Include="Solidum\TaskFramework\src\TaskBarrier.cpp" />
   </ItemGroup>
 </Project>

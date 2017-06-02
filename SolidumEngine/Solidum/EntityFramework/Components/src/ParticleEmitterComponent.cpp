@@ -170,6 +170,10 @@ Particle * ParticleEmitterComponent::getDeadParticle()
 	return particlePool->getResource(PARTICLE_TYPE::STANDARD);
 }
 
+void ParticleEmitterComponent::processParticles()
+{
+}
+
 void ParticleEmitterComponent::update(float delta)
 {
 	std::shared_ptr<ParticleBatch> batch = std::make_shared<ParticleBatch>();

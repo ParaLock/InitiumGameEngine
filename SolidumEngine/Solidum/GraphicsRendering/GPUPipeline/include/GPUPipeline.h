@@ -43,7 +43,7 @@ public:
 class GPUPipeline : public IResource
 {
 private:
-	std::map<std::string, GPUPipelineElement*> *_elementList;
+	std::map<std::string, GPUPipelineElement> *_elementList;
 
 	std::list<GPUPipelineOP> *_opList;
 

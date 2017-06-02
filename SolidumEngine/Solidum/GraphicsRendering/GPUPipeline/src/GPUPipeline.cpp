@@ -3,7 +3,7 @@
 
 GPUPipeline::GPUPipeline()
 {
-	_elementList = new std::map<std::string, GPUPipelineElement*>;
+	_elementList = new std::map<std::string, GPUPipelineElement>;
 	_opList = new std::list<GPUPipelineOP>;
 }
 
@@ -50,16 +50,16 @@ void GPUPipeline::setBlendState(BLEND_STATE state)
 void GPUPipeline::attachResource(IResource* res, std::string name, int index, SHADER_RESOURCE_TYPE type,
 	SHADER_TYPE parentShader, bool isOutput)
 {
-	GPUPipelineElement* newElement = new GPUPipelineElement();
+	GPUPipelineElement newElement;
 
-	newElement->rt_isOutput = isOutput;
+	newElement.rt_isOutput = isOutput;
 
-	newElement->type = type;
-	newElement->parentShader = parentShader;
+	newElement.type = type;
+	newElement.parentShader = parentShader;
 
-	newElement->core = res;
+	newElement.core = res;
 
-	newElement->bindSlot = index;
+	newElement.bindSlot = index;
 
 	_elementList->insert({ name, newElement });
 }
@@ -76,43 +76,43 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 	commandList->createCommand(std::make_shared<PipelineSetPTCommand::InitData>(PRIMITIVE_TOPOLOGY::TRANGLE_LIST), 
 		GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_PRIMITIVE_TOPOLOGY);
 
-	for (std::map<std::string, GPUPipelineElement*>::iterator itr =
+	for (std::map<std::string, GPUPipelineElement>::iterator itr =
 		_elementList->begin(); itr != _elementList->end(); ++itr)
 	{
 
-		GPUPipelineElement* element = itr->second;
+		GPUPipelineElement& element = itr->second;
 
-		if (element->core != nullptr) {
+		if (element.core != nullptr) {
 
-			if (element->type == SHADER_RESOURCE_TYPE::DEPTH_STENCIL) {
-				_currentDepthStencil = element->core->getCore<DepthStencil>();
+			if (element.type == SHADER_RESOURCE_TYPE::DEPTH_STENCIL) {
+				_currentDepthStencil = element.core->getCore<DepthStencil>();
 			}
 
-			if (element->type == SHADER_RESOURCE_TYPE::TEXTURE) {
+			if (element.type == SHADER_RESOURCE_TYPE::TEXTURE) {
 
 				commandList->createCommand(std::make_shared<PipelineSRBindCommand::InitData>
-					(element->core, element->bindSlot, element->type, element->parentShader), 
+					(element.core, element.bindSlot, element.type, element.parentShader), 
 					  GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
 			}
 
-			if (element->type == SHADER_RESOURCE_TYPE::TEXTURE_SAMPLER) {
+			if (element.type == SHADER_RESOURCE_TYPE::TEXTURE_SAMPLER) {
 
 				commandList->createCommand(std::make_shared<PipelineSRBindCommand::InitData>
-					(element->core, element->bindSlot, element->type, element->parentShader), 
+					(element.core, element.bindSlot, element.type, element.parentShader), 
 					  GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
 			}
 
-			if (element->type == SHADER_RESOURCE_TYPE::CONSTANT_BUFFER) {
+			if (element.type == SHADER_RESOURCE_TYPE::CONSTANT_BUFFER) {
 
 				commandList->createCommand(std::make_shared<PipelineSRBindCommand::InitData>
-					(element->core, element->bindSlot, element->type, element->parentShader), 
+					(element.core, element.bindSlot, element.type, element.parentShader), 
 					  GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SR);
 			}
 
-			if (element->type == SHADER_RESOURCE_TYPE::GPU_BUFFER) {
+			if (element.type == SHADER_RESOURCE_TYPE::GPU_BUFFER) {
 
 				commandList->createCommand(std::make_shared<PipelineBufferBindCommand::InitData>
-					(std::vector<GPUBuffer*> {element->core->getCore<GPUBuffer>()}, 
+					(std::vector<GPUBuffer*> {element.core->getCore<GPUBuffer>()}, 
 					 std::vector<UINT> {0}, 
 					 std::vector<UINT>{_currentInputLayout->getCore<ShaderInputLayout>()->getDataStride()}),
 					
@@ -120,12 +120,12 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 
 			}
 
-			if (element->type == SHADER_RESOURCE_TYPE::RENDER_TARGET) {
-				if (element->rt_isOutput)
+			if (element.type == SHADER_RESOURCE_TYPE::RENDER_TARGET) {
+				if (element.rt_isOutput)
 				{
-					outputRTs.push_back((RenderTarget*)element->core);
+					outputRTs.push_back((RenderTarget*)element.core);
 
-					Viewport rtView = element->core->getCore<RenderTarget>()->getViewport();
+					Viewport rtView = element.core->getCore<RenderTarget>()->getViewport();
 					
 					commandList->createCommand(std::make_shared<PipelineSetViewportCommand::InitData>
 						(rtView), GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VIEWPORT_STATE);
@@ -133,8 +133,8 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 				else {
 
 					commandList->createCommand(std::make_shared<PipelineRenderTargetCommand::InitData>
-						  (element->bindSlot, element->parentShader, 
-							std::list<RenderTarget*>{ (RenderTarget*)element->core }, 
+						  (element.bindSlot, element.parentShader, 
+							std::list<RenderTarget*>{ (RenderTarget*)element.core }, 
 							 RENDER_TARGET_OP_TYPE::BIND_AS_INPUT,
 							  _currentDepthStencil),
 				     GRAPHICS_COMMAND_TYPE::PIPELINE_RENDER_TARGET_COMMAND);

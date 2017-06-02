@@ -18,9 +18,7 @@ public:
 	ResourcePool() {};
 	~ResourcePool() {};
 
-	void allocateResources(EnumType type, int numResources) {
-
-	}
+	void setFactory(FactoryType* factory) { _factory = factory; };
 
 	ResourceType* getResource(EnumType type) {
 		IResource* resource = nullptr;

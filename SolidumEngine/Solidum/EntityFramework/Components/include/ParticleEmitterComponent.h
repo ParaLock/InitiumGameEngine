@@ -12,6 +12,8 @@
 
 #include "../../../GraphicsRendering/Particles/include/ParticlePool.h"
 
+#include "../../../TaskFramework/include/TaskTree.h"
+
 #include "CameraComponent.h"
 
 #include "Component.h"
@@ -59,6 +61,8 @@ private:
 	Vector2f calcTextureOffset(int index, int rows);
 
 	Particle* getDeadParticle();
+
+	void processParticles();
 
 public:
 	ParticleEmitterComponent(

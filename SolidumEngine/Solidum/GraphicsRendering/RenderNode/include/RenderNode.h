@@ -3,7 +3,6 @@
 
 #include "../../RenderParameters/include/RenderParams.h"
 
-#include "../../GraphicsCommandListQueueManager/include/GCLQManager.h"
 #include "../../ShaderCommands/include/ShaderCommand.h"
 
 #include "../../../ResourceFramework/include/IResource.h"

@@ -25,8 +25,6 @@
 #include "../../PipelineCommands/include/PipelineFunctions.h"
 
 #include "../../PipelineCommands/include/PipelineCommand.h"
-#include "../../GraphicsCommandListQueue/include/GraphicsCommandListQueue.h"
-#include "../../GraphicsCommandListQueueManager/include/GCLQManager.h"
 
 #include "../../RenderNode/include/RenderNodePool.h"
 #include "../../GraphicsCommand/include/GraphicsCommandPool.h"
@@ -42,6 +40,8 @@
 
 #include "../../RenderFlowGraph/include/RenderFlowGraph.h"
 
+#include "../../../TaskFramework/include/TaskTree.h"
+
 #include "IGraphicsCore.h"
 
 class RenderNodeFactory;
@@ -53,16 +53,14 @@ class GraphicsCore : public IEventListener, public IGraphicsCore
 private:
 	std::map<std::string, Renderer*> _registeredRenderers;
 
-	GCLQManager* _gcqManager;
-
 	dxDeviceManager *_dxManager = nullptr;
 	ResourceManagerPool *_resManagerPool = nullptr;
 
 	RenderNodeTree *_renderTree;
 
-	GlobalRenderingParams _globalRenderingParameters;
+	TaskTree* _primaryTaskTree;
 
-	GraphicsCommandList* _primaryCommandList;
+	GlobalRenderingParams _globalRenderingParameters;
 
 	GPUPipeline* _endFrameState;
 
@@ -82,14 +80,16 @@ private:
 	ParticlePool* _particlePool;
 
 public:
-	GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool);
+	GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool, TaskTree* masterTaskTree);
 	~GraphicsCore();
 
 	void beginFrame();
 
 	void endFrame();
 
-	void render();
+	void prepareRender(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline);
+
+	void render(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline);
 
 	void setCurrentRenderingCamera(CameraComponent* cam);
 
@@ -100,6 +100,8 @@ public:
 
 	GraphicsCommandPool* getGraphicsCommandPool() { return _graphicsCommandPool; };
 	GraphicsCommandFactory* getGraphicsCommandFactory() { return _graphicsCommandFactory; }
+
+	TaskTree* getPrimaryTaskTree() { return _primaryTaskTree; };
 
 	void registerRenderer(Renderer* newRenderer);
 	void setPrimaryRenderFlowGraph(RenderFlowGraph* graph);

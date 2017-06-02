@@ -11,9 +11,26 @@
 
 #include "../../EventFramework/include/EventFrameworkCore.h"
 
+#include "../../TaskFramework/include/TaskTree.h"
+
 class EngineInstance
 {
 private:
+
+	const static int MAX_PRE_RENDERED_FRAMES = 3;
+
+	struct FrameTasks {
+
+		GraphicsCommandList* _endScenePipeline;
+		GraphicsCommandList* _scenePipeline;
+
+		std::shared_ptr<TaskHandle> _renderPreReqTaskHandle;
+		std::shared_ptr<TaskHandle> _simulationTaskHandle;
+		std::shared_ptr<TaskHandle> _renderCMDProcTaskHandle;
+	};
+
+	std::list<FrameTasks> _inflightFrames;
+
 	HRTimer _engineTick;
 
 	window* _currentWindow;
@@ -24,10 +41,14 @@ private:
 
 	World* _currentWorld;
 
+	TaskTree* _primaryTaskTree;
+
 	volatile bool engineActive = false;
 public:
 	EngineInstance(window* renderWindow);
 	~EngineInstance();
+
+	void engineHeartbeat();
 
 	void loadWorld(World* world);
 
@@ -38,8 +59,9 @@ public:
 
 	void cleanup();
 
+	std::shared_ptr<TaskHandle> testTaskHandle;
+
 	void update(float delta);
-	void render();
 
 	World* getWorld() { return _currentWorld; }
 

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\TaskFramework\include\Task.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Renderers\include\RendererFactory.h" />
     <ClInclude Include="Solidum\EngineUtils\include\EnumString.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderFlowGraph\include\RenderFlowGraphIOInterface.h" />
@@ -60,9 +61,7 @@
     <ClInclude Include="Solidum\EntityFramework\Components\include\OrbitComponent.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\SkydomeWeatherComponent.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderNode\include\SkyBoxRenderNode.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandListQueueManager\include\GCLQManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\ShaderCommands\include\ShaderCommand.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandListQueue\include\GraphicsCommandListQueue.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommand\include\GraphicsCommand.h" />
     <ClInclude Include="Solidum\GraphicsRendering\PipelineCommands\include\PipelineFunctions.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\api_function_wrappers\include\dx11_pipeline_functions_wrapper.h" />
@@ -140,13 +139,18 @@
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureSampler.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureSamplerManager.h" />
+    <ClInclude Include="Solidum\TaskFramework\include\TaskFactory.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\World.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldManager.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldCell.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\SunMoonLightingComponent.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Renderers\include\GeometryForwardRenderer.h" />
+    <ClInclude Include="Solidum\TaskFramework\include\TaskTree.h" />
+    <ClInclude Include="Solidum\TaskFramework\include\TaskThread.h" />
+    <ClInclude Include="Solidum\TaskFramework\include\TaskBarrier.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\TaskFramework\src\Task.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Renderers\src\RendererFactory.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderFlowGraph\src\RenderFlowGraphIOInterface.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderFlowGraph\src\RenderFlowGraphParser.cpp" />
@@ -185,9 +189,7 @@
     <ClCompile Include="Solidum\EntityFramework\Components\src\OrbitComponent.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\SkydomeWeatherComponent.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderNode\src\SkyBoxRenderNode.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandListQueueManager\src\GCLQManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\ShaderCommands\src\ShaderCommand.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandListQueue\src\GraphicsCommandListQueue.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommand\src\GraphicsCommand.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\PipelineCommands\src\PipelineFunctions.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\api_function_wrappers\src\dx11_pipeline_functions_wrapper.cpp" />
@@ -255,11 +257,15 @@
     <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureSampler.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureSamplerManager.cpp" />
+    <ClCompile Include="Solidum\TaskFramework\src\TaskFactory.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\World.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldManager.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldCell.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\SunMoonLightingComponent.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Renderers\src\GeometryForwardRenderer.cpp" />
+    <ClCompile Include="Solidum\TaskFramework\src\TaskTree.cpp" />
+    <ClCompile Include="Solidum\TaskFramework\src\TaskThread.cpp" />
+    <ClCompile Include="Solidum\TaskFramework\src\TaskBarrier.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{936972AA-1079-49FC-BABD-6CCFB9EE4B9A}</ProjectGuid>

@@ -40,3 +40,9 @@ void GraphicsCommandList::executeCommands()
 		command->execute();
 	}
 }
+
+void GraphicsCommandList::reset()
+{
+	_loadedCommands.clear();
+	_unloadedCommands.clear();
+}
