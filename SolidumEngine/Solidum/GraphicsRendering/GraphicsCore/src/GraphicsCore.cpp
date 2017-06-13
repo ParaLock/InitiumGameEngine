@@ -19,9 +19,6 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 
 	ActiveGraphicsAPI::setCurrentAPI(api);
 
-	_renderNodeFactory = new RenderNodeFactory();
-	_renderNodePool = new RenderNodePool(_renderNodeFactory);
-
 	_endFrameState = new GPUPipeline();
 
 	_graphicsCommandFactory = new GraphicsCommandFactory();
@@ -30,15 +27,11 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 	_particleFactory = new ParticleFactory();
 	_particlePool = new ParticlePool(_particleFactory);
 
-	_renderTree = new RenderNodeTree();
-
 	_primaryTaskTree = masterTaskTree;
 
 	EventFrameworkCore::getInstance()->getGlobalEventHub("ComponentEventHub")->subscribeListener(this);
 
 	_resManagerPool = resManagerPool;
-
-	_globalRenderingParameters._ambientLightLevel = Vector4f(0.2f, 0.2f, 0.2f, 0.2f);
 
 	if (api == SUPPORTED_GRAPHICS_API::DIRECTX11) {
 
@@ -98,36 +91,21 @@ GraphicsCore::~GraphicsCore()
 {
 	if (_dxManager != nullptr)
 		delete _dxManager;
-	if (_renderTree != nullptr)
-		delete _renderTree;
 }
 
-void GraphicsCore::beginFrame()
+void GraphicsCore::beginRender(GraphicsCommandList * endscenePipeline, GraphicsCommandList * scenePipeline, RenderDataGroup * renderData)
 {
-}
+	renderData->setGlobalData(_globalRenderData);
 
-void GraphicsCore::endFrame()
-{
-}
+	for each(Renderer* renderer in _registeredRenderers) {
 
-void GraphicsCore::prepareRender(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline)
-{
-	_renderTree->updateGlobalRenderParams(_globalRenderingParameters);
-
-	_renderTree->optimize();
-
-	_renderTree->walkTree();
-
-	for each(Renderer* renderer in _sortedRenderers) {
-
-		renderer->gatherAndPrepareNodes(_renderTree);
-		renderer->processNodes(scenePipeline);
+		renderer->renderScene(scenePipeline, renderData);
 	}
 
 	_endFrameState->applyState(endscenePipeline);
 }
 
-void GraphicsCore::render(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline)
+void GraphicsCore::endRender(GraphicsCommandList * endscenePipeline, GraphicsCommandList * scenePipeline)
 {
 	scenePipeline->loadCommands();
 	scenePipeline->executeCommands();
@@ -136,37 +114,17 @@ void GraphicsCore::render(GraphicsCommandList* endscenePipeline, GraphicsCommand
 	endscenePipeline->executeCommands();
 }
 
-void GraphicsCore::setCurrentRenderingCamera(CameraComponent* cam)
+void GraphicsCore::setCurrentRenderingCamera(CameraComponent * cam)
 {
-	_globalRenderingParameters._globalRenderingCamera = cam;
+	_globalRenderData.global_cam._eyePosition = cam->getPos();
+	_globalRenderData.global_cam._orthoProjection = cam->getOrthoProjectionMatrix();
+	_globalRenderData.global_cam._projectionMatrix = cam->getProjectionMatrix();
+	_globalRenderData.global_cam._startView = cam->getStartViewMatrix();
+	_globalRenderData.global_cam._viewMatrix = cam->getViewMatrix();
+	_globalRenderData.global_cam._worldMatrix = cam->getWorldMatrix();
 }
 
 void GraphicsCore::onEvent(EVENT_PTR evt)
 {
 }
 
-void GraphicsCore::registerRenderer(Renderer * newRenderer)
-{
-	_registeredRenderers.insert({newRenderer->getName(), newRenderer});
-}
-
-void GraphicsCore::setPrimaryRenderFlowGraph(RenderFlowGraph * graph)
-{
-	_primaryFlowGraph = graph;
-}
-
-void GraphicsCore::calculateRenderOrder()
-{
-	if (_primaryFlowGraph != nullptr) {
-
-		_sortedRenderers.clear();
-
-		auto& renderOrder = _primaryFlowGraph->getNodeExecutionOrder();
-
-		for each(std::string rendererName in renderOrder) {
-
-			Renderer* activeRenderer = _registeredRenderers.at(rendererName);
-			_sortedRenderers.push_back(activeRenderer);
-		}
-	}
-}

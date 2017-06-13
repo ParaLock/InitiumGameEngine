@@ -6,12 +6,15 @@ class Transform;
 class World;
 
 class IEntityRenderObject;
+class RenderDataGroup;
 
 class IEntity
 {
 public:
 	IEntity();
 	~IEntity();
+
+	virtual void setWorld(World* world) = 0;
 
 	virtual void addComponent(IComponent* comp) = 0;
 	virtual void addChild(IEntity* entity) = 0;
@@ -25,6 +28,8 @@ public:
 
 	virtual Transform* getTransform() = 0;
 
-	virtual void update(float delta) = 0;
+	virtual World* getWorld() = 0;
+
+	virtual void update(float delta, RenderDataGroup* collection) = 0;
 };
 

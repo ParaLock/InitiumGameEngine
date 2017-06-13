@@ -6,15 +6,13 @@
 #include "../../../EngineUtils/include/Vector2.h"
 #include "../../../EngineUtils/include/Vector3.h"
 
-#include "../../../GraphicsRendering/RenderNode/include/SkyBoxRenderNode.h"
-
-#include "../../../GraphicsRendering/RenderNode/include/RenderNodePool.h"
-
-#include "../../../GraphicsRendering/RenderNodeTree/include/RenderNodeTree.h"
-
 #include "../../../ResourceFramework/include/IResource.h"
 
 #include "../../../GraphicsRendering/GraphicsCore/include/IGraphicsCore.h"
+
+#include "../../../GraphicsRendering/Mesh/include/mesh.h"
+
+#include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataPacket.h"
 
 #include "Component.h"
 
@@ -31,6 +29,19 @@ struct TIME_OF_DAY_BLOCK {
 	float goal_rgb_apex[3];
 	float goal_rgb_center[3];
 	//float change_speed;
+};
+
+struct RenderPassPacket_SkyData {
+
+	int _numIndices;
+
+	IResource* _vertexBuffer;
+	IResource* _indexBuffer;
+
+	IResource* _skyTexture;
+
+	Vector4f _weatherCenterColor;
+	Vector4f _weatherApexColor;
 };
 
 class SkydomeWeatherComponent : public Component
@@ -69,5 +80,7 @@ public:
 	void onEvent(EVENT_PTR evt);
 
 	void updateDayNightCycle(float delta);
+
+	std::shared_ptr<RenderDataPacket> createRenderData();
 };
 

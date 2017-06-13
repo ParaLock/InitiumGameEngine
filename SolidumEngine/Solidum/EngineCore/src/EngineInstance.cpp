@@ -48,7 +48,7 @@ void EngineInstance::engineHeartbeat()
 
 	while (itr != _inflightFrames.end()) {
 
-		FrameTasks& frame = *itr;
+		Frame& frame = *itr;
 
 		if (frame._renderCMDProcTaskHandle) {
 
@@ -58,7 +58,7 @@ void EngineInstance::engineHeartbeat()
 			{
 				delete frame._scenePipeline;
 				delete frame._endScenePipeline;
-
+				
 				if (!_inflightFrames.empty()) {
 
 					itr = _inflightFrames.erase(itr);
@@ -77,26 +77,26 @@ void EngineInstance::engineHeartbeat()
 		GraphicsCommandList* scenePipeline = new GraphicsCommandList();
 		GraphicsCommandList* endScenePipeline = new GraphicsCommandList();
 
-		FrameTasks newFrame;
+		Frame newFrame;
 
 		_inflightFrames.push_back(newFrame);
 
-		FrameTasks& currentFrame = _inflightFrames.back();
+		Frame& currentFrame = _inflightFrames.back();
 
 		currentFrame._scenePipeline = scenePipeline;
 		currentFrame._endScenePipeline = endScenePipeline;
 
 		currentFrame._simulationTaskHandle = _primaryTaskTree->createThreadedTask(
-			std::bind(&EngineInstance::update, this, 17.0f),
-			nullptr, "SimAndPreRenderThread", false, 1, true);
+			std::bind(&EngineInstance::update, this, 17.0f, &currentFrame._renderDataGroup),
+			nullptr, "SimAndRenderThread", false, 1, true);
 
 		currentFrame._renderPreReqTaskHandle = _primaryTaskTree->createThreadedTask(
-			std::bind(&GraphicsCore::prepareRender, _graphicsCore, std::ref(currentFrame._endScenePipeline), std::ref(currentFrame._scenePipeline)),
-			nullptr, "SimAndPreRenderThread", false, 1, true);
+			std::bind(&GraphicsCore::beginRender, _graphicsCore, std::ref(currentFrame._endScenePipeline), std::ref(currentFrame._scenePipeline), &currentFrame._renderDataGroup),
+			nullptr, "SimAndRenderThread", false, 1, true);
 
 	}
 	else {
-		FrameTasks& currentFrame = _inflightFrames.back();
+		Frame& currentFrame = _inflightFrames.back();
 
 		bool simTask_isComplete = currentFrame._simulationTaskHandle->_taskComplete;
 		bool preRenderTask_isComplete = currentFrame._renderPreReqTaskHandle->_taskComplete;
@@ -105,7 +105,7 @@ void EngineInstance::engineHeartbeat()
 
 			if (!currentFrame._renderCMDProcTaskHandle) {
 
-				currentFrame._renderCMDProcTaskHandle = _primaryTaskTree->createThreadedTask(std::bind(&GraphicsCore::render, _graphicsCore, std::ref(currentFrame._endScenePipeline), std::ref(currentFrame._scenePipeline)),
+				currentFrame._renderCMDProcTaskHandle = _primaryTaskTree->createThreadedTask(std::bind(&GraphicsCore::endRender, _graphicsCore, std::ref(currentFrame._endScenePipeline), std::ref(currentFrame._scenePipeline)),
 					nullptr, "CommandProcessingThread", false, 1, true);
 
 			}
@@ -127,7 +127,6 @@ void EngineInstance::loadWorld(World * world)
 
 void EngineInstance::executionCycle()
 {
-
 	while (engineActive) {
 
 		_primaryTaskTree->walk();
@@ -143,14 +142,14 @@ void EngineInstance::executionCycle()
 	}
 }
 
-void EngineInstance::update(float delta)
+void EngineInstance::update(float delta, RenderDataGroup* collection)
 {
 	const std::map<uint64_t, IEntity*>& worldEntities = _currentWorld->getEntities();
 
 	for (auto itr = worldEntities.begin(); itr != worldEntities.end(); itr++) {
 		IEntity* entity = itr->second;
 
-		entity->update(delta);
+		entity->update(delta, collection);
 	}
 	
 	_inputHandler->update();

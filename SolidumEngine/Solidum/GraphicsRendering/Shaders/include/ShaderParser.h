@@ -1,7 +1,7 @@
 #pragma once
 #include "../../../sysInclude.h"
 
-#include "../../Renderers/include/RendererDescriptorParser.h"
+#include "../../RenderPass/include/RenderPassDescriptorParser.h"
 
 class ShaderParser
 {
@@ -12,6 +12,6 @@ public:
 
 	std::list<std::string> getIncludeFile(std::string includeFilename);
 
-	std::string parseShader(RendererDescriptorData* metadata, std::string filepath);
+	std::string parseShader(RenderPassDescriptorData* metadata, std::string filepath);
 };
 

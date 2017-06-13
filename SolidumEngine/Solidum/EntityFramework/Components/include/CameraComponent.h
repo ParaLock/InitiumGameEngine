@@ -18,6 +18,8 @@
 
 #include "../../../InputHandling/include/InputHandler.h"
 
+#include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataPacket.h"
+
 #define SMOOTHING_FACTOR 100
 
 enum CAMERA_MOVE {
@@ -97,6 +99,8 @@ public:
 	}
 
 	Vector3f getPos() { return _eye; }
+
+	std::shared_ptr<RenderDataPacket> createRenderData();
 };
 
 #endif

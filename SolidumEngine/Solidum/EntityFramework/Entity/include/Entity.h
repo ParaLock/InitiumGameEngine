@@ -25,9 +25,13 @@ private:
 
 	IEntity* _parent = nullptr;
 
+	World* _parentWorld;
+
 public:
 	Entity();
 	~Entity();
+
+	void setWorld(World* world) { _parentWorld = world; }
 
 	void addComponent(IComponent* comp);
 	void addChild(IEntity* entity);
@@ -39,8 +43,10 @@ public:
 	void setParent(IEntity* parent);
 	IEntity* getParent() { return _parent; }
 	
+	World* getWorld() { return _parentWorld; }
+
 	Transform* getTransform() { return _transform; }
 
-	void update(float delta);
+	void update(float delta, RenderDataGroup* collection);
 };
 

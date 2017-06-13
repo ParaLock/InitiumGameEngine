@@ -20,7 +20,7 @@ RENDERING_BEGIN
 	
 	NODE 0
 	
-		CORE_NAME sky_renderer
+		CORE_NAME sky_render_pass
 		
 		EDGES_BEGIN
 		
@@ -39,7 +39,7 @@ RENDERING_BEGIN
 	
 	NODE 1
 	
-		CORE_NAME shadow_mapping
+		CORE_NAME shadow_mapping_render_pass
 		
 		EDGES_BEGIN
 		
@@ -56,7 +56,7 @@ RENDERING_BEGIN
 		
 	NODE 2
 	
-		CORE_NAME static_mesh_deferred_renderer
+		CORE_NAME mesh_render_pass
 		
 		EDGES_BEGIN
 			OUTPUT DEPTH_STENCIL 0 framebuffer_depth_stencil
@@ -76,7 +76,7 @@ RENDERING_BEGIN
 		
 	NODE 3
 	
-		CORE_NAME particle_renderer
+		CORE_NAME particle_render_pass
 		
 		EDGES_BEGIN
 			OUTPUT DEPTH_STENCIL 0 framebuffer_depth_stencil
@@ -92,7 +92,7 @@ RENDERING_BEGIN
 		
 	NODE 4
 	
-		CORE_NAME light_renderer
+		CORE_NAME light_render_pass
 		
 		EDGES_BEGIN
 			OUTPUT DEPTH_STENCIL 0 framebuffer_depth_stencil

@@ -20,6 +20,8 @@ void World::addPrimaryCamera(IEntity * camera, uint64_t id)
 
 void World::addEntity(IEntity * entity, uint64_t entityID)
 {
+	entity->setWorld(this);
+
 	_entities.insert({ entityID, entity});
 }
 

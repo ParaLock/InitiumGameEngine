@@ -8,15 +8,33 @@
 #include "../../../GraphicsRendering/Particles/include/Particle.h"
 #include "../../../GraphicsRendering/Particles/include/ParticleStream.h"
 
-#include "../../../GraphicsRendering/RenderNode/include/RenderNodePool.h"
-
 #include "../../../GraphicsRendering/Particles/include/ParticlePool.h"
 
 #include "../../../TaskFramework/include/TaskTree.h"
 
+#include "../../../GraphicsRendering/Mesh/include/mesh.h"
+
+#include "../../../GraphicsRendering/Textures/include/Texture.h"
+
 #include "CameraComponent.h"
 
 #include "Component.h"
+
+struct RenderPassPacket_ParticleEmitterData {
+	int _maxParticles = 0;
+
+	int _numIndices;
+
+	IResource* _indexBuffer;
+	IResource* _vertexBuffer;
+
+	IResource* _particleInstanceBuffer;
+
+	ParticleStream* _particleSteam;
+	ParticleInstanceData* _particleDataCPUBuffer;
+
+	Matrix4f _translationMatrix;
+};
 
 class ParticleEmitterComponent : public Component
 {
@@ -24,6 +42,10 @@ private:
 
 	std::list<Particle*> _deadParticleList;
 	std::list<Particle*> _liveParticleList;
+
+	IResource* _particleInstanceBuffer;
+
+	ParticleInstanceData* _particleDataCPUBuffer;
 
 	Texture* _particleTex;
 
@@ -74,5 +96,7 @@ public:
 	~ParticleEmitterComponent();
 
 	void update(float delta);
+
+	std::shared_ptr<RenderDataPacket> createRenderData();
 };
 

@@ -20,18 +20,6 @@ GraphicsCommand * GraphicsCommandFactory::createObject(GRAPHICS_COMMAND_TYPE typ
 	case GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM:
 		command = new ShaderUpdateUniformCommand();
 		break;
-	case GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_LIGHT_UNIFORMS:
-		command = new ShaderUpdateLightUniformsCommand();
-		break;
-	case GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_MATERIAL_PASS_UNIFORMS:
-		command = new ShaderUpdateMaterialPassUniformsCommand();
-		break;
-	case GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_CAMERA_UNIFORMS:
-		command = new ShaderUpdateCameraUniformsCommand();
-		break;
-	case GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_TRANSFORM_UNIFORMS:
-		command = new ShaderUpdateTransformCommand();
-		break;
 	case GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS:
 		command = new ShaderSyncUniforms();
 		break;

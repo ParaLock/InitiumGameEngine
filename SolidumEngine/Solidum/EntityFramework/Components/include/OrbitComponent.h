@@ -7,6 +7,8 @@
 
 #include "Component.h"
 
+class RenderDataPacket;
+
 class OrbitComponent : public Component
 {
 private:
@@ -29,5 +31,7 @@ public:
 	void onEvent(EVENT_PTR evt) {};
 
 	void update(float delta);
+
+	std::shared_ptr<RenderDataPacket> createRenderData() { return std::shared_ptr<RenderDataPacket>(); };
 };
 

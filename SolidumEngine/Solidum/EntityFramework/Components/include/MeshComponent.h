@@ -6,7 +6,34 @@
 #include "../../../GraphicsRendering/Material/include/Material.h"
 #include "../../../GraphicsRendering/Textures/include/Texture.h"
 
-#include "../../../GraphicsRendering/RenderNode/include/MeshRenderNode.h"
+#include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataPacket.h"
+
+struct RenderPassPacket_MaterialData {
+
+	float _specularIntensity;
+	float _specularPower;
+
+	Shader* _shader;
+
+	Vector4f _specularColor;
+
+	std::map<MATERIAL_TEX, Texture*> _textures;
+
+};
+
+struct RenderPassPacket_MeshData {
+
+	int _numIndices;
+
+	Matrix4f _globalTransform;
+
+	IResource* _indiceBuffer;
+	IResource* _vertexBuffer;
+
+	IResource* _modelTex;
+
+	RenderPassPacket_MaterialData _materialData;
+};
 
 class MeshComponent : public Component
 {
@@ -24,7 +51,12 @@ public:
 	MeshComponent(mesh* mesh, Texture* tex, Material* mat, int index, IEntity* entity);
 	~MeshComponent();
 
+	void setTexture(Texture* tex) { _tex = tex; }
+	void setMaterial(Material* mat) { _mat = mat; }
+
 	void update(float delta);
 	void onEvent(EVENT_PTR evt);
+
+	std::shared_ptr<RenderDataPacket> createRenderData();
 };
 

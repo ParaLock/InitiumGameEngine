@@ -15,13 +15,18 @@
 #include "Solidum\EntityFramework\Components\include\OrbitComponent.h"
 #include "Solidum\EntityFramework\Components\include\SunMoonLightingComponent.h"
 #include "Solidum\EntityFramework\Components\include\ParticleEmitterComponent.h"
-#include "Solidum\GraphicsRendering\RenderNode\include\ShadowGenRenderNode.h"
 
 #include "Solidum\InputHandling\include\InputHandler.h"
 
 #include "Solidum\EntityFramework\Entity\include\Entity.h"
 
 #include "Solidum\WorldSimulation\include\World.h"
+
+#include "Plugins\RenderPasses\light_render_pass.h"
+#include "Plugins\RenderPasses\mesh_render_pass.h"
+#include "Plugins\RenderPasses\particle_render_pass.h"
+#include "Plugins\RenderPasses\shadow_map_render_pass.h"
+#include "Plugins\RenderPasses\sky_render_pass.h"
 
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -54,35 +59,22 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	ResourceManagerPool* resManagerPool = solidum->getResourceManagerPool();
 
+	//** PLUGIN LOADING... !IN THE FUTURE PLUGINS WILL BE LOADED FROM DLL's! **//
+
+	reg_render_pass__light(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1));
+	reg_render_pass__mesh(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1));
+	reg_render_pass__particleEmitter(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1));
+	reg_render_pass__shadowmap(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1));
+	reg_render_pass__sky(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1));
+
+	//** PLUGING LOADING END **//
+
 	//** RESOURCE LOADING **//
 
-	Renderer* geometryDeferredRenderer = new GeometryDeferredRenderer();
-	geometryDeferredRenderer->load(std::make_shared<Renderer::InitData>("./res/RendererDescriptors/GeometryDeferredRenderer.txt"));
+	Renderer* simpleDeferredRenderer = new Renderer();
+	simpleDeferredRenderer->load(std::make_shared<Renderer::InitData>("./res/RenderFlowGraphs/SimpleDeferredRenderFlow.txt"));
 
-	Renderer* lightRenderer = new LightRenderer();
-	lightRenderer->load(std::make_shared<Renderer::InitData>("./res/RendererDescriptors/LightsDeferredRenderer.txt"));
-
-	Renderer* particleRenderer = new ParticleRenderer();
-	particleRenderer->load(std::make_shared<Renderer::InitData>("./res/RendererDescriptors/ParticleRenderer.txt"));
-
-	Renderer* shadowMapRenderer = new ShadowMapRenderer();
-	shadowMapRenderer->load(std::make_shared<Renderer::InitData>("./res/RendererDescriptors/ShadowMapRenderer.txt"));
-
-	Renderer* skyRenderer = new SkyRenderer();
-	skyRenderer->load(std::make_shared<Renderer::InitData>("./res/RendererDescriptors/SkyRenderer.txt"));
-
-	RenderFlowGraph* simpleDeferredRenderFlow = new RenderFlowGraph();
-	simpleDeferredRenderFlow->load(std::make_shared<RenderFlowGraph::InitData>("./res/RenderFlowGraphs/SimpleDeferredRenderFlow.txt"));
-
-	solidum->getGraphicsSubsystem()->registerRenderer(geometryDeferredRenderer);
-	solidum->getGraphicsSubsystem()->registerRenderer(lightRenderer);
-	solidum->getGraphicsSubsystem()->registerRenderer(particleRenderer);
-	solidum->getGraphicsSubsystem()->registerRenderer(shadowMapRenderer);
-	solidum->getGraphicsSubsystem()->registerRenderer(skyRenderer);
-
-	solidum->getGraphicsSubsystem()->setPrimaryRenderFlowGraph(simpleDeferredRenderFlow);
-
-	solidum->getGraphicsSubsystem()->calculateRenderOrder();
+	solidum->getGraphicsSubsystem()->registerRenderer(simpleDeferredRenderer);
 
 	Light* sunLight = resManagerPool->getResourceManager("LightManager")->createResource(std::make_shared<Light::InitData>
 		(LIGHT_TYPE::DIRECTIONAL_LIGHT), "sun", false)->getCore<Light>();
@@ -178,7 +170,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	sunLight->setColor(Vector4f(0.5f, 0.5f, 0.5f, 0.5f));
 	sunLight->setDirection(Vector3f(-0.707f, -0.707f, 0));
 	sunLight->setPosition(Vector3f(0.0f, 0.0f, 0.0f));
-	sunLight->setIntensity(1.5f);
+	sunLight->setIntensity(0.9f);
 
 	fireLight->setColor(Vector4f(3.5f, 1.5f, 0.5f, 0.5f));
 	fireLight->setDirection(Vector3f(0.0f, 0.0f, 0.0f));
@@ -225,9 +217,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	pointLight3->setRange(60.5f);
 
 	Entity* globalWorldLighting = new Entity();
+
 	globalWorldLighting->addComponent(new SunMoonLightingComponent(sunLight, moonLight, 0.1f, globalWorldLighting));
 
 	Entity* sun = new Entity();
+
 	sun->addComponent(new LightComponent(sunLight, 0, sun));
 
 	Entity* pointLight1Entity = new Entity();
@@ -247,6 +241,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	pointLight3Entity->addComponent(new LightComponent(pointLight3, 0, pointLight3Entity));
 
 	Entity* fireLightEntity = new Entity();
+
 	fireLightEntity->addComponent(new MoveComponent(Vector3f(0.0f, 3.0f, 0.0f), 0.5, false, moveKeyConfig1, fireLightEntity));
 	fireLightEntity->addComponent(new LightComponent(fireLight, 0, fireLightEntity));
 
@@ -274,23 +269,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		(CameraComponent*)camera->getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0)->front(),
 		Vector4f(0.1f, 0.1f, 0.1f, 1.0f), Vector4f(0.1f, 0.1f, 0.1f, 1.0f), 0, sky));
 
-	RenderNodeTree* tree = solidum->getGraphicsSubsystem()->getRenderNodeTree();
-	
-	RenderNode* shadowGenNode = GraphicsCore::getInstance()->getRenderNodePool()->getResource(RENDER_NODE_TYPE::SHADOW_GEN_RENDER_NODE);
-
-	shadowGenNode->load(std::make_shared<ShadowGenRenderNode::InitData>(tree->getUniqueNodeID()));
-
-	tree->addNode(shadowGenNode, shadowGenNode->getID());
-
 	Entity* particleEmitter1Entity = new Entity();
+
 	particleEmitter1Entity->addComponent(new MoveComponent(Vector3f(0, 6.0f, 0), 0.5, true, moveKeyConfig1, particleEmitter1Entity));
 	
 	particleEmitter1Entity->addComponent(new ParticleEmitterComponent(110, 4.5, -0.5, 3, 200, 8, fireTexture, BLEND_STATE::ADDITIVE_BLENDING,
 		(CameraComponent*)camera->getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0), 
 		particleEmitter1Entity));
-
-	particleEmitter1Entity->addChild(cube);
-	particleEmitter1Entity->addChild(fireLightEntity);
 
 	Entity* particleEmitter2Entity = new Entity();
 
@@ -299,6 +284,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	particleEmitter2Entity->addComponent(new ParticleEmitterComponent(110, 4.5, -0.5, 3, 200, 8, smokeTexture, BLEND_STATE::ALPHA_BLENDING,
 		(CameraComponent*)camera->getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0),
 		particleEmitter2Entity));
+
+	particleEmitter1Entity->addChild(cube);
+	particleEmitter1Entity->addChild(fireLightEntity);
 
 	world->addPrimaryCamera(camera, 0000);
 	

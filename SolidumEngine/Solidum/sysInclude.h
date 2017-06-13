@@ -38,14 +38,16 @@
 #include <locale>
 #include <codecvt>
 
-#include "../Solidum/EngineUtils/include/MiscMath.h"
+#include "EngineUtils\include\MiscMath.h"
 
-#include "../Solidum/EngineUtils/include/Matrix3x3.h"
-#include "../Solidum/EngineUtils/include/Matrix4x4.h"
+#include "EngineUtils\include\Matrix3x3.h"
+#include "EngineUtils\include\Matrix4x4.h"
 
-#include "../Solidum/EngineUtils/include/Vector2.h"
-#include "../Solidum/EngineUtils/include/Vector3.h"
-#include "../Solidum/EngineUtils/include/Vector4.h"
+#include "EngineUtils\include\Vector2.h"
+#include "EngineUtils\include\Vector3.h"
+#include "EngineUtils\include\Vector4.h"
+
+#include "EngineUtils\include\VariantType.h"
 
 #include "EngineUtils\include\EnumString.h"
 
@@ -160,10 +162,6 @@ enum class GRAPHICS_COMMAND_TYPE {
 
 	//SHADER COMMANDS
 	SHADER_UPDATE_UNIFORM,
-	SHADER_UPDATE_LIGHT_UNIFORMS,
-	SHADER_UPDATE_MATERIAL_PASS_UNIFORMS,
-	SHADER_UPDATE_CAMERA_UNIFORMS,
-	SHADER_UPDATE_TRANSFORM_UNIFORMS,
 	SHADER_SYNC_UNIFORMS,
 
 	//PIPELINE COMMANDS
@@ -197,26 +195,6 @@ enum class TASK_COMPLETION_STATUS {
 enum class PARTICLE_TYPE {
 	INVALID,
 	STANDARD
-};
-
-enum class RENDER_NODE_TYPE {
-	LIGHT_RENDER_NODE,
-	MESH_RENDER_NODE,
-	SKYBOX_WEATHER_RENDER_NODE,
-	POST_FX_RENDER_NODE,
-	SHADOW_GEN_RENDER_NODE,
-	PARTICLE_EMITTER_RENDER_NODE
-};
-
-enum class RENDERER_TYPE {
-	INVALID,
-	GEOMETRY_DEFERRED_RENDERER,
-	GEOMETRY_FORWARD_RENDERER,
-	LIGHT_RENDERER,
-	MULTI_PASS_RENDERING,
-	SKY_RENDERER,
-	PARTICLE_RENDERER,
-	SHADOW_RENDERER
 };
 
 enum SHADER_TYPE {
@@ -268,6 +246,15 @@ enum class COMPONENT_TYPE {
 	PARTICLE_COMPONENT
 };
 
+enum class RENDER_DATA_TYPE {
+	RENDER_CAMERA_DATA,
+	RENDER_LIGHT_DATA,
+	RENDER_MESH_DATA,
+	RENDER_PARTICLE_EMITTER_DATA,
+	SHADOW_MAP_RENDER_DATA,
+	SKY_RENDER_DATA
+};
+
 enum class DEFAULT_SHADER_TYPE {
 	DEFAULT_MESH,
 	DEFAULT_LIGHT
@@ -316,7 +303,27 @@ struct ParticleInstanceData {
 
 };
 
-struct RendererSpecificIOHookData {
+class BoundingSphere;
+
+struct RenderPassPacket_CameraData {
+
+	Matrix4f _projectionMatrix;
+	Matrix4f _orthoProjection;
+	Matrix4f _viewMatrix;
+	Matrix4f _worldMatrix;
+
+	Matrix4f _startView;
+
+	Vector3f _eyePosition;
+};
+
+struct RenderData_GlobalData {
+	RenderPassPacket_CameraData global_cam;
+	BoundingSphere* boundingSphere;
+};
+
+
+struct RenderPassSpecificIOHookData {
 	SHADER_TYPE _shaderType;
 	SHADER_RESOURCE_TYPE _shaderResType;
 };

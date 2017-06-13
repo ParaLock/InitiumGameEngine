@@ -17,8 +17,6 @@
 
 #include "../../../EventFramework/include/EventFrameworkCore.h"
 
-#include "../../RenderNodeTree/include/RenderNodeTree.h"
-
 #include "../../GPUPipeline/include/GPUPipeline.h"
 
 #include "../../Directx11Rendering/api_function_wrappers/include/dx11_pipeline_functions_wrapper.h"
@@ -26,41 +24,36 @@
 
 #include "../../PipelineCommands/include/PipelineCommand.h"
 
-#include "../../RenderNode/include/RenderNodePool.h"
 #include "../../GraphicsCommand/include/GraphicsCommandPool.h"
 
 #include "../../Particles/include/ParticlePool.h"
 #include "../../Particles/include/ParticleFactory.h"
 
-#include "../../Renderers/include/LightRenderer.h"
-#include "../../Renderers/include/GeometryDeferredRenderer.h"
-#include "../../Renderers/include/ShadowMapRenderer.h"
-#include "../../Renderers/include/SkyRenderer.h"
-#include "../../Renderers/include/ParticleRenderer.h"
+#include "../../RenderPass/include/RenderPassWrapper.h"
+
+#include "../../Renderer/include/Renderer.h"
 
 #include "../../RenderFlowGraph/include/RenderFlowGraph.h"
+
+#include "../../../PhysicsFramework/include/BoundingSphere.h"
 
 #include "../../../TaskFramework/include/TaskTree.h"
 
 #include "IGraphicsCore.h"
 
-class RenderNodeFactory;
 class ParticlePool;
 class BoundingSphere;
 
 class GraphicsCore : public IEventListener, public IGraphicsCore
 {
 private:
-	std::map<std::string, Renderer*> _registeredRenderers;
+	std::map<std::string, std::shared_ptr<RenderPassWrapper>> _registeredRenderPasses;
+	std::list<Renderer*> _registeredRenderers;
 
 	dxDeviceManager *_dxManager = nullptr;
 	ResourceManagerPool *_resManagerPool = nullptr;
 
-	RenderNodeTree *_renderTree;
-
 	TaskTree* _primaryTaskTree;
-
-	GlobalRenderingParams _globalRenderingParameters;
 
 	GPUPipeline* _endFrameState;
 
@@ -70,49 +63,42 @@ private:
 
 	RenderFlowGraph* _primaryFlowGraph;
 
-	RenderNodeFactory* _renderNodeFactory;
-	RenderNodePool* _renderNodePool;
-
 	GraphicsCommandFactory* _graphicsCommandFactory;
 	GraphicsCommandPool* _graphicsCommandPool;
 
 	ParticleFactory* _particleFactory;
 	ParticlePool* _particlePool;
 
+	RenderData_GlobalData _globalRenderData;
+
 public:
 	GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool, TaskTree* masterTaskTree);
 	~GraphicsCore();
 
-	void beginFrame();
+	void registerRenderPass(std::shared_ptr<RenderPassWrapper> renderpass) { _registeredRenderPasses.insert({renderpass->getName(), renderpass}); };
 
-	void endFrame();
+	void registerRenderer(Renderer* renderer) { _registeredRenderers.push_back(renderer); }
 
-	void prepareRender(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline);
+	void beginRender(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline, RenderDataGroup* renderData);
 
-	void render(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline);
+	void endRender(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline);
 
 	void setCurrentRenderingCamera(CameraComponent* cam);
 
 	void onEvent(EVENT_PTR evt);
-
-	RenderNodeTree* getRenderNodeTree() { return _renderTree; };
-	RenderNodePool* getRenderNodePool() { return _renderNodePool; };
 
 	GraphicsCommandPool* getGraphicsCommandPool() { return _graphicsCommandPool; };
 	GraphicsCommandFactory* getGraphicsCommandFactory() { return _graphicsCommandFactory; }
 
 	TaskTree* getPrimaryTaskTree() { return _primaryTaskTree; };
 
-	void registerRenderer(Renderer* newRenderer);
-	void setPrimaryRenderFlowGraph(RenderFlowGraph* graph);
-
-	void calculateRenderOrder();
-
 	ParticlePool* getParticlePool() { return _particlePool; }
 
-	void setWorldBoundingSphere(BoundingSphere* boundingSphere) { _globalRenderingParameters._worldBoundingSphere = boundingSphere; }
+	void setWorldBoundingSphere(BoundingSphere* boundingSphere) { _globalRenderData.boundingSphere = boundingSphere; }
 
 	GPUPipeline* getEndscenePSO() { return _endFrameState; }
+
+	std::shared_ptr<RenderPassWrapper> getRegisteredRenderPass(std::string name) { return _registeredRenderPasses.at(name); };
 
 	static GraphicsCore* singletonInstance;
 	static GraphicsCore* getInstance();

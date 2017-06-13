@@ -46,8 +46,10 @@ void Entity::setParent(IEntity * parent)
 	_transform->setParent(_parent->getTransform());
 }
 
-void Entity::update(float delta)
+void Entity::update(float delta, RenderDataGroup* collection)
 {
+	_renderObject->attachRenderDataToGroup(collection);
+
 	for (auto itr = _components->begin(); itr != _components->end(); itr++) {
 		
 		for (auto compItr = _components->at(itr->first)->begin();
@@ -63,6 +65,8 @@ void Entity::update(float delta)
 
 		IEntity* child = *itr;
 
-		child->update(delta);
+		child->setWorld(_parentWorld);
+
+		child->update(delta, collection);
 	}
 }

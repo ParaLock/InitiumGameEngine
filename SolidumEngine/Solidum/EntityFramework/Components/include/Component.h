@@ -6,7 +6,10 @@
 
 #include "../../../GraphicsRendering/EntityRenderObject/include/IEntityRenderObject.h"
 
+#include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataPacket.h"
+
 #include "../../../ResourceFramework/include/IResource.h"
+
 #include "IComponent.h"
 
 class Component : public IResource, public IComponent
@@ -32,5 +35,7 @@ public:
 
 	void setParent(IEntity* parent) { _parent = parent; };
 	IEntity* getParent() { return _parent; }
+
+	virtual std::shared_ptr<RenderDataPacket> createRenderData() = 0;
 };
 

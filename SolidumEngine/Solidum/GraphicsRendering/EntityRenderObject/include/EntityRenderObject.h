@@ -1,36 +1,33 @@
 #pragma once
 #include "../../../sysInclude.h"
-
-#include "../../RenderNode/include/RenderNode.h"
-#include "../../RenderNode/include/LightRenderNode.h"
-#include "../../RenderNode/include/MeshRenderNode.h"
-
-#include "../../RenderNodeTree/include/RenderNodeTree.h"
-
 #include "../../GraphicsCore/include/IGraphicsCore.h"
-
-#include "../../RenderNode/include/RenderNodePool.h"
+#include "../../RenderDataProtocal/include/RenderDataGroup.h"
 
 #include "IEntityRenderObject.h"
 
-typedef std::map<int, uint64_t>* ENTITY_INDEXED_RENDER_RESOURCE;
+#include "../../../EntityFramework/Components/include/CameraComponent.h"
+#include "../../../EntityFramework/Components/include/MeshComponent.h"
+#include "../../../EntityFramework/Components/include/LightComponent.h"
+#include "../../../EntityFramework/Components/include/ParticleEmitterComponent.h"
+#include "../../../EntityFramework/Components/include/SkydomeWeatherComponent.h"
 
 class EntityRenderObject : public IEntityRenderObject
 {
 private:
-	std::map<RENDER_NODE_TYPE, ENTITY_INDEXED_RENDER_RESOURCE> _renderResources;
+	std::list<Component*> _uniqueRenderResources;
+	std::map<COMPONENT_TYPE, std::map<int, Component*>> _renderResources;
 public:
 	EntityRenderObject();
 	~EntityRenderObject();
 
-	void addLight(ILight* light, int lightIndex);
-	void addTexture(Texture* tex, int targetMeshIndex);
-	void addMaterial(Material* mat, int targetMeshIndex);
-	void addStaticGeometry(mesh* model, int meshIndex);
-	void addAnimatedMesh(mesh* animation, int animationMeshIndex);
+	void addLightComponent(LightComponent* lightComponent, int index);
+	void addMeshComponent(MeshComponent* meshComponent, int index);
 
-	void addGenericRenderNode(RenderNode* renderNode, int genericNodeIndex);
+	void setMeshTexture(Texture * tex, int index);
+	void setMeshMaterial(Material* mat, int index);
 
-	RenderParams* updateRenderNodeParams(RENDER_NODE_TYPE objtype, int index);
+	void addUniqueComponent(Component* comp);
+
+	void attachRenderDataToGroup(RenderDataGroup* datagroup);
 };
 

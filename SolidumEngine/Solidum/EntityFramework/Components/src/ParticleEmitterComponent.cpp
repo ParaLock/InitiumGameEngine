@@ -28,14 +28,11 @@ ParticleEmitterComponent::ParticleEmitterComponent(
 
 	_stream = new ParticleStream();
 
-	IGraphicsCore* gCore = IGraphicsCore::getInstance();
-	RenderNodePool* renderNodePool = gCore->getRenderNodePool();
+	_particleInstanceBuffer = ResourceManagerPool::getInstance()->getResourceManager("GPUBufferManager")->createResource(std::make_shared<GPUBuffer::InitData>
+		(maxParticles * sizeof(ParticleInstanceData), BUFFER_TYPE::VERTEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE),
+		std::to_string(getRandomNumber()) + "particle_instance_buffer", false);
 
-	RenderNode* node = renderNodePool->getResource(RENDER_NODE_TYPE::PARTICLE_EMITTER_RENDER_NODE);
-
-	_parent->getRenderObject()->addGenericRenderNode(node, 0);
-
-	node->load(std::make_shared<ParticleRenderNode::InitData>(_stream, 4000));
+	_particleDataCPUBuffer = new ParticleInstanceData[maxParticles];
 
 	std::string stlStr = std::to_string(getRandomNumber());
 
@@ -58,15 +55,13 @@ ParticleEmitterComponent::ParticleEmitterComponent(
 
 	_particleQuad->generatePlaneMesh(-0.52, 0.52, 0.52, -0.52);
 
-	node->getRenderParams()->setPerNodeParam_Mesh(_particleQuad);
-	node->getRenderParams()->setPerNodeParam_Transform(_parent->getTransform());
-	node->getRenderParams()->setPerNodeParam_BlendState(_blendState);
-
 	ParticlePool* particlePool = IGraphicsCore::getInstance()->getParticlePool();
 	
 	_maxParticles = maxParticles;
 
 	_time.startTimer();
+
+	_parent->getRenderObject()->addUniqueComponent(this);
 }
 
 
@@ -118,8 +113,6 @@ bool ParticleEmitterComponent::updateParticle(Particle* particle, float delta)
 	updateParticleTextureState(particle);
 
 	particle->_elapsedTime += delta;
-
-	//particle->_distanceFromCamera = pow(Vector3f::length((_cam->getPos - particle->_position)), 2);
 
 	return particle->_elapsedTime < _particleLifeTime;
 }
@@ -228,4 +221,30 @@ void ParticleEmitterComponent::update(float delta)
 	_stream->pushBatch(batch);
 	
 	_time.reset();
+}
+
+std::shared_ptr<RenderDataPacket> ParticleEmitterComponent::createRenderData()
+{
+	RenderPassPacket_ParticleEmitterData data;
+
+	data._maxParticles = _maxParticles;
+
+	data._particleInstanceBuffer = _particleInstanceBuffer;
+	data._particleDataCPUBuffer = _particleDataCPUBuffer;
+
+	data._particleSteam = _stream;
+
+	data._indexBuffer = _particleQuad->getIndexBuff();
+	data._vertexBuffer = _particleQuad->getVertexBuff();
+	data._numIndices = _particleQuad->numIndices;
+
+	data._translationMatrix = _parent->getTransform()->getGlobalTransform();
+
+	std::shared_ptr<RenderDataPacket> _dataPtr = std::make_shared<RenderDataPacket>();
+
+	_dataPtr->setType(RENDER_DATA_TYPE::RENDER_PARTICLE_EMITTER_DATA);
+
+	_dataPtr->addData<RenderPassPacket_ParticleEmitterData>(data);
+
+	return _dataPtr;
 }

@@ -5,9 +5,11 @@
 #include "../../../EngineUtils/include/Vector2.h"
 #include "../../../EngineUtils/include/Vector3.h"
 
-#include "../../../GraphicsRendering/RenderNode/include/LightRenderNode.h"
+#include "../../../GraphicsRendering/Lights/include/Light.h"
 
 #include "Component.h"
+
+class RenderDataPacket;
 
 class SunMoonLightingComponent : public Component
 {
@@ -37,5 +39,7 @@ public:
 	void update(float delta);
 
 	void onEvent(EVENT_PTR evt) {};
+
+	std::shared_ptr<RenderDataPacket> createRenderData();
 };
 

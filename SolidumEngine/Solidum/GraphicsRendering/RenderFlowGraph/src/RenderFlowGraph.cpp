@@ -30,8 +30,7 @@ void RenderFlowGraph::load(std::shared_ptr<IResourceBuilder> builder)
 
 	RenderFlowGraphParser parser;
 
-	ParsedRenderFlowGraphData data = parser.parseRenderFlowGraph(realBuilder->_filename);
-
+	ParsedRenderFlowGraphData& data = parser.parseRenderFlowGraph(realBuilder->_filename);
 
 	std::shared_ptr<RenderFlowGraphIOInterfaceEvtData> _ioInterfaceQueryEvtData = std::make_shared<RenderFlowGraphIOInterfaceEvtData>();
 

@@ -10,6 +10,8 @@
 
 #include "Component.h"
 
+class RenderDataPacket;
+
 enum MOVE_FUNCTION {
 	MOVE_FORWARD,
 	MOVE_BACKWARD,
@@ -44,5 +46,7 @@ public:
 	void update(float delta);
 
 	void onEvent(EVENT_PTR evt);
+
+	std::shared_ptr<RenderDataPacket> createRenderData() { return std::shared_ptr<RenderDataPacket>(); };
 };
 

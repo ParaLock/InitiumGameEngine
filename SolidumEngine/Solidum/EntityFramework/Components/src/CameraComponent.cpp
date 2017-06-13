@@ -257,3 +257,22 @@ void CameraComponent::update(float delta)
 	_movementStore[3] = 0;
 }
 
+std::shared_ptr<RenderDataPacket> CameraComponent::createRenderData()
+{
+	RenderPassPacket_CameraData data;
+
+	std::shared_ptr<RenderDataPacket> _dataPtr = std::make_shared<RenderDataPacket>();
+
+	data._eyePosition = _eye;
+	data._orthoProjection = _orthoProjectionMatrix;
+	data._projectionMatrix = _projectionMatrix;
+	data._viewMatrix = _viewMatrix;
+	data._worldMatrix = _worldMatrix;
+
+	_dataPtr->setType(RENDER_DATA_TYPE::RENDER_CAMERA_DATA);
+
+	_dataPtr->addData<RenderPassPacket_CameraData>(data);
+
+	return _dataPtr;
+}
+

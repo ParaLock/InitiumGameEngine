@@ -1,0 +1,17 @@
+RENDER_PASS_DESC_BEGIN
+
+	NAME shadow_mapping_render_pass
+	
+	SHADER ./res/Shaders/deferredRendering/basicShaders/deferredDepthMapGenShader.hlsl shadow_map_gen_shader
+	
+	INPUT_HOOK GPU_BUFFER 0 index_buffer
+	INPUT_HOOK GPU_BUFFER 1 vertex_buffer
+	
+	INPUT_HOOK TEXTURE_SAMPLER 0 SampleTypeWrap
+	INPUT_HOOK TEXTURE_SAMPLER 1 SampleTypePoint
+	
+	OUTPUT_HOOK DEPTH_STENCIL 0 shadowmap_depth_stencil
+	
+	OUTPUT_HOOK RENDER_TARGET 0 shadowmap
+	
+RENDER_PASS_DESC_END

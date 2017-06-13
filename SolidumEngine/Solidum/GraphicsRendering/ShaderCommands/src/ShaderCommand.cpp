@@ -13,41 +13,17 @@ ShaderCommand::~ShaderCommand()
 
 void ShaderUpdateUniformCommand::execute()
 {
-	_shader->updateUniform(_uniform.first, _uniform.second);
-}
+	auto& itr = _uniforms->getUniformsMap().begin();
+	auto& itr_end = _uniforms->getUniformsMap().end();
 
-void ShaderUpdateLightUniformsCommand::execute()
-{
-	if(_isDeferred) {
-		if (_lights.size() > 0)
-			_shader->updateDeferredLightUniforms(_lights.at(0));
+	while (itr != itr_end) {
+
+		auto& uniform = *itr;
+
+		_shader->updateUniform(uniform.first, uniform.second.get());
+
+		itr++;
 	}
-	else {
-		if (_lights.size() > 0)
-		{
-			if (_lights.at(0)->getType() == LIGHT_TYPE::POINT_LIGHT) {
-				_shader->updatePointLightsForwardRendering(_lights);
-			}
-			if (_lights.at(0)->getType() == LIGHT_TYPE::DIRECTIONAL_LIGHT) {
-				_shader->updateDirectionalLightsForwardRendering(_lights);
-			}
-		}
-	}
-}
-
-void ShaderUpdateMaterialPassUniformsCommand::execute()
-{
-	_shader->updateMaterialPassUniforms(_matPass, _ioInterface);
-}
-
-void ShaderUpdateCameraUniformsCommand::execute()
-{
-	_shader->updateCameraUniforms(_camera);
-}
-
-void ShaderUpdateTransformCommand::execute()
-{
-	_shader->updateModelUniforms(_transform);
 }
 
 void ShaderSyncUniforms::execute()

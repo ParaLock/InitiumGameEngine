@@ -19,17 +19,19 @@ private:
 
 	const static int MAX_PRE_RENDERED_FRAMES = 3;
 
-	struct FrameTasks {
+	struct Frame {
 
 		GraphicsCommandList* _endScenePipeline;
 		GraphicsCommandList* _scenePipeline;
+
+		RenderDataGroup _renderDataGroup;
 
 		std::shared_ptr<TaskHandle> _renderPreReqTaskHandle;
 		std::shared_ptr<TaskHandle> _simulationTaskHandle;
 		std::shared_ptr<TaskHandle> _renderCMDProcTaskHandle;
 	};
 
-	std::list<FrameTasks> _inflightFrames;
+	std::list<Frame> _inflightFrames;
 
 	HRTimer _engineTick;
 
@@ -59,9 +61,7 @@ public:
 
 	void cleanup();
 
-	std::shared_ptr<TaskHandle> testTaskHandle;
-
-	void update(float delta);
+	void update(float delta, RenderDataGroup* collection);
 
 	World* getWorld() { return _currentWorld; }
 

@@ -11,106 +11,72 @@ EntityRenderObject::~EntityRenderObject()
 {
 }
 
-void EntityRenderObject::addLight(ILight * light, int lightIndex)
+void EntityRenderObject::addLightComponent(LightComponent * lightComponent, int index)
 {
-	RenderNodeTree* tree = IGraphicsCore::getInstance()->getRenderNodeTree();
-
-	RenderNodePool* renderNodePool = IGraphicsCore::getInstance()->getRenderNodePool();
-
-	RenderNode* newNode = renderNodePool->getResource(RENDER_NODE_TYPE::LIGHT_RENDER_NODE);
-
-	newNode->load(std::make_shared<LightRenderNode::InitData>(tree->getUniqueNodeID()));
-
-	tree->addNode(newNode, newNode->getID());
-
-	if (_renderResources.find(RENDER_NODE_TYPE::LIGHT_RENDER_NODE) == _renderResources.end()) {
-		_renderResources.insert({ RENDER_NODE_TYPE::LIGHT_RENDER_NODE, new std::map<int, uint64_t> });
+	if (_renderResources.find(COMPONENT_TYPE::LIGHT_COMPONENT) == _renderResources.end()) {
+		_renderResources.insert({ COMPONENT_TYPE::LIGHT_COMPONENT, std::map<int, Component*>() });
 	}
 
-	_renderResources[RENDER_NODE_TYPE::LIGHT_RENDER_NODE]->insert({lightIndex, newNode->getID()});
-	
-	updateRenderNodeParams(RENDER_NODE_TYPE::LIGHT_RENDER_NODE, lightIndex)->
-		setPerNodeParam_Light((Light*)light);
+	_renderResources.at(COMPONENT_TYPE::LIGHT_COMPONENT).insert({index, lightComponent});
 }
 
-void EntityRenderObject::addTexture(Texture * tex, int targetMeshIndex)
+void EntityRenderObject::addMeshComponent(MeshComponent * meshComponent, int index)
 {
-	if (_renderResources.find(RENDER_NODE_TYPE::MESH_RENDER_NODE) != _renderResources.end())
-	{
-		uint64_t nodeID = _renderResources[RENDER_NODE_TYPE::MESH_RENDER_NODE]->operator[](targetMeshIndex);
-
-		updateRenderNodeParams(RENDER_NODE_TYPE::MESH_RENDER_NODE, targetMeshIndex)->
-			setPerNodeParam_MeshTexture(tex);
-	}
-}
-
-void EntityRenderObject::addMaterial(Material * mat, int targetMeshIndex)
-{
-	RenderNodeTree* tree = IGraphicsCore::getInstance()->getRenderNodeTree();
-
-	if (_renderResources.find(RENDER_NODE_TYPE::MESH_RENDER_NODE) != _renderResources.end())
-	{
-		uint64_t nodeID = _renderResources[RENDER_NODE_TYPE::MESH_RENDER_NODE]->operator[](targetMeshIndex);
-
-		updateRenderNodeParams(RENDER_NODE_TYPE::MESH_RENDER_NODE, targetMeshIndex)->
-			setPerNodeParam_MeshMaterial(mat);
-	}
-}
-
-void EntityRenderObject::addStaticGeometry(mesh * model, int meshIndex)
-{
-	RenderNodeTree* tree = IGraphicsCore::getInstance()->getRenderNodeTree();
-
-	RenderNodePool* renderNodePool = IGraphicsCore::getInstance()->getRenderNodePool();
-
-	RenderNode* newNode = renderNodePool->getResource(RENDER_NODE_TYPE::MESH_RENDER_NODE);
-
-	newNode->load(std::make_shared<MeshRenderNode::InitData>(tree->getUniqueNodeID()));
-
-	tree->addNode(newNode, newNode->getID());
-
-	if (_renderResources.find(RENDER_NODE_TYPE::MESH_RENDER_NODE) == _renderResources.end()) {
-		_renderResources.insert({ RENDER_NODE_TYPE::MESH_RENDER_NODE, new std::map<int, uint64_t> });
+	if (_renderResources.find(COMPONENT_TYPE::MESH_COMPONENT) == _renderResources.end()) {
+		_renderResources.insert({ COMPONENT_TYPE::MESH_COMPONENT, std::map<int, Component*>() });
 	}
 
-	_renderResources[RENDER_NODE_TYPE::MESH_RENDER_NODE]->insert({ meshIndex, newNode->getID() });
-
-	updateRenderNodeParams(RENDER_NODE_TYPE::MESH_RENDER_NODE, meshIndex)->
-		setPerNodeParam_Mesh(model);
+	_renderResources.at(COMPONENT_TYPE::MESH_COMPONENT).insert({ index, meshComponent });
 }
 
-void EntityRenderObject::addAnimatedMesh(mesh * animation, int animationMeshIndex)
+void EntityRenderObject::setMeshTexture(Texture * tex, int index)
 {
-}
-
-void EntityRenderObject::addGenericRenderNode(RenderNode * renderNode, int genericNodeIndex)
-{
-	if (_renderResources.find(renderNode->getType()) == _renderResources.end()) {
-		_renderResources.insert({ renderNode->getType(), new std::map<int, uint64_t> });
+	if (_renderResources.find(COMPONENT_TYPE::MESH_COMPONENT) == _renderResources.end()) {
+		return;
 	}
 
-	_renderResources[renderNode->getType()]->insert({ genericNodeIndex, renderNode->getID() });
-	
-	RenderNodeTree* tree = IGraphicsCore::getInstance()->getRenderNodeTree();
-	
-	tree->addNode(renderNode, renderNode->getID());
+	MeshComponent* comp = (MeshComponent*)_renderResources.at(COMPONENT_TYPE::MESH_COMPONENT).at(index);
+
+	comp->setTexture(tex);
 }
 
-RenderParams* EntityRenderObject::updateRenderNodeParams(RENDER_NODE_TYPE nodeType, int index)
+void EntityRenderObject::setMeshMaterial(Material * mat, int index)
 {
-	if (_renderResources.find(nodeType) != _renderResources.end()) {
+	if (_renderResources.find(COMPONENT_TYPE::MESH_COMPONENT) == _renderResources.end()) {
+		return;
+	}
 
-		auto renderNodeByIndex = _renderResources.at(nodeType);
+	MeshComponent* comp = (MeshComponent*)_renderResources.at(COMPONENT_TYPE::MESH_COMPONENT).at(index);
 
-		if (renderNodeByIndex->find(index) != renderNodeByIndex->end()) {
+	comp->setMaterial(mat);
+}
 
-			uint64_t nodeID = renderNodeByIndex->at(index);
+void EntityRenderObject::addUniqueComponent(Component* comp)
+{
+	_uniqueRenderResources.push_back(comp);
+}
 
-			RenderParams* params = IGraphicsCore::getInstance()->getRenderNodeTree()->getRenderNodeParams(nodeID);
+void EntityRenderObject::attachRenderDataToGroup(RenderDataGroup * datagroup)
+{
+	auto& itr = _renderResources.begin();
 
-			return params;
+	while (itr != _renderResources.end()) {
+
+		auto& innerMap = itr->second;
+
+		auto& innerItr = innerMap.begin();
+
+		while (innerItr != innerMap.end()) {
+
+			datagroup->addPacketToRenderGroup(innerItr->second->createRenderData());
+
+			innerItr++;
 		}
+
+		itr++;
 	}
 
-	return nullptr;
+	for each(Component* comp in _uniqueRenderResources) {
+		datagroup->addPacketToRenderGroup(comp->createRenderData());
+	}
 }

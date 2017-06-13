@@ -21,6 +21,9 @@ SunMoonLightingComponent::~SunMoonLightingComponent()
 
 void SunMoonLightingComponent::update(float delta)
 {
-	//GraphicsCore::getInstance()->getRenderNodeTree()->updateNodeVisibility(true, _renderNodeID[0]);
-	//GraphicsCore::getInstance()->getRenderNodeTree()->updateNodeVisibility(true, _renderNodeID[1]);
+}
+
+std::shared_ptr<RenderDataPacket> SunMoonLightingComponent::createRenderData()
+{
+	return std::shared_ptr<RenderDataPacket>();
 }

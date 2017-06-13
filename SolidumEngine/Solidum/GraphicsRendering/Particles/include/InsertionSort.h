@@ -3,7 +3,7 @@
 
 #include "Particle.h"
 
-class RenderNode;
+struct RenderPassPacket_ParticleEmitterData;
 
 class InsertionSort
 {
@@ -43,18 +43,18 @@ public:
 		}
 	}
 
-	void particleBatchSelectionSort(std::vector<std::tuple<std::shared_ptr<ParticleBatch>, RenderNode*>>* arr) {
-
+	bool particleBatchSelectionSort(std::vector<std::tuple<std::shared_ptr<ParticleBatch>, RenderPassPacket_ParticleEmitterData*>>* arr) {
 
 		if (arr->size() == 0)
-			return;
+			return false;
 
 		if (arr->size() == 2) {
+
 			if (std::get<0>(arr->at(0))->_particlesToRender->front()->_distance < std::get<0>(arr->at(1))->_particlesToRender->front()->_distance) {
 				std::swap(arr->at(0), arr->at(1));
 			}
 
-			return;
+			return true;
 		}
 
 		int i = 0;
@@ -74,6 +74,8 @@ public:
 			j = i + 1;
 
 		}
+
+		return true;
 	}
 };
 

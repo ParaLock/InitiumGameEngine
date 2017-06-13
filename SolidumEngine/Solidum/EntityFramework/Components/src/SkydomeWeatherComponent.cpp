@@ -18,26 +18,7 @@ SkydomeWeatherComponent::SkydomeWeatherComponent(Texture* tex, mesh* skydome, Ca
 
 	_parent = entity;
 
-	uint64_t nodeID = IGraphicsCore::getInstance()->getRenderNodeTree()->getUniqueNodeID();
-
-	IGraphicsCore* gCore = IGraphicsCore::getInstance();
-	RenderNodePool* renderNodePool = gCore->getRenderNodePool();
-
-	RenderNode* skyboxWeatherNode = renderNodePool->getResource(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE);
-
-	skyboxWeatherNode->load(std::make_shared<SkyBoxRenderNode::InitData>
-		(_weatherApexColor, _weatherCenterColor, nodeID));
-
-	_parent->getRenderObject()->addGenericRenderNode(skyboxWeatherNode, _index);
-
-	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
-		->setPerNodeParam_MeshTexture(_tex);
-
-	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
-		->setPerNodeParam_Mesh(_skydome);
-
-	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
-		->setPerNodeParam_RenderCamera(_cam);
+	_parent->getRenderObject()->addUniqueComponent(this);
 }
 
 
@@ -48,12 +29,6 @@ SkydomeWeatherComponent::~SkydomeWeatherComponent()
 void SkydomeWeatherComponent::update(float delta)
 {
 	updateDayNightCycle(0.0005f);
-
-	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
-		->setPerNodeParam_skydomeApexColor(_weatherApexColor);
-
-	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)
-		->setPerNodeParam_skydomeCenterColor(_weatherCenterColor);
 }
 
 void SkydomeWeatherComponent::updateDayNightCycle(float delta)
@@ -197,9 +172,28 @@ void SkydomeWeatherComponent::updateDayNightCycle(float delta)
 	_timeOfDayIndex = _timeOfDayIndex % 4;
 
 	CURRENT_TIME += delta;
+}
 
-	_parent->getRenderObject()->updateRenderNodeParams(RENDER_NODE_TYPE::SKYBOX_WEATHER_RENDER_NODE, _index)->
-		setPerNodeParam_isVisible(true);
+std::shared_ptr<RenderDataPacket> SkydomeWeatherComponent::createRenderData()
+{
+	RenderPassPacket_SkyData data;
+
+	data._indexBuffer = _skydome->getIndexBuff();
+	data._vertexBuffer = _skydome->getVertexBuff();
+
+	data._numIndices = _skydome->numIndices;
+	data._skyTexture = (IResource*)_tex;
+
+	data._weatherApexColor = _weatherApexColor;
+	data._weatherCenterColor = _weatherCenterColor;
+
+	std::shared_ptr<RenderDataPacket> _dataPtr = std::make_shared<RenderDataPacket>();
+
+	_dataPtr->setType(RENDER_DATA_TYPE::SKY_RENDER_DATA);
+
+	_dataPtr->addData<RenderPassPacket_SkyData>(data);
+
+	return _dataPtr;
 }
 
 void SkydomeWeatherComponent::onEvent(EVENT_PTR evt)

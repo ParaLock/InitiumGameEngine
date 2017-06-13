@@ -62,7 +62,7 @@ std::list<std::string> ShaderParser::getIncludeFile(std::string includeFilename)
 	return includeFileLines;
 }
 
-std::string ShaderParser::parseShader(RendererDescriptorData * metadata, std::string filepath)
+std::string ShaderParser::parseShader(RenderPassDescriptorData * metadata, std::string filepath)
 {
 	std::string parsedShader;
 
@@ -151,7 +151,7 @@ std::string ShaderParser::parseShader(RendererDescriptorData * metadata, std::st
 			if (itr != metadata->_hooksByName.end()) {
 
 				RenderFlowGraphNodeIOHook* hookData = &metadata->_hooksByName.at(hookSpaceSplit.at(1));
-				RendererSpecificIOHookData* specificData = (RendererSpecificIOHookData*)hookData->_userData;
+				RenderPassSpecificIOHookData* specificData = (RenderPassSpecificIOHookData*)hookData->_userData;
 
 				if (languageType == "HLSL") {
 
