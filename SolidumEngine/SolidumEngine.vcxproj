@@ -24,6 +24,7 @@
     <ClInclude Include="Plugins\RenderPasses\particle_render_pass.h" />
     <ClInclude Include="Plugins\RenderPasses\shadow_map_render_pass.h" />
     <ClInclude Include="Plugins\RenderPasses\sky_render_pass.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderDataProtocal\include\RenderDataAttribs.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderUniformGroup.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderPass\include\RenderPassDescriptorParser.h" />
     <ClInclude Include="Solidum\EngineUtils\include\VariantType.h" />
