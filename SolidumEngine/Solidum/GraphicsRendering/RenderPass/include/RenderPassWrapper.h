@@ -27,7 +27,7 @@ private:
 
 	RenderFlowGraphIOInterface* _ioInterface;
 
-	std::function<void(GraphicsCommandList*, RenderDataGroup*, RenderPassWrapper*)> _renderPassCallback;
+	std::function<void(GraphicsCommandList*, RenderDataGroup&, RenderPassWrapper*)> _renderPassCallback;
 public:
 	RenderPassWrapper();
 	~RenderPassWrapper();
@@ -46,12 +46,12 @@ public:
 	void load(std::shared_ptr<IResourceBuilder> builder);
 
 	void setRenderPass(
-		std::function<void(GraphicsCommandList*, RenderDataGroup*, RenderPassWrapper*)> func) 
+		std::function<void(GraphicsCommandList*, RenderDataGroup&, RenderPassWrapper*)> func)
 	{
 		_renderPassCallback = func;
 	};
 
-	void execute(GraphicsCommandList* commandList, RenderDataGroup* collection);
+	void execute(GraphicsCommandList* commandList, RenderDataGroup& collection);
 
 	RenderFlowGraphIOInterface* getIOInterface() { return _ioInterface; };
 

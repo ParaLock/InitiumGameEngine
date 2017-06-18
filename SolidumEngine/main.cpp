@@ -22,6 +22,8 @@
 
 #include "Solidum\WorldSimulation\include\World.h"
 
+#include "Solidum\GraphicsRendering\RenderDataProcessingLayers\include\FrustumCullingLayer.h"
+
 #include "Plugins\RenderPasses\light_render_pass.h"
 #include "Plugins\RenderPasses\mesh_render_pass.h"
 #include "Plugins\RenderPasses\particle_render_pass.h"
@@ -73,6 +75,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	Renderer* simpleDeferredRenderer = new Renderer();
 	simpleDeferredRenderer->load(std::make_shared<Renderer::InitData>("./res/RenderFlowGraphs/SimpleDeferredRenderFlow.txt"));
+
+	simpleDeferredRenderer->pushGeneralProcessingLayer(std::make_shared<FrustumCullingLayer>());
 
 	solidum->getGraphicsSubsystem()->registerRenderer(simpleDeferredRenderer);
 
@@ -289,9 +293,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	particleEmitter1Entity->addChild(fireLightEntity);
 
 	world->addPrimaryCamera(camera, 0000);
-	
-	world->addEntity(particleEmitter2Entity, 8593);
-	world->addEntity(particleEmitter1Entity, 5964);
+	//
+	//world->addEntity(particleEmitter2Entity, 8593);
+	//world->addEntity(particleEmitter1Entity, 5964);
 	world->addEntity(sun, 3333);
 	world->addEntity(pointLight2Entity, 0001);
 	world->addEntity(pointLight3Entity, 0010);

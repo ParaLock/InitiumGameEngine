@@ -19,11 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\include\FrustumCullingLayer.h" />
     <ClInclude Include="Plugins\RenderPasses\light_render_pass.h" />
     <ClInclude Include="Plugins\RenderPasses\mesh_render_pass.h" />
     <ClInclude Include="Plugins\RenderPasses\particle_render_pass.h" />
     <ClInclude Include="Plugins\RenderPasses\shadow_map_render_pass.h" />
     <ClInclude Include="Plugins\RenderPasses\sky_render_pass.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\include\RenderDataProcessingLayer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderDataProtocal\include\RenderDataAttribs.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderUniformGroup.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderPass\include\RenderPassDescriptorParser.h" />
@@ -143,6 +145,8 @@
     <ClInclude Include="Solidum\GraphicsRendering\SpatialAccelerationStructures\include\TypeOptimizedTree.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\src\FrustumCullingLayer.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\src\RenderDataProcessingLayer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderUniformGroup.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderPass\src\RenderPassDescriptorParser.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderDataProtocal\src\RenderDataPacket.cpp" />

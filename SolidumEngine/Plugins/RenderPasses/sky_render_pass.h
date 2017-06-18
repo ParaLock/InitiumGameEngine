@@ -11,15 +11,16 @@ static void reg_render_pass__sky(std::function<void(std::shared_ptr<RenderPassWr
 
 	wrapper->setRenderPass
 		(
-			[=](GraphicsCommandList* commandList, RenderDataGroup* collection, RenderPassWrapper* wrapper)
+			[=](GraphicsCommandList* commandList, RenderDataGroup& collection, RenderPassWrapper* wrapper)
 	{
 
-		std::list<std::shared_ptr<RenderDataPacket>> renderData = collection->getRenderDataByType(RENDER_DATA_TYPE::SKY_RENDER_DATA);
+		std::list<std::shared_ptr<RenderDataPacket>> renderData;
+		collection.getRenderDataByType(RENDER_DATA_TYPE::SKY_RENDER_DATA, renderData);
 
 		for each(std::shared_ptr<RenderDataPacket> sky in renderData) {
 
 			RenderPassPacket_SkyData* skyData = sky->getData<RenderPassPacket_SkyData>();
-			RenderData_GlobalData* globalData = collection->getGlobalData();
+			RenderData_GlobalData* globalData = collection.getGlobalData();
 
 			GPUPipeline pipelineState;
 

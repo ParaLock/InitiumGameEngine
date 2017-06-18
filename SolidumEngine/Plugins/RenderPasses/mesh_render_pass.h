@@ -11,12 +11,13 @@ static void reg_render_pass__mesh(std::function<void(std::shared_ptr<RenderPassW
 
 	wrapper->setRenderPass
 		(
-			[=](GraphicsCommandList* commandList, RenderDataGroup* collection, RenderPassWrapper* wrapper)
+			[=](GraphicsCommandList* commandList, RenderDataGroup& collection, RenderPassWrapper* wrapper)
 	{
 
-		std::list<std::shared_ptr<RenderDataPacket>> renderData = collection->getRenderDataByType(RENDER_DATA_TYPE::RENDER_MESH_DATA);
+		std::list<std::shared_ptr<RenderDataPacket>> renderData;
+		collection.getRenderDataByType(RENDER_DATA_TYPE::RENDER_MESH_DATA, renderData);
 
-		RenderData_GlobalData* globalData = collection->getGlobalData();
+		RenderData_GlobalData* globalData = collection.getGlobalData();
 
 		std::shared_ptr<ShaderUniformGroup> globalDataUniforms = std::make_shared<ShaderUniformGroup>();
 

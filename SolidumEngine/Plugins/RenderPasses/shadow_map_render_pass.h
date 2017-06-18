@@ -11,12 +11,17 @@ static void reg_render_pass__shadowmap(std::function<void(std::shared_ptr<Render
 
 	wrapper->setRenderPass
 		(
-			[=](GraphicsCommandList* commandList, RenderDataGroup* collection, RenderPassWrapper* wrapper)
+			[=](GraphicsCommandList* commandList, RenderDataGroup& collection, RenderPassWrapper* wrapper)
 	{
-		std::list<std::shared_ptr<RenderDataPacket>> lightRenderData = collection->getRenderDataByType(RENDER_DATA_TYPE::RENDER_LIGHT_DATA);
-		std::list<std::shared_ptr<RenderDataPacket>> meshRenderData = collection->getRenderDataByType(RENDER_DATA_TYPE::RENDER_MESH_DATA);
+		std::list<std::shared_ptr<RenderDataPacket>> lightRenderData;
+		
+		collection.getRenderDataByType(RENDER_DATA_TYPE::RENDER_LIGHT_DATA, lightRenderData);
+		
+		std::list<std::shared_ptr<RenderDataPacket>> meshRenderData;
+		
+		collection.getRenderDataByType(RENDER_DATA_TYPE::RENDER_MESH_DATA, meshRenderData);
 
-		RenderData_GlobalData* globalData = collection->getGlobalData();
+		RenderData_GlobalData* globalData = collection.getGlobalData();
 
 		std::shared_ptr<ShaderUniformGroup> globalDataUniforms = std::make_shared<ShaderUniformGroup>();
 

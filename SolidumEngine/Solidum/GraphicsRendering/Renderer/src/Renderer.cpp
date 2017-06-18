@@ -22,9 +22,29 @@ void Renderer::load(std::shared_ptr<IResourceBuilder> builder)
 
 void Renderer::renderScene(GraphicsCommandList * commandList, RenderDataGroup * collection)
 {
+	RenderDataGroup processedCollection = *collection;
+
+	processedCollection = performGeneralRenderDataProcessing(processedCollection);
+
 	for each(std::shared_ptr<RenderPassWrapper> renderPass in _activeRenderOrder) {
-		renderPass->execute(commandList, collection);
+
+		renderPass->execute(commandList, processedCollection);
+
 	}
+}
+
+void Renderer::pushGeneralProcessingLayer(std::shared_ptr<RenderDataProcessingLayer> layer)
+{
+	_generalProcessingLayerStack.push_back(layer);
+}
+
+RenderDataGroup& Renderer::performGeneralRenderDataProcessing(RenderDataGroup& data)
+{
+	for each(std::shared_ptr<RenderDataProcessingLayer> layer in _generalProcessingLayerStack) {
+		layer->execute(data);
+	}
+
+	return data;
 }
 
 void Renderer::syncWithGraph()

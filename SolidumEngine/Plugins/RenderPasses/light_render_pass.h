@@ -11,14 +11,15 @@ static void reg_render_pass__light(std::function<void(std::shared_ptr<RenderPass
 
 	wrapper->setRenderPass
 		(
-			[=](GraphicsCommandList* commandList, RenderDataGroup* collection, RenderPassWrapper* wrapper)
+			[=](GraphicsCommandList* commandList, RenderDataGroup& collection, RenderPassWrapper* wrapper)
 	{
-		std::list<std::shared_ptr<RenderDataPacket>>& renderData = collection->getRenderDataByType(RENDER_DATA_TYPE::RENDER_LIGHT_DATA);
+		std::list<std::shared_ptr<RenderDataPacket>> renderData;
+		collection.getRenderDataByType(RENDER_DATA_TYPE::RENDER_LIGHT_DATA, renderData);
 
 		for each(std::shared_ptr<RenderDataPacket> light in renderData) {
 
 			RenderPassPacket_LightData* lightData = light->getData<RenderPassPacket_LightData>();
-			RenderData_GlobalData* globalData = collection->getGlobalData();
+			RenderData_GlobalData* globalData = collection.getGlobalData();
 
 			std::shared_ptr<ShaderUniformGroup> globalDataUniforms = std::make_shared<ShaderUniformGroup>();
 

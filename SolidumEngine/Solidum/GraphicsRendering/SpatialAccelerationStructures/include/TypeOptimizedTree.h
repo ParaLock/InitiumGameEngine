@@ -88,11 +88,9 @@ public:
 
 	}
 
-	std::list<std::shared_ptr<T>> queryNodesByType(E_TYPE e) {
+	void queryNodesByType(E_TYPE e, std::list<std::shared_ptr<T>>& outList) {
 
 		auto& itr = _rootLists.begin();
-
-		std::list<std::shared_ptr<T>> _discoveredNodes;
 
 		while (itr != _rootLists.end()) {
 
@@ -104,19 +102,23 @@ public:
 
 				while (innerItr != rootNode._childNodes.end()) {
 
-					_discoveredNodes.push_back(*innerItr);
+					outList.push_back(*innerItr);
 
 					innerItr++;
 				}
-
-				return _discoveredNodes;
 			}
 
 			itr++;
 		}
+	}
 
-		return std::list<std::shared_ptr<T>>();
+	void queryAllNodes(std::list<std::shared_ptr<T>>& out) {
 
+		for each(RootNode root in _rootLists) {
+			for each(std::shared_ptr<T> node in root._childNodes) {
+				out.push_back(node);
+			}
+		}
 	}
 };
 

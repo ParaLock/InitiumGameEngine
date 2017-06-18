@@ -13,6 +13,8 @@ struct RenderDataAttributes {
 	} occlusionCulling;
 
 	struct Visibility {
+
 		bool _isVisible;
+
 	} visibility;
 };

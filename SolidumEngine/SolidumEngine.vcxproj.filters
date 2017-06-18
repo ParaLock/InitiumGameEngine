@@ -123,6 +123,8 @@
     <ClInclude Include="Plugins\RenderPasses\sky_render_pass.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderUniformGroup.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderDataProtocal\include\RenderDataAttribs.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\include\RenderDataProcessingLayer.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\include\FrustumCullingLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -227,5 +229,7 @@
     <ClCompile Include="Solidum\GraphicsRendering\RenderPass\src\RenderPassWrapper.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderPass\src\RenderPassDescriptorParser.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderUniformGroup.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\src\RenderDataProcessingLayer.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\src\FrustumCullingLayer.cpp" />
   </ItemGroup>
 </Project>

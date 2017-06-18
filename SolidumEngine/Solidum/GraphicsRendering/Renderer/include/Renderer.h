@@ -13,19 +13,25 @@
 
 #include "../../RenderPass/include/RenderPassWrapper.h"
 
+#include "../../RenderDataProcessingLayers/include/RenderDataProcessingLayer.h"
+
 class Renderer : public IResource
 {
 private:
+	std::list<std::shared_ptr<RenderDataProcessingLayer>> _generalProcessingLayerStack;
+
 	std::list<std::shared_ptr<RenderPassWrapper>> _activeRenderOrder;
 
 	RenderFlowGraph* _renderGraph;
+
+	std::string _name;
 
 	virtual void unload() { isLoaded = false; };
 
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
-
-	std::string _name;
+	
+	RenderDataGroup& performGeneralRenderDataProcessing(RenderDataGroup& collection);
 
 protected:
 public:
@@ -42,6 +48,8 @@ public:
 
 		}
 	};
+
+	void pushGeneralProcessingLayer(std::shared_ptr<RenderDataProcessingLayer> layer);
 
 	void load(std::shared_ptr<IResourceBuilder> builder);
 

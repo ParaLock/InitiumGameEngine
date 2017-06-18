@@ -44,7 +44,7 @@ static void reg_render_pass__particleEmitter(std::function<void(std::shared_ptr<
 
 	wrapper->setRenderPass
 		(
-			[=](GraphicsCommandList* commandList, RenderDataGroup* collection, RenderPassWrapper* wrapper)
+			[=](GraphicsCommandList* commandList, RenderDataGroup& collection, RenderPassWrapper* wrapper)
 	{
 
 		IShader* _particleRenderingShader = wrapper->getShader("particle_shader");
@@ -95,7 +95,8 @@ static void reg_render_pass__particleEmitter(std::function<void(std::shared_ptr<
 
 		SceneParticles sceneParticles;
 
-		std::list<std::shared_ptr<RenderDataPacket>>& renderData = collection->getRenderDataByType(RENDER_DATA_TYPE::RENDER_PARTICLE_EMITTER_DATA);
+		std::list<std::shared_ptr<RenderDataPacket>> renderData;
+		collection.getRenderDataByType(RENDER_DATA_TYPE::RENDER_PARTICLE_EMITTER_DATA, renderData);
 
 		int currentBatchCount = 0;
 
@@ -103,7 +104,7 @@ static void reg_render_pass__particleEmitter(std::function<void(std::shared_ptr<
 		for each(std::shared_ptr<RenderDataPacket> particleEmitter in renderData) {
 
 			RenderPassPacket_ParticleEmitterData* particleEmitterData = particleEmitter->getData<RenderPassPacket_ParticleEmitterData>();
-			RenderData_GlobalData* _globalData = collection->getGlobalData();
+			RenderData_GlobalData* _globalData = collection.getGlobalData();
 
 			//PARTICLE REMOVAL FROM BATCH
 			while (!particleEmitterData->_particleSteam->isEmpty()) {
@@ -150,8 +151,8 @@ static void reg_render_pass__particleEmitter(std::function<void(std::shared_ptr<
 
 			std::shared_ptr<ParticleBatch> batch = std::get<0>(sceneParticles._particleListByBatchIndex.at(batchIndex));
 
-			Matrix4f worldMatrix = collection->getGlobalData()->global_cam._worldMatrix;
-			Matrix4f viewMatrix = collection->getGlobalData()->global_cam._viewMatrix;
+			Matrix4f worldMatrix = collection.getGlobalData()->global_cam._worldMatrix;
+			Matrix4f viewMatrix = collection.getGlobalData()->global_cam._viewMatrix;
 
 			particleData._mvMatrix = Matrix4f::transpose(createParticleMVMatrix(particle->_position, particle->_rotation, particle->_scale, viewMatrix, worldMatrix));
 
@@ -181,7 +182,7 @@ static void reg_render_pass__particleEmitter(std::function<void(std::shared_ptr<
 
 			RenderPassPacket_ParticleEmitterData* particleRenderData = std::get<1>(particleDataTuple);
 
-			RenderData_GlobalData* globalData = collection->getGlobalData();
+			RenderData_GlobalData* globalData = collection.getGlobalData();
 
 			std::shared_ptr<ShaderUniformGroup> globalDataUniforms = std::make_shared<ShaderUniformGroup>();
 

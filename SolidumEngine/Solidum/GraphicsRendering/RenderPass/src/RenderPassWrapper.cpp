@@ -45,7 +45,7 @@ void RenderPassWrapper::load(std::shared_ptr<IResourceBuilder> builder)
 
 }
 
-void RenderPassWrapper::execute(GraphicsCommandList * commandList, RenderDataGroup * collection)
+void RenderPassWrapper::execute(GraphicsCommandList * commandList, RenderDataGroup& collection)
 {
 	_renderPassCallback(commandList, collection, this);
 }
