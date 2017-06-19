@@ -13,43 +13,7 @@ Shader::~Shader()
 
 void Shader::updateMaterialPassUniforms(MaterialPass* pass, RenderFlowGraphIOInterface* ioInterface)
 {
-	ioInterface->assignHookResourceByName("mat_tex_albedo", nullptr);
-	ioInterface->assignHookResourceByName("mat_tex_specular", nullptr);
-	ioInterface->assignHookResourceByName("mat_tex_pbr_emessive", nullptr);
-	ioInterface->assignHookResourceByName("mat_tex_pbr_roughness", nullptr);
-
-	float specPower = pass->getSpecularPower();
-	float specIntensity= pass->getSpecularIntensity();
-	Vector4f specColor = pass->getSpecularColor();
-
-	updateUniform("cbuff_specularIntensity", &specIntensity);
-	updateUniform("cbuff_specularColor", &specColor);
-	updateUniform("cbuff_specularPower", &specPower);
-
-	const std::map<MATERIAL_TEX, Texture*>& materialTextures = pass->getTextures();
-
-	for (auto itr = materialTextures.begin(); itr != materialTextures.end(); itr++) {		
-		switch (itr->first)
-		{
-		case MATERIAL_TEX::ALBEDO_MAT_TEXTURE:
-			ioInterface->assignHookResourceByName("mat_tex_albedo", itr->second);
-			break;
-		case MATERIAL_TEX::NORMAL_MAT_TEXTURE:
-			ioInterface->assignHookResourceByName("mat_tex_normal", itr->second);
-			break;
-		case MATERIAL_TEX::SPECULAR_MAT_TEXTURE:
-			ioInterface->assignHookResourceByName("mat_tex_specular", itr->second);
-			break;
-		case MATERIAL_TEX::EMESSIVE_PBR_TEXTURE:
-			ioInterface->assignHookResourceByName("mat_tex_pbr_emessive", itr->second);
-			break;
-		case MATERIAL_TEX::ROUGHNESS_PBR_TEXTURE:
-			ioInterface->assignHookResourceByName("mat_tex_pbr_roughness", itr->second);
-			break;
-		default:
-			break;
-		}
-	}
+	//NOT IMPLEMENTED
 }
 
 void Shader::updateDeferredLightUniforms(ILight* light)

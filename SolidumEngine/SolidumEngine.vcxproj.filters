@@ -125,6 +125,8 @@
     <ClInclude Include="Solidum\GraphicsRendering\RenderDataProtocal\include\RenderDataAttribs.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\include\RenderDataProcessingLayer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\include\FrustumCullingLayer.h" />
+    <ClInclude Include="Solidum\MemoryManagement\include\SlabCache.h" />
+    <ClInclude Include="Solidum\MemoryManagement\include\BasicSlabAllocator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -231,5 +233,7 @@
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderUniformGroup.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\src\RenderDataProcessingLayer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\src\FrustumCullingLayer.cpp" />
+    <ClCompile Include="Solidum\MemoryManagement\src\SlabCache.cpp" />
+    <ClCompile Include="Solidum\MemoryManagement\src\BasicSlabAllocator.cpp" />
   </ItemGroup>
 </Project>

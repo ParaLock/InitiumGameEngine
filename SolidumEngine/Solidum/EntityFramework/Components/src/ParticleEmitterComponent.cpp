@@ -223,9 +223,10 @@ void ParticleEmitterComponent::update(float delta)
 	_time.reset();
 }
 
-std::shared_ptr<RenderDataPacket> ParticleEmitterComponent::createRenderData()
+void ParticleEmitterComponent::AddRenderData(RenderDataGroup * collection)
 {
 	RenderPassPacket_ParticleEmitterData data;
+	RenderDataAttributes attributes;
 
 	data._maxParticles = _maxParticles;
 
@@ -240,11 +241,6 @@ std::shared_ptr<RenderDataPacket> ParticleEmitterComponent::createRenderData()
 
 	data._translationMatrix = _parent->getTransform()->getGlobalTransform();
 
-	std::shared_ptr<RenderDataPacket> _dataPtr = std::make_shared<RenderDataPacket>();
-
-	_dataPtr->setType(RENDER_DATA_TYPE::RENDER_PARTICLE_EMITTER_DATA);
-
-	_dataPtr->addData<RenderPassPacket_ParticleEmitterData>(data);
-
-	return _dataPtr;
+	collection->addRenderData<RenderPassPacket_ParticleEmitterData>(&data, RENDER_DATA_TYPE::RENDER_PARTICLE_EMITTER_DATA, &attributes);
 }
+

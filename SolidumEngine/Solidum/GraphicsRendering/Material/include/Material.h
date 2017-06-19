@@ -19,7 +19,11 @@ private:
 
 	Vector4f _specularColor;
 
-	std::map<MATERIAL_TEX, Texture*> _textures;
+	Texture* _albedoTex = nullptr;
+	Texture* _specularTex = nullptr;
+	Texture* _normalTex = nullptr;
+	Texture* _roughnessTex = nullptr;
+	Texture* _emissiveTex = nullptr;
 
 public:
 	MaterialPass() {}
@@ -40,11 +44,16 @@ public:
 	void setPBRRoughnessTexture(Texture* tex);
 	void setPBREmessiveTexture(Texture* tex);
 
+	Texture* getSpecularTexture() { return _specularTex; };
+	Texture* getNormalTexture() { return _normalTex; };
+
+	Texture* getPBRAlbedoTexture() { return _albedoTex; };
+	Texture* getPBRRoughnessTexture() { return _roughnessTex; };
+	Texture* getPBREmessiveTexture() { return _emissiveTex; };
+
 	void setShader(Shader* shader) { _shader = shader; }
 
 	Vector4f getSpecularColor() { return _specularColor; }
-
-	const std::map<MATERIAL_TEX, Texture*>& getTextures() { return _textures; }
 
 	Shader* getShader() { return _shader; }
 };

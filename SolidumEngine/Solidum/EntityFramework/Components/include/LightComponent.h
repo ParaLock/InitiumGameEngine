@@ -7,7 +7,7 @@
 
 #include "../../../GraphicsRendering/Transform/include/Transform.h"
 
-#include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataPacket.h"
+#include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataGroup.h"
 
 #include "../../../WorldSimulation/include/World.h"
 
@@ -60,6 +60,6 @@ public:
 
 	void onEvent(EVENT_PTR evt);
 
-	std::shared_ptr<RenderDataPacket> createRenderData();
+	void AddRenderData(RenderDataGroup* collection);
 };
 

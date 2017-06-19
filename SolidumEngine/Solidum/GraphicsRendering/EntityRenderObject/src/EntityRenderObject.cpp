@@ -68,7 +68,7 @@ void EntityRenderObject::attachRenderDataToGroup(RenderDataGroup * datagroup)
 
 		while (innerItr != innerMap.end()) {
 
-			datagroup->addPacketToRenderGroup(innerItr->second->createRenderData());
+			innerItr->second->AddRenderData(datagroup);
 
 			innerItr++;
 		}
@@ -77,6 +77,8 @@ void EntityRenderObject::attachRenderDataToGroup(RenderDataGroup * datagroup)
 	}
 
 	for each(Component* comp in _uniqueRenderResources) {
-		datagroup->addPacketToRenderGroup(comp->createRenderData());
+
+		comp->AddRenderData(datagroup);
+
 	}
 }

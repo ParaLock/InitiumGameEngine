@@ -40,6 +40,6 @@ public:
 
 	void onEvent(EVENT_PTR evt) {};
 
-	std::shared_ptr<RenderDataPacket> createRenderData();
+	void AddRenderData(RenderDataGroup* collection) {};
 };
 

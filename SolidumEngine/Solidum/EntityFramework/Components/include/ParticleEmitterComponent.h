@@ -12,6 +12,8 @@
 
 #include "../../../TaskFramework/include/TaskTree.h"
 
+#include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataGroup.h"
+
 #include "../../../GraphicsRendering/Mesh/include/mesh.h"
 
 #include "../../../GraphicsRendering/Textures/include/Texture.h"
@@ -97,6 +99,6 @@ public:
 
 	void update(float delta);
 
-	std::shared_ptr<RenderDataPacket> createRenderData();
+	void AddRenderData(RenderDataGroup* collection);
 };
 

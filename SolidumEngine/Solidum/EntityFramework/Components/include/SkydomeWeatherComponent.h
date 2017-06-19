@@ -12,7 +12,7 @@
 
 #include "../../../GraphicsRendering/Mesh/include/mesh.h"
 
-#include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataPacket.h"
+#include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataGroup.h"
 
 #include "Component.h"
 
@@ -81,6 +81,6 @@ public:
 
 	void updateDayNightCycle(float delta);
 
-	std::shared_ptr<RenderDataPacket> createRenderData();
+	void AddRenderData(RenderDataGroup* collection);
 };
 

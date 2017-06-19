@@ -47,25 +47,25 @@ std::vector<MaterialPass*> Material::getPassList()
 
 void MaterialPass::setSpecularTexture(Texture * tex)
 {
-	_textures.insert({ MATERIAL_TEX::SPECULAR_MAT_TEXTURE, tex});
+	_specularTex = tex;
 }
 
 void MaterialPass::setNormalTexture(Texture * tex)
 {
-	_textures.insert({ MATERIAL_TEX::NORMAL_MAT_TEXTURE, tex });
+	_normalTex = tex;
 }
 
 void MaterialPass::setPBRAlbedoTexture(Texture * tex)
 {
-	_textures.insert({ MATERIAL_TEX::ALBEDO_MAT_TEXTURE, tex });
+	_albedoTex = tex;
 }
 
 void MaterialPass::setPBRRoughnessTexture(Texture * tex)
 {
-	_textures.insert({ MATERIAL_TEX::ROUGHNESS_PBR_TEXTURE, tex });
+	_roughnessTex = tex;
 }
 
 void MaterialPass::setPBREmessiveTexture(Texture * tex)
 {
-	_textures.insert({ MATERIAL_TEX::EMESSIVE_PBR_TEXTURE, tex });
+	_emissiveTex = tex;
 }

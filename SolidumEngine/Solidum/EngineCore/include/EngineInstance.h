@@ -11,6 +11,8 @@
 
 #include "../../EventFramework/include/EventFrameworkCore.h"
 
+#include "../../MemoryManagement/include/SlabCache.h"
+
 #include "../../TaskFramework/include/TaskTree.h"
 
 class EngineInstance
@@ -24,7 +26,7 @@ private:
 		GraphicsCommandList* _endScenePipeline;
 		GraphicsCommandList* _scenePipeline;
 
-		RenderDataGroup _renderDataGroup;
+		RenderDataGroup* _renderDataGroup;
 
 		std::shared_ptr<TaskHandle> _renderPreReqTaskHandle;
 		std::shared_ptr<TaskHandle> _simulationTaskHandle;
@@ -34,6 +36,8 @@ private:
 	std::list<Frame> _inflightFrames;
 
 	HRTimer _engineTick;
+
+	SlabCache* _renderDataCache;
 
 	window* _currentWindow;
 	GraphicsCore *_graphicsCore;

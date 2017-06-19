@@ -46,46 +46,42 @@ static void reg_render_pass__mesh(std::function<void(std::shared_ptr<RenderPassW
 
 			wrapper->getIOInterface()->assignHookResourceByName("color_texture", meshData->_modelTex);
 
-			if (meshData->_materialData._textures.find(MATERIAL_TEX::NORMAL_MAT_TEXTURE) != meshData->_materialData._textures.end()) {
-				_materialShader = wrapper->getShader("geo_shader_w_normal_mapping");
-			}
-			else {
-				_materialShader = wrapper->getShader("geo_shader_no_normal_mapping");
-			}
+			_materialShader = wrapper->getShader("geo_shader_no_normal_mapping");
 
 			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_albedo", nullptr);
 			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_specular", nullptr);
 			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_emessive", nullptr);
 			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_roughness", nullptr);
 
+
+			if (meshData->_materialData._normalTex != nullptr) {
+				_materialShader = wrapper->getShader("geo_shader_w_normal_mapping");
+
+				wrapper->getIOInterface()->assignHookResourceByName("mat_tex_normal", meshData->_materialData._normalTex);
+			}
+
+			if (meshData->_materialData._albedoTex != nullptr) {
+
+				wrapper->getIOInterface()->assignHookResourceByName("mat_tex_albedo", meshData->_materialData._albedoTex);
+
+			}
+
+			if (meshData->_materialData._specularTex != nullptr) {
+				wrapper->getIOInterface()->assignHookResourceByName("mat_tex_specular", meshData->_materialData._specularTex);
+			}
+
+
+			if (meshData->_materialData._emissiveTex != nullptr) {
+				wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_emessive", meshData->_materialData._emissiveTex);
+			}
+
+			if (meshData->_materialData._roughnessTex != nullptr) {
+				wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_roughness", meshData->_materialData._roughnessTex);
+			}
+
 			materialDataUniforms->addUniform<float>(meshData->_materialData._specularIntensity, "cbuff_specularIntensity");
 			materialDataUniforms->addUniform<Vector4f>(meshData->_materialData._specularColor, "cbuff_specularColor");
 			materialDataUniforms->addUniform<float>(meshData->_materialData._specularPower, "cbuff_specularPower");
-
-			const std::map<MATERIAL_TEX, Texture*>& materialTextures = meshData->_materialData._textures;
-
-			for (auto itr = materialTextures.begin(); itr != materialTextures.end(); itr++) {
-				switch (itr->first)
-				{
-				case MATERIAL_TEX::ALBEDO_MAT_TEXTURE:
-					wrapper->getIOInterface()->assignHookResourceByName("mat_tex_albedo", itr->second);
-					break;
-				case MATERIAL_TEX::NORMAL_MAT_TEXTURE:
-					wrapper->getIOInterface()->assignHookResourceByName("mat_tex_normal", itr->second);
-					break;
-				case MATERIAL_TEX::SPECULAR_MAT_TEXTURE:
-					wrapper->getIOInterface()->assignHookResourceByName("mat_tex_specular", itr->second);
-					break;
-				case MATERIAL_TEX::EMESSIVE_PBR_TEXTURE:
-					wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_emessive", itr->second);
-					break;
-				case MATERIAL_TEX::ROUGHNESS_PBR_TEXTURE:
-					wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_roughness", itr->second);
-					break;
-				default:
-					break;
-				}
-			}
 
 			commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
 				(globalDataUniforms, _materialShader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);

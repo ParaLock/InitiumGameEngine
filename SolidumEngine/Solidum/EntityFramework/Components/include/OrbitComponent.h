@@ -32,6 +32,6 @@ public:
 
 	void update(float delta);
 
-	std::shared_ptr<RenderDataPacket> createRenderData() { return std::shared_ptr<RenderDataPacket>(); };
+	void AddRenderData(RenderDataGroup* collection) {};
 };
 

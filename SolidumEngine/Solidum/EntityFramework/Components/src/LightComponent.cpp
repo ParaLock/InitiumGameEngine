@@ -32,9 +32,10 @@ void LightComponent::onEvent(EVENT_PTR evt)
 {
 }
 
-std::shared_ptr<RenderDataPacket> LightComponent::createRenderData()
+void LightComponent::AddRenderData(RenderDataGroup * collection)
 {
 	RenderPassPacket_LightData light_data;
+	RenderDataAttributes attributes;
 
 	_light->shadowUpdate(_parent->getWorld()->getBoundingSphere());
 
@@ -62,11 +63,6 @@ std::shared_ptr<RenderDataPacket> LightComponent::createRenderData()
 	light_data._vertexBuff = _screenQuad->getVertexBuff();
 	light_data._indexBuff = _screenQuad->getIndexBuff();
 
-	std::shared_ptr<RenderDataPacket> _dataPtr = std::make_shared<RenderDataPacket>();
-
-	_dataPtr->setType(RENDER_DATA_TYPE::RENDER_LIGHT_DATA);
-
-	_dataPtr->addData<RenderPassPacket_LightData>(light_data);
-
-	return _dataPtr;
+	collection->addRenderData<RenderPassPacket_LightData>(&light_data, RENDER_DATA_TYPE::RENDER_LIGHT_DATA, &attributes);
 }
+

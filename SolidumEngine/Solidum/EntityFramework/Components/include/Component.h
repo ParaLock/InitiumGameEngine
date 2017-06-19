@@ -36,6 +36,6 @@ public:
 	void setParent(IEntity* parent) { _parent = parent; };
 	IEntity* getParent() { return _parent; }
 
-	virtual std::shared_ptr<RenderDataPacket> createRenderData() = 0;
+	virtual void AddRenderData(RenderDataGroup* collection) = 0;
 };
 

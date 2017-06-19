@@ -1,11 +1,15 @@
 #pragma once
 #include "../../../sysInclude.h"
+
+#include "../../../MemoryManagement/include/SlabCache.h"
+
 #include "RenderDataAttribs.h"
 
 struct RenderData {
+
 	RenderDataAttributes attribs;
 
-	std::shared_ptr<void> _data;
+	SlabCache::Slab* _slab;
 };
 
 class RenderDataPacket
@@ -13,27 +17,36 @@ class RenderDataPacket
 private:
 	RENDER_DATA_TYPE _type;
 
-	std::shared_ptr<RenderData> _data;
+	RenderData _data;
+
+	SlabCache* _cache;
 public:
-	RenderDataPacket();
+	RenderDataPacket(SlabCache* cache);
 	~RenderDataPacket();
 
 	template<typename T>
-	void addData(T data) { 
+	void addData(T* data) { 
 		
-		_data = std::make_shared<RenderData>();
+		RenderData packetCore;
 
-		_data->_data = std::make_shared<T>(data);
+		SlabCache::Slab* dataSlab = _cache->getSlab(sizeof(T));
+
+		T* buffPtr = (T*)dataSlab->_mem;
+
+		*buffPtr = *data;
+
+		packetCore._slab = dataSlab;
+
+		_data = packetCore;
 	};
 
 	template<typename T>
 	T* getData() {
-		
-		return (T*)_data->_data.get();
 
+		return (T*)_data._slab->_mem;
 	};
 
-	RenderDataAttributes& getAttributes() { return _data->attribs; }
+	RenderDataAttributes& getAttributes() { return _data.attribs; }
 
 	void setType(RENDER_DATA_TYPE type) { _type = type; };
 

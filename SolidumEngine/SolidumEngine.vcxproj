@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\MemoryManagement\include\BasicSlabAllocator.h" />
+    <ClInclude Include="Solidum\MemoryManagement\include\SlabCache.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\include\FrustumCullingLayer.h" />
     <ClInclude Include="Plugins\RenderPasses\light_render_pass.h" />
     <ClInclude Include="Plugins\RenderPasses\mesh_render_pass.h" />
@@ -145,6 +147,8 @@
     <ClInclude Include="Solidum\GraphicsRendering\SpatialAccelerationStructures\include\TypeOptimizedTree.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\MemoryManagement\src\BasicSlabAllocator.cpp" />
+    <ClCompile Include="Solidum\MemoryManagement\src\SlabCache.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\src\FrustumCullingLayer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\src\RenderDataProcessingLayer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderUniformGroup.cpp" />

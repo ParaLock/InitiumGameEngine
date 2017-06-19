@@ -6,7 +6,7 @@
 #include "../../../GraphicsRendering/Material/include/Material.h"
 #include "../../../GraphicsRendering/Textures/include/Texture.h"
 
-#include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataPacket.h"
+#include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataGroup.h"
 
 struct RenderPassPacket_MaterialData {
 
@@ -17,8 +17,11 @@ struct RenderPassPacket_MaterialData {
 
 	Vector4f _specularColor;
 
-	std::map<MATERIAL_TEX, Texture*> _textures;
-
+	IResource* _albedoTex = nullptr;
+	IResource* _specularTex = nullptr;
+	IResource* _normalTex = nullptr;
+	IResource* _roughnessTex = nullptr;
+	IResource* _emissiveTex = nullptr;
 };
 
 struct RenderPassPacket_MeshData {
@@ -57,6 +60,6 @@ public:
 	void update(float delta);
 	void onEvent(EVENT_PTR evt);
 
-	std::shared_ptr<RenderDataPacket> createRenderData();
+	void AddRenderData(RenderDataGroup* collection);
 };
 

@@ -22,8 +22,3 @@ SunMoonLightingComponent::~SunMoonLightingComponent()
 void SunMoonLightingComponent::update(float delta)
 {
 }
-
-std::shared_ptr<RenderDataPacket> SunMoonLightingComponent::createRenderData()
-{
-	return std::shared_ptr<RenderDataPacket>();
-}

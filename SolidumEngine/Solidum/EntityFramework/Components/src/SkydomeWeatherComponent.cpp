@@ -174,9 +174,10 @@ void SkydomeWeatherComponent::updateDayNightCycle(float delta)
 	CURRENT_TIME += delta;
 }
 
-std::shared_ptr<RenderDataPacket> SkydomeWeatherComponent::createRenderData()
+void SkydomeWeatherComponent::AddRenderData(RenderDataGroup * collection)
 {
 	RenderPassPacket_SkyData data;
+	RenderDataAttributes attributes;
 
 	data._indexBuffer = _skydome->getIndexBuff();
 	data._vertexBuffer = _skydome->getVertexBuff();
@@ -187,13 +188,7 @@ std::shared_ptr<RenderDataPacket> SkydomeWeatherComponent::createRenderData()
 	data._weatherApexColor = _weatherApexColor;
 	data._weatherCenterColor = _weatherCenterColor;
 
-	std::shared_ptr<RenderDataPacket> _dataPtr = std::make_shared<RenderDataPacket>();
-
-	_dataPtr->setType(RENDER_DATA_TYPE::SKY_RENDER_DATA);
-
-	_dataPtr->addData<RenderPassPacket_SkyData>(data);
-
-	return _dataPtr;
+	collection->addRenderData<RenderPassPacket_SkyData>(&data, RENDER_DATA_TYPE::SKY_RENDER_DATA, &attributes);
 }
 
 void SkydomeWeatherComponent::onEvent(EVENT_PTR evt)

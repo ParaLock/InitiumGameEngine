@@ -30,11 +30,23 @@
 #include "Plugins\RenderPasses\shadow_map_render_pass.h"
 #include "Plugins\RenderPasses\sky_render_pass.h"
 
+#include "Solidum\MemoryManagement\include\SlabCache.h"
+
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine,
 	int nCmdShow)
 {
+
+	SlabCache testCache(10);
+
+	SlabCache::Slab* testSlab = testCache.getSlab(16);
+	SlabCache::Slab* testSlab2 = testCache.getSlab(256);
+
+
+	void* testPtr = testSlab->_mem;
+
+
 	srand((unsigned)time(NULL));
 
 	AllocConsole();

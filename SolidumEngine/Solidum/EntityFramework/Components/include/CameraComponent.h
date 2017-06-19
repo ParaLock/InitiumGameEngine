@@ -18,7 +18,7 @@
 
 #include "../../../InputHandling/include/InputHandler.h"
 
-#include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataPacket.h"
+#include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataGroup.h"
 
 #define SMOOTHING_FACTOR 100
 
@@ -100,7 +100,7 @@ public:
 
 	Vector3f getPos() { return _eye; }
 
-	std::shared_ptr<RenderDataPacket> createRenderData();
+	void AddRenderData(RenderDataGroup* collection);
 };
 
 #endif

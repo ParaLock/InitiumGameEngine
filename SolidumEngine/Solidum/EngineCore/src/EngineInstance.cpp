@@ -30,6 +30,8 @@ EngineInstance::EngineInstance(window* renderWindow)
 
 	_primaryTaskTree = new TaskTree;
 
+	_renderDataCache = new SlabCache(10);
+
 	_graphicsCore = new GraphicsCore(DIRECTX11, renderWindow, _resManagers, _primaryTaskTree);
 
 	_currentWindow = renderWindow;
@@ -40,6 +42,7 @@ EngineInstance::~EngineInstance()
 {
 	delete _graphicsCore;
 	delete _resManagers;
+	delete _renderDataCache;
 }
 
 void EngineInstance::engineHeartbeat()
@@ -58,7 +61,8 @@ void EngineInstance::engineHeartbeat()
 			{
 				delete frame._scenePipeline;
 				delete frame._endScenePipeline;
-				
+				delete frame._renderDataGroup;
+
 				if (!_inflightFrames.empty()) {
 
 					itr = _inflightFrames.erase(itr);
@@ -77,7 +81,11 @@ void EngineInstance::engineHeartbeat()
 		GraphicsCommandList* scenePipeline = new GraphicsCommandList();
 		GraphicsCommandList* endScenePipeline = new GraphicsCommandList();
 
+		RenderDataGroup* renderDataCollection = new RenderDataGroup(_renderDataCache);
+
 		Frame newFrame;
+
+		newFrame._renderDataGroup = renderDataCollection;
 
 		_inflightFrames.push_back(newFrame);
 
@@ -87,11 +95,11 @@ void EngineInstance::engineHeartbeat()
 		currentFrame._endScenePipeline = endScenePipeline;
 
 		currentFrame._simulationTaskHandle = _primaryTaskTree->createThreadedTask(
-			std::bind(&EngineInstance::update, this, 17.0f, &currentFrame._renderDataGroup),
+			std::bind(&EngineInstance::update, this, 17.0f, currentFrame._renderDataGroup),
 			nullptr, "SimAndRenderThread", false, 1, true);
 
 		currentFrame._renderPreReqTaskHandle = _primaryTaskTree->createThreadedTask(
-			std::bind(&GraphicsCore::beginRender, _graphicsCore, std::ref(currentFrame._endScenePipeline), std::ref(currentFrame._scenePipeline), &currentFrame._renderDataGroup),
+			std::bind(&GraphicsCore::beginRender, _graphicsCore, std::ref(currentFrame._endScenePipeline), std::ref(currentFrame._scenePipeline), currentFrame._renderDataGroup),
 			nullptr, "SimAndRenderThread", false, 1, true);
 
 	}

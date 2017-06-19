@@ -31,9 +31,11 @@ void MeshComponent::onEvent(EVENT_PTR evt)
 {
 }
 
-std::shared_ptr<RenderDataPacket> MeshComponent::createRenderData()
+void MeshComponent::AddRenderData(RenderDataGroup * collection)
 {
 	RenderPassPacket_MeshData data;
+
+	RenderDataAttributes attributes;
 
 	data._indiceBuffer = _mesh->getIndexBuff();
 	data._vertexBuffer = _mesh->getVertexBuff();
@@ -48,13 +50,12 @@ std::shared_ptr<RenderDataPacket> MeshComponent::createRenderData()
 	data._materialData._specularColor = _mat->getPassList().front()->getSpecularColor();
 	data._materialData._specularIntensity = _mat->getPassList().front()->getSpecularIntensity();
 	data._materialData._specularPower = _mat->getPassList().front()->getSpecularPower();
-	data._materialData._textures = _mat->getPassList().front()->getTextures();
 
-	std::shared_ptr<RenderDataPacket> _dataPtr = std::make_shared<RenderDataPacket>();
+	data._materialData._albedoTex = _mat->getPassList().front()->getPBRAlbedoTexture();
+	data._materialData._emissiveTex = _mat->getPassList().front()->getPBREmessiveTexture();
+	data._materialData._normalTex = _mat->getPassList().front()->getNormalTexture();
+	data._materialData._roughnessTex = _mat->getPassList().front()->getPBRRoughnessTexture();
+	data._materialData._specularTex = _mat->getPassList().front()->getSpecularTexture();
 
-	_dataPtr->setType(RENDER_DATA_TYPE::RENDER_MESH_DATA);
-
-	_dataPtr->addData<RenderPassPacket_MeshData>(data);
-
-	return _dataPtr;
+	collection->addRenderData<RenderPassPacket_MeshData>(&data, RENDER_DATA_TYPE::RENDER_MESH_DATA, &attributes);
 }
