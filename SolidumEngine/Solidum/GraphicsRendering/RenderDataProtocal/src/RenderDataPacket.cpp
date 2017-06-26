@@ -8,4 +8,5 @@ RenderDataPacket::RenderDataPacket(SlabCache * cache)
 
 RenderDataPacket::~RenderDataPacket()
 {
+	_cache->free(_data._slab);
 }

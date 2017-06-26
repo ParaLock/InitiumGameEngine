@@ -95,7 +95,7 @@ void EngineInstance::engineHeartbeat()
 		currentFrame._endScenePipeline = endScenePipeline;
 
 		currentFrame._simulationTaskHandle = _primaryTaskTree->createThreadedTask(
-			std::bind(&EngineInstance::update, this, 17.0f, currentFrame._renderDataGroup),
+			std::bind(&EngineInstance::update, this, 0.01f, currentFrame._renderDataGroup),
 			nullptr, "SimAndRenderThread", false, 1, true);
 
 		currentFrame._renderPreReqTaskHandle = _primaryTaskTree->createThreadedTask(

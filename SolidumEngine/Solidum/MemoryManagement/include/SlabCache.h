@@ -30,7 +30,7 @@ public:
 
 		slabPtr->_isFree = true;
 
-		ZeroMemory(slabPtr->_mem, slabPtr->_size);
+		//ZeroMemory(slabPtr->_mem, slabPtr->_size);
 	}
 
 	Slab* getSlab(size_t size) {
@@ -54,6 +54,8 @@ public:
 					if (_slab->_isFree) {
 
 						nonFree = false;
+
+						_slab->_isFree = false;
 
 						return _slab;
 					}

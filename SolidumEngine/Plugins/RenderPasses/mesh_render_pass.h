@@ -48,36 +48,17 @@ static void reg_render_pass__mesh(std::function<void(std::shared_ptr<RenderPassW
 
 			_materialShader = wrapper->getShader("geo_shader_no_normal_mapping");
 
-			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_albedo", nullptr);
-			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_specular", nullptr);
-			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_emessive", nullptr);
-			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_roughness", nullptr);
-
-
 			if (meshData->_materialData._normalTex != nullptr) {
+
 				_materialShader = wrapper->getShader("geo_shader_w_normal_mapping");
 
 				wrapper->getIOInterface()->assignHookResourceByName("mat_tex_normal", meshData->_materialData._normalTex);
 			}
 
-			if (meshData->_materialData._albedoTex != nullptr) {
-
-				wrapper->getIOInterface()->assignHookResourceByName("mat_tex_albedo", meshData->_materialData._albedoTex);
-
-			}
-
-			if (meshData->_materialData._specularTex != nullptr) {
-				wrapper->getIOInterface()->assignHookResourceByName("mat_tex_specular", meshData->_materialData._specularTex);
-			}
-
-
-			if (meshData->_materialData._emissiveTex != nullptr) {
-				wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_emessive", meshData->_materialData._emissiveTex);
-			}
-
-			if (meshData->_materialData._roughnessTex != nullptr) {
-				wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_roughness", meshData->_materialData._roughnessTex);
-			}
+			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_albedo", meshData->_materialData._albedoTex);
+			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_specular", meshData->_materialData._specularTex);
+			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_emessive", meshData->_materialData._emissiveTex);
+			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_roughness", meshData->_materialData._roughnessTex);
 
 			materialDataUniforms->addUniform<float>(meshData->_materialData._specularIntensity, "cbuff_specularIntensity");
 			materialDataUniforms->addUniform<Vector4f>(meshData->_materialData._specularColor, "cbuff_specularColor");
