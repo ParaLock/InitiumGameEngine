@@ -5,7 +5,9 @@ ParticleEmitterComponent::ParticleEmitterComponent(
 	float pps, float speed, float gravityComplient,
 	float particleLifeLength, int maxParticles, int texNumRows,
 	Texture* tex, BLEND_STATE state, CameraComponent* cam,
-	IEntity* entity)
+	IEntity* entity,
+	ResourceCreator& resCreator) :
+		_resourceCreator(resCreator)
 {
 
 	_particleLifeTime = particleLifeLength;
@@ -24,20 +26,19 @@ ParticleEmitterComponent::ParticleEmitterComponent(
 
 	_parent = entity;
 
-	_type = COMPONENT_TYPE::PARTICLE_COMPONENT;
-
 	_stream = new ParticleStream();
 
-	_particleInstanceBuffer = ResourceManagerPool::getInstance()->getResourceManager("GPUBufferManager")->createResource(std::make_shared<GPUBuffer::InitData>
-		(maxParticles * sizeof(ParticleInstanceData), BUFFER_TYPE::VERTEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE),
-		std::to_string(getRandomNumber()) + "particle_instance_buffer", false);
+	_particleInstanceBuffer = resCreator.createResourceImmediate<GPUBuffer>(&GPUBuffer::InitData(maxParticles * sizeof(ParticleInstanceData), 
+		BUFFER_TYPE::VERTEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE), std::to_string(getRandomNumber()) + "particle_instance_buffer",
+		[](IResource*) {});
 
 	_particleDataCPUBuffer = new ParticleInstanceData[maxParticles];
 
 	std::string stlStr = std::to_string(getRandomNumber());
 
-	_particleQuad = (mesh*)ResourceManagerPool::getInstance()->getResourceManager("meshManager")->
-		createResource(std::make_shared<mesh::InitData>(L"null", nullptr), stlStr + "particle_quad", false);
+	_particleQuad = (mesh*)resCreator.createResourceImmediate<mesh>(&mesh::InitData(L"null", &resCreator), stlStr + "particle_quad", 
+		[](IResource*) {}
+		);
 
 	float texWidth = tex->getWidth();
 	float texHeight = tex->getHeight();
@@ -53,10 +54,8 @@ ParticleEmitterComponent::ParticleEmitterComponent(
 	top = (float)(particleSideLength / 2);
 	bottom = top - (float)particleSideLength;
 
-	_particleQuad->generatePlaneMesh(-0.52, 0.52, 0.52, -0.52);
+	_particleQuad->generatePlaneMesh(-0.52, 0.52, 0.52, -0.52, &resCreator);
 
-	ParticlePool* particlePool = IGraphicsCore::getInstance()->getParticlePool();
-	
 	_maxParticles = maxParticles;
 
 	_time.startTimer();
@@ -82,7 +81,7 @@ Particle* ParticleEmitterComponent::emitParticle(Vector3f center)
 
 	velocity = velocity * _speed;
 
-	newParticle = getDeadParticle();
+	newParticle = getDeadParticle(_resourceCreator);
 
 	newParticle->_isAlive = true;
 
@@ -131,8 +130,6 @@ void ParticleEmitterComponent::updateParticleTextureState(Particle* particle)
 
 	particle->_texOffset1 = calcTextureOffset(index1, particle->_texNumRows);
 	particle->_texOffset2 = calcTextureOffset(index2, particle->_texNumRows);
-
-	int debug = -1;
 }
 
 Vector2f ParticleEmitterComponent::calcTextureOffset(int index, int rows)
@@ -148,11 +145,10 @@ Vector2f ParticleEmitterComponent::calcTextureOffset(int index, int rows)
 	return offset;
 }
 
-Particle * ParticleEmitterComponent::getDeadParticle()
+Particle * ParticleEmitterComponent::getDeadParticle(ResourceCreator& resCreator)
 {
-	ParticlePool* particlePool = IGraphicsCore::getInstance()->getParticlePool();
-
 	if (!_deadParticleList.empty()) {
+
 		Particle* particle = _deadParticleList.back();
 		
 		_deadParticleList.pop_back();
@@ -160,7 +156,9 @@ Particle * ParticleEmitterComponent::getDeadParticle()
 		return particle;
 	}
 
-	return particlePool->getResource(PARTICLE_TYPE::STANDARD);
+	Particle* newParticle = resCreator.createResourceImmediate<Particle>(&Particle::InitData(), "particle" + getRandomNumber(), [](IResource*) {});
+
+	return newParticle;
 }
 
 void ParticleEmitterComponent::processParticles()

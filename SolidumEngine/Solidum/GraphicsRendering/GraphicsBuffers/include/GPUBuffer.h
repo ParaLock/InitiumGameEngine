@@ -1,21 +1,23 @@
 #pragma once
 #include "../../../sysInclude.h"
-#include "../../../ResourceFramework/include/IResource.h"
-#include "../../../ResourceFramework/include/IResourceBuilder.h"
-#include "../../../ResourceFramework/include/IResourceManager.h"
+#include "../../../ResourceFramework/include/Resource.h"
+#include "../../../ResourceFramework/include/ResourceContext.h"
+#include "../../../ResourceFramework/include/ResourceInitParams.h"
 
-class GPUBuffer : public IResource
+#include "../include/GPUBufferFactory.h"
+
+class GPUBufferFactory;
+class ResourcePool;
+
+class GPUBuffer : public Resource<GPUBuffer, GPUBufferFactory, ResourcePool>
 {
-protected:
-	size_t _size;
-	BUFFER_TYPE _type;
-	BUFFER_CPU_ACCESS _access;
-
 public:
 	GPUBuffer();
 	~GPUBuffer();
 
-	struct InitData : public IResourceBuilder {
+	struct InitData : public ResourceInitParams {
+
+		InitData() {}
 
 		size_t _size;
 		BUFFER_TYPE _type;
@@ -30,7 +32,7 @@ public:
 		}
 	};
 
-	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
+	virtual void load() = 0;
 	virtual void unload() = 0;
 
 	virtual void Write(void *pSrc, size_t byteToWrite, size_t offset) = 0;
@@ -41,5 +43,10 @@ public:
 	size_t getSize() { return _size; }
 
 	BUFFER_TYPE getBuffType() { return _type; };
+
+protected:
+	size_t _size;
+	BUFFER_TYPE _type;
+	BUFFER_CPU_ACCESS _access;
 };
 

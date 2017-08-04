@@ -1,94 +1,82 @@
 #pragma once
 #include "../../sysInclude.h"
 
-template < class ResourceType, typename EnumType, class FactoryType >
-class ResourcePool
-{
-protected:
-	FactoryType* _factory;
+#include "../include/IResource.h"
+
+class ResourcePool {
 private:
 
 	struct PerTypePool {
-		std::list<int> _freeIndices;
-		std::vector<ResourceType*> _pool;
+		std::list<unsigned int> _freeIndices;
+		std::vector<IResource*> _resourcePool;
 	};
 
-	std::vector<PerTypePool*> _commandPools;
+	std::unordered_map<unsigned int, PerTypePool*> _resourcePools;
 public:
-	ResourcePool() {};
-	~ResourcePool() {};
 
-	void setFactory(FactoryType* factory) { _factory = factory; };
+	template<typename T>
+	IResource* getResource() {
 
-	ResourceType* getResource(EnumType type) {
+		unsigned int type = IResource::getTypeID(std::type_index(typeid(T)));
+
+		if (type == 0) { IResource::addType(std::type_index(typeid(T))); type = IResource::getTypeID(std::type_index(typeid(T))); }
+
 		IResource* resource = nullptr;
 
-		PerTypePool* properPool;
+		PerTypePool* pool = nullptr;
 
-		int typeIndex = (int)type;
+		auto& itr = _resourcePools.find(type);
 
-		//Get the correct pool for given type
-		if (_commandPools.size() <= typeIndex) {
-
-			int diff = (typeIndex - _commandPools.size()) + 1;
-
-			for (int i = 0; i <= diff; i++) {
-
-				_commandPools.push_back(new PerTypePool());
-			}
-		}
-
-		properPool = _commandPools[typeIndex];
-
-
-		//Get resource from pool
-		if (properPool->_freeIndices.empty()) {
-
-			int newIndex = (properPool->_pool.size() + 1) - 1;
-
-			properPool->_pool.push_back(_factory->createObject(type));
-			properPool->_freeIndices.push_back(newIndex);
-		}
-
-		int newIndex = properPool->_freeIndices.back();
-
-		properPool->_freeIndices.pop_back();
-
-		resource = properPool->_pool[newIndex];
-		resource->setPoolIndex(newIndex);
-
-
-		return (ResourceType*)resource;
-	}
-
-	void releaseResource(ResourceType* res) {
-
-		IResource* resource = (IResource*)res;
-
-		resource->unload();
-
-		PerTypePool* properPool;
-
-		int typeIndex = (int)res->getType();
-
-		//Get the correct pool for given type
-		if (_commandPools.size() < typeIndex) {
-
-			int diff = (typeIndex - _commandPools.size()) + 1;
-
-			for (int i = 0; i < diff; i++) {
-				_commandPools.push_back(new PerTypePool());
-			}
-			properPool = _commandPools.back();
+		if (itr != _resourcePools.end()) {
+			pool = _resourcePools.at(type);
 		}
 		else {
-			properPool = _commandPools[typeIndex];
+
+			pool = new PerTypePool;
+
+			_resourcePools.insert({ type, pool});
 		}
 
-		int index = res->getPoolIndex();
+		if (pool->_freeIndices.empty()) {
 
-		//Add resource to pool
-		properPool->_freeIndices.push_back(index);
+			int newIndex = (pool->_resourcePool.size() + 1) - 1;
+
+			pool->_resourcePool.push_back(new T());
+			pool->_freeIndices.push_back(newIndex);
+		}
+
+		int newIndex = pool->_freeIndices.back();
+
+		pool->_freeIndices.pop_back();
+
+		resource = pool->_resourcePool[newIndex];
+		resource->poolIndex(newIndex);
+
+		resource->type(type);
+
+		return resource;
+	}
+	
+	void releaseResource(IResource* res) {
+
+		unsigned int type = res->type();
+
+		PerTypePool* pool = nullptr;
+
+		auto& itr = _resourcePools.find(type);
+
+		if (itr != _resourcePools.end()) {
+			pool = _resourcePools.at(type);
+		}
+		else {
+			pool = new PerTypePool;
+			_resourcePools.insert({ type, pool });
+		}
+
+		res->type(type);
+		
+		int index = res->poolIndex();
+
+		pool->_freeIndices.push_back(index);
 	}
 };
-

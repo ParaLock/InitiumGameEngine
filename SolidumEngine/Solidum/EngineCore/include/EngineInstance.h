@@ -7,15 +7,19 @@
 
 #include "../../GraphicsRendering/Window/include/window.h"
 
-#include "../../resourceManagerInclude.h"
-
 #include "../../EventFramework/include/EventFrameworkCore.h"
 
 #include "../../MemoryManagement/include/SlabCache.h"
 
 #include "../../TaskFramework/include/TaskTree.h"
 
-class EngineInstance
+#include "../../ResourceFramework/include/ResourceCreator.h"
+
+#include "../../ResourceFramework/include/ResourceLookupCache.h"
+
+#include "IEngineInstance.h"
+
+class EngineInstance : public IEngineInstance
 {
 private:
 
@@ -33,6 +37,8 @@ private:
 		std::shared_ptr<TaskHandle> _renderCMDProcTaskHandle;
 	};
 
+	ResourceCreator* _resourceCreator;
+
 	std::list<Frame> _inflightFrames;
 
 	HRTimer _engineTick;
@@ -41,7 +47,6 @@ private:
 
 	window* _currentWindow;
 	GraphicsCore *_graphicsCore;
-	ResourceManagerPool* _resManagers;
 	EventFrameworkCore* _eventFrameworkCore;
 	InputHandler* _inputHandler;
 
@@ -50,9 +55,13 @@ private:
 	TaskTree* _primaryTaskTree;
 
 	volatile bool engineActive = false;
+
+	std::map<std::string, ResourceLookupCache*> _ResourceLookupCacheByGroupName;
 public:
 	EngineInstance(window* renderWindow);
 	~EngineInstance();
+
+	ResourceLookupCache* getResourceLookupCache(std::string& resourceGroup);
 
 	void engineHeartbeat();
 
@@ -67,10 +76,11 @@ public:
 
 	void update(float delta, RenderDataGroup* collection);
 
+	ResourceCreator& getResourceCreator() { return *_resourceCreator; };
+
 	World* getWorld() { return _currentWorld; }
 
 	EventFrameworkCore* getEventFrameworkCore() { return _eventFrameworkCore; };
 	GraphicsCore* getGraphicsSubsystem() { return _graphicsCore; };
-	ResourceManagerPool* getResourceManagerPool() { return _resManagers; }
 };
 

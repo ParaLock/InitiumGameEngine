@@ -1,4 +1,6 @@
 #pragma once
+#include "../../RenderDataProtocal/include/RenderDataPacket.h"
+
 #include "RenderDataProcessingLayer.h"
 
 class FrustumCullingLayer : public RenderDataProcessingLayer

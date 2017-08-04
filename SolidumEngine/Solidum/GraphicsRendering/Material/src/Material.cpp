@@ -8,16 +8,12 @@ Material::~Material()
 {
 }
 
-void Material::load(std::shared_ptr<IResourceBuilder> builder)
+void Material::load()
 {
-	InitData* realBuilder = static_cast<InitData*>(builder.get());
-
-	isLoaded = true;
 }
 
 void Material::unload()
 {
-	isLoaded = false;
 }
 
 void Material::createPass(std::string name, Shader * shader)

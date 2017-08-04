@@ -10,8 +10,6 @@
 
 #include "Component.h"
 
-class RenderDataPacket;
-
 enum MOVE_FUNCTION {
 	MOVE_FORWARD,
 	MOVE_BACKWARD,
@@ -35,18 +33,24 @@ private:
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 
-	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
-	void unload() { isLoaded = false; };
-protected:
-
+	void load() {};
+	void unload() {};
 public:
 	MoveComponent(Vector3f startPos, float movementSpeed, bool keyboardControl, KEY_FUNCTION_MAP* keyMap, IEntity* entity);
 	~MoveComponent();
+
+	struct InitData : public ResourceInitParams {
+		InitData() {}
+
+		
+	};
 
 	void update(float delta);
 
 	void onEvent(EVENT_PTR evt);
 
 	void AddRenderData(RenderDataGroup* collection) {};
+protected:
+
 };
 

@@ -8,26 +8,28 @@
 
 #include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataPacket.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
+
+#include "../../../ResourceFramework/include/GenericFactory.h"
 
 #include "IComponent.h"
 
-class Component : public IResource, public IComponent
+class ResourcePool;
+
+class Component : public IComponent, public Resource<Component, GenericFactory, ResourcePool>
 {
 private:
 protected:
 	int _index = -1;
 
-	COMPONENT_TYPE _type;
-
 	IEntity* _parent = nullptr;
-
-	void setType(COMPONENT_TYPE type) { _type = type; };
 public:
 	Component();
 	~Component();
 
-	COMPONENT_TYPE getType() { return _type; }
+	struct InitData {
+
+	};
 
 	virtual void update(float delta) = 0;
 

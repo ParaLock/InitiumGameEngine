@@ -1,30 +1,63 @@
 #pragma once
 #include "../../../sysInclude.h"
 
+#include "../../../MemoryManagement/include/SlabCache.h"
+
 class ShaderUniformGroup
 {
-private:
-	std::map<std::string, std::shared_ptr<void>> _uniforms;
 public:
 	ShaderUniformGroup();
 	~ShaderUniformGroup();
 
+	ShaderUniformGroup(ShaderUniformGroup& other) {
+		
+		_uniformCache = other._uniformCache;
+		_uniformList = other._uniformList;
+
+		other._uniformList.clear();
+		other._uniformCache = nullptr;
+	}
+
+	ShaderUniformGroup& operator=(ShaderUniformGroup& other) {
+		
+		_uniformList = other._uniformList;
+		_uniformCache = other._uniformCache;
+
+		other._uniformList.clear();
+		other._uniformCache = nullptr;
+
+		return *this;
+	}
+
+	struct Uniform {
+
+		Uniform(std::string& name, Slab* data) {
+			_name = name;
+			_data = data;
+		}
+
+		std::string _name;
+		Slab* _data;
+
+	};
+
+	void setUniformCache(SlabCache* cache) { _uniformCache = cache; }
+
 	template<typename T>
-	void addUniform(T data, std::string name) {
+	void addUniform(T& data, std::string name) {
 
-		T* sData = new T;
+		Slab* dataSlab = _uniformCache->getSlab(sizeof(T));
 
-		*sData = data;
+		*(T*)dataSlab->_mem = data;
 
-		std::shared_ptr<void> sDataPtr = std::shared_ptr<void>(sData);
-
-		_uniforms.insert({name, sDataPtr });
+		_uniformList.push_back(Uniform(name, dataSlab));
 	}
+	std::list<Uniform>& getUniforms() { return _uniformList; };
 
-	std::shared_ptr<void> getUniform(std::string name) {
-		return _uniforms.at(name);
-	}
+private:
 
-	std::map<std::string, std::shared_ptr<void>>& getUniformsMap() { return _uniforms; }
+	SlabCache* _uniformCache;
+
+	std::list<Uniform> _uniformList;
 };
 

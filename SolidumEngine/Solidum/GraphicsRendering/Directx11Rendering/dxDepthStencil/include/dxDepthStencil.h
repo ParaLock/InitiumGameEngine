@@ -14,7 +14,7 @@ public:
 
 	void clear(float depth);
 
-	void load(std::shared_ptr<IResourceBuilder> builder);
+	void load();
 	void unload();
 
 	void* getParameter(std::string varName);

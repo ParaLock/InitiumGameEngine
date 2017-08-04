@@ -9,11 +9,11 @@ dxShader::~dxShader()
 {
 }
 
-void dxShader::load(std::shared_ptr<IResourceBuilder> builder)
+void dxShader::load()
 {
 	_shaderBindFunc = std::bind(&dxShader::bind, this);
 
-	Shader::InitData* realBuilder = static_cast<Shader::InitData*>(builder.get());
+	Shader::InitData* realBuilder = static_cast<Shader::InitData*>(getContext()->getResourceInitParams());
 
 	_genInputLayout = realBuilder->_genInputLayout;
 
@@ -24,7 +24,7 @@ void dxShader::load(std::shared_ptr<IResourceBuilder> builder)
 
 	HRESULT compileResult;
 
-	std::string shaderCode = realBuilder->_shaderCode;
+	std::string shaderCode = *realBuilder->_shaderCode;
 
 	compileResult = D3DCompile(shaderCode.c_str(), shaderCode.size(),
 		0, 0, NULL, "Vshader", "vs_5_0", D3DCOMPILE_DEBUG, 0, &vertexShaderCode, &errorBlob);
@@ -88,18 +88,15 @@ void dxShader::load(std::shared_ptr<IResourceBuilder> builder)
 		OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 	}
 
-	enumerateResources(SHADER_TYPE::PIXEL_SHADER, pixelShaderCode);
-	enumerateResources(SHADER_TYPE::VERTEX_SHADER, vertexShaderCode);
-
-	isLoaded = true;
+	enumerateResources(SHADER_TYPE::PIXEL_SHADER, pixelShaderCode, realBuilder->_resCreator);
+	enumerateResources(SHADER_TYPE::VERTEX_SHADER, vertexShaderCode, realBuilder->_resCreator);
 }
 
 void dxShader::unload()
 {
-	isLoaded = false;
 }
 
-void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode)
+void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode, ResourceCreator* resCreator)
 {
 	ID3D11ShaderReflection* pReflector = NULL;
 	HRESULT hr = D3DReflect(shaderCode->GetBufferPointer(),
@@ -107,6 +104,7 @@ void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode
 		(void**) &pReflector);
 
 	ShaderInputLayout* newLayout = new dxShaderInputLayout();
+	auto* newdxInputLayout = (dxShaderInputLayout*)newLayout;
 
 	if (!FAILED(hr)) {
 		D3D11_SHADER_DESC desc;
@@ -116,11 +114,14 @@ void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode
 
 			D3D11_SIGNATURE_PARAMETER_DESC input_desc;
 			pReflector->GetInputParameterDesc(i, &input_desc);
-			newLayout->getCore<dxShaderInputLayout>()->addInput(input_desc.ComponentType, input_desc.SemanticName, input_desc.SemanticIndex, input_desc.Mask);
+
+			newdxInputLayout->addInput(input_desc.ComponentType, input_desc.SemanticName, input_desc.SemanticIndex, input_desc.Mask);
 		}
 		
-		if(_genInputLayout)
-			newLayout->getCore<dxShaderInputLayout>()->generateInputLayout();
+		if (_genInputLayout) {
+			
+			newdxInputLayout->generateInputLayout();
+		}
 
 		if (shaderType == SHADER_TYPE::VERTEX_SHADER) {
 
@@ -162,10 +163,8 @@ void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode
 
 			if (BufferLayout.Description.Type == D3D11_CT_CBUFFER) {
 
-				DynamicStruct* cbuff = new DynamicStruct();
-
-				cbuff->load(std::make_shared<DynamicStruct::InitData>
-					(BufferLayout.Description.Name, true));
+				DynamicStruct* cbuff = (DynamicStruct*)resCreator->createResourceImmediate<DynamicStruct>(&DynamicStruct::InitData(BufferLayout.Description.Name, true),
+					BufferLayout.Description.Name, [](IResource*) {});
 
 				for (int q = 0; q < BufferLayout.Variables.size(); q++) {
 					cbuff->addVariable(BufferLayout.Variables.at(q).Name, BufferLayout.Variables.at(q).Size);
@@ -173,7 +172,7 @@ void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode
 					_varNameToConstantBuffer.insert({ BufferLayout.Variables.at(q).Name, std::make_pair(shaderType, cbuff) });
 				}
 
-				cbuff->initMemory();
+				cbuff->initMemory(resCreator);
 			}
 		}
 	}
@@ -187,6 +186,6 @@ void dxShader::bind()
 
 void dxShader::execute(GraphicsCommandList* commandList)
 {
-	commandList->createCommand(std::make_shared<PipelineBindShaderCommand::InitData>(_shaderBindFunc), 
-		GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_SHADERS);
+	commandList->createCommand<PipelineBindShaderCommand>
+		(&PipelineBindShaderCommand::InitData(this));
 }

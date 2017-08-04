@@ -11,9 +11,9 @@ RenderPassWrapper::~RenderPassWrapper()
 {
 }
 
-void RenderPassWrapper::load(std::shared_ptr<IResourceBuilder> builder)
+void RenderPassWrapper::load()
 {
-	InitData* realBuilder = static_cast<InitData*>(builder.get());
+	InitData* realBuilder = static_cast<InitData*>(getContext()->getResourceInitParams());
 
 	_ioInterface = new RenderFlowGraphIOInterface();
 
@@ -28,10 +28,13 @@ void RenderPassWrapper::load(std::shared_ptr<IResourceBuilder> builder)
 	ShaderParser shaderParser;
 
 	for each(ShaderToLoad shaderToLoad in descData._shadersToLoad) {
+
 		std::string shaderCode = shaderParser.parseShader(&descData, shaderToLoad._path);
 
-		IShader* newShader = ResourceManagerPool::getInstance()->getResourceManager("ShaderManager")->createResource(std::make_shared<Shader::InitData>
-			(shaderCode, true), shaderToLoad._name, false)->getCore<IShader>();
+		Shader* newShader = (Shader*)realBuilder->_resourceCreator->createResourceImmediate<Shader>(&Shader::InitData(&shaderCode, true, realBuilder->_resourceCreator), shaderToLoad._name,
+			[=](IResource* res) {IResource::addResourceToGroup(res, std::string("ShaderGroup"), realBuilder->_resourceCreator->getParentEngine()); });
+
+		newShader->updateGPU();
 
 		_shaders.insert({ shaderToLoad._name, newShader });
 

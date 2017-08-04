@@ -6,10 +6,10 @@
 
 #include "../../Solidum/GraphicsRendering/Particles/include/InsertionSort.h"
 
-static void reg_render_pass__particleEmitter(std::function<void(std::shared_ptr<RenderPassWrapper>)> regCallback) {
-	std::shared_ptr<RenderPassWrapper> wrapper = std::make_shared<RenderPassWrapper>();
-
-	wrapper->load(std::make_shared<RenderPassWrapper::InitData>("./res/RenderPassDescriptors/ParticleRenderPass.txt"));
+static void reg_render_pass__particleEmitter(std::function<void(std::shared_ptr<RenderPassWrapper>)> regCallback, ResourceCreator* resCreator) {
+	
+	RenderPassWrapper* wrapper = (RenderPassWrapper*)resCreator->createResourceImmediate<RenderPassWrapper>(&RenderPassWrapper::InitData("./res/RenderPassDescriptors/ParticleRenderPass.txt", resCreator), "particle_render_pass",
+		[](IResource*) {});
 
 	IShader* _particleRenderingShader = wrapper->getShader("particle_shader");
 
@@ -95,15 +95,17 @@ static void reg_render_pass__particleEmitter(std::function<void(std::shared_ptr<
 
 		SceneParticles sceneParticles;
 
-		std::list<std::shared_ptr<RenderDataPacket>> renderData;
+		std::list<RenderDataPacket*> renderData;
 		collection.getRenderDataByType(RENDER_DATA_TYPE::RENDER_PARTICLE_EMITTER_DATA, renderData);
 
 		int currentBatchCount = 0;
 
 
-		for each(std::shared_ptr<RenderDataPacket> particleEmitter in renderData) {
+		for each(RenderDataPacket* particleEmitter in renderData) {
 
-			RenderPassPacket_ParticleEmitterData* particleEmitterData = particleEmitter->getData<RenderPassPacket_ParticleEmitterData>();
+			RenderPassPacket_ParticleEmitterData* particleEmitterData = 
+				(RenderPassPacket_ParticleEmitterData*)particleEmitter->getData();
+
 			RenderData_GlobalData* _globalData = collection.getGlobalData();
 
 			//PARTICLE REMOVAL FROM BATCH
@@ -184,9 +186,11 @@ static void reg_render_pass__particleEmitter(std::function<void(std::shared_ptr<
 
 			RenderData_GlobalData* globalData = collection.getGlobalData();
 
-			std::shared_ptr<ShaderUniformGroup> globalDataUniforms = std::make_shared<ShaderUniformGroup>();
+			ShaderUniformGroup globalDataUniforms;
 
-			globalDataUniforms->addUniform<Matrix4f>(Matrix4f::transpose(globalData->global_cam._projectionMatrix), "cbuff_projectionMatrix");
+			globalDataUniforms.setUniformCache(&wrapper->getSlabCache());
+
+			globalDataUniforms.addUniform<Matrix4f>(Matrix4f::transpose(globalData->global_cam._projectionMatrix), "cbuff_projectionMatrix");
 
 			std::shared_ptr<ParticleBatch> batch = std::get<0>(particleDataTuple);
 
@@ -194,25 +198,30 @@ static void reg_render_pass__particleEmitter(std::function<void(std::shared_ptr<
 
 			_particleInstanceBufferCasted->Write(particleRenderData->_particleDataCPUBuffer, sizeof(ParticleInstanceData) * particleRenderData->_maxParticles, 0);
 
-			commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
-				(globalDataUniforms, _particleRenderingShader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+			commandList->createCommand<ShaderUpdateUniformCommand>(&ShaderUpdateUniformCommand::InitData
+				(globalDataUniforms, _particleRenderingShader));
 		
-			commandList->createCommand(std::make_shared<PipelineBufferBindCommand::InitData>
-				(std::vector<GPUBuffer*> {(GPUBuffer*)particleRenderData->_indexBuffer},
-					std::vector<UINT> {0},
-					std::vector<UINT> {0}),
+			std::vector<PipelineBufferBindCommand::InitData::BufferBindInfo> buffersToBind;
 
-				GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER
+			buffersToBind.push_back(PipelineBufferBindCommand::InitData::BufferBindInfo((GPUBuffer*)particleRenderData->_indexBuffer, 0, 0));
+
+			commandList->createCommand<PipelineBufferBindCommand>(&PipelineBufferBindCommand::InitData
+				(buffersToBind)
 				);
 
-			commandList->createCommand(std::make_shared<PipelineBufferBindCommand::InitData>
-				(std::vector<GPUBuffer*> {(GPUBuffer*)particleRenderData->_vertexBuffer, (GPUBuffer*)particleRenderData->_particleInstanceBuffer},
-					std::vector<UINT> {0, 0},
-					std::vector<UINT> {sizeof(LIGHT_VERTEX), sizeof(ParticleInstanceData)}),
+			buffersToBind.clear();
 
-				GRAPHICS_COMMAND_TYPE::PIPELINE_BIND_VERTEX_BUFFER);
+			buffersToBind.push_back(PipelineBufferBindCommand::InitData::BufferBindInfo
+				((GPUBuffer*)particleRenderData->_vertexBuffer, 0, sizeof(LIGHT_VERTEX)));
 
-			commandList->createCommand(std::make_shared<ShaderSyncUniforms::InitData>(_particleRenderingShader), GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
+			buffersToBind.push_back(PipelineBufferBindCommand::InitData::BufferBindInfo
+				((GPUBuffer*)particleRenderData->_particleInstanceBuffer, 0, sizeof(ParticleInstanceData)));
+
+			commandList->createCommand<PipelineBufferBindCommand>(&PipelineBufferBindCommand::InitData
+				(buffersToBind)
+				);
+
+			commandList->createCommand<ShaderSyncUniforms>(&ShaderSyncUniforms::InitData(_particleRenderingShader));
 
 			pipelineState.shaderSetVertexInputLayout(_particleRenderingShader->getInputLayout());
 
@@ -246,14 +255,14 @@ static void reg_render_pass__particleEmitter(std::function<void(std::shared_ptr<
 
 			_particleRenderingShader->execute(commandList);
 
-			commandList->createCommand(std::make_shared<PipelineDrawInstancedCommand::InitData>(particleRenderData->_numIndices, std::get<0>(particleDataTuple)->_particlesToRender->size()),
-				GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INSTANCED);
+			commandList->createCommand<PipelineDrawInstancedCommand>(&PipelineDrawInstancedCommand::InitData(
+				particleRenderData->_numIndices, std::get<0>(particleDataTuple)->_particlesToRender->size()));
 
 
-			commandList->createCommand(std::make_shared<IResourceBuilder>(), GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
+			commandList->createCommand<PipelineStateResetCommand>(&PipelineStateResetCommand::InitData());
 		}
 	}
 	);
 
-	regCallback(wrapper);
+	regCallback(std::shared_ptr<RenderPassWrapper>(wrapper));
 }

@@ -1,7 +1,9 @@
 #pragma once
 #include "../../../sysInclude.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
+
+class GenericFactory;
 
 class ShaderInputLayoutElement {
 public:
@@ -23,26 +25,25 @@ public:
 	int _type;
 };
 
-class ShaderInputLayout : public IResource
+class ResourcePool;
+
+class ShaderInputLayout : public Resource<ShaderInputLayout, GenericFactory, ResourcePool>
 {
-protected:
-	std::vector<ShaderInputLayoutElement*> *_inputLayoutElementList;
 
-	std::string _name;
-
-	UINT _dataStride = 0;
 public:
 	ShaderInputLayout();
 	~ShaderInputLayout();
 
-	struct InitData : public IResourceBuilder {
+	struct InitData : public ResourceInitParams {
 		InitData() {
 
 		}
+
+		
 	};
 
-	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
-	void unload() { isLoaded = false; };
+	void load() { };
+	void unload() { };
 
 	virtual void addInput(int type, std::string name, UINT index, BYTE mask) = 0;
 
@@ -56,5 +57,12 @@ public:
 	std::vector<ShaderInputLayoutElement*>* getElementList() { return _inputLayoutElementList; }
 
 	UINT getDataStride() {return _dataStride; };
+
+protected:
+	std::vector<ShaderInputLayoutElement*> *_inputLayoutElementList;
+
+	std::string _name;
+
+	UINT _dataStride = 0;
 };
 

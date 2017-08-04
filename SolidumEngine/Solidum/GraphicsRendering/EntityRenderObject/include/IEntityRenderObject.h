@@ -5,7 +5,7 @@ class Texture;
 class Material;
 
 class RenderDataGroup;
-class RenderDataPacket;
+class IRenderDataPacket;
 class LightComponent;
 class MeshComponent;
 class Component;

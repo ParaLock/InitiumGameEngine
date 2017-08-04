@@ -5,6 +5,8 @@
 #include "../../Lights/include/ILight.h"
 #include "../../GraphicsCommand/include/GraphicsCommand.h"
 
+#include "../../../ResourceFramework/include/ResourceInitParams.h"
+
 #include "../../Shaders/include/ShaderUniformGroup.h"
 
 class MaterialPass;
@@ -13,48 +15,139 @@ class Transform;
 class mesh;
 class Texture;
 
-class ShaderCommand : public GraphicsCommand
-{
-public:
-	ShaderCommand();
-	~ShaderCommand();
-};
+//DECL_GRAPHICS_COMMAND(ShaderUpdateUniformCommand,
+//class DataPolicy {
+//public:
+//	ShaderUniformGroup _uniforms;
+//
+//	IShader* _shader;
+//
+//	struct InitData : public ResourceInitParams {
+//
+//		ShaderUniformGroup _uniforms;
+//		IShader* _shader;
+//
+//		InitData() {
+//
+//		}
+//
+//		InitData(ShaderUniformGroup& uniform, IShader* shader)
+//		{
+//			_uniforms = uniform;
+//
+//			_shader = shader;
+//		}
+//
+//
+//	};
+//
+//}; ,
+//class LoadPolicy {
+//public:
+//	inline static void LOAD(DataPolicy::InitData* initParams, DataPolicy* dataOut) {
+//		dataOut->_shader = initParams->_shader;
+//		dataOut->_uniforms = initParams->_uniforms;
+//	}
+//};,
+//class ExecutePolicy {
+//public:
+//	inline static void EXECUTE(DataPolicy* data) {
+//		for each(ShaderUniformGroup::Uniform uniform in data->_uniforms.getUniforms()) {
+//
+//			data->_shader->updateUniform(uniform._name, uniform._data);
+//		}
+//	}
+//};);
 
-class ShaderUpdateUniformCommand : public ShaderCommand {
+
+class ShaderUpdateUniformCommand : public GraphicsCommand<ShaderUpdateUniformCommand> {
 private:
-	std::shared_ptr<ShaderUniformGroup> _uniforms;
+	ShaderUniformGroup _uniforms;
+
 	IShader* _shader;
 public:
-	ShaderUpdateUniformCommand() { _type = GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM; }
 
-	struct InitData : public IResourceBuilder {
+	struct InitData : public ResourceInitParams {
 
-		std::shared_ptr<ShaderUniformGroup> _uniforms;
+		ShaderUniformGroup _uniforms;
 		IShader* _shader;
+	
+
+		InitData() {
 		
-		InitData(std::shared_ptr<ShaderUniformGroup> uniform, IShader* shader) {
+		}
+
+		InitData(ShaderUniformGroup& uniform, IShader* shader)
+		{
 			_uniforms = uniform;
 			_shader = shader;
 		}
+
+
 	};
 
-	void load(std::shared_ptr<IResourceBuilder> builder) {
-		InitData* realBuilder = static_cast<InitData*>(builder.get());
+	void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName) { return nullptr; };
+
+	void load() {
+
+		InitData* realBuilder = static_cast<InitData*>(getContext()->getResourceInitParams());
 
 		_uniforms = realBuilder->_uniforms;
 		_shader = realBuilder->_shader;
 	}
 
 	void execute();
+protected:
 };
 
-class ShaderSyncUniforms : public ShaderCommand {
+//DECL_GRAPHICS_COMMAND(ShaderSyncUniforms,
+//class DataPolicy {
+//public:
+//
+//	IShader* _shader;
+//
+//	struct InitData : public ResourceInitParams {
+//
+//		InitData() {
+//
+//		}
+//
+//		IShader* _shader;
+//
+//		InitData(IShader* shader) {
+//			_shader = shader;
+//		}
+//	};
+//
+//};,
+//class LoadPolicy {
+//public:
+//	inline static void LOAD(DataPolicy::InitData* initParams, DataPolicy* dataOut) {
+//		dataOut->_shader = initParams->_shader;
+//	}
+//}; ,
+//class ExecutePolicy {
+//public:
+//	inline static void EXECUTE(DataPolicy* data) {
+//		data->_shader->updateGPU();
+//	}
+//};);
+
+class ShaderSyncUniforms : public GraphicsCommand<ShaderSyncUniforms> {
 private:
 	IShader* _shader;
 public:
-	ShaderSyncUniforms() { _type = GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS; }
 
-	struct InitData : public IResourceBuilder {
+	ShaderSyncUniforms() {};
+
+	struct InitData : public ResourceInitParams {
+
+		InitData() {
+			
+			int test = 1;
+		}
+
 		IShader* _shader;
 
 		InitData(IShader* shader) {
@@ -62,11 +155,17 @@ public:
 		}
 	};
 
-	void load(std::shared_ptr<IResourceBuilder> builder) {
-		InitData* realBuilder = static_cast<InitData*>(builder.get());
+
+	void updateParameter(std::string varName, void *data) {};
+	void* getParameter(std::string varName) { return nullptr; };
+
+	void load() {
+		InitData* realBuilder = static_cast<InitData*>(getContext()->getResourceInitParams());
 
 		_shader = realBuilder->_shader;
 	}
 
 	void execute();
+
+protected:
 };

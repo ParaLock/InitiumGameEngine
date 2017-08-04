@@ -7,7 +7,7 @@
 
 #include "Component.h"
 
-class RenderDataPacket;
+class IRenderDataPacket;
 
 class OrbitComponent : public Component
 {
@@ -18,8 +18,8 @@ private:
 	float _orbitSpeed;
 	float _orbitAngle;
 
-	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
-	void unload() { isLoaded = false; };
+	void load() {};
+	void unload() {};
 
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
@@ -28,10 +28,19 @@ public:
 	OrbitComponent(Vector3f pointToOrbit, float radius, float speed, IEntity* entity);
 	~OrbitComponent();
 
+	struct InitData : public ResourceInitParams {
+		InitData() {}
+
+		
+
+	};
+
 	void onEvent(EVENT_PTR evt) {};
 
 	void update(float delta);
 
 	void AddRenderData(RenderDataGroup* collection) {};
+
+protected:
 };
 

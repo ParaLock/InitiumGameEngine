@@ -11,8 +11,6 @@ MeshComponent::MeshComponent(mesh* mesh, Texture* tex, Material* mat, int index,
 
 	_parent = entity;
 
-	setType(COMPONENT_TYPE::MESH_COMPONENT);
-
 	//Static meshes are always index + 1
 	_parent->getRenderObject()->addMeshComponent(this, _index + 1);
 	_parent->getRenderObject()->setMeshTexture(_tex, _index + 1);
@@ -37,8 +35,8 @@ void MeshComponent::AddRenderData(RenderDataGroup * collection)
 
 	RenderDataAttributes attributes;
 
-	data._indiceBuffer = _mesh->getIndexBuff();
-	data._vertexBuffer = _mesh->getVertexBuff();
+	data._indiceBuffer = (IResource*)_mesh->getIndexBuff();
+	data._vertexBuffer = (IResource*)_mesh->getVertexBuff();
 
 	data._globalTransform = _parent->getTransform()->getGlobalTransform();
 

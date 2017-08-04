@@ -2,19 +2,17 @@
 
 
 
-LightComponent::LightComponent(Light* light, int index, IEntity* entity)
+LightComponent::LightComponent(Light* light, int index, IEntity* entity, ResourceCreator& resCreator)
 {
-	setType(COMPONENT_TYPE::LIGHT_COMPONENT);
-
 	_index = index;
 
 	_light = light;
 
 	_parent = entity;
 
-	_screenQuad = new mesh();
-	_screenQuad->load(std::make_shared<mesh::InitData>(L"gen_ortho_window_mesh", ResourceManagerPool::getInstance()));
-	
+	_screenQuad = (mesh*)resCreator.createResourceImmediate<mesh>(&mesh::InitData(L"gen_ortho_window_mesh", &resCreator),
+		"light_quad_mesh", [](IResource*) {});
+
 	_parent->getRenderObject()->addLightComponent(this, _index);
 }
 

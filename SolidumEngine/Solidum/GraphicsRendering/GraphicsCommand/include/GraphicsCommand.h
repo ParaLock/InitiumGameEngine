@@ -1,9 +1,12 @@
 #pragma once
+
 #include "../../../sysInclude.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
 
-#include "../../../ResourceFramework/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/ResourceInitParams.h"
+
+#include "../../../ResourceFramework/include/GenericFactory.h"
 
 class Texture;
 class RenderTarget;
@@ -14,24 +17,56 @@ class ILight;
 class CameraComponent;
 class MaterialPass;
 
-class GraphicsCommand : public IResource
-{
-protected:
-	GRAPHICS_COMMAND_TYPE _type = GRAPHICS_COMMAND_TYPE::INVALID;
-private:
-	uint64_t _executionThreadID;
+class IGraphicsCommand {
 public:
-	GraphicsCommand();
-	~GraphicsCommand();
-
-	virtual GRAPHICS_COMMAND_TYPE getType() { return _type; };
-
-	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
-	virtual void unload() {};
-
-	void updateParameter(std::string varName, void *data) {};
-	void* getParameter(std::string varName) { return nullptr; };
 
 	virtual void execute() = 0;
+
+private:
 };
 
+//template<typename LOAD_POLICY, typename EXECUTE_POLICY, typename DATA_POLICY>
+//class GraphicsCommand : public IGraphicsCommand, public Resource<GraphicsCommand<LOAD_POLICY, EXECUTE_POLICY, DATA_POLICY>,
+//	GenericFactory, ResourcePool>
+//{
+//protected:
+//private:
+//public:
+//	GraphicsCommand() {};
+//	~GraphicsCommand() {};
+//
+//	DATA_POLICY _data;
+//
+//	typedef typename DATA_POLICY::InitData InitData;
+//
+//	void unload() {};
+//	void release() { this->release(); }
+//
+//	virtual void load() { 
+//
+//		LOAD_POLICY::LOAD(dynamic_cast<InitData>(getContext()->getResourceInitParams()), &_data); 
+//	
+//		int test = 1;
+//
+//	}
+//	virtual void execute() { EXECUTE_POLICY::EXECUTE(&_data); };
+//};
+//
+//#define DECL_GRAPHICS_COMMAND(CMD_NAME, DATA_POLICY, LOAD_POLICY, EXECUTE_POLICY)\
+//namespace CMD_NAME##_policy{\
+//DATA_POLICY\
+//\
+// LOAD_POLICY\
+//\
+// EXECUTE_POLICY\
+//}\
+//typedef GraphicsCommand<CMD_NAME##_policy::LoadPolicy, CMD_NAME##_policy::ExecutePolicy, CMD_NAME##_policy::DataPolicy> CMD_NAME;
+
+template<typename T_CMD>
+class GraphicsCommand : public IGraphicsCommand, public Resource<T_CMD, GenericFactory, ResourcePool>{
+public:
+	virtual void load() = 0;
+	virtual void unload() {}
+	virtual void execute() = 0;
+private:
+};

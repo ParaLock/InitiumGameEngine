@@ -4,22 +4,26 @@
 
 #include "../../Solidum/EntityFramework/Components/include/SkydomeWeatherComponent.h"
 
-static void reg_render_pass__sky(std::function<void(std::shared_ptr<RenderPassWrapper>)> regCallback) {
-	std::shared_ptr<RenderPassWrapper> wrapper = std::make_shared<RenderPassWrapper>();
+static void reg_render_pass__sky(std::function<void(std::shared_ptr<RenderPassWrapper>)> regCallback, ResourceCreator* resCreator) {
+	
+	RenderPassWrapper* wrapper = (RenderPassWrapper*)resCreator->createResourceImmediate<RenderPassWrapper>(&RenderPassWrapper::InitData("./res/RenderPassDescriptors/SkyRenderPass.txt", resCreator), "sky_render_pass",
+		[](IResource*) {});
 
-	wrapper->load(std::make_shared<RenderPassWrapper::InitData>("./res/RenderPassDescriptors/SkyRenderPass.txt"));
+	IShader* _skyShader = wrapper->getShader("sky_shader");
+
+	_skyShader->updateGPU();
 
 	wrapper->setRenderPass
 		(
 			[=](GraphicsCommandList* commandList, RenderDataGroup& collection, RenderPassWrapper* wrapper)
 	{
 
-		std::list<std::shared_ptr<RenderDataPacket>> renderData;
+		std::list<RenderDataPacket*> renderData;
 		collection.getRenderDataByType(RENDER_DATA_TYPE::SKY_RENDER_DATA, renderData);
 
-		for each(std::shared_ptr<RenderDataPacket> sky in renderData) {
+		for each(RenderDataPacket* sky in renderData) {
 
-			RenderPassPacket_SkyData* skyData = sky->getData<RenderPassPacket_SkyData>();
+			RenderPassPacket_SkyData* skyData = (RenderPassPacket_SkyData*)sky->getData();
 			RenderData_GlobalData* globalData = collection.getGlobalData();
 
 			GPUPipeline pipelineState;
@@ -33,21 +37,22 @@ static void reg_render_pass__sky(std::function<void(std::shared_ptr<RenderPassWr
 
 			Matrix4f wvp = (t * view * projection);
 
-			std::shared_ptr<ShaderUniformGroup> skyDataUniforms = std::make_shared<ShaderUniformGroup>();
+			ShaderUniformGroup skyDataUniforms;
 
-			skyDataUniforms->addUniform<Matrix4f>(wvp, "cbuff_skydomeWorldViewProj");
-			skyDataUniforms->addUniform<Vector4f>(skyData->_weatherApexColor, "cbuff_skydomeApexColor");
-			skyDataUniforms->addUniform<Vector4f>(skyData->_weatherCenterColor, "cbuff_skydomeCenterColor");
+			skyDataUniforms.setUniformCache(&wrapper->getSlabCache());
 
-			commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
-				(skyDataUniforms, _skyShader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+			skyDataUniforms.addUniform<Matrix4f>(wvp, "cbuff_skydomeWorldViewProj");
+			skyDataUniforms.addUniform<Vector4f>(skyData->_weatherApexColor, "cbuff_skydomeApexColor");
+			skyDataUniforms.addUniform<Vector4f>(skyData->_weatherCenterColor, "cbuff_skydomeCenterColor");
+
+			commandList->createCommand<ShaderUpdateUniformCommand>(&ShaderUpdateUniformCommand::InitData(skyDataUniforms, _skyShader));
 
 			wrapper->getIOInterface()->assignHookResourceByName("index_buffer", skyData->_indexBuffer);
 			wrapper->getIOInterface()->assignHookResourceByName("vertex_buffer", skyData->_vertexBuffer);
 
 			wrapper->getIOInterface()->assignHookResourceByName("skymap_texture", skyData->_skyTexture);
 
-			commandList->createCommand(std::make_shared<ShaderSyncUniforms::InitData>(_skyShader), GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
+			commandList->createCommand<ShaderSyncUniforms>(&ShaderSyncUniforms::InitData(_skyShader));
 
 			pipelineState.setBlendState(BLEND_STATE::BLENDING_OFF);
 			pipelineState.setDepthTestState(DEPTH_TEST_STATE::FULL_DISABLE);
@@ -80,13 +85,12 @@ static void reg_render_pass__sky(std::function<void(std::shared_ptr<RenderPassWr
 
 			_skyShader->execute(commandList);
 
-			commandList->createCommand(std::make_shared<PipelineDrawIndexedCommand::InitData>(0, skyData->_numIndices),
-				GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INDEXED);
+			commandList->createCommand<PipelineDrawIndexedCommand>(&PipelineDrawIndexedCommand::InitData(0, skyData->_numIndices));
 
 		}
-		commandList->createCommand(std::shared_ptr<IResourceBuilder>(), GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
+		commandList->createCommand<PipelineStateResetCommand>(&PipelineStateResetCommand::InitData());
 	}
 	);
 
-	regCallback(wrapper);
+	regCallback(std::shared_ptr<RenderPassWrapper>(wrapper));
 }

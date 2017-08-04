@@ -3,17 +3,25 @@
 
 #include "../../ActiveGraphicsAPI.h"
 
-#include "../../../ResourceFramework/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/ResourceInitParams.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
 
-class TextureSampler : public IResource
+#include "TextureSamplerFactory.h"
+
+class ResourcePool;
+
+class TextureSampler : public Resource<TextureSampler, TextureSamplerFactory, ResourcePool>
 {
 public:
 	TextureSampler();
 	~TextureSampler();
 
-	struct InitData : public IResourceBuilder {
+	struct InitData : public ResourceInitParams {
+
+		InitData() {}
+
+		
 
 		TEX_FILTERS _texFilterType;
 		ANISOTRPHIC_FILTER_LEVELS _anisotropyFilterLevel;
@@ -29,7 +37,9 @@ public:
 		}
 	};
 
-	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
+	virtual void load() = 0;
 	virtual void unload() = 0;
+
+protected:
 };
 

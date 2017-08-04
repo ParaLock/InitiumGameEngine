@@ -1,7 +1,5 @@
 #include "../include/RenderTarget.h"
 
-
-
 RenderTarget::RenderTarget()
 {
 	

@@ -23,19 +23,17 @@ DynamicStruct::~DynamicStruct()
 	delete _variableMap;
 }
 
-void DynamicStruct::load(std::shared_ptr<IResourceBuilder> builder)
+void DynamicStruct::load()
 {
-	InitData* realBuilder = static_cast<InitData*>(builder.get());
+	InitData* realBuilder = static_cast<InitData*>(getContext()->getResourceInitParams());
 
 	_name = realBuilder->_name;
 	_hasGPUBuff = realBuilder->_hasGPUBuff;
 
-	isLoaded = true;
 }
 
 void DynamicStruct::unload()
 {
-	isLoaded = false;
 }
 
 void DynamicStruct::updateVar(std::string varName, void * pData)
@@ -63,19 +61,25 @@ void DynamicStruct::updateVar(std::string varName, void * pData)
 
 void DynamicStruct::updateGPU()
 {
-	if(_GPUBuff != nullptr)
-		_GPUBuff->getCore<GPUBuffer>()->Write(_pBuffCPUMem, _lastVarOffset, 0);
+	if (_GPUBuff != nullptr) {
+
+		GPUBuffer* realBuff = _GPUBuff;
+
+		realBuff->Write(_pBuffCPUMem, _lastVarOffset, 0);
+	}
 }
 
-void DynamicStruct::initMemory()
+void DynamicStruct::initMemory(ResourceCreator* resCreator)
 {
 	_pBuffCPUMem = new __int8[_lastVarOffset];
 
 	SecureZeroMemory(_pBuffCPUMem, _lastVarOffset);
 
 	if (_hasGPUBuff) {
-		_GPUBuff = ResourceManagerPool::getInstance()->getResourceManager("GPUBufferManager")->createResource(std::make_shared<GPUBuffer::InitData>
-			(_lastVarOffset, BUFFER_TYPE::SHADER_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE), _name, false)->getCore<GPUBuffer>();
+
+		_GPUBuff = (GPUBuffer*)resCreator->createResourceImmediate<GPUBuffer>(&GPUBuffer::InitData
+			(_lastVarOffset, BUFFER_TYPE::SHADER_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE), std::to_string(getRandomNumber()) + _name,
+			[](IResource*) {});
 	}
 }
 

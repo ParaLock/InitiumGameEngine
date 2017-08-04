@@ -3,17 +3,21 @@
 
 #include "../../Directx11Rendering/dxDevice/include/dxDeviceAccessor.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
 
-#include "../../../ResourceFramework/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/ResourceInitParams.h"
 
 #include "../../../PhysicsFramework/include/BoundingSphere.h"
 
 #include "../../GraphicsCore/include/IGraphicsCore.h"
 
+#include "../../../ResourceFramework/include/GenericFactory.h"
+
 #include "ILight.h"
 
-class Light : public IResource, public ILight
+class ResourcePool;
+
+class Light : public ILight, public Resource<Light, GenericFactory, ResourcePool>
 {
 private:
 
@@ -47,7 +51,14 @@ public:
 	Light();
 	~Light();
 
-	struct InitData : public IResourceBuilder {
+	static const unsigned int TYPE = 0;
+
+	struct InitData : public ResourceInitParams {
+
+		InitData() {}
+
+		
+
 		LIGHT_TYPE _type;
 
 		InitData(LIGHT_TYPE type) {
@@ -55,7 +66,7 @@ public:
 		}
 	};
 
-	void load(std::shared_ptr<IResourceBuilder> builder);
+	void load();
 	void unload();
 
     void updateParameter(std::string varName, void *data) {};
@@ -94,5 +105,6 @@ public:
 
 	bool getIsShadowCaster() { return _isShadowCaster; };
 	void setIsShadowCaster(bool isShaderCaster) { _isShadowCaster = isShaderCaster; };
+protected:
 };
 

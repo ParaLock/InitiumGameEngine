@@ -15,13 +15,9 @@ private:
 
 public:
 	dxRenderTarget();
-
-	dxRenderTarget(ID3D11RenderTargetView * rt, ID3D11Texture2D * rtTex, Viewport& view);
-	dxRenderTarget(ID3D11ShaderResourceView * sv, ID3D11Texture2D * svTex, Viewport& view);
-
 	~dxRenderTarget();
 
-	void load(std::shared_ptr<IResourceBuilder> builder);
+	void load();
 	void unload();
 
 	void updateParameter(std::string varName, void *data);

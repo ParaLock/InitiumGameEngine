@@ -19,7 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Solidum\MemoryManagement\include\BasicSlabAllocator.h" />
+    <ClInclude Include="Solidum\EngineCore\include\IEngineInstance.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\DepthStencil\include\DepthStencilFactory.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\GraphicsBuffers\include\GPUBufferFactory.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderTarget\include\RenderTargetFactory.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderFactory.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureSamplerFactory.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\GenericFactory.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\ResourceSignature.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\ResourceLookupCache.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\IResource.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\ResourceContext.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\ResourceCreator.h" />
     <ClInclude Include="Solidum\MemoryManagement\include\SlabCache.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\include\FrustumCullingLayer.h" />
     <ClInclude Include="Plugins\RenderPasses\light_render_pass.h" />
@@ -43,20 +54,13 @@
     <ClInclude Include="Solidum\GraphicsRendering\RenderFlowGraph\include\RenderFlowGraph.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Renderer\include\Renderer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Particles\include\InsertionSort.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Particles\include\ParticlePool.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Particles\include\ParticleFactory.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Particles\include\ParticleStream.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Particles\include\Particle.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Particles\include\ParticleRenderNode.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\ParticleEmitterComponent.h" />
     <ClInclude Include="Solidum\PhysicsFramework\include\BoundingSphere.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\DepthStencil\include\DepthStencilManager.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxDepthStencil\include\dxDepthStencil.h" />
     <ClInclude Include="Solidum\GraphicsRendering\DepthStencil\include\DepthStencil.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCore\include\IGraphicsCore.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommand\include\GraphicsCommandFactory.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommand\include\GraphicsCommandPool.h" />
-    <ClInclude Include="Solidum\ResourceFramework\include\ResourceFactory.h" />
     <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandList\include\GraphicsCommandList.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Viewport\include\Viewport.h" />
     <ClInclude Include="Solidum\ResourceFramework\include\ResourcePool.h" />
@@ -84,24 +88,14 @@
     <ClInclude Include="Solidum\EntityFramework\Components\include\MoveComponent.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\IShader.h" />
     <ClInclude Include="Solidum\InputHandling\include\InputHandler.h" />
-    <ClInclude Include="Solidum\InputHandling\include\InputManager.h" />
     <ClInclude Include="Solidum\EventFramework\include\EventFrameworkCore.h" />
     <ClInclude Include="Solidum\EventFramework\include\Event.h" />
     <ClInclude Include="Solidum\EventFramework\include\IEventListener.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\IComponent.h" />
     <ClInclude Include="Solidum\EntityFramework\Entity\include\Entity.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Lights\include\ILight.h" />
-    <ClInclude Include="Solidum\ResourceFramework\include\ResourceManagerPool.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderManager.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Material\include\MaterialManager.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Lights\include\LightManager.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\GPUPipeline\include\GPUPipelineManager.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\GraphicsBuffers\include\GPUBufferManager.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\RenderTarget\include\RenderTargetManager.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Mesh\include\meshManager.h" />
-    <ClInclude Include="Solidum\ResourceFramework\include\IResourceBuilder.h" />
-    <ClInclude Include="Solidum\ResourceFramework\include\IResourceManager.h" />
-    <ClInclude Include="Solidum\ResourceFramework\include\IResource.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\ResourceInitParams.h" />
+    <ClInclude Include="Solidum\ResourceFramework\include\Resource.h" />
     <ClInclude Include="Solidum\GraphicsRendering\ActiveGraphicsAPI.h" />
     <ClInclude Include="Solidum\EngineCore\include\EngineInstance.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Material\include\Material.h" />
@@ -127,16 +121,12 @@
     <ClInclude Include="Solidum\GraphicsRendering\Mesh\include\meshLoader.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Mesh\include\meshLoaderOBJ.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Window\include\window.h" />
-    <ClInclude Include="Solidum\resourceManagerInclude.h" />
     <ClInclude Include="Solidum\sysInclude.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\dxTextures\include\dxTexture.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Transform\include\Transform.h" />
     <ClInclude Include="Solidum\EngineUtils\include\StringManipulation.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\Texture.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureSampler.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureManager.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureSamplerManager.h" />
-    <ClInclude Include="Solidum\TaskFramework\include\TaskFactory.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\World.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldManager.h" />
     <ClInclude Include="Solidum\WorldSimulation\include\WorldCell.h" />
@@ -145,9 +135,20 @@
     <ClInclude Include="Solidum\TaskFramework\include\TaskThread.h" />
     <ClInclude Include="Solidum\TaskFramework\include\TaskBarrier.h" />
     <ClInclude Include="Solidum\GraphicsRendering\SpatialAccelerationStructures\include\TypeOptimizedTree.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureFactory.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Solidum\MemoryManagement\src\BasicSlabAllocator.cpp" />
+    <ClCompile Include="Solidum\EngineCore\src\IEngineInstance.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\DepthStencil\src\DepthStencilFactory.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\GraphicsBuffers\src\GPUBufferFactory.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderTarget\src\RenderTargetFactory.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderFactory.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureFactory.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureSamplerFactory.cpp" />
+    <ClCompile Include="Solidum\ResourceFramework\src\ResourceLookupCache.cpp" />
+    <ClCompile Include="Solidum\ResourceFramework\src\IResource.cpp" />
+    <ClCompile Include="Solidum\ResourceFramework\src\ResourceContext.cpp" />
+    <ClCompile Include="Solidum\ResourceFramework\src\ResourceCreator.cpp" />
     <ClCompile Include="Solidum\MemoryManagement\src\SlabCache.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\src\FrustumCullingLayer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\src\RenderDataProcessingLayer.cpp" />
@@ -163,19 +164,13 @@
     <ClCompile Include="Solidum\GraphicsRendering\RenderFlowGraph\src\RenderFlowGraph.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Renderer\src\Renderer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Particles\src\InsertionSort.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Particles\src\ParticlePool.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Particles\src\ParticleFactory.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Particles\src\ParticleStream.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Particles\src\Particle.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Particles\src\ParticleRenderNode.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\ParticleEmitterComponent.cpp" />
     <ClCompile Include="Solidum\PhysicsFramework\src\BoundingSphere.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\DepthStencil\src\DepthStencilManager.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Directx11Rendering\dxDepthStencil\src\dxDepthStencil.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\DepthStencil\src\DepthStencil.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCore\src\IGraphicsCore.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommand\src\GraphicsCommandFactory.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommand\src\GraphicsCommandPool.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandList\src\GraphicsCommandList.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Viewport\src\Viewport.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\EntityRenderObject\src\IEntityRenderObject.cpp" />
@@ -194,7 +189,6 @@
     <ClCompile Include="Solidum\EventFramework\src\EventHub.cpp" />
     <ClCompile Include="Solidum\EntityFramework\Components\src\MoveComponent.cpp" />
     <ClCompile Include="Solidum\InputHandling\src\InputHandler.cpp" />
-    <ClCompile Include="Solidum\InputHandling\src\InputManager.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\EventFrameworkCore.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\Event.cpp" />
     <ClCompile Include="Solidum\EventFramework\src\IEventListener.cpp" />
@@ -202,17 +196,8 @@
     <ClCompile Include="Solidum\EntityFramework\Entity\src\Entity.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Lights\src\ILight.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\ActiveGraphicsAPI.cpp" />
-    <ClCompile Include="Solidum\ResourceFramework\src\ResourceManagerPool.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderManager.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Material\src\MaterialManager.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Lights\src\LightManager.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GPUPipeline\src\GPUPipelineManager.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\GraphicsBuffers\src\GPUBufferManager.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\RenderTarget\src\RenderTargetManager.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Mesh\src\meshManager.cpp" />
-    <ClCompile Include="Solidum\ResourceFramework\src\IResourceBuilder.cpp" />
-    <ClCompile Include="Solidum\ResourceFramework\src\IResourceManager.cpp" />
-    <ClCompile Include="Solidum\ResourceFramework\src\IResource.cpp" />
+    <ClCompile Include="Solidum\ResourceFramework\src\ResourceInitParams.cpp" />
+    <ClCompile Include="Solidum\ResourceFramework\src\Resource.cpp" />
     <ClCompile Include="Solidum\EngineCore\src\EngineInstance.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Material\src\Material.cpp" />
     <ClCompile Include="Solidum\EngineUtils\src\DynamicStruct.cpp" />
@@ -242,9 +227,6 @@
     <ClCompile Include="Solidum\EngineUtils\src\StringManipulation.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Textures\src\Texture.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureSampler.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureManager.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Textures\src\TextureSamplerManager.cpp" />
-    <ClCompile Include="Solidum\TaskFramework\src\TaskFactory.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\World.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldManager.cpp" />
     <ClCompile Include="Solidum\WorldSimulation\src\WorldCell.cpp" />
@@ -344,6 +326,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>true</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -382,7 +366,7 @@
       </AdditionalUsingDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>

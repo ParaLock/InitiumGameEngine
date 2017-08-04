@@ -10,17 +10,19 @@
 
 #include "../../../EngineUtils/include/StringManipulation.h"
 
-#include "../../../ResourceFramework/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/ResourceInitParams.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
 
-#include "../../../ResourceFramework/include/IResourceManager.h"
-
-#include "../../../ResourceFramework/include/ResourceManagerPool.h"
+#include "../../../ResourceFramework/include/ResourceCreator.h"
 
 #include "../../ActiveGraphicsAPI.h"
 
-class mesh : public IResource
+class GenericFactory;
+
+class ResourcePool;
+
+class mesh : public Resource<mesh, GenericFactory, ResourcePool>
 {
 private:
 	IResource* _vertexBuff;
@@ -30,19 +32,26 @@ public:
 	mesh();
 	~mesh();
 
-	struct InitData : public IResourceBuilder {
-		LPCWSTR _filename;
-		ResourceManagerPool* _managerPool;
+	struct InitData : public ResourceInitParams {
 
-		InitData(LPCWSTR filename, ResourceManagerPool* managerPool) {
+		InitData() {}
+
+		
+
+		LPCWSTR _filename;
+
+		ResourceCreator* _resourceCreator;
+
+		InitData(LPCWSTR filename, ResourceCreator* resCreator) :
+			_resourceCreator(resCreator)
+		{
 			_filename = filename;
-			_managerPool = managerPool;
 		}
 	};
 
-	void generatePlaneMesh(float top, float bottom, float left, float right);
+	void generatePlaneMesh(float top, float bottom, float left, float right, ResourceCreator* resCreator);
 
-	void load(std::shared_ptr<IResourceBuilder> builder);
+	void load();
 	void unload();
 
 	void updateParameter(std::string varName, void *data) {};
@@ -97,4 +106,5 @@ public:
 	
 	GPUBuffer* getVertexBuff() { return (GPUBuffer*)_vertexBuff; }
 	GPUBuffer* getIndexBuff() { return (GPUBuffer*)_indexBuff; }
+protected:
 };

@@ -13,9 +13,9 @@ dxTextureSampleState::~dxTextureSampleState()
 	sampleState->Release();
 }
 
-void dxTextureSampleState::load(std::shared_ptr<IResourceBuilder> builder)
+void dxTextureSampleState::load()
 {
-	InitData* realBuilder = static_cast<InitData*>(builder.get());
+	InitData* realBuilder = static_cast<InitData*>(getContext()->getResourceInitParams());
 
 	TEX_FILTERS texFilterType = realBuilder->_texFilterType;
 	ANISOTRPHIC_FILTER_LEVELS anisotropyFilterLevel = realBuilder->_anisotropyFilterLevel;
@@ -80,13 +80,10 @@ void dxTextureSampleState::load(std::shared_ptr<IResourceBuilder> builder)
 	samplerStateDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	dxDev->CreateSamplerState(&samplerStateDesc, &sampleState);
-
-	isLoaded = true;
 }
 
 void dxTextureSampleState::unload()
 {
-	isLoaded = false;
 }
 
 void dxTextureSampleState::updateParameter(std::string varName, void * data)

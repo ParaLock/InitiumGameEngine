@@ -11,9 +11,9 @@ dxGPUBuffer::~dxGPUBuffer()
 {
 }
 
-void dxGPUBuffer::load(std::shared_ptr<IResourceBuilder> builder)
+void dxGPUBuffer::load()
 {
-	InitData *realBuilder = static_cast<InitData*>(builder.get());
+	InitData *realBuilder = static_cast<InitData*>(getContext()->getResourceInitParams());
 
 	_size = realBuilder->_size;
 	_type = realBuilder->_type;
@@ -64,12 +64,10 @@ void dxGPUBuffer::load(std::shared_ptr<IResourceBuilder> builder)
 
 	result = dxDev->CreateBuffer(&bd, NULL, &bufferPtr);
 
-	isLoaded = true;
 }
 
 void dxGPUBuffer::unload()
 {
-	isLoaded = false;
 }
 
 void dxGPUBuffer::Write(void *pSrc, size_t byteToWrite, size_t offset)

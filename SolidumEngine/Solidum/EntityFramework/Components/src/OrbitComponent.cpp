@@ -11,8 +11,6 @@ OrbitComponent::OrbitComponent(Vector3f pointToOrbit, float radius, float speed,
 
 	_orbitAngle = 0.0f;
 
-	setType(COMPONENT_TYPE::ORBIT_COMPONENT);
-
 	_parent = entity;
 }
 

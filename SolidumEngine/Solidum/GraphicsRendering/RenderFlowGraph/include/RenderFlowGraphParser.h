@@ -2,11 +2,10 @@
 #include "../../../sysInclude.h"
 
 #include "../../../EngineUtils/include/StringManipulation.h"
-
-#include "../../../ResourceFramework/include/ResourceManagerPool.h"
-
 #include "../../RenderTarget/include/RenderTarget.h"
 #include "../../Textures/include/TextureSampler.h"
+
+#include "../../../ResourceFramework/include/ResourceCreator.h"
 
 #include "../../Window/include/window.h"
 
@@ -49,6 +48,6 @@ public:
 	RenderFlowGraphParser();
 	~RenderFlowGraphParser();
 
-	ParsedRenderFlowGraphData parseRenderFlowGraph(std::string filepath);
+	ParsedRenderFlowGraphData parseRenderFlowGraph(std::string filepath, ResourceCreator* resCreator);
 };
 

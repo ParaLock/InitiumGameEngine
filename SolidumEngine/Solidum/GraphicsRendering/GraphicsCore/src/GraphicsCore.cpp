@@ -8,7 +8,9 @@ GraphicsCore * GraphicsCore::getInstance()
 }
 
 
-GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool, TaskTree* masterTaskTree)
+GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, 
+	TaskTree* masterTaskTree, ResourceCreator& resCreator, IEngineInstance* sysInstance) :
+		_resourceCreator(resCreator)
 {	
 	if (singletonInstance == nullptr)
 		singletonInstance = this;
@@ -19,19 +21,13 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 
 	ActiveGraphicsAPI::setCurrentAPI(api);
 
+	_sysInstance = sysInstance;
+
 	_endFrameState = new GPUPipeline();
-
-	_graphicsCommandFactory = new GraphicsCommandFactory();
-	_graphicsCommandPool = new GraphicsCommandPool(_graphicsCommandFactory);
-
-	_particleFactory = new ParticleFactory();
-	_particlePool = new ParticlePool(_particleFactory);
 
 	_primaryTaskTree = masterTaskTree;
 
 	EventFrameworkCore::getInstance()->getGlobalEventHub("ComponentEventHub")->subscribeListener(this);
-
-	_resManagerPool = resManagerPool;
 
 	if (api == SUPPORTED_GRAPHICS_API::DIRECTX11) {
 
@@ -68,19 +64,27 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, Res
 
 		Viewport frameBuffDepthStencilView = Viewport(outputWindow->screen_height, outputWindow->screen_width, 1, 0);
 
-		RenderTarget* frameBufferRT = new dxRenderTarget(
-			dxDeviceAccessor::dxEncapsulator->getFrameBufferRenderTarget(),
-			dxDeviceAccessor::dxEncapsulator->getFrameBufferTexture(),
-			frameBuffDepthStencilView);
+		RenderTarget* frameBufferRT = (RenderTarget*)resCreator.createResourceImmediate<RenderTarget>
+			(&RenderTarget::InitData(TEX_FORMAT::INVALID, outputWindow->screen_height, outputWindow->screen_width),
+				"framebuffer", [=](IResource* res) {IResource::addResourceToGroup(res, std::string("RenderTargetGroup"), sysInstance); });
 
-		resManagerPool->getResourceManager("RenderTargetManager")->addResource(frameBufferRT, "framebuffer");
+		frameBufferRT->setViewport(frameBuffDepthStencilView);
 
-		RenderTarget* depthBufferRT = new dxRenderTarget(
-			dxDeviceAccessor::dxEncapsulator->getDepthBufferShaderView(),
-			dxDeviceAccessor::dxEncapsulator->getDepthBufferTexture(),
-			frameBuffDepthStencilView);
+		frameBufferRT->updateParameter("RENDERTARGET", dxDeviceAccessor::dxEncapsulator->getFrameBufferRenderTarget());
+		frameBufferRT->updateParameter("SHADERVIEW", dxDeviceAccessor::dxEncapsulator->getFrameBufferTexture());
 
-		resManagerPool->getResourceManager("RenderTargetManager")->addResource(depthBufferRT, "depthbuffer");
+		RenderTarget* depthBufferRT = (RenderTarget*)resCreator.createResourceImmediate<RenderTarget>
+			(&RenderTarget::InitData(TEX_FORMAT::INVALID, outputWindow->screen_height, outputWindow->screen_width),
+				"depthbuffer", [=](IResource* res) {IResource::addResourceToGroup(res, std::string("RenderTargetGroup"), sysInstance); });
+
+		depthBufferRT->setViewport(frameBuffDepthStencilView);
+
+		depthBufferRT->updateParameter("TEXTURE", dxDeviceAccessor::dxEncapsulator->getDepthBufferTexture());
+		depthBufferRT->updateParameter("SHADERVIEW", dxDeviceAccessor::dxEncapsulator->getDepthBufferShaderView());
+
+		IResource::createResourceGroup(std::string("RenderTargetGroup"), _sysInstance);
+
+		IResource::lookupResource(std::string("depthbuffer"), std::string("RenderTargetGroup"), _sysInstance);
 	}
 
 	IGraphicsCore::singletonInstance = this;
@@ -107,10 +111,10 @@ void GraphicsCore::beginRender(GraphicsCommandList * endscenePipeline, GraphicsC
 
 void GraphicsCore::endRender(GraphicsCommandList * endscenePipeline, GraphicsCommandList * scenePipeline)
 {
-	scenePipeline->loadCommands();
-	scenePipeline->executeCommands();
+	_resourceCreator.loadPendingResources();
+	_resourceCreator.waitForCompletionOfCreationTask();
 
-	endscenePipeline->loadCommands();
+	scenePipeline->executeCommands();
 	endscenePipeline->executeCommands();
 }
 

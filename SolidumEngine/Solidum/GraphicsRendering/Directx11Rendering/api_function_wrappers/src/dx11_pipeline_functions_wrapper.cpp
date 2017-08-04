@@ -49,7 +49,7 @@ void dx11_bind_shader_input_layout(void* pInputLayout) {
 		IASetInputLayout((ID3D11InputLayout*)pInputLayout);
 }
 
-void dx11_bind_shader_buffer(std::vector<void*> buffers, std::vector<UINT> buffStrides, BUFFER_TYPE buffType) {
+void dx11_bind_shader_buffer(std::vector<void*>& buffers, std::vector<UINT>& buffStrides, BUFFER_TYPE buffType) {
 
 	if (buffType == BUFFER_TYPE::INDEX_BUFF) {
 

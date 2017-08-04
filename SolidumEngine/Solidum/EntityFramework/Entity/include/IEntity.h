@@ -16,10 +16,7 @@ public:
 
 	virtual void setWorld(World* world) = 0;
 
-	virtual void addComponent(IComponent* comp) = 0;
 	virtual void addChild(IEntity* entity) = 0;
-
-	virtual std::list<IComponent*>* getComponentsByTypeAndIndex(COMPONENT_TYPE type, int index) = 0;
 
 	virtual IEntityRenderObject* getRenderObject() = 0;
 

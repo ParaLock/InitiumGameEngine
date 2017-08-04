@@ -9,8 +9,6 @@
 
 #include "../../Lights/include/Light.h"
 
-#include "../../../ResourceFramework/include/ResourceManagerPool.h"
-
 #include "../../../EntityFramework/Entity/include/IEntity.h"
 
 #include "../../../EventFramework/include/IEventListener.h"
@@ -24,11 +22,6 @@
 
 #include "../../PipelineCommands/include/PipelineCommand.h"
 
-#include "../../GraphicsCommand/include/GraphicsCommandPool.h"
-
-#include "../../Particles/include/ParticlePool.h"
-#include "../../Particles/include/ParticleFactory.h"
-
 #include "../../RenderPass/include/RenderPassWrapper.h"
 
 #include "../../Renderer/include/Renderer.h"
@@ -39,9 +32,10 @@
 
 #include "../../../TaskFramework/include/TaskTree.h"
 
+#include "../../../EngineCore/include/IEngineInstance.h"
+
 #include "IGraphicsCore.h"
 
-class ParticlePool;
 class BoundingSphere;
 
 class GraphicsCore : public IEventListener, public IGraphicsCore
@@ -50,8 +44,9 @@ private:
 	std::map<std::string, std::shared_ptr<RenderPassWrapper>> _registeredRenderPasses;
 	std::list<Renderer*> _registeredRenderers;
 
+	ResourceCreator& _resourceCreator;
+
 	dxDeviceManager *_dxManager = nullptr;
-	ResourceManagerPool *_resManagerPool = nullptr;
 
 	TaskTree* _primaryTaskTree;
 
@@ -63,16 +58,14 @@ private:
 
 	RenderFlowGraph* _primaryFlowGraph;
 
-	GraphicsCommandFactory* _graphicsCommandFactory;
-	GraphicsCommandPool* _graphicsCommandPool;
-
-	ParticleFactory* _particleFactory;
-	ParticlePool* _particlePool;
-
 	RenderData_GlobalData _globalRenderData;
 
+	IEngineInstance* _sysInstance;
+
 public:
-	GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, ResourceManagerPool* resManagerPool, TaskTree* masterTaskTree);
+	GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow, 
+		TaskTree* masterTaskTree, ResourceCreator& resCreator, IEngineInstance* sysInstance);
+
 	~GraphicsCore();
 
 	void registerRenderPass(std::shared_ptr<RenderPassWrapper> renderpass) { _registeredRenderPasses.insert({renderpass->getName(), renderpass}); };
@@ -87,13 +80,8 @@ public:
 
 	void onEvent(EVENT_PTR evt);
 
-	GraphicsCommandPool* getGraphicsCommandPool() { return _graphicsCommandPool; };
-	GraphicsCommandFactory* getGraphicsCommandFactory() { return _graphicsCommandFactory; }
-
 	TaskTree* getPrimaryTaskTree() { return _primaryTaskTree; };
-
-	ParticlePool* getParticlePool() { return _particlePool; }
-
+	
 	void setWorldBoundingSphere(BoundingSphere* boundingSphere) { _globalRenderData.boundingSphere = boundingSphere; }
 
 	GPUPipeline* getEndscenePSO() { return _endFrameState; }

@@ -30,7 +30,9 @@ public:
 
 	virtual ShaderInputLayout* getInputLayout() = 0;
 
-	virtual void updateUniform(std::string varName, void * pData) = 0;
+	virtual void bind() = 0;
+
+	virtual void updateUniform(std::string& varName, void * pData) = 0;
 	virtual void updateGPU() = 0;
 
 	virtual void execute(GraphicsCommandList* commandList) = 0;

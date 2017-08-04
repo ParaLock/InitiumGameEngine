@@ -1,6 +1,6 @@
 #pragma once
-#include "../../ResourceFramework/include/IResource.h"
-#include "../../ResourceFramework/include/IResourceBuilder.h"
+#include "../../ResourceFramework/include/Resource.h"
+#include "../../ResourceFramework/include/ResourceInitParams.h"
 
 #include "../../EventFramework/include/EventFrameworkCore.h"
 
@@ -8,6 +8,7 @@
 
 #include "../../GraphicsRendering/Window/include/window.h"
 
+#include "../../ResourceFramework/include/GenericFactory.h"
 
 struct InputEvtData : public EventData {
 
@@ -21,15 +22,24 @@ struct InputEvtData : public EventData {
 	std::list<KEY_MAP> getPressedKeys() { return _keysPressed; }
 };
 
-class InputHandler : public IResource, public IEventListener
+class ResourcePool;
+
+class InputHandler : public IEventListener, public Resource<InputHandler, GenericFactory, ResourcePool>
 {
 private:
 public:
 	InputHandler();
 	~InputHandler();
 
-	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; }
-	void unload() { isLoaded = false; }
+	struct InitData : public ResourceInitParams {
+
+		
+
+		InitData() {}
+	};
+
+	void load() {}
+	void unload() {}
 
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
@@ -40,5 +50,7 @@ public:
 	void onEvent(EVENT_PTR evt);
 
 	void update();
+
+protected:
 };
 

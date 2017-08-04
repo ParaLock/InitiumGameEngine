@@ -4,7 +4,6 @@
 
 Task::Task()
 {
-	setType(TASK_TYPE::NORMAL_TASK);
 }
 
 
@@ -31,6 +30,12 @@ void Task::unload()
 
 void Task::touch()
 {
+	if (_isComplete && _cyclicTask) {
+
+		_parentThreadEnqueue(this);
+
+		start();
+	}
 }
 
 void Task::execute()

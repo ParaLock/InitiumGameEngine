@@ -3,7 +3,7 @@
 
 #include "../../ResourceFramework/include/ResourcePool.h"
 
-#include "TaskFactory.h"
+#include "../../ResourceFramework/include/ResourceCreator.h"
 
 #include "TaskThread.h"
 
@@ -26,13 +26,11 @@ private:
 	TaskThread _asyncTaskThread;
 	uint32_t _asyncTaskThreadID;
 
-	TaskFactory _taskFactory;
-
-	ResourcePool<Task, TASK_TYPE, TaskFactory> _taskPool;
-
 	uint32_t getFreeTaskThread();
+
+	ResourceCreator& _resCreator;
 public:
-	TaskTree();
+	TaskTree(ResourceCreator& resCreator);
 	~TaskTree();
 
 	void walk();

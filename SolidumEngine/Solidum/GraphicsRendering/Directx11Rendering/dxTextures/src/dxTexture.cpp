@@ -10,18 +10,15 @@ dxTexture::~dxTexture()
 	texture->Release();
 }
 
-void dxTexture::load(std::shared_ptr<IResourceBuilder> builder)
+void dxTexture::load()
 {
-	InitData* realBuilder = static_cast<InitData*>(builder.get());
+	InitData* realBuilder = (InitData*)getContext()->getResourceInitParams();
 
 	loadImage(realBuilder->_filename);
-
-	isLoaded = true;
 }
 
 void dxTexture::unload()
 {
-	isLoaded = false;
 }
 
 void dxTexture::loadImage(LPCWSTR filename)

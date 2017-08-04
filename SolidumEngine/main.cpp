@@ -6,8 +6,6 @@
 
 #include "Solidum\EngineCore\include\EngineInstance.h"
 
-#include "Solidum\ResourceFramework\include\ResourceManagerPool.h"
-
 #include "Solidum\EntityFramework\Components\include\MoveComponent.h"
 #include "Solidum\EntityFramework\Components\include\LightComponent.h"
 #include "Solidum\EntityFramework\Components\include\MeshComponent.h"
@@ -37,16 +35,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	LPSTR lpCmdLine,
 	int nCmdShow)
 {
-
-	SlabCache testCache(10);
-
-	SlabCache::Slab* testSlab = testCache.getSlab(16);
-	SlabCache::Slab* testSlab2 = testCache.getSlab(256);
-
-
-	void* testPtr = testSlab->_mem;
-
-
 	srand((unsigned)time(NULL));
 
 	AllocConsole();
@@ -71,84 +59,80 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	solidum->loadWorld(world);
 
-	ResourceManagerPool* resManagerPool = solidum->getResourceManagerPool();
+	ResourceCreator& resCreator = solidum->getResourceCreator();
 
 	//** PLUGIN LOADING... !IN THE FUTURE PLUGINS WILL BE LOADED FROM DLL's! **//
-
-	reg_render_pass__light(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1));
-	reg_render_pass__mesh(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1));
-	reg_render_pass__particleEmitter(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1));
-	reg_render_pass__shadowmap(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1));
-	reg_render_pass__sky(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1));
-
+	reg_render_pass__sky(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1), &resCreator);
+	reg_render_pass__light(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1), &resCreator);
+	reg_render_pass__mesh(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1), &resCreator);
+	reg_render_pass__particleEmitter(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1), &resCreator);
+	reg_render_pass__shadowmap(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1), &resCreator);
+	
 	//** PLUGING LOADING END **//
 
 	//** RESOURCE LOADING **//
 
-	Renderer* simpleDeferredRenderer = new Renderer();
-	simpleDeferredRenderer->load(std::make_shared<Renderer::InitData>("./res/RenderFlowGraphs/SimpleDeferredRenderFlow.txt"));
+	Renderer* simpleDeferredRenderer = (Renderer*)resCreator.createResourceImmediate<Renderer>(&Renderer::InitData("./res/RenderFlowGraphs/SimpleDeferredRenderFlow.txt", &resCreator),
+		"simpleDeferredRenderer", [=](IResource* res) { solidum->getGraphicsSubsystem()->registerRenderer((Renderer*)res); });
 
 	simpleDeferredRenderer->pushGeneralProcessingLayer(std::make_shared<FrustumCullingLayer>());
 
-	solidum->getGraphicsSubsystem()->registerRenderer(simpleDeferredRenderer);
+	Light* sunLight = (Light*)resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::DIRECTIONAL_LIGHT),
+		"sun", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("LightGroup"), solidum); });
 
-	Light* sunLight = resManagerPool->getResourceManager("LightManager")->createResource(std::make_shared<Light::InitData>
-		(LIGHT_TYPE::DIRECTIONAL_LIGHT), "sun", false)->getCore<Light>();
-
-	Light* moonLight = resManagerPool->getResourceManager("LightManager")->createResource(std::make_shared<Light::InitData>
-		(LIGHT_TYPE::DIRECTIONAL_LIGHT), "moon", false)->getCore<Light>();
-
-	Light* pointLight1 = resManagerPool->getResourceManager("LightManager")->createResource(std::make_shared<Light::InitData>
-		(LIGHT_TYPE::POINT_LIGHT), "pointLight1", false)->getCore<Light>();
-
-	Light* pointLight2 = resManagerPool->getResourceManager("LightManager")->createResource(std::make_shared<Light::InitData>
-		(LIGHT_TYPE::POINT_LIGHT), "pointLight2", false)->getCore<Light>();
-
-	Light* pointLight3 = resManagerPool->getResourceManager("LightManager")->createResource(std::make_shared<Light::InitData>
-		(LIGHT_TYPE::POINT_LIGHT), "pointLight3", false)->getCore<Light>();
-
-	Light* fireLight = resManagerPool->getResourceManager("LightManager")->createResource(std::make_shared<Light::InitData>
-		(LIGHT_TYPE::POINT_LIGHT), "fire_light", false)->getCore<Light>();
-
-
-	mesh* cubeMesh = resManagerPool->getResourceManager("meshManager")->createResource(std::make_shared<mesh::InitData>
-		(L"./res/Meshes/cube.obj", resManagerPool), "cube_mesh", false)->getCore<mesh>();
+	Light* moonLight = (Light*)resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::DIRECTIONAL_LIGHT),
+		"moon", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("LightGroup"), solidum); });
 	
-	mesh* planeMesh = resManagerPool->getResourceManager("meshManager")->createResource(std::make_shared<mesh::InitData>
-		(L"./res/Meshes/plane.obj", resManagerPool), "plane_mesh", false)->getCore<mesh>();
-
-	mesh* skydomeMesh = resManagerPool->getResourceManager("meshManager")->createResource(std::make_shared<mesh::InitData>
-		(L"./res/Meshes/skydome.obj", resManagerPool), "sky_mesh", false)->getCore<mesh>();
-
-
-	Texture* grassTex = resManagerPool->getResourceManager("TextureManager")->createResource(std::make_shared<Texture::InitData>
-		(L"./res/Textures/diffuse/grass.png"), "grass_tex", false)->getCore<Texture>();
-
-	Texture* woodTex = resManagerPool->getResourceManager("TextureManager")->createResource(std::make_shared<Texture::InitData>
-		(L"./res/Textures/diffuse/Wood.png"), "wood_tex", false)->getCore<Texture>();
-
-	Texture* metalTex = resManagerPool->getResourceManager("TextureManager")->createResource(std::make_shared<Texture::InitData>
-		(L"./res/Textures/diffuse/metal.png"), "metal_tex", false)->getCore<Texture>();
-
-	Texture* bricksTex = resManagerPool->getResourceManager("TextureManager")->createResource(std::make_shared<Texture::InitData>
-		(L"./res/Textures/diffuse/grey_bricks.png"), "bricks_tex", false)->getCore<Texture>();
-
-	Texture* bricksNormalMap = resManagerPool->getResourceManager("TextureManager")->createResource(std::make_shared<Texture::InitData>
-		(L"./res/Textures/normals/bricks_normal.bmp"), "bricks_normal_map", false)->getCore<Texture>();
-
-	Texture* skydomeCubeMap = resManagerPool->getResourceManager("TextureManager")->createResource(std::make_shared<Texture::InitData>
-		(L"./res/Textures/cubemaps/sunsetcube1024.dds"), "cube_map", false)->getCore<Texture>();
-
-	Texture* smokeTexture = resManagerPool->getResourceManager("TextureManager")->createResource(std::make_shared<Texture::InitData>
-		(L"./res/Textures/diffuse/smoke.png"), "smoke_tex", false)->getCore<Texture>();
+	Light* pointLight1 = (Light*)resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::POINT_LIGHT),
+		"pointLight1", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("LightGroup"), solidum); });
 	
-	Texture* fireTexture = resManagerPool->getResourceManager("TextureManager")->createResource(std::make_shared<Texture::InitData>
-		(L"./res/Textures/diffuse/fire.png"), "fire_tex", false)->getCore<Texture>();
+	Light* pointLight2 = (Light*)resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::POINT_LIGHT),
+		"pointLight2", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("LightGroup"), solidum); });
+	
+	Light* pointLight3 = (Light*)resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::POINT_LIGHT),
+		"pointLight3", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("LightGroup"), solidum); });
+	
+	Light* fireLight = (Light*)resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::POINT_LIGHT),
+		"fire_light", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("LightGroup"), solidum); });
+	
+
+	mesh* cubeMesh = (mesh*)resCreator.createResourceImmediate<mesh>(&mesh::InitData(L"./res/Meshes/cube.obj", &resCreator),
+		"cube_mesh", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("MeshGroup"), solidum); });
+	
+	mesh* planeMesh = (mesh*)resCreator.createResourceImmediate<mesh>(&mesh::InitData(L"./res/Meshes/plane.obj", &resCreator),
+		"plane_mesh", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("MeshGroup"), solidum); });
+
+	mesh* skydomeMesh = (mesh*)resCreator.createResourceImmediate<mesh>(&mesh::InitData(L"./res/Meshes/skydome.obj", &resCreator),
+		"sky_mesh", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("MeshGroup"), solidum); });
+	
+	Texture* grassTex = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/grass.png"),
+		"grass_tex", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
+		
+	Texture* woodTex = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/Wood.png"),
+		"wood_tex", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
+	
+	Texture* metalTex = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/metal.png"),
+		"metal_tex", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
+	
+	Texture* bricksTex = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/grey_bricks.png"),
+		"bricks_tex", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
+	
+	Texture* bricksNormalMap = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/normals/bricks_normal.png"),
+		"bricks_normal_map", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
+	
+	Texture* skydomeCubeMap = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/cubemaps/sunsetcube1024.dds"),
+		"cube_map", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
+	
+	Texture* smokeTexture = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/smoke.png"),
+		"smoke_tex", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
+	
+	Texture* fireTexture = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/fire.png"),
+		"fire_tex", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
 
 
-	Material* brickMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(std::make_shared<IResourceBuilder>
-		(Material::InitData()), "brickMaterial", false)->getCore<Material>();
-
+	Material* brickMaterial = (Material*)resCreator.createResourceImmediate<Material>(&Material::InitData(), "brickMaterial", 
+		[=](IResource* res) { IResource::addResourceToGroup(res, std::string("MaterialGroup"), solidum); });
+		
 	brickMaterial->createPass("basicPhongWSpecular", nullptr);
 	
 	brickMaterial->getPass("basicPhongWSpecular")->setSpecularColor(Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
@@ -157,8 +141,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	brickMaterial->getPass("basicPhongWSpecular")->setNormalTexture(bricksNormalMap);
 	
-	Material* woodMaterial = resManagerPool->getResourceManager("MaterialManager")->createResource(std::make_shared<IResourceBuilder>
-		(Material::InitData()), "woodMaterial", false)->getCore<Material>();
+	Material* woodMaterial = (Material*)resCreator.createResourceImmediate<Material>(&Material::InitData(), "woodMaterial",
+		[=](IResource* res) { IResource::addResourceToGroup(res, std::string("MaterialGroup"), solidum); });
 
 	woodMaterial->createPass("basicPhongWSpecular", nullptr);
 
@@ -234,80 +218,80 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	Entity* globalWorldLighting = new Entity();
 
-	globalWorldLighting->addComponent(new SunMoonLightingComponent(sunLight, moonLight, 0.1f, globalWorldLighting));
+	globalWorldLighting->addComponent<SunMoonLightingComponent>(new SunMoonLightingComponent(sunLight, moonLight, 0.1f, globalWorldLighting));
 
 	Entity* sun = new Entity();
 
-	sun->addComponent(new LightComponent(sunLight, 0, sun));
+	sun->addComponent<LightComponent>(new LightComponent(sunLight, 0, sun, resCreator));
 
 	Entity* pointLight1Entity = new Entity();
 
-	pointLight1Entity->addComponent(new MoveComponent(Vector3f(4.0f, 0.01f, -1.8f), 0.5, false, moveKeyConfig2, pointLight1Entity));
-	pointLight1Entity->addComponent(new LightComponent(pointLight1, 0, pointLight1Entity));
+	pointLight1Entity->addComponent<MoveComponent>(new MoveComponent(Vector3f(4.0f, 0.01f, -1.8f), 0.5, false, moveKeyConfig2, pointLight1Entity));
+	pointLight1Entity->addComponent<LightComponent>(new LightComponent(pointLight1, 0, pointLight1Entity, resCreator));
 
 	Entity* pointLight2Entity = new Entity();
 
-	pointLight2Entity->addComponent(new MoveComponent(Vector3f(0.2f, 0.01f, -5.0f), 0.5, false, moveKeyConfig1, pointLight2Entity));
-	pointLight2Entity->addComponent(new LightComponent(pointLight2, 0, pointLight2Entity));
+	pointLight2Entity->addComponent<MoveComponent>(new MoveComponent(Vector3f(0.2f, 0.01f, -5.0f), 0.5, false, moveKeyConfig1, pointLight2Entity));
+	pointLight2Entity->addComponent<LightComponent>(new LightComponent(pointLight2, 0, pointLight2Entity, resCreator));
 
 	Entity* pointLight3Entity = new Entity();
 
-	pointLight3Entity->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, 0, pointLight3Entity));
-	pointLight3Entity->addComponent(new MoveComponent(Vector3f(-0.2f, 0.01f, 8.0f), 0.5, false, moveKeyConfig1, pointLight3Entity));
-	pointLight3Entity->addComponent(new LightComponent(pointLight3, 0, pointLight3Entity));
+	pointLight3Entity->addComponent<MeshComponent>(new MeshComponent(cubeMesh, woodTex, woodMaterial, 0, pointLight3Entity));
+	pointLight3Entity->addComponent<MoveComponent>(new MoveComponent(Vector3f(-0.2f, 0.01f, 8.0f), 0.5, false, moveKeyConfig1, pointLight3Entity));
+	pointLight3Entity->addComponent<LightComponent>(new LightComponent(pointLight3, 0, pointLight3Entity, resCreator));
 
 	Entity* fireLightEntity = new Entity();
 
-	fireLightEntity->addComponent(new MoveComponent(Vector3f(0.0f, 3.0f, 0.0f), 0.5, false, moveKeyConfig1, fireLightEntity));
-	fireLightEntity->addComponent(new LightComponent(fireLight, 0, fireLightEntity));
+	fireLightEntity->addComponent<MoveComponent>(new MoveComponent(Vector3f(0.0f, 3.0f, 0.0f), 0.5, false, moveKeyConfig1, fireLightEntity));
+	fireLightEntity->addComponent<LightComponent>(new LightComponent(fireLight, 0, fireLightEntity, resCreator));
 
 	Entity* hammer = new Entity();
 
-	hammer->addComponent(new MeshComponent(cubeMesh, metalTex, brickMaterial, 0, hammer));
+	hammer->addComponent<MeshComponent>(new MeshComponent(cubeMesh, metalTex, brickMaterial, 0, hammer));
 
 	Entity* cube = new Entity();
 
-	cube->addComponent(new MoveComponent(Vector3f(0, -1.0f, 0), 0.5, false, moveKeyConfig1, cube));
-	cube->addComponent(new MeshComponent(cubeMesh, woodTex, woodMaterial, 0, cube));
+	cube->addComponent<MoveComponent>(new MoveComponent(Vector3f(0, -1.0f, 0), 0.5, false, moveKeyConfig1, cube));
+	cube->addComponent<MeshComponent>(new MeshComponent(cubeMesh, woodTex, woodMaterial, 0, cube));
 
 	Entity* plane = new Entity();
 
-	plane->addComponent(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, moveKeyConfig1, plane));
-	plane->addComponent(new MeshComponent(planeMesh, bricksTex, woodMaterial, 0, plane));
+	plane->addComponent<MoveComponent>(new MoveComponent(Vector3f(0, -3.5, 0), 0.5, false, moveKeyConfig1, plane));
+	plane->addComponent<MeshComponent>(new MeshComponent(planeMesh, bricksTex, woodMaterial, 0, plane));
 
 	Entity* camera = new Entity();
 
-	camera->addComponent(new CameraComponent(0.1f, 1000.0f, camera));
+	camera->addComponent<CameraComponent>(new CameraComponent(0.1f, 1000.0f, camera));
 
 	Entity* sky = new Entity();
 
-	sky->addComponent(new SkydomeWeatherComponent(skydomeCubeMap, skydomeMesh,
-		(CameraComponent*)camera->getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0)->front(),
+	sky->addComponent<SkydomeWeatherComponent>(new SkydomeWeatherComponent(skydomeCubeMap, skydomeMesh,
+		(CameraComponent*)camera->getComponent<CameraComponent>(0),
 		Vector4f(0.1f, 0.1f, 0.1f, 1.0f), Vector4f(0.1f, 0.1f, 0.1f, 1.0f), 0, sky));
 
 	Entity* particleEmitter1Entity = new Entity();
 
-	particleEmitter1Entity->addComponent(new MoveComponent(Vector3f(0, 6.0f, 0), 0.5, true, moveKeyConfig1, particleEmitter1Entity));
+	particleEmitter1Entity->addComponent<MoveComponent>(new MoveComponent(Vector3f(0, 6.0f, 0), 0.5, true, moveKeyConfig1, particleEmitter1Entity));
 	
-	particleEmitter1Entity->addComponent(new ParticleEmitterComponent(110, 4.5, -0.5, 3, 200, 8, fireTexture, BLEND_STATE::ADDITIVE_BLENDING,
-		(CameraComponent*)camera->getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0), 
-		particleEmitter1Entity));
+	particleEmitter1Entity->addComponent<ParticleEmitterComponent>(new ParticleEmitterComponent(110, 4.5, -0.5, 3, 200, 8, fireTexture, BLEND_STATE::ADDITIVE_BLENDING,
+		(CameraComponent*)camera->getComponent<CameraComponent>(0), 
+		particleEmitter1Entity, resCreator));
 
 	Entity* particleEmitter2Entity = new Entity();
 
-	particleEmitter2Entity->addComponent(new MoveComponent(Vector3f(-5.0f, 2.0f, 0), 0.5, false, moveKeyConfig1, particleEmitter2Entity));
+	particleEmitter2Entity->addComponent<MoveComponent>(new MoveComponent(Vector3f(-5.0f, 2.0f, 0), 0.5, false, moveKeyConfig1, particleEmitter2Entity));
 
-	particleEmitter2Entity->addComponent(new ParticleEmitterComponent(110, 4.5, -0.5, 3, 200, 8, smokeTexture, BLEND_STATE::ALPHA_BLENDING,
-		(CameraComponent*)camera->getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0),
-		particleEmitter2Entity));
+	particleEmitter2Entity->addComponent<ParticleEmitterComponent>(new ParticleEmitterComponent(110, 4.5, -0.5, 3, 200, 8, smokeTexture, BLEND_STATE::ALPHA_BLENDING,
+		(CameraComponent*)camera->getComponent<CameraComponent>(0),
+		particleEmitter2Entity, resCreator));
 
 	particleEmitter1Entity->addChild(cube);
 	particleEmitter1Entity->addChild(fireLightEntity);
 
 	world->addPrimaryCamera(camera, 0000);
-	//
-	//world->addEntity(particleEmitter2Entity, 8593);
-	//world->addEntity(particleEmitter1Entity, 5964);
+	
+	world->addEntity(particleEmitter2Entity, 8593);
+	world->addEntity(particleEmitter1Entity, 5964);
 	world->addEntity(sun, 3333);
 	world->addEntity(pointLight2Entity, 0001);
 	world->addEntity(pointLight3Entity, 0010);

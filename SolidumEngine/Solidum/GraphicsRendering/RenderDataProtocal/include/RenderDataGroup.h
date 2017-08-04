@@ -3,43 +3,52 @@
 
 #include "../../SpatialAccelerationStructures/include/TypeOptimizedTree.h"
 
-#include "../../../MemoryManagement/include/SlabCache.h"
+#include "../../RenderDataProtocal/include/RenderDataPacket.h"
 
-#include "RenderDataPacket.h"
+struct RenderDataAttributes;
 
 class RenderDataGroup
 {
 private:
+
+	std::list<RenderDataPacket> _dataStore;
+
 	TypeOptimizedTree<
-		RenderDataPacket,
+		RenderDataPacket*,
 		RENDER_DATA_TYPE
 	> _groupItems;
 
 	RenderData_GlobalData _globalData;
+
 	SlabCache* _cache;
 
 public:
 	RenderDataGroup(SlabCache* cache);
 	~RenderDataGroup();
 
-	void getRenderDataByType(RENDER_DATA_TYPE type, std::list<std::shared_ptr<RenderDataPacket>>& out) { _groupItems.queryNodesByType(type, out); };
-	void getAllRenderData(std::list<std::shared_ptr<RenderDataPacket>>& out) { _groupItems.queryAllNodes(out); };
+	void getRenderDataByType(RENDER_DATA_TYPE type, std::list<RenderDataPacket*>& out) { _groupItems.queryNodesByType(type, out); };
+	void getAllRenderData(std::list<RenderDataPacket*>& out) { _groupItems.queryAllNodes(out); };
 
 	template<typename T>
 	void addRenderData(T* data, RENDER_DATA_TYPE type, RenderDataAttributes* attributes) {
 	
-		std::shared_ptr<RenderDataPacket> dataPtr = std::make_shared<RenderDataPacket>(_cache);
+		_dataStore.push_back(RenderDataPacket(_cache));
 
-		dataPtr->addData<T>(data);
-		dataPtr->setType(type);
+		RenderDataPacket* packet = &_dataStore.back();
 
-		_groupItems.addNode(dataPtr);
+		packet->addData<T>(data);
+		
+		packet->setType(type);
+
+		packet->setAttributes(*attributes);
+
+		_groupItems.addNode(packet);
 		
 	}
 
-	void removePacket(std::shared_ptr<RenderDataPacket> packet);
+	void removePacket(RenderDataPacket& packet);
 
-	void setGlobalData(RenderData_GlobalData gData) { _globalData = gData; };
+	void setGlobalData(RenderData_GlobalData& gData) { _globalData = gData; };
 	RenderData_GlobalData* getGlobalData() { return &_globalData; }
 };
 

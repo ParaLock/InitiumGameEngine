@@ -5,10 +5,8 @@
 class CameraComponent;
 class Shader;
 class GPUPipeline;
-class GraphicsCommandPool;
-class GraphicsCommandFactory;
+class ResourcePool;
 class GraphicsCommandList;
-class ParticlePool;
 class World;
 class Renderer;
 class TaskTree;
@@ -29,19 +27,13 @@ public:
 
 	virtual	void endRender(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline) = 0;
 
-
 	virtual void setCurrentRenderingCamera(CameraComponent* cam) = 0;
 
 	virtual void onEvent(EVENT_PTR evt) = 0;
 
 	virtual GPUPipeline* getEndscenePSO() = 0;
 
-	virtual GraphicsCommandPool* getGraphicsCommandPool() = 0;
-	virtual GraphicsCommandFactory* getGraphicsCommandFactory() = 0;
-
 	virtual TaskTree* getPrimaryTaskTree() = 0;
-
-	virtual ParticlePool* getParticlePool() = 0;
 
 	virtual std::shared_ptr<RenderPassWrapper> getRegisteredRenderPass(std::string name) = 0;
 

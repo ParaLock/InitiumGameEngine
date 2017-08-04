@@ -47,19 +47,27 @@ private:
 
 	bool _parentTransformDirty = false;
 
-	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
-	void unload() { isLoaded = false; };
+	void load() {};
+	void unload() {};
 
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 public:
-	LightComponent(Light* light, int index, IEntity* entity);
+	LightComponent(Light* light, int index, IEntity* entity, ResourceCreator& resCreator);
 	~LightComponent();
+	
+	struct InitData : public ResourceInitParams {
+		InitData() {}
+
+		
+	};
 
 	void update(float delta);
 
 	void onEvent(EVENT_PTR evt);
 
 	void AddRenderData(RenderDataGroup* collection);
+
+protected:
 };
 

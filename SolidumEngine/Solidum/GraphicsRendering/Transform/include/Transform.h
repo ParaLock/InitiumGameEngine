@@ -1,9 +1,11 @@
 #pragma once
 #include "../../../sysInclude.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
 
-#include "../../../ResourceFramework/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/ResourceInitParams.h"
+
+#include "../../../ResourceFramework/include/GenericFactory.h"
 
 #include "../../../EngineUtils/include/quaternion.h"
 
@@ -14,7 +16,9 @@ enum ROT_DIR {
 	ROT_DOWN
 };
 
-class Transform : public IResource
+class ResourcePool;
+
+class Transform : public Resource<Transform, GenericFactory, ResourcePool>
 {
 private:
 	Vector3f _vecPos;
@@ -30,10 +34,17 @@ public:
 	Transform();
 	~Transform();
 
+	struct InitData : public ResourceInitParams {
+
+		
+
+		InitData() {}
+	};
+
 	void buildTransform();
 
-	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
-	void unload() { isLoaded = false; };
+	void load() { };
+	void unload() { };
 
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };

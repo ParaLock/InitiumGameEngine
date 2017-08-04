@@ -1,41 +1,28 @@
 #include "../include/GraphicsCommandList.h"
 
 
-
-GraphicsCommandList::GraphicsCommandList()
-{
-}
-
-
 GraphicsCommandList::~GraphicsCommandList()
 {
-	for each(GraphicsCommand* command in _loadedCommands) {
-		IGraphicsCore::getInstance()->
-			getGraphicsCommandPool()->releaseResource(command);
+	for each(IGraphicsCommand* command in _loadedCommands) {
+
+		IResource* resCast = dynamic_cast<IResource*>(command);
+
+		resCast->release();
 	}
+
+	reset();
 }
 
-void GraphicsCommandList::loadCommands()
+void GraphicsCommandList::commandLoadedCallback(IResource * loadedCmd)
 {
-	IGraphicsCore* gCore = IGraphicsCore::getInstance();
-	GraphicsCommandPool* commandPool = gCore->getGraphicsCommandPool();
+	IGraphicsCommand* cmd = dynamic_cast<IGraphicsCommand*>(loadedCmd);
 
-	for each(auto unloadedCommand in _unloadedCommands) {
-		GraphicsCommand* command = commandPool->getResource(unloadedCommand._type);
-
-		command->load(unloadedCommand._initData);
-		_loadedCommands.push_back(command);
-	}
-}
-
-void GraphicsCommandList::createCommand(std::shared_ptr<IResourceBuilder> builder, GRAPHICS_COMMAND_TYPE type)
-{
-	_unloadedCommands.push_back(unloadedCommandData(builder, type));
+	_loadedCommands.push_back(cmd);
 }
 
 void GraphicsCommandList::executeCommands()
 {
-	for each(GraphicsCommand* command in _loadedCommands) {
+	for each(IGraphicsCommand* command in _loadedCommands) {
 
 		command->execute();
 	}
@@ -44,5 +31,4 @@ void GraphicsCommandList::executeCommands()
 void GraphicsCommandList::reset()
 {
 	_loadedCommands.clear();
-	_unloadedCommands.clear();
 }

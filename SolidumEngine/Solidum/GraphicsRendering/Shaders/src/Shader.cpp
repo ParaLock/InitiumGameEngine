@@ -26,14 +26,14 @@ void Shader::updateDeferredLightUniforms(ILight* light)
 
 	Vector3f pos = light->getPosition();
 
-	updateUniform("cbuff_lightDirection", &light->getDirection());
-	updateUniform("cbuff_lightPos", &pos);
-	updateUniform("cbuff_lightColor", &light->getColor());
-	updateUniform("cbuff_lightIntensity", &intensity);
-	updateUniform("cbuff_pointLightRange", &range);
-	updateUniform("cbuff_pointLightConstant", &constant);
-	updateUniform("cbuff_pointLightLinear", &linear);
-	updateUniform("cbuff_pointLightExponent", &exponent);
+	updateUniform(std::string("cbuff_lightDirection"), &light->getDirection());
+	updateUniform(std::string("cbuff_lightPos"), &pos);
+	updateUniform(std::string("cbuff_lightColor"), &light->getColor());
+	updateUniform(std::string("cbuff_lightIntensity"), &intensity);
+	updateUniform(std::string("cbuff_pointLightRange"), &range);
+	updateUniform(std::string("cbuff_pointLightConstant"), &constant);
+	updateUniform(std::string("cbuff_pointLightLinear"), &linear);
+	updateUniform(std::string("cbuff_pointLightExponent"), &exponent);
 }
 
 void Shader::updatePointLightsForwardRendering(std::vector<ILight*> pointLights)
@@ -82,7 +82,7 @@ void Shader::updatePointLightsForwardRendering(std::vector<ILight*> pointLights)
 
 	}
 
-	updateUniform("pointLights", &lights);
+	updateUniform(std::string("pointLights"), &lights);
 }
 
 void Shader::updateDirectionalLightsForwardRendering(std::vector<ILight*> dirLights)
@@ -115,23 +115,23 @@ void Shader::updateDirectionalLightsForwardRendering(std::vector<ILight*> dirLig
 			lights[i].lightColor = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
 		}
 	}
-	updateUniform("directionalLights", &lights);
+	updateUniform(std::string("directionalLights"), &lights);
 }
 
 
 void Shader::updateModelUniforms(Transform* transform)
 {
-	updateUniform("cbuff_OBJSpecificMatrix", &Matrix4f::transpose(transform->getGlobalTransform()));
+	updateUniform(std::string("cbuff_OBJSpecificMatrix"), &Matrix4f::transpose(transform->getGlobalTransform()));
 }
 
 void Shader::updateCameraUniforms(CameraComponent* cam)
 {
-	updateUniform("cbuff_eyePos", &cam->getPos());
-	updateUniform("cbuff_viewMatrix", &Matrix4f::transpose(cam->getViewMatrix()));
-	updateUniform("cbuff_projectionMatrix", &Matrix4f::transpose(cam->getProjectionMatrix()));
-	updateUniform("cbuff_worldMatrix", &Matrix4f::transpose(cam->getWorldMatrix()));
-	updateUniform("cbuff_orthoProjection", &Matrix4f::transpose(cam->getOrthoProjectionMatrix()));
-	updateUniform("cbuff_camViewStart", &Matrix4f::transpose(cam->getStartViewMatrix()));
+	updateUniform(std::string("cbuff_eyePos"), &cam->getPos());
+	updateUniform(std::string("cbuff_viewMatrix"), &Matrix4f::transpose(cam->getViewMatrix()));
+	updateUniform(std::string("cbuff_projectionMatrix"), &Matrix4f::transpose(cam->getProjectionMatrix()));
+	updateUniform(std::string("cbuff_worldMatrix"), &Matrix4f::transpose(cam->getWorldMatrix()));
+	updateUniform(std::string("cbuff_orthoProjection"), &Matrix4f::transpose(cam->getOrthoProjectionMatrix()));
+	updateUniform(std::string("cbuff_camViewStart"), &Matrix4f::transpose(cam->getStartViewMatrix()));
 }
 
 void Shader::execute(GraphicsCommandList* commandList)
@@ -139,7 +139,7 @@ void Shader::execute(GraphicsCommandList* commandList)
 	std::cout << "GENERIC SHADER: NO GRAPHICS API DIRECTIVE DETECTED" << std::endl;
 }
 
-void Shader::updateUniform(std::string varName, void * pData)
+void Shader::updateUniform(std::string& varName, void * pData)
 {
 	auto itr = _varNameToConstantBuffer.find(varName);
 

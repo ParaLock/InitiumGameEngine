@@ -19,10 +19,9 @@ uint32_t TaskTree::getFreeTaskThread()
 	return id;
 }
 
-TaskTree::TaskTree()
+TaskTree::TaskTree(ResourceCreator& resCreator) :
+	_resCreator(resCreator)
 {
-	_taskPool.setFactory(&_taskFactory);
-
 	_asyncTaskThreadID = getRandomNumber();
 }
 
@@ -38,14 +37,16 @@ void TaskTree::walk()
 	if (node == nullptr)
 		return;
 
-	while (node->getChild() != nullptr) {
-		node = node->getChild();
+	while (node != nullptr) {
 
 		node->touch();
 
 		if (node->_isComplete) {
+
 			removeTask(node);
 		}
+
+		node = node->getChild();
 	}
 }
 
@@ -80,11 +81,11 @@ void TaskTree::removeTask(Task * node)
 			node->setChild(nullptr);
 			node->setParent(nullptr);
 
-			_taskPool.releaseResource(node);
+			node->release();
 		}
 		//Root does not have child
 		else {
-			_taskPool.releaseResource(node);
+			node->release();
 
 			node->setChild(nullptr);
 			node->setParent(nullptr);
@@ -111,7 +112,7 @@ void TaskTree::removeTask(Task * node)
 			node->setChild(nullptr);
 			node->setParent(nullptr);
 
-			_taskPool.releaseResource(node);
+			node->release();
 		}
 	}
 }
@@ -134,7 +135,7 @@ std::shared_ptr<TaskHandle> TaskTree::createThreadedTask(
 		_threadIDByName.insert({threadName, getFreeTaskThread()});
 	}
 
-	Task* newTask = _taskPool.getResource(TASK_TYPE::NORMAL_TASK);
+	Task* newTask = (Task*)_resCreator.createResourceImmediate<Task>(&Task::InitData(), "task" + getRandomNumber(), [](IResource*) {});
 
 	TaskThread* taskThread = _liveThreads.at(_threadIDByName.at(threadName));
 
@@ -146,6 +147,8 @@ std::shared_ptr<TaskHandle> TaskTree::createThreadedTask(
 	newTask->setFreeOnComplete(freeOnComplete);
 
 	newTask->setCyclicState(isCyclic);
+
+	newTask->setEnQueueFunction(std::bind(&TaskThread::queueTask, taskThread, std::placeholders::_1));
 
 	newTask->start();
 

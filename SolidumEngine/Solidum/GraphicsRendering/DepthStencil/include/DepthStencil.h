@@ -1,18 +1,25 @@
 #pragma once
 #include "../../../sysInclude.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
-#include "../../../ResourceFramework/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/Resource.h"
+#include "../../../ResourceFramework/include/ResourceInitParams.h"
 
-class DepthStencil : public IResource
+#include "DepthStencilFactory.h"
+
+class ResourcePool;
+
+class DepthStencil : public Resource<DepthStencil, DepthStencilFactory, ResourcePool>
 {
-protected:
-	int _width, _height;
 public:
 	DepthStencil();
 	~DepthStencil();
 
-	struct InitData : public IResourceBuilder {
+	struct InitData : public ResourceInitParams {
+
+		InitData() {}
+
+		
+
 		int _width, _height;
 
 		InitData(int width, int height) {
@@ -23,10 +30,12 @@ public:
 
 	virtual void clear(float depth) = 0;
 
-	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
+	virtual void load() = 0;
 	virtual void unload() = 0;
 
 	virtual void updateParameter(std::string varName, void *data) {};
 	virtual void* getParameter(std::string varName) { return nullptr; };
+protected:
+	int _width, _height;
 };
 

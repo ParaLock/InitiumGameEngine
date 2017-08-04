@@ -1,9 +1,7 @@
 #pragma once
 #include "../../../sysInclude.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
-
-#include "../../../ResourceFramework/include/ResourceManagerPool.h"
+#include "../../../ResourceFramework/include/Resource.h"
 
 #include "../../GPUPipeline/include/GPUPipeline.h"
 #include "../../GraphicsCore/include/IGraphicsCore.h"
@@ -11,6 +9,8 @@
 #include "../../../EventFramework/include/EventFrameworkCore.h"
 #include "../../../EventFramework/include/IEventListener.h"
 #include "../../../EventFramework/include/EventHub.h"
+
+#include "../../../ResourceFramework/include/GenericFactory.h"
 
 #include "RenderFlowGraphIOInterface.h"
 
@@ -21,17 +21,19 @@ struct NodeExecuteData {
 	std::string _nodeCoreManagerName;
 };
 
-class RenderFlowGraph : public IEventListener, public IResource
+class ResourcePool;
+
+class RenderFlowGraph : public IEventListener, public Resource<RenderFlowGraph, GenericFactory, ResourcePool>
 {
 private:
 	std::string _name;
 
-	virtual void unload() { isLoaded = false; };
+	virtual void unload() {};
 
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 
-	std::map<std::string, std::string> _managerNameByResourceTypeName;
+	std::map<std::string, std::string> _resourceGroupByType;
 
 	std::map<std::string, RenderFlowGraphIOInterface*> _registeredIOInterfaces;
 
@@ -40,12 +42,21 @@ public:
 	RenderFlowGraph();
 	~RenderFlowGraph();
 
-	struct InitData : public IResourceBuilder {
+	static const unsigned int TYPE = 0;
+
+	struct InitData : public ResourceInitParams {
+
+		InitData() {}
+
+		
 
 		std::string _filename;
 
-		InitData(std::string descFilename) :
-			_filename(descFilename)
+		ResourceCreator* _resCreator;
+
+		InitData(std::string descFilename, ResourceCreator* resCreator) :
+			_filename(descFilename),
+			_resCreator(resCreator)
 		{
 
 		}
@@ -53,10 +64,12 @@ public:
 
 	void registerIOInterface(RenderFlowGraphIOInterface* ioInterface);
 
-	void load(std::shared_ptr<IResourceBuilder> builder);
+	void load();
 
 	std::list<std::string> getNodeExecutionOrder();
 
 	void onEvent(EVENT_PTR evt);
+
+protected:
 };
 

@@ -11,8 +11,6 @@ CameraComponent::CameraComponent(float near_value, float far_value, IEntity* ent
 	_yaw(0),
 	_pitch(0)
 {
-	setType(COMPONENT_TYPE::CAMERA_COMPONENT);
-
 	_parent = entity;
 
 	EventFrameworkCore::getInstance()->getGlobalEventHub("InputEventHub")->subscribeListener(this);
@@ -58,13 +56,10 @@ CameraComponent::CameraComponent(float near_value, float far_value, IEntity* ent
 	_mouseLocked = false;
 
 	ShowCursor(false);
-
-	isLoaded = true;
 }
 
 CameraComponent::~CameraComponent()
 {
-	isLoaded = false;
 }
 
 float toRadians(float input) {

@@ -2,11 +2,13 @@
 #include "../../sysInclude.h"
 #include "../../GraphicsRendering/GraphicsBuffers/include/GPUBuffer.h"
 
-#include "../../ResourceFramework/include/IResource.h"
+#include "../../ResourceFramework/include/Resource.h"
 
-#include "../../ResourceFramework/include/IResourceBuilder.h"
+#include "../../ResourceFramework/include/ResourceInitParams.h"
 
-#include "../../ResourceFramework/include/ResourceManagerPool.h"
+#include "../../ResourceFramework/include/ResourceCreator.h"
+
+#include "../../ResourceFramework/include/GenericFactory.h"
 
 class DynamicStructMember {
 private:
@@ -26,7 +28,9 @@ public:
 	size_t getEndAddr() { return _endAddr; };
 };
 
-class DynamicStruct : public IResource
+class ResourcePool;
+
+class DynamicStruct : public Resource<DynamicStruct, GenericFactory, ResourcePool>
 {
 private:
 	std::string _name;
@@ -50,7 +54,14 @@ public:
 	DynamicStruct();
 	~DynamicStruct();
 
-	struct InitData : public IResourceBuilder {
+	static const unsigned int TYPE = 0;
+
+	struct InitData : public ResourceInitParams {
+
+		InitData() {}
+
+		
+
 		std::string _name;
 		bool _hasGPUBuff;
 
@@ -60,7 +71,7 @@ public:
 		}
 	};
 
-	void load(std::shared_ptr<IResourceBuilder> builder);
+	void load();
 	void unload();
 
 	void addVariable(std::string varName, size_t varSize);
@@ -69,11 +80,13 @@ public:
 
 	void updateGPU();
 
-	void initMemory();
+	void initMemory(ResourceCreator* resCreator);
 
 	std::string getName() { return _name; };
 	std::vector<std::string> getVarNameList();
 
 	GPUBuffer* getGPUBuffer() { return _GPUBuff; };
+
+protected:
 };
 

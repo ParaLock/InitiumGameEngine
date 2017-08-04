@@ -9,12 +9,12 @@ Renderer::~Renderer()
 {
 }
 
-void Renderer::load(std::shared_ptr<IResourceBuilder> builder)
+void Renderer::load()
 {
-	InitData *realBuilder = static_cast<InitData*>(builder.get());
-	
-	_renderGraph = new RenderFlowGraph();
-	_renderGraph->load(std::make_shared<RenderFlowGraph::InitData>(realBuilder->_renderGraphFilename));
+	InitData *realBuilder = static_cast<InitData*>(getContext()->getResourceInitParams());
+
+	_renderGraph = (RenderFlowGraph*)realBuilder->_resCreator->createResourceImmediate<RenderFlowGraph>(&RenderFlowGraph::InitData(realBuilder->_renderGraphFilename, realBuilder->_resCreator), "",
+		[](IResource*) {});
 
 	syncWithGraph();
 
@@ -41,6 +41,7 @@ void Renderer::pushGeneralProcessingLayer(std::shared_ptr<RenderDataProcessingLa
 RenderDataGroup& Renderer::performGeneralRenderDataProcessing(RenderDataGroup& data)
 {
 	for each(std::shared_ptr<RenderDataProcessingLayer> layer in _generalProcessingLayerStack) {
+
 		layer->execute(data);
 	}
 

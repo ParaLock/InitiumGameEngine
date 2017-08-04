@@ -2,34 +2,6 @@
 
 dxRenderTarget::dxRenderTarget()
 {
-	_aaSamples = 1;
-	_mipLevel = 1;
-}
-
-dxRenderTarget::dxRenderTarget(ID3D11RenderTargetView * rt, ID3D11Texture2D * rtTex, Viewport& view)
-{
-	//Yup.... This constructer is a hack xD
-	_texture = rtTex;
-	_renderTarget = rt;
-
-	_aaSamples = -1;
-	_mipLevel = -1;
-	_texFormat = TEX_FORMAT::UNKNOWN;
-
-	_viewPort = view;
-}
-
-dxRenderTarget::dxRenderTarget(ID3D11ShaderResourceView * sv, ID3D11Texture2D * svTex, Viewport& view)
-{
-	//And again.... I promise to fix this in the future... ;)
-	_texture = svTex;
-	_shaderView = sv;
-
-	_aaSamples = -1;
-	_mipLevel = -1;
-	_texFormat = TEX_FORMAT::UNKNOWN;
-
-	_viewPort = view;
 }
 
 dxRenderTarget::~dxRenderTarget()
@@ -42,11 +14,13 @@ dxRenderTarget::~dxRenderTarget()
 	_texture->Release();
 }
 
-void dxRenderTarget::load(std::shared_ptr<IResourceBuilder> builder)
+void dxRenderTarget::load()
 {
-	InitData* realBuilder = static_cast<InitData*>(builder.get());
+	InitData* realBuilder = static_cast<InitData*>(getContext()->getResourceInitParams());
 
 	_texFormat = realBuilder->_texFormat;
+
+	if (_texFormat == TEX_FORMAT::INVALID) { return; }
 
 	ID3D11Device *dxDev = dxDeviceAccessor::dxEncapsulator->dxDev;
 
@@ -116,25 +90,24 @@ void dxRenderTarget::load(std::shared_ptr<IResourceBuilder> builder)
 	result = dxDev->CreateTexture2D(&textureDesc, NULL, &_texture);
 	result = dxDev->CreateRenderTargetView(_texture, &renderTargetViewDesc, &_renderTarget);
 	dxDev->CreateShaderResourceView(_texture, &shaderResourceViewDesc, &_shaderView);
-
-
-	isLoaded = true;
 }
 
 void dxRenderTarget::unload()
 {
-	isLoaded = false;
 }
 
 void dxRenderTarget::updateParameter(std::string varName, void * data)
 {
 	if (varName == "TEXTURE") {
+
 		_texture = (ID3D11Texture2D*)data;
 	}
 	if (varName == "RENDERTARGET") {
+
 		_renderTarget = (ID3D11RenderTargetView*)data;
 	}
 	if (varName == "SHADERVIEW") {
+
 		_shaderView = (ID3D11ShaderResourceView*)data;
 	}
 }

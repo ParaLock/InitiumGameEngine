@@ -11,7 +11,7 @@ public:
 	dxGPUBuffer();
 	~dxGPUBuffer();
 
-	void load(std::shared_ptr<IResourceBuilder> builder);
+	void load();
 	void unload();
 
 	void Write(void *pSrc, size_t byteToWrite, size_t offset);

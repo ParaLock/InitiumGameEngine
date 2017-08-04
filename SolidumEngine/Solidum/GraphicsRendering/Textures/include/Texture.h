@@ -2,33 +2,47 @@
 #include "../../../sysInclude.h"
 #include "../../../GraphicsRendering/ActiveGraphicsAPI.h"
 
-#include "../../../ResourceFramework/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/ResourceInitParams.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
 
-class Texture : public IResource
+#include "../include/TextureFactory.h"
+
+class ResourcePool;
+
+class Texture : public Resource<Texture, TextureFactory, ResourcePool>
 {
-protected:
-	int _width = 0;
-	int _height = 0;
 public:
 	Texture();
 	~Texture();
 
-	struct InitData : public IResourceBuilder {
+	struct InitData : public ResourceInitParams {
 		LPCWSTR _filename;
+
+		
+
+		InitData() {
+		
+
+		}
+
 
 		InitData(LPCWSTR filename) {
 			_filename = filename;
 		}
+
 	};
 
-	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
+	virtual void load() = 0;
 	virtual void unload() = 0;
 
 	int getHeight() { return _height; }
 	int getWidth() { return _width; }
 
 	virtual void loadImage(LPCWSTR filename);
+
+protected:
+	int _width = 0;
+	int _height = 0;
 };
 

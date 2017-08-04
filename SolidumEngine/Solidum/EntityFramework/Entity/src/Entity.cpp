@@ -7,7 +7,6 @@ Entity::Entity()
 	_renderObject = new EntityRenderObject();
 
 	_transform = new Transform;
-	_components = new std::map<COMPONENT_TYPE, std::list<IComponent*>*>;
 	_children = new std::list<IEntity*>;
 }
 
@@ -15,16 +14,7 @@ Entity::Entity()
 Entity::~Entity()
 {
 	delete _transform;
-	delete _components;
 	delete _children;
-}
-
-void Entity::addComponent(IComponent * comp)
-{
-	if (_components->operator[](comp->getType()) == nullptr) 
-		_components->operator[](comp->getType()) = new std::list<IComponent*>;
-
-	_components->operator[](comp->getType())->push_back(comp);
 }
 
 void Entity::addChild(IEntity * entity)
@@ -33,12 +23,6 @@ void Entity::addChild(IEntity * entity)
 
 	_children->push_back(entity);
 }
-
-std::list<IComponent*> * Entity::getComponentsByTypeAndIndex(COMPONENT_TYPE type, int index)
-{
-	return _components->at(type);
-}
-
 void Entity::setParent(IEntity * parent)
 {
 	_parent = parent; 
@@ -50,10 +34,10 @@ void Entity::update(float delta, RenderDataGroup* collection)
 {
 	_renderObject->attachRenderDataToGroup(collection);
 
-	for (auto itr = _components->begin(); itr != _components->end(); itr++) {
+	for (auto itr = _components.begin(); itr != _components.end(); itr++) {
 		
-		for (auto compItr = _components->at(itr->first)->begin();
-			 compItr != _components->at(itr->first)->end(); compItr++) {
+		for (auto compItr = _components.at(itr->first).begin();
+			 compItr != _components.at(itr->first).end(); compItr++) {
 
 			IComponent* comp = *compItr;
 

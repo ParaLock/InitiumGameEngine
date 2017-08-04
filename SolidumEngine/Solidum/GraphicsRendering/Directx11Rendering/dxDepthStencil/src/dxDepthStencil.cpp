@@ -18,11 +18,11 @@ void dxDepthStencil::clear(float depth)
 	dxDevice->dxDevContext->ClearDepthStencilView(_depthStencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, 0);
 }
 
-void dxDepthStencil::load(std::shared_ptr<IResourceBuilder> builder)
+void dxDepthStencil::load()
 {
 	dxDevice* dxManager = dxDeviceAccessor::dxEncapsulator;
 
-	InitData* realBuilder = static_cast<InitData*>(builder.get());
+	InitData* realBuilder = static_cast<InitData*>(getContext()->getResourceInitParams());
 
 	HRESULT result;
 	D3D11_TEXTURE2D_DESC descDepth;
@@ -57,13 +57,10 @@ void dxDepthStencil::load(std::shared_ptr<IResourceBuilder> builder)
 	result = dxManager->dxDev->CreateTexture2D(&descDepth, NULL, &_depthTexture);
 	result = dxManager->dxDev->CreateDepthStencilView(_depthTexture, &descDSV, &_depthStencil);
 	result = dxManager->dxDev->CreateShaderResourceView(_depthTexture, &sr_desc, &_depthShaderView);
-
-	isLoaded = true;
 }
 
 void dxDepthStencil::unload()
 {
-	isLoaded = false;
 }
 
 void * dxDepthStencil::getParameter(std::string varName)

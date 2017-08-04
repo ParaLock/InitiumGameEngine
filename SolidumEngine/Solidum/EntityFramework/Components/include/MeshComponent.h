@@ -44,8 +44,8 @@ private:
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 
-	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
-	void unload() { isLoaded = false; };
+	void load() {};
+	void unload() {};
 
 	mesh* _mesh;
 	Texture* _tex;
@@ -54,6 +54,12 @@ public:
 	MeshComponent(mesh* mesh, Texture* tex, Material* mat, int index, IEntity* entity);
 	~MeshComponent();
 
+	struct InitData : public ResourceInitParams {
+		InitData() {}
+
+		
+	};
+
 	void setTexture(Texture* tex) { _tex = tex; }
 	void setMaterial(Material* mat) { _mat = mat; }
 
@@ -61,5 +67,6 @@ public:
 	void onEvent(EVENT_PTR evt);
 
 	void AddRenderData(RenderDataGroup* collection);
+protected:
 };
 

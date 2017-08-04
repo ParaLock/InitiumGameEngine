@@ -14,8 +14,6 @@ SkydomeWeatherComponent::SkydomeWeatherComponent(Texture* tex, mesh* skydome, Ca
 	_index = index;
 	_skydome = skydome;
 
-	setType(COMPONENT_TYPE::SKYBOX_WEATHER_COMPONENT);
-
 	_parent = entity;
 
 	_parent->getRenderObject()->addUniqueComponent(this);
@@ -189,6 +187,14 @@ void SkydomeWeatherComponent::AddRenderData(RenderDataGroup * collection)
 	data._weatherCenterColor = _weatherCenterColor;
 
 	collection->addRenderData<RenderPassPacket_SkyData>(&data, RENDER_DATA_TYPE::SKY_RENDER_DATA, &attributes);
+
+	std::list<RenderDataPacket*> testList;
+	collection->getAllRenderData(testList);
+
+	RenderDataPacket* renderData = testList.back();
+
+	RenderPassPacket_SkyData* realData = (RenderPassPacket_SkyData*)renderData->getData();
+
 }
 
 void SkydomeWeatherComponent::onEvent(EVENT_PTR evt)

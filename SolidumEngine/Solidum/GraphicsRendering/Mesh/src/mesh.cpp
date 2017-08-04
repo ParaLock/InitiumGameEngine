@@ -10,9 +10,9 @@ mesh::~mesh()
 {
 }
 
-void mesh::load(std::shared_ptr<IResourceBuilder> builder)
+void mesh::load()
 {
-	InitData *realBuilder = static_cast<InitData*>(builder.get());
+	InitData *realBuilder = static_cast<InitData*>(getContext()->getResourceInitParams());
 
 	LPCWSTR fileName = realBuilder->_filename;
 
@@ -27,7 +27,7 @@ void mesh::load(std::shared_ptr<IResourceBuilder> builder)
 	bottom = top - (float)screen_height;
 
 	if (fileName == L"gen_ortho_window_mesh") {
-		generatePlaneMesh(top, bottom, left, right);
+		generatePlaneMesh(top, bottom, left, right, realBuilder->_resourceCreator);
 	}
 	else if(fileName != L"null") {
 		std::shared_ptr<meshLoader> pMeshLoader;
@@ -40,19 +40,32 @@ void mesh::load(std::shared_ptr<IResourceBuilder> builder)
 
 		pMeshLoader->loadMesh(fileName, this);
 
-		_indexBuff = realBuilder->_managerPool->getResourceManager("GPUBufferManager")
-			->createResource(std::make_shared<GPUBuffer::InitData>(GPUBuffer::
-				InitData(indicesSize, BUFFER_TYPE::INDEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE)), stlStr + "index_buffer", false)->getCore<GPUBuffer>();
+		_indexBuff = realBuilder->_resourceCreator->createResourceImmediate<GPUBuffer>
 
-		_vertexBuff = realBuilder->_managerPool->getResourceManager("GPUBufferManager")
-			->createResource(std::make_shared<GPUBuffer::InitData>(GPUBuffer::
-				InitData(meshSize, BUFFER_TYPE::VERTEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE)), stlStr + "vertex_buffer", false)->getCore<GPUBuffer>();
+			(&GPUBuffer::InitData(
+				indicesSize, 
+				BUFFER_TYPE::INDEX_BUFF, 
+				BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE), 
+				stlStr + "index_buffer",
 
-		_indexBuff->getCore<GPUBuffer>()->Write(meshIndices, indicesSize, 0);
-		_vertexBuff->getCore<GPUBuffer>()->Write(meshVertices, meshSize, 0);
+			[](IResource*) {});
+
+		_vertexBuff = realBuilder->_resourceCreator->createResourceImmediate<GPUBuffer>
+
+			(&GPUBuffer::InitData(
+				meshSize, 
+				BUFFER_TYPE::VERTEX_BUFF, 
+				BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE), 
+				stlStr + "vertex_buffer",
+
+			[](IResource*) {});
+
+		auto* iBuff = (GPUBuffer*)_indexBuff;
+		iBuff->Write(meshIndices, indicesSize, 0);
+
+		auto* vBuff = (GPUBuffer*)_vertexBuff;
+		vBuff->Write(meshVertices, meshSize, 0);
 	}
-
-	isLoaded = true;
 }
 
 void mesh::unload()
@@ -175,7 +188,7 @@ void mesh::calcTangentsAndBiNormals(
 }
 
 
-void mesh::generatePlaneMesh(float top, float bottom, float left, float right)
+void mesh::generatePlaneMesh(float top, float bottom, float left, float right, ResourceCreator* resCreator)
 {
 	int m_vertexCount, m_indexCount;
 
@@ -217,15 +230,32 @@ void mesh::generatePlaneMesh(float top, float bottom, float left, float right)
 
 	std::string stlStr = std::to_string(getRandomNumber());
 
-	_indexBuff = ResourceManagerPool::getInstance()->getResourceManager("GPUBufferManager")->createResource(std::make_shared<GPUBuffer::InitData>
-		(m_indexCount * sizeof(unsigned long), BUFFER_TYPE::INDEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE), stlStr + "index_buffer", false)->getCore<GPUBuffer>();
+	_indexBuff = resCreator->createResourceImmediate<GPUBuffer>
+		(&GPUBuffer::InitData(
 
-	_vertexBuff = ResourceManagerPool::getInstance()->getResourceManager("GPUBufferManager")->createResource(std::make_shared<GPUBuffer::InitData>
-		(m_vertexCount * sizeof(LIGHT_VERTEX), BUFFER_TYPE::VERTEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE), stlStr + "vertex_buffer", false)->getCore<GPUBuffer>();
+			m_indexCount * sizeof(unsigned long), 
+			BUFFER_TYPE::INDEX_BUFF, 
+			BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE),
+			stlStr + "index_buffer",
+
+			[](IResource*) {});
+
+	_vertexBuff = resCreator->createResourceImmediate<GPUBuffer>
+		(&GPUBuffer::InitData(
+			
+			m_vertexCount * sizeof(LIGHT_VERTEX), 
+			BUFFER_TYPE::VERTEX_BUFF, 
+			BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE), 
+			stlStr + "vertex_buffer",
+
+		[](IResource*) {});
 
 
-	_indexBuff->getCore<GPUBuffer>()->Write(indices, m_indexCount * sizeof(unsigned long), 0);
-	_vertexBuff->getCore<GPUBuffer>()->Write(vertices, m_vertexCount * sizeof(LIGHT_VERTEX), 0);
+	auto* iBuff = (GPUBuffer*)_indexBuff;
+	iBuff->Write(indices, m_indexCount * sizeof(unsigned long), 0);
+
+	auto* vBuff = (GPUBuffer*)_vertexBuff;
+	vBuff->Write(vertices, m_vertexCount * sizeof(LIGHT_VERTEX), 0);
 
 	delete[] vertices;
 	vertices = 0;

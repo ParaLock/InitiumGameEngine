@@ -5,51 +5,47 @@
 
 #include "RenderDataAttribs.h"
 
-struct RenderData {
-
-	RenderDataAttributes attribs;
-
-	SlabCache::Slab* _slab;
-};
-
-class RenderDataPacket
+class RenderDataPacket 
 {
 private:
+	SlabCache* _cache;
+
 	RENDER_DATA_TYPE _type;
 
-	RenderData _data;
+	RenderDataAttributes _attribs;
 
-	SlabCache* _cache;
+	Slab* _data;
 public:
-	RenderDataPacket(SlabCache* cache);
-	~RenderDataPacket();
 
-	template<typename T>
-	void addData(T* data) { 
-		
-		RenderData packetCore;
+	RenderDataPacket(SlabCache* cache) { _cache = cache; };
+	~RenderDataPacket() {};
 
-		SlabCache::Slab* dataSlab = _cache->getSlab(sizeof(T));
+	RenderDataPacket(const RenderDataPacket& other) {
+		_data = other._data;
+		_attribs = other._attribs;
+		_type = other._type;
 
-		T* buffPtr = (T*)dataSlab->_mem;
+		_cache = other._cache;
+	}
 
-		*buffPtr = *data;
+	template<typename T_DATA>
+	void addData(T_DATA* data) { 
+	
+		_data = _cache->getSlab(sizeof(T_DATA));
 
-		packetCore._slab = dataSlab;
+		T_DATA* slabData = static_cast<T_DATA*>(_data->_mem);
 
-		_data = packetCore;
+		*slabData = *data;
 	};
+	
+	void* getData() { return _data->_mem; }
 
-	template<typename T>
-	T* getData() {
-
-		return (T*)_data._slab->_mem;
-	};
-
-	RenderDataAttributes& getAttributes() { return _data.attribs; }
+	RenderDataAttributes& getAttributes() { return _attribs; }
+	void setAttributes(RenderDataAttributes& attribs) { _attribs = attribs; }
 
 	void setType(RENDER_DATA_TYPE type) { _type = type; };
-
 	RENDER_DATA_TYPE getType() { return _type; };
+
+	void free();
 };
 

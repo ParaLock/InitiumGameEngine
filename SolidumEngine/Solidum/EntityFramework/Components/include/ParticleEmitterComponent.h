@@ -8,8 +8,6 @@
 #include "../../../GraphicsRendering/Particles/include/Particle.h"
 #include "../../../GraphicsRendering/Particles/include/ParticleStream.h"
 
-#include "../../../GraphicsRendering/Particles/include/ParticlePool.h"
-
 #include "../../../TaskFramework/include/TaskTree.h"
 
 #include "../../../GraphicsRendering/RenderDataProtocal/include/RenderDataGroup.h"
@@ -59,6 +57,8 @@ private:
 
 	BLEND_STATE _blendState;
 
+	ResourceCreator& _resourceCreator;
+
 	float _particleLifeTime;
 	float _gravityComplient;
 	float _pps;
@@ -67,8 +67,8 @@ private:
 	int _maxParticles;
 	int _texNumRows;
 
-	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
-	void unload() { isLoaded = false; };
+	void load() { };
+	void unload() { };
 
 	HRTimer _time;
 
@@ -84,7 +84,7 @@ private:
 
 	Vector2f calcTextureOffset(int index, int rows);
 
-	Particle* getDeadParticle();
+	Particle* getDeadParticle(ResourceCreator& resCreator);
 
 	void processParticles();
 
@@ -93,12 +93,21 @@ public:
 		float pps, float speed, float gravityComplient, 
 		float particleLifeLength, int maxParticles, int texNumRows,
 		Texture* tex, BLEND_STATE state, CameraComponent* cam,
-		IEntity* entity);
+		IEntity* entity,
+		ResourceCreator& resCreator);
 
 	~ParticleEmitterComponent();
+
+	struct InitData : public ResourceInitParams {
+		InitData() {}
+
+		
+	};
 
 	void update(float delta);
 
 	void AddRenderData(RenderDataGroup* collection);
+
+protected:
 };
 

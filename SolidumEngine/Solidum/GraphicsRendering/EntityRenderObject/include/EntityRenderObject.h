@@ -15,7 +15,7 @@ class EntityRenderObject : public IEntityRenderObject
 {
 private:
 	std::list<Component*> _uniqueRenderResources;
-	std::map<COMPONENT_TYPE, std::map<int, Component*>> _renderResources;
+	std::map<std::type_index, std::map<int, Component*>> _renderResources;
 public:
 	EntityRenderObject();
 	~EntityRenderObject();

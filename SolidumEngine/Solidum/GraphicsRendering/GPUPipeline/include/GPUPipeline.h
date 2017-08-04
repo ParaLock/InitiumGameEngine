@@ -7,9 +7,8 @@
 #include "../../Shaders/include/ShaderInputLayout.h"
 #include "../../../EngineUtils/include/DynamicStruct.h"
 
-#include "../../../ResourceFramework/include/IResourceManager.h"
-#include "../../../ResourceFramework/include/ResourceManagerPool.h"
 #include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
 
 #include "../../PipelineCommands/include/PipelineCommand.h"
 
@@ -20,6 +19,8 @@
 #include "../../GraphicsCommandList/include/GraphicsCommandList.h"
 
 #include "../../GraphicsCore/include/IGraphicsCore.h"
+
+#include "../../../ResourceFramework/include/GenericFactory.h"
 
 class GPUPipelineElement {
 public:
@@ -40,7 +41,9 @@ public:
 	IResource* opTarget;
 };
 
-class GPUPipeline : public IResource
+class ResourcePool;
+
+class GPUPipeline : public Resource<GPUPipeline, GenericFactory, ResourcePool>
 {
 private:
 	std::map<std::string, GPUPipelineElement> *_elementList;
@@ -61,15 +64,19 @@ public:
 	GPUPipeline();
 	~GPUPipeline();
 
-	struct InitData : public IResourceBuilder {
+	struct InitData : public ResourceInitParams {
 		LPCWSTR _filename;
+
+		InitData() {}
+
+		
 
 		InitData(LPCWSTR filename) {
 			_filename = filename;
 		}
 	};
 
-	virtual void load(std::shared_ptr<IResourceBuilder> builder);
+	virtual void load();
 	virtual void unload();
 
 	void reset();
@@ -88,5 +95,7 @@ public:
 	void applyState(GraphicsCommandList* commandList);
 
 	ShaderInputLayout* getInputLayout() { return _currentInputLayout; }
+
+protected:
 };
 

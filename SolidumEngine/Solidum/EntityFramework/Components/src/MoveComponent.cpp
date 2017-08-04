@@ -3,8 +3,6 @@
 
 MoveComponent::MoveComponent(Vector3f startPos, float movementSpeed, bool keyboardControl, KEY_FUNCTION_MAP* keyMap, IEntity* entity)
 {
-	setType(COMPONENT_TYPE::MOVE_COMPONENT);
-
 	if (keyboardControl) {
 		EventFrameworkCore::getInstance()->
 			getGlobalEventHub("InputEventHub")->subscribeListener(this);

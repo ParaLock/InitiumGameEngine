@@ -1,31 +1,36 @@
 #pragma once
 #include "../../../sysInclude.h"
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
 
 #include "ParticleStream.h"
 
-class Particle : public IResource
+class GenericFactory;
+
+class ResourcePool;
+
+class Particle : public Resource<Particle, GenericFactory, ResourcePool>
 {
 private:
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 
-	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
-	void unload() { 
+	void load() {};
+	void unload() { _elapsedTime = 0;};
 
-		isLoaded = false; 
-
-		_elapsedTime = 0;
-	};
-
-	PARTICLE_TYPE _type;
 public:
 	Particle();
 	~Particle();
 
-	int _batchIndex = 0;
+	struct InitData : public ResourceInitParams {
+		InitData() {}
 
-	PARTICLE_TYPE getType() { return _type; }
+		
+	};
+
+
+	static const unsigned int TYPE = 0;
+
+	int _batchIndex = 0;
 
 	Vector2f _texOffset1;
 	Vector2f _texOffset2;
@@ -47,6 +52,8 @@ public:
 
 	Vector3f _velocity;
 	Vector3f _position;
+
+protected:
 };
 
 

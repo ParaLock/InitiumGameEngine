@@ -1,19 +1,8 @@
 #include "../include/PipelineCommand.h"
 
 
-PipelineCommand::PipelineCommand()
-{
-}
-
-
-PipelineCommand::~PipelineCommand()
-{
-}
-
 void PipelineSRBindCommand::execute()
 {
-	ResourceManagerPool* managerPool = ResourceManagerPool::getInstance();
-
 	switch (_resourceType)
 	{
 	case SHADER_RESOURCE_TYPE::CONSTANT_BUFFER:
@@ -39,17 +28,27 @@ void PipelineSRBindCommand::execute()
 void PipelineBufferBindCommand::execute()
 {
 	std::vector<void*> _rawBuffers;
+	
+	std::vector<GPUBuffer*> _buffersList;
+	std::vector<UINT> _strides;
 
-	for each(GPUBuffer* buff in _buffers) {
+	for each(InitData::BufferBindInfo buffInfo in _bufferList) {
+		
+		_buffersList.push_back(buffInfo._buff);
+		_strides.push_back(buffInfo._stride);
+		
+	}
+
+	for each(GPUBuffer* buff in _buffersList) {
 		_rawBuffers.push_back(buff->getParameter("BUFFER"));
 	}
 
-	PipelineFunctions::pipeline_bindBuffer(_rawBuffers, _strides, _buffType);
+	PipelineFunctions::pipeline_bindBuffer(_rawBuffers, _strides, _type);
 }
 
 void PipelineILBindCommand::execute()
 {
-	ShaderInputLayout* inputLayout = _inputLayout->getCore<ShaderInputLayout>();
+	ShaderInputLayout* inputLayout = (ShaderInputLayout*)_inputLayout;
 
 	PipelineFunctions::pipeline_bindInputLayout(_inputLayout->getParameter("INPUT_LAYOUT"));
 }
@@ -66,38 +65,41 @@ void PipelineSetDepthTestStateCommand::execute()
 
 void PipelineRenderTargetCommand::execute()
 {
+	for each(InitData::RendertargetOP op in _bindInfo.rtOPList) {
 
-	if (_op == RENDER_TARGET_OP_TYPE::BIND_AS_INPUT) {
-		for each(IResource* rt in _involvedRTList) {
-
-			RenderTarget* renderTarget = rt->getCore<RenderTarget>();
-
-			void* tmpRT = renderTarget->getParameter("SHADERVIEW");
-
-			PipelineFunctions::pipeline_bindRenderTargetAsSR(tmpRT, _parentShader, _bindSlot);
+		if (op._opType == RENDER_TARGET_OP_TYPE::CLEAR) {
+			op._rt->Clear(0.0f, 0.0f, 0.0f, 0.0f);
 		}
+
 	}
 
-	if (_op == RENDER_TARGET_OP_TYPE::BIND_AS_OUTPUT) {
+	for each(InitData::InputRenderTargetBindInfo inputRT in _bindInfo.inputRTList) {
 
-		std::vector<void*> pRts;
+		void* tmpRT = inputRT._rt->getParameter("SHADERVIEW");
 
-		for each(IResource* res in _involvedRTList) {
-			pRts.push_back(res->getParameter("RENDERTARGET"));
+		PipelineFunctions::pipeline_bindRenderTargetAsSR(tmpRT, inputRT._targetShader, inputRT._bindSlot);
+	}
+
+	std::vector<void*> outputRTs;
+	DepthStencil* outputRTDepthStencil = nullptr;
+
+	for each(InitData::OutputRenderTargetBindInfo outputRT in _bindInfo.outputRTList) {
+
+		outputRTs.push_back(outputRT._rt->getParameter("RENDERTARGET"));
+
+		if (outputRT._depthStencil != nullptr) {
+			outputRTDepthStencil = outputRT._depthStencil;
 		}
 
-		if(_depthStencil != nullptr)
-			PipelineFunctions::pipeline_bindRenderTargetAsRT(pRts, _depthStencil->getParameter("STENCILVIEW"));
+	}
+
+	for each(void* rt in outputRTs) {
+
+		if (outputRTDepthStencil != nullptr)
+			PipelineFunctions::pipeline_bindRenderTargetAsRT(outputRTs, outputRTDepthStencil->getParameter("STENCILVIEW"));
 		else
-			PipelineFunctions::pipeline_bindRenderTargetAsRT(pRts, nullptr);
-		
-	}
+			PipelineFunctions::pipeline_bindRenderTargetAsRT(outputRTs, nullptr);
 
-	if (_op == RENDER_TARGET_OP_TYPE::CLEAR) {
-		for each(IResource* rt in _involvedRTList) {
-
-			rt->getCore<RenderTarget>()->Clear(0.0f, 0.0f, 0.0f, 0.0f);
-		}
 	}
 }
 
@@ -118,7 +120,7 @@ void PipelineDrawIndexedCommand::execute()
 
 void PipelineBindShaderCommand::execute()
 {
-	__bindFunc();
+	__shaderToBind->bind();
 }
 
 void PipelineSetRasterStateCommand::execute()

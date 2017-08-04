@@ -13,40 +13,40 @@ EntityRenderObject::~EntityRenderObject()
 
 void EntityRenderObject::addLightComponent(LightComponent * lightComponent, int index)
 {
-	if (_renderResources.find(COMPONENT_TYPE::LIGHT_COMPONENT) == _renderResources.end()) {
-		_renderResources.insert({ COMPONENT_TYPE::LIGHT_COMPONENT, std::map<int, Component*>() });
+	if (_renderResources.find( std::type_index(typeid(LightComponent))) == _renderResources.end()) {
+		_renderResources.insert({ std::type_index(typeid(LightComponent)), std::map<int, Component*>() });
 	}
 
-	_renderResources.at(COMPONENT_TYPE::LIGHT_COMPONENT).insert({index, lightComponent});
+	_renderResources.at(typeid(LightComponent)).insert({index, lightComponent});
 }
 
 void EntityRenderObject::addMeshComponent(MeshComponent * meshComponent, int index)
 {
-	if (_renderResources.find(COMPONENT_TYPE::MESH_COMPONENT) == _renderResources.end()) {
-		_renderResources.insert({ COMPONENT_TYPE::MESH_COMPONENT, std::map<int, Component*>() });
+	if (_renderResources.find(std::type_index(typeid(MeshComponent))) == _renderResources.end()) {
+		_renderResources.insert({ std::type_index(typeid(MeshComponent)), std::map<int, Component*>() });
 	}
 
-	_renderResources.at(COMPONENT_TYPE::MESH_COMPONENT).insert({ index, meshComponent });
+	_renderResources.at(std::type_index(typeid(MeshComponent))).insert({ index, meshComponent });
 }
 
 void EntityRenderObject::setMeshTexture(Texture * tex, int index)
 {
-	if (_renderResources.find(COMPONENT_TYPE::MESH_COMPONENT) == _renderResources.end()) {
+	if (_renderResources.find(std::type_index(typeid(MeshComponent))) == _renderResources.end()) {
 		return;
 	}
 
-	MeshComponent* comp = (MeshComponent*)_renderResources.at(COMPONENT_TYPE::MESH_COMPONENT).at(index);
+	MeshComponent* comp = (MeshComponent*)_renderResources.at(std::type_index(typeid(MeshComponent))).at(index);
 
 	comp->setTexture(tex);
 }
 
 void EntityRenderObject::setMeshMaterial(Material * mat, int index)
 {
-	if (_renderResources.find(COMPONENT_TYPE::MESH_COMPONENT) == _renderResources.end()) {
+	if (_renderResources.find(std::type_index(typeid(MeshComponent))) == _renderResources.end()) {
 		return;
 	}
 
-	MeshComponent* comp = (MeshComponent*)_renderResources.at(COMPONENT_TYPE::MESH_COMPONENT).at(index);
+	MeshComponent* comp = (MeshComponent*)_renderResources.at(std::type_index(typeid(MeshComponent))).at(index);
 
 	comp->setMaterial(mat);
 }

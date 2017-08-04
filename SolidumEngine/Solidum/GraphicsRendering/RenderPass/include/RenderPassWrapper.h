@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
 #include "../../RenderFlowGraph/include/RenderFlowGraphIOInterface.h"
 #include "../../GraphicsCommandList/include/GraphicsCommandList.h"
 #include "../../RenderDataProtocal/include/RenderDataGroup.h"
@@ -13,14 +13,20 @@
 
 #include "RenderPassDescriptorParser.h"
 
-class RenderPassWrapper : public IResource
+class GenericFactory;
+class ResourcePool;
+
+class RenderPassWrapper : public Resource<RenderPassWrapper, GenericFactory, ResourcePool>
 {
 private:
+
+	SlabCache _generalPurposeSlabcache;
+
 	std::string _name;
 
 	std::map<std::string, IShader*> _shaders;
 
-	virtual void unload() { isLoaded = false; };
+	virtual void unload() { };
 
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
@@ -32,18 +38,27 @@ public:
 	RenderPassWrapper();
 	~RenderPassWrapper();
 
-	struct InitData : public IResourceBuilder {
+	static const unsigned int TYPE = 0;
+
+	struct InitData : public ResourceInitParams {
+
+		InitData() {}
+
+		
+
+		ResourceCreator* _resourceCreator;
 
 		std::string _filename;
 
-		InitData(std::string descFilename) :
-			_filename(descFilename)
+		InitData(std::string descFilename, ResourceCreator* resourceCreator) :
+			_filename(descFilename),
+			_resourceCreator(resourceCreator)
 		{
 
 		}
 	};
 
-	void load(std::shared_ptr<IResourceBuilder> builder);
+	void load();
 
 	void setRenderPass(
 		std::function<void(GraphicsCommandList*, RenderDataGroup&, RenderPassWrapper*)> func)
@@ -59,6 +74,10 @@ public:
 
 	GPUPipeline* rebuildPSO(GPUPipeline* pipeline);
 
+	SlabCache& getSlabCache() { return _generalPurposeSlabcache;};
+
 	std::string getName() { return _name; }
+
+protected:
 };
 

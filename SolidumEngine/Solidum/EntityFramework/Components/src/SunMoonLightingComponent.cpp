@@ -7,8 +7,6 @@ SunMoonLightingComponent::SunMoonLightingComponent(Light* sun, Light* moon, floa
 	_sun = sun;
 	_moon = moon;
 
-	setType(COMPONENT_TYPE::SUN_COMPONENT);
-
 	_speed = speed;
 
 	_parent = entity;

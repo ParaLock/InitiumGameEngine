@@ -9,7 +9,7 @@
 
 #include "Component.h"
 
-class RenderDataPacket;
+class IRenderDataPacket;
 
 class SunMoonLightingComponent : public Component
 {
@@ -28,11 +28,15 @@ private:
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 
-	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
-	void unload() { isLoaded = false; };
+	void load() {};
+	void unload() {};
 public:
 	SunMoonLightingComponent(Light* sun, Light* moon, float speed, IEntity* entity);
 	~SunMoonLightingComponent();
+
+	struct InitData : ResourceInitParams {
+		InitData() {}
+	};
 
 	void init() {};
 
@@ -41,5 +45,7 @@ public:
 	void onEvent(EVENT_PTR evt) {};
 
 	void AddRenderData(RenderDataGroup* collection) {};
+
+protected:
 };
 

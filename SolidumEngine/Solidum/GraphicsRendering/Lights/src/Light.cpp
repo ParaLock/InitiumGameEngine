@@ -14,19 +14,15 @@ Light::~Light()
 {
 }
 
-void Light::load(std::shared_ptr<IResourceBuilder> builder)
+void Light::load()
 {
-	InitData* realBuilder = static_cast<InitData*>(builder.get());
+	InitData* realBuilder = static_cast<InitData*>(getContext()->getResourceInitParams());
 
 	_type = realBuilder->_type;
-
-	isLoaded = true;
 }
 
 void Light::unload()
 {
-
-	isLoaded = false;
 }
 
 void Light::setDirection(Vector3f dir) {

@@ -1,43 +1,54 @@
 #pragma once
 #include "../../Solidum/sysInclude.h"
+
 #include "../../Solidum/GraphicsRendering/RenderPass/include/RenderPassWrapper.h"
 
 #include "../../Solidum/EntityFramework/Components/include/MeshComponent.h"
 
-static void reg_render_pass__mesh(std::function<void(std::shared_ptr<RenderPassWrapper>)> regCallback) {
-	std::shared_ptr<RenderPassWrapper> wrapper = std::make_shared<RenderPassWrapper>();;
+#include "../../Solidum/GraphicsRendering/ShaderCommands/include/ShaderCommand.h"
 
-	wrapper->load(std::make_shared<RenderPassWrapper::InitData>("./res/RenderPassDescriptors/MeshRenderPass.txt"));
+static void reg_render_pass__mesh(std::function<void(std::shared_ptr<RenderPassWrapper>)> regCallback, ResourceCreator* resCreator) {
+	
+	RenderPassWrapper* wrapper = (RenderPassWrapper*)resCreator->createResourceImmediate<RenderPassWrapper>(&RenderPassWrapper::InitData("./res/RenderPassDescriptors/MeshRenderPass.txt", resCreator), "mesh_render_pass",
+		[](IResource*) {});
 
 	wrapper->setRenderPass
 		(
 			[=](GraphicsCommandList* commandList, RenderDataGroup& collection, RenderPassWrapper* wrapper)
 	{
 
-		std::list<std::shared_ptr<RenderDataPacket>> renderData;
+		std::list<RenderDataPacket*> renderData;
 		collection.getRenderDataByType(RENDER_DATA_TYPE::RENDER_MESH_DATA, renderData);
 
 		RenderData_GlobalData* globalData = collection.getGlobalData();
 
-		std::shared_ptr<ShaderUniformGroup> globalDataUniforms = std::make_shared<ShaderUniformGroup>();
+		for each(RenderDataPacket* mesh in renderData) {
 
-		globalDataUniforms->addUniform<Vector3f>(globalData->global_cam._eyePosition, "cbuff_eyePos");
-		globalDataUniforms->addUniform<Matrix4f>(Matrix4f::transpose(globalData->global_cam._viewMatrix), "cbuff_viewMatrix");
-		globalDataUniforms->addUniform<Matrix4f>(Matrix4f::transpose(globalData->global_cam._projectionMatrix), "cbuff_projectionMatrix");
-		globalDataUniforms->addUniform<Matrix4f>(Matrix4f::transpose(globalData->global_cam._worldMatrix), "cbuff_worldMatrix");
-		globalDataUniforms->addUniform<Matrix4f>(Matrix4f::transpose(globalData->global_cam._orthoProjection), "cbuff_orthoProjection");
-		globalDataUniforms->addUniform<Matrix4f>(Matrix4f::transpose(globalData->global_cam._startView), "cbuff_camViewStart");
+			ShaderUniformGroup globalDataUniforms;
 
-		for each(std::shared_ptr<RenderDataPacket> mesh in renderData) {
+			globalDataUniforms.setUniformCache(&wrapper->getSlabCache());
 
-			RenderPassPacket_MeshData* meshData = mesh->getData<RenderPassPacket_MeshData>();
+			globalDataUniforms.addUniform<Vector3f>(globalData->global_cam._eyePosition, "cbuff_eyePos");
+			globalDataUniforms.addUniform<Matrix4f>(Matrix4f::transpose(globalData->global_cam._viewMatrix), "cbuff_viewMatrix");
+			globalDataUniforms.addUniform<Matrix4f>(Matrix4f::transpose(globalData->global_cam._projectionMatrix), "cbuff_projectionMatrix");
+			globalDataUniforms.addUniform<Matrix4f>(Matrix4f::transpose(globalData->global_cam._worldMatrix), "cbuff_worldMatrix");
+			globalDataUniforms.addUniform<Matrix4f>(Matrix4f::transpose(globalData->global_cam._orthoProjection), "cbuff_orthoProjection");
+			globalDataUniforms.addUniform<Matrix4f>(Matrix4f::transpose(globalData->global_cam._startView), "cbuff_camViewStart");
+
+
+			RenderPassPacket_MeshData* meshData = (RenderPassPacket_MeshData*)mesh->getData();
 
 			GPUPipeline pipelineState;
 
-			std::shared_ptr<ShaderUniformGroup> meshDataUniforms = std::make_shared<ShaderUniformGroup>();
-			std::shared_ptr<ShaderUniformGroup> materialDataUniforms = std::make_shared<ShaderUniformGroup>();
+			ShaderUniformGroup meshDataUniforms;
 
-			meshDataUniforms->addUniform<Matrix4f>(Matrix4f::transpose(meshData->_globalTransform), "cbuff_OBJSpecificMatrix");
+			meshDataUniforms.setUniformCache(&wrapper->getSlabCache());
+
+			ShaderUniformGroup materialDataUniforms;
+
+			materialDataUniforms.setUniformCache(&wrapper->getSlabCache());
+
+			meshDataUniforms.addUniform<Matrix4f>(Matrix4f::transpose(meshData->_globalTransform), "cbuff_OBJSpecificMatrix");
 
 			IShader* _materialShader = nullptr;
 
@@ -60,20 +71,15 @@ static void reg_render_pass__mesh(std::function<void(std::shared_ptr<RenderPassW
 			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_emessive", meshData->_materialData._emissiveTex);
 			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_roughness", meshData->_materialData._roughnessTex);
 
-			materialDataUniforms->addUniform<float>(meshData->_materialData._specularIntensity, "cbuff_specularIntensity");
-			materialDataUniforms->addUniform<Vector4f>(meshData->_materialData._specularColor, "cbuff_specularColor");
-			materialDataUniforms->addUniform<float>(meshData->_materialData._specularPower, "cbuff_specularPower");
+			materialDataUniforms.addUniform<float>(meshData->_materialData._specularIntensity, "cbuff_specularIntensity");
+			materialDataUniforms.addUniform<Vector4f>(meshData->_materialData._specularColor, "cbuff_specularColor");
+			materialDataUniforms.addUniform<float>(meshData->_materialData._specularPower, "cbuff_specularPower");
 
-			commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
-				(globalDataUniforms, _materialShader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
+			commandList->createCommand<ShaderUpdateUniformCommand>(&ShaderUpdateUniformCommand::InitData(globalDataUniforms, _materialShader));
+			commandList->createCommand<ShaderUpdateUniformCommand>(&ShaderUpdateUniformCommand::InitData(meshDataUniforms, _materialShader));
+			commandList->createCommand<ShaderUpdateUniformCommand>(&ShaderUpdateUniformCommand::InitData(materialDataUniforms, _materialShader));
 
-			commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
-				(meshDataUniforms, _materialShader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
-
-			commandList->createCommand(std::make_shared<ShaderUpdateUniformCommand::InitData>
-				(materialDataUniforms, _materialShader), GRAPHICS_COMMAND_TYPE::SHADER_UPDATE_UNIFORM);
-
-			commandList->createCommand(std::make_shared<ShaderSyncUniforms::InitData>(_materialShader), GRAPHICS_COMMAND_TYPE::SHADER_SYNC_UNIFORMS);
+			commandList->createCommand<ShaderSyncUniforms>(&ShaderSyncUniforms::InitData(_materialShader));
 
 			pipelineState.setBlendState(BLEND_STATE::BLENDING_OFF);
 			pipelineState.setDepthTestState(DEPTH_TEST_STATE::FULL_ENABLE);
@@ -105,13 +111,12 @@ static void reg_render_pass__mesh(std::function<void(std::shared_ptr<RenderPassW
 
 			_materialShader->execute(commandList);
 
-			commandList->createCommand(std::make_shared<PipelineDrawIndexedCommand::InitData>
-				(0, meshData->_numIndices), GRAPHICS_COMMAND_TYPE::PIPELINE_DRAW_INDEXED);
+			commandList->createCommand<PipelineDrawIndexedCommand>(&PipelineDrawIndexedCommand::InitData(0, meshData->_numIndices));
 		}
 
-		commandList->createCommand(std::shared_ptr<IResourceBuilder>(), GRAPHICS_COMMAND_TYPE::PIPELINE_RESET);
+		commandList->createCommand<PipelineStateResetCommand>(&PipelineStateResetCommand::InitData());
 	}
 	);
 
-	regCallback(wrapper);
+	regCallback(std::shared_ptr<RenderPassWrapper>(wrapper));
 }

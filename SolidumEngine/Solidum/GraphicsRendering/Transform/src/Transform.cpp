@@ -9,14 +9,11 @@ Transform::Transform()
 
 	_vecPos = Vector3f(0,0,0);
 	_vecScale = Vector3f(1, 1, 1);
-
-	isLoaded = true;
 }
 
 
 Transform::~Transform()
 {
-	isLoaded = false;
 }
 
 void Transform::buildTransform()

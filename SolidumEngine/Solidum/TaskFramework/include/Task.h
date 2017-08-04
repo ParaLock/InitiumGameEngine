@@ -1,7 +1,8 @@
 #pragma once
 #include "../../sysInclude.h"
-#include "../../ResourceFramework/include/IResource.h"
+#include "../../ResourceFramework/include/Resource.h"
 
+#include "../../ResourceFramework/include/GenericFactory.h"
 
 struct TaskCompletionStatus {
 
@@ -20,18 +21,19 @@ public:
 	bool _taskComplete = false;
 };
 
-class Task : public IResource
+class ResourcePool;
+
+class Task : public Resource<Task, GenericFactory, ResourcePool>
 {
 private:
-	void load(std::shared_ptr<IResourceBuilder> builder) {};
+	void load() {};
 
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 
 	std::shared_ptr<TaskHandle> _handle;
 
-	TASK_TYPE _type;
-
+	std::function<void(Task*)> _parentThreadEnqueue;
 
 protected:
 	Task* _child = nullptr;
@@ -44,17 +46,24 @@ protected:
 	bool _cyclicTask = false;
 	bool _processed = false;
 
-	void setType(TASK_TYPE type) { _type = type; };
-
 	std::function<void()> _executionCallback;
 	std::function<void(std::unique_ptr<TaskCompletionStatus>)> _completionCallback;
 public:
 	Task();
 	~Task();
 
+	struct InitData : public ResourceInitParams {
+
+		
+
+		InitData() {}
+	};
+
 	bool _isComplete = false;
 
 	void unload();
+
+	void setEnQueueFunction(std::function<void(Task*)> func) { _parentThreadEnqueue = func; };
 
 	void touch();
 	void execute();
@@ -92,6 +101,6 @@ public:
 	Task* getChild() { return _child; }
 	Task* getParent() { return _parent; }
 
-	TASK_TYPE getType() { return _type; }
+protected:
 };
 

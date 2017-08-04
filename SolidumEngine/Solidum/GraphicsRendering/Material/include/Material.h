@@ -2,10 +2,12 @@
 
 #include "../../../sysInclude.h"
 #include "../../Textures/include/Texture.h"
-#include "../../../ResourceFramework/include/IResource.h"
-#include "../../../ResourceFramework/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/Resource.h"
+#include "../../../ResourceFramework/include/ResourceInitParams.h"
 
 class Shader;
+
+class GenericFactory;
 
 class MaterialPass {
 private:
@@ -58,8 +60,9 @@ public:
 	Shader* getShader() { return _shader; }
 };
 
+class ResourcePool;
 
-class Material : public IResource
+class Material : public Resource<Material, GenericFactory, ResourcePool>
 {
 private:
 	std::map<std::string, MaterialPass*> _passes;
@@ -67,14 +70,16 @@ public:
 	Material();
 	~Material();
 
-	void load(std::shared_ptr<IResourceBuilder> builder);
+	void load();
 	void unload();
 
-	struct InitData : public IResourceBuilder {
+	struct InitData : public ResourceInitParams {
 
 		InitData() {
 
 		}
+
+		
 	};
 
 	void updateParameter(std::string varName, void *data) {};
@@ -85,5 +90,6 @@ public:
 	MaterialPass* getPass(std::string name);
 
 	std::vector<MaterialPass*> getPassList();
+protected:
 };
 

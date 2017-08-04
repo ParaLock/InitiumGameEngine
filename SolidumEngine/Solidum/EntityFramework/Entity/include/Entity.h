@@ -19,7 +19,7 @@ private:
 
 	std::list<IEntity*>* _children;
 
-	std::map<COMPONENT_TYPE, std::list<IComponent*>*>* _components;
+	std::unordered_map<std::type_index, std::vector<IComponent*>> _components;
 
 	Transform* _transform;
 
@@ -31,12 +31,64 @@ public:
 	Entity();
 	~Entity();
 
+	template<typename T>
+	T* getComponent(int index) {
+		
+		auto& itr = _components.find(std::type_index(typeid(T)));
+
+		if (itr != _components.end()) {
+
+			auto& compList = itr->second;
+
+			if (index <= compList.size()) {
+
+				return (T*)compList.at(index);
+
+			}
+
+		}
+
+		return nullptr;
+	}
+
+	template<typename T>
+	std::list<T*>& getComponents() {
+
+		auto& itr = _components.find(std::type_index(typeid(T)));
+
+		if (itr != _components.end()) {
+
+			auto& compList = itr->second;
+
+			return *compList;
+		}
+
+		return std::list<T*>();
+
+	}
+
 	void setWorld(World* world) { _parentWorld = world; }
 
-	void addComponent(IComponent* comp);
-	void addChild(IEntity* entity);
+	template<typename T>
+	void addComponent(IComponent* comp) {
 
-	std::list<IComponent*>* getComponentsByTypeAndIndex(COMPONENT_TYPE type, int index);
+		auto& itr = _components.find(std::type_index(typeid(T)));
+
+		if (itr != _components.end()) {
+
+			auto& compList = itr->second;
+
+			compList.push_back(comp);
+		}
+		else {
+
+			_components.insert({ std::type_index(typeid(T)), std::vector<IComponent*>{comp} });
+
+		}
+
+	}
+
+	void addChild(IEntity* entity);
 
 	IEntityRenderObject* getRenderObject() { return _renderObject; }
 

@@ -2,6 +2,8 @@
 
 EngineInstance::EngineInstance(window* renderWindow)
 {
+	_resourceCreator = new ResourceCreator(this);
+
 	_eventFrameworkCore = new EventFrameworkCore();
 
 	_eventFrameworkCore->registerGlobalEventHub(new EventHub(), "ComponentEventHub");
@@ -9,44 +11,59 @@ EngineInstance::EngineInstance(window* renderWindow)
 	_eventFrameworkCore->registerGlobalEventHub(new EventHub(), "InputEventHub");
 	_eventFrameworkCore->registerGlobalEventHub(new EventHub(), "CameraEventHub");
 
-	_resManagers = new ResourceManagerPool();
+	_inputHandler = _resourceCreator->createResourceImmediate<InputHandler>(&InputHandler::InitData(), "core_input_handler", [](IResource*) {});
 
-	_resManagers->registerResourceManager(new TextureManager(), "TextureManager");
-	_resManagers->registerResourceManager(new TextureSamplerManager(), "TextureSamplerManager");
-	_resManagers->registerResourceManager(new GPUPipelineManager(), "GPUPipelineManager");
-	_resManagers->registerResourceManager(new RenderTargetManager(), "RenderTargetManager");
-	_resManagers->registerResourceManager(new ShaderManager(), "ShaderManager");
-	_resManagers->registerResourceManager(new MaterialManager(), "MaterialManager");
-	_resManagers->registerResourceManager(new meshManager(), "meshManager");
-	_resManagers->registerResourceManager(new GPUBufferManager(), "GPUBufferManager");
-	_resManagers->registerResourceManager(new LightManager(), "LightManager");
-	_resManagers->registerResourceManager(new InputManager(), "InputHandlerManager");
-	_resManagers->registerResourceManager(new DepthStencilManager(), "DepthStencilManager");
+	_primaryTaskTree = new TaskTree(*_resourceCreator);
 
-	_resManagers->getResourceManager("InputHandlerManager")->createResource(nullptr, "InputHandler", false);
+	_renderDataCache = new SlabCache();
 
-	_inputHandler = _resManagers->getResourceManager("InputHandlerManager")->
-		getResource("InputHandler")->getCore<InputHandler>();
-
-	_primaryTaskTree = new TaskTree;
-
-	_renderDataCache = new SlabCache(10);
-
-	_graphicsCore = new GraphicsCore(DIRECTX11, renderWindow, _resManagers, _primaryTaskTree);
+	_graphicsCore = new GraphicsCore(DIRECTX11, renderWindow, _primaryTaskTree, *_resourceCreator, this);
 
 	_currentWindow = renderWindow;
+
+	//auto resourceCreationTaskHandle = _primaryTaskTree->createThreadedTask(
+	//	std::bind(&ResourceCreator::loadPendingResources, _resourceCreator),
+	//	nullptr, "ResourceCreationThread", true, 1, true);
+
+	//_resourceCreator->setTaskHandle(resourceCreationTaskHandle);
 }
 
 
 EngineInstance::~EngineInstance()
 {
 	delete _graphicsCore;
-	delete _resManagers;
 	delete _renderDataCache;
+
+	delete _resourceCreator;
+}
+
+ResourceLookupCache * EngineInstance::getResourceLookupCache(std::string & resourceGroup)
+{
+	auto& itr = _ResourceLookupCacheByGroupName.find(resourceGroup);
+
+	if (itr != _ResourceLookupCacheByGroupName.end()) {
+
+		return _ResourceLookupCacheByGroupName.at(resourceGroup);
+
+	}
+	else {
+
+		ResourceLookupCache* newCache = new ResourceLookupCache();
+
+		_ResourceLookupCacheByGroupName.insert({ resourceGroup, newCache });
+
+		return newCache;
+	}
 }
 
 void EngineInstance::engineHeartbeat()
 {
+	Entity* cameraEntity = (Entity*)_currentWorld->getEntity(_currentWorld->getPrimaryCameraID());
+
+	CameraComponent* cameraComponent = cameraEntity->getComponent<CameraComponent>(0);
+
+	_graphicsCore->setCurrentRenderingCamera(cameraComponent);
+
 	auto& itr = _inflightFrames.begin();
 
 	while (itr != _inflightFrames.end()) {
@@ -78,8 +95,8 @@ void EngineInstance::engineHeartbeat()
 
 	if (_inflightFrames.empty()) {
 
-		GraphicsCommandList* scenePipeline = new GraphicsCommandList();
-		GraphicsCommandList* endScenePipeline = new GraphicsCommandList();
+		GraphicsCommandList* scenePipeline = new GraphicsCommandList(_resourceCreator);
+		GraphicsCommandList* endScenePipeline = new GraphicsCommandList(_resourceCreator);
 
 		RenderDataGroup* renderDataCollection = new RenderDataGroup(_renderDataCache);
 
@@ -95,11 +112,17 @@ void EngineInstance::engineHeartbeat()
 		currentFrame._endScenePipeline = endScenePipeline;
 
 		currentFrame._simulationTaskHandle = _primaryTaskTree->createThreadedTask(
-			std::bind(&EngineInstance::update, this, 0.01f, currentFrame._renderDataGroup),
+
+			std::bind(&EngineInstance::update, this, 0.01f,
+			currentFrame._renderDataGroup),
 			nullptr, "SimAndRenderThread", false, 1, true);
 
 		currentFrame._renderPreReqTaskHandle = _primaryTaskTree->createThreadedTask(
-			std::bind(&GraphicsCore::beginRender, _graphicsCore, std::ref(currentFrame._endScenePipeline), std::ref(currentFrame._scenePipeline), currentFrame._renderDataGroup),
+
+			std::bind(&GraphicsCore::beginRender, _graphicsCore, 
+			std::ref(currentFrame._endScenePipeline), 
+			std::ref(currentFrame._scenePipeline), 
+			currentFrame._renderDataGroup),
 			nullptr, "SimAndRenderThread", false, 1, true);
 
 	}
@@ -113,18 +136,16 @@ void EngineInstance::engineHeartbeat()
 
 			if (!currentFrame._renderCMDProcTaskHandle) {
 
-				currentFrame._renderCMDProcTaskHandle = _primaryTaskTree->createThreadedTask(std::bind(&GraphicsCore::endRender, _graphicsCore, std::ref(currentFrame._endScenePipeline), std::ref(currentFrame._scenePipeline)),
+				currentFrame._renderCMDProcTaskHandle = _primaryTaskTree->createThreadedTask(
+
+					std::bind(&GraphicsCore::endRender, _graphicsCore, 
+					std::ref(currentFrame._endScenePipeline), 
+					std::ref(currentFrame._scenePipeline)),
 					nullptr, "CommandProcessingThread", false, 1, true);
 
 			}
 		}
 	}
-
-	IEntity* cameraEntity = _currentWorld->getEntity(_currentWorld->getPrimaryCameraID());
-
-	_graphicsCore->setCurrentRenderingCamera((CameraComponent*)cameraEntity->
-		getComponentsByTypeAndIndex(COMPONENT_TYPE::CAMERA_COMPONENT, 0)->front());
-
 }
 
 void EngineInstance::loadWorld(World * world)
@@ -159,7 +180,14 @@ void EngineInstance::update(float delta, RenderDataGroup* collection)
 
 		entity->update(delta, collection);
 	}
+
+	std::list<RenderDataPacket*> testList;
+	collection->getAllRenderData(testList);
+
+	RenderDataPacket* renderData = testList.back();
 	
+	RenderPassPacket_SkyData* realData = (RenderPassPacket_SkyData*)renderData->getData();
+
 	_inputHandler->update();
 }
 

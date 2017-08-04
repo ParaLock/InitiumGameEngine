@@ -4,7 +4,7 @@
 
 #include "../../../GraphicsRendering/GraphicsCommandList/include/GraphicsCommandList.h"
 
-#include "../../../ResourceFramework/include/IResourceBuilder.h"
+#include "../../../ResourceFramework/include/ResourceInitParams.h"
 
 #include "../../Lights/include/ILight.h"
 #include "../../Material/include/Material.h"
@@ -14,13 +14,20 @@
 
 #include "../../RenderFlowGraph/include/RenderFlowGraphIOInterface.h"
 
+#include "../../../ResourceFramework/include/Resource.h"
+
+#include "../../../EngineUtils/include/DynamicStruct.h"
+
+#include "../../../ResourceFramework/include/GenericFactory.h"
+
+#include "ShaderFactory.h"
+
 #include "IShader.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
-
 class MaterialPass;
+class ResourcePool;
 
-class Shader : public IShader, public IResource
+class Shader : public IShader, public Resource<Shader, ShaderFactory, ResourcePool>
 {
 protected:
 	ShaderInputLayout* _vertexInputLayout;
@@ -30,19 +37,26 @@ public:
 	Shader();
 	~Shader();
 
-	struct InitData : public IResourceBuilder {
+	struct InitData : public ResourceInitParams {
 
-		std::string& _shaderCode;
+		InitData() {}
+
+		
+
+		std::string* _shaderCode;
 		bool _genInputLayout = false;
 
-		InitData(std::string& shaderCode, bool genInputLayout) :
-			_shaderCode(shaderCode)
+		ResourceCreator* _resCreator;
+
+		InitData(std::string* shaderCode, bool genInputLayout, ResourceCreator* resCreator) :
+			_resCreator(resCreator)
 		{
+			_shaderCode = shaderCode;
 			_genInputLayout = genInputLayout;
 		};
 	};
 
-	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
+	virtual void load() = 0;
 	virtual void unload() = 0;
 
 	void updateMaterialPassUniforms(MaterialPass* pass, RenderFlowGraphIOInterface* ioInterface);
@@ -55,13 +69,17 @@ public:
 	void updateModelUniforms(Transform* transform);
 	void updateCameraUniforms(CameraComponent* cam);
 
-	ShaderInputLayout* getInputLayout() { return _vertexInputLayout; }
+	ShaderInputLayout* getInputLayout() { 
+		return _vertexInputLayout; 
+	
+	}
 
 	const std::map<std::string, std::pair<SHADER_TYPE, DynamicStruct*>>& getConstantBuffers() { return _varNameToConstantBuffer; }
 
-	void updateUniform(std::string varName, void * pData);
+	void updateUniform(std::string& varName, void * pData);
 	void updateGPU();
 
 	virtual void execute(GraphicsCommandList* commandList);
+protected:
 };
 

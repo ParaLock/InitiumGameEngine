@@ -5,7 +5,7 @@
 
 #include "../../../EventFramework/include/Event.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
 #include "../../../sysInclude.h"
 
 struct RenderFlowGraphNodeIOHook {

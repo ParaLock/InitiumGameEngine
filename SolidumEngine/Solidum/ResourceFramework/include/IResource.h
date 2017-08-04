@@ -1,42 +1,45 @@
 #pragma once
 #include "../../sysInclude.h"
 
-#include "IResourceBuilder.h"
+#include "../../EngineCore/include/IEngineInstance.h"
+
+#include "ResourceLookupCache.h"
+
+class IResourceContext;
 
 class IResource
 {
 private:
-protected:
-	int _poolIndex;
-	volatile bool isLoaded = false;
+	static std::unordered_map<std::type_index, unsigned int> _typeIDByTypeIndex;
 public:
 	IResource();
-	virtual ~IResource();
+	~IResource();
 
-	virtual void load(std::shared_ptr<IResourceBuilder> builder) = 0;
-	virtual void unload() = 0;
+	static IResource* lookupResource(std::string& name, std::string& group, IEngineInstance* sysInstance);
+
+	static void createResourceGroup(std::string& groupName, IEngineInstance* sysInstance);
+	static void addResourceToGroup(IResource* res, std::string& groupName, IEngineInstance* sysInstance);
 
 	virtual void updateParameter(std::string varName, void *data) = 0;
 	virtual void* getParameter(std::string varName) = 0;
 
-	bool getLoadStatus() { return isLoaded; }
-	int getPoolIndex() { return _poolIndex; }
+	virtual void poolIndex(unsigned int index) = 0;
+	virtual unsigned int poolIndex() = 0;
 
-	void setPoolIndex(int index) { _poolIndex = index; }
+	virtual IResourceContext* getContext() = 0;
 
-	template<typename T>
-	T* getCore() {
+	virtual std::string name() = 0;
+	virtual void name(std::string newName) = 0;
 
-		if (dynamic_cast<T*>(this) != NULL) {
-			return dynamic_cast<T*>(this);
-		}
-		else {
-			std::cout << "Resource Cast To Core Type failed!" << " " << "RESOURCE TYPE:" << typeid(T).name() << std::endl;
-		
-			throw "BAD CAST";
+	virtual unsigned int type() = 0;
+	virtual void type(unsigned int type) = 0;
 
-			//return nullptr;
-		}
-	}
+	static unsigned int getTypeID(std::type_index index);
+	static void addType(std::type_index index);
+
+	virtual void load() = 0;
+	virtual void unload() = 0;
+
+	virtual void release() = 0;
 };
 

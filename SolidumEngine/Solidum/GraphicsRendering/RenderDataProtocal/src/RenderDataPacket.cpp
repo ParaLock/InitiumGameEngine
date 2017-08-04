@@ -1,12 +1,6 @@
 #include "../include/RenderDataPacket.h"
 
-
-RenderDataPacket::RenderDataPacket(SlabCache * cache)
+void RenderDataPacket::free()
 {
-	_cache = cache;
-}
-
-RenderDataPacket::~RenderDataPacket()
-{
-	_cache->free(_data._slab);
+	_cache->free(_data);
 }

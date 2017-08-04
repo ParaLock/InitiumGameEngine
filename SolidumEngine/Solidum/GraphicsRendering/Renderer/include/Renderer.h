@@ -1,13 +1,11 @@
 #pragma once
 #include "../../../sysInclude.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
 
 #include "../../RenderFlowGraph/include/RenderFlowGraph.h"
 
 #include "../../Shaders/include/ShaderParser.h"
-
-#include "../../../ResourceFramework/include/ResourceManagerPool.h"
 
 #include "../../Shaders/include/Shader.h"
 
@@ -15,7 +13,10 @@
 
 #include "../../RenderDataProcessingLayers/include/RenderDataProcessingLayer.h"
 
-class Renderer : public IResource
+class GenericFactory;
+class ResourcePool;
+
+class Renderer : public Resource<Renderer, GenericFactory, ResourcePool>
 {
 private:
 	std::list<std::shared_ptr<RenderDataProcessingLayer>> _generalProcessingLayerStack;
@@ -26,7 +27,7 @@ private:
 
 	std::string _name;
 
-	virtual void unload() { isLoaded = false; };
+	virtual void unload() {};
 
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
@@ -38,12 +39,18 @@ public:
 	Renderer();
 	~Renderer();
 
-	struct InitData : public IResourceBuilder {
+	struct InitData : public ResourceInitParams {
 		
+		InitData() {}
+		
+
 		std::string _renderGraphFilename;
 
-		InitData(std::string renderGraphFilename) :
-			_renderGraphFilename(renderGraphFilename)
+		ResourceCreator* _resCreator;
+
+		InitData(std::string renderGraphFilename, ResourceCreator* resCreator) :
+			_renderGraphFilename(renderGraphFilename),
+			_resCreator(resCreator)
 		{
 
 		}
@@ -51,12 +58,14 @@ public:
 
 	void pushGeneralProcessingLayer(std::shared_ptr<RenderDataProcessingLayer> layer);
 
-	void load(std::shared_ptr<IResourceBuilder> builder);
+	void load();
 
 	void renderScene(GraphicsCommandList* commandList, RenderDataGroup* collection);
 
 	void syncWithGraph();
 
 	std::string getName() { return _name; }
+
+protected:
 };
 

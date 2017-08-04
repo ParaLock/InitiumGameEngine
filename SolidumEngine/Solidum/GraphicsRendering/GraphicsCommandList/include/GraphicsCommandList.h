@@ -3,35 +3,37 @@
 
 #include "../../GraphicsCommand/include/GraphicsCommand.h"
 
-#include "../../GraphicsCommand/include/GraphicsCommandFactory.h"
-#include "../../GraphicsCommand/include/GraphicsCommandPool.h"
+#include "../../../ResourceFramework/include/ResourceCreator.h"
 
 #include "../../GraphicsCore/include/IGraphicsCore.h"
 
 class GraphicsCommandList
 {
 private:
-	struct unloadedCommandData {
-		std::shared_ptr<IResourceBuilder> _initData;
-		GRAPHICS_COMMAND_TYPE _type;
+	
+	ResourceCreator* _resourceCreator;
 
-		unloadedCommandData(std::shared_ptr<IResourceBuilder> initData, GRAPHICS_COMMAND_TYPE type) {
-			_initData = initData;
-			_type = type;
-		}
+	std::list<IGraphicsCommand*> _loadedCommands;
+public:
+	GraphicsCommandList(ResourceCreator* resourceCreator)
+		: _resourceCreator(resourceCreator) 
+	{
 	};
 
-	std::list<unloadedCommandData> _unloadedCommands;
-	std::list<GraphicsCommand*> _loadedCommands;
-public:
-	GraphicsCommandList();
 	~GraphicsCommandList();
 
 	void setRenderStateFlags() {};
 
-	void loadCommands();
+	void commandLoadedCallback(IResource* loadedCmd);
 
-	void createCommand(std::shared_ptr<IResourceBuilder> builder, GRAPHICS_COMMAND_TYPE type);
+	template<typename T_CMD>
+	void createCommand(typename T_CMD::InitData* params) {
+
+		_resourceCreator->createResourceDeferred<T_CMD>(params, "",
+			std::bind(&GraphicsCommandList::commandLoadedCallback, this, std::placeholders::_1)
+		);
+	}
+
 
 	void executeCommands();
 

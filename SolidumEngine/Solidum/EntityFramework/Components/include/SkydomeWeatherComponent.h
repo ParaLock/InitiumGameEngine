@@ -6,7 +6,7 @@
 #include "../../../EngineUtils/include/Vector2.h"
 #include "../../../EngineUtils/include/Vector3.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
 
 #include "../../../GraphicsRendering/GraphicsCore/include/IGraphicsCore.h"
 
@@ -32,6 +32,8 @@ struct TIME_OF_DAY_BLOCK {
 };
 
 struct RenderPassPacket_SkyData {
+
+	const char* debug = "SKY DATA RENDER DATA BEGIN";
 
 	int _numIndices;
 
@@ -64,8 +66,8 @@ private:
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 
-	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
-	void unload() { isLoaded = false; };
+	void load() { };
+	void unload() { };
 
 	Texture* _tex;
 	mesh* _skydome;
@@ -75,6 +77,13 @@ public:
 	SkydomeWeatherComponent(Texture* tex, mesh* skydome, CameraComponent* cam, Vector4f apexColor, Vector4f centerColor, int index, IEntity* entity);
 	~SkydomeWeatherComponent();
 
+	struct InitData : public ResourceInitParams {
+		InitData() {}
+
+		
+	};
+
+
 	void update(float delta);
 
 	void onEvent(EVENT_PTR evt);
@@ -82,5 +91,6 @@ public:
 	void updateDayNightCycle(float delta);
 
 	void AddRenderData(RenderDataGroup* collection);
+protected:
 };
 

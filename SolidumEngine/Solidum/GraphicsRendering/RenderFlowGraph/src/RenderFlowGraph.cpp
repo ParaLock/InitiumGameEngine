@@ -4,10 +4,10 @@
 
 RenderFlowGraph::RenderFlowGraph()
 {
-	_managerNameByResourceTypeName.insert({"RENDER_TARGET", "RenderTargetManager"});
-	_managerNameByResourceTypeName.insert({"TEXTURE", "TextureManager" });
-	_managerNameByResourceTypeName.insert({"TEXTURE_SAMPLER", "TextureSamplerManager" });
-	_managerNameByResourceTypeName.insert({ "DEPTH_STENCIL", "DepthStencilManager" });
+	_resourceGroupByType.insert({"RENDER_TARGET", "RenderTargetGroup"});
+	_resourceGroupByType.insert({"TEXTURE", "TextureGroup" });
+	_resourceGroupByType.insert({"TEXTURE_SAMPLER", "TextureSamplerGroup" });
+	_resourceGroupByType.insert({ "DEPTH_STENCIL", "DepthStencilGroup" });
 }
 
 
@@ -20,17 +20,17 @@ void RenderFlowGraph::registerIOInterface(RenderFlowGraphIOInterface * ioInterfa
 	_registeredIOInterfaces.insert({ ioInterface->getParentName(), ioInterface });
 }
 
-void RenderFlowGraph::load(std::shared_ptr<IResourceBuilder> builder)
+void RenderFlowGraph::load()
 {
 	EventHub* hub = EventFrameworkCore::getInstance()->getGlobalEventHub("RenderFlowGraphEventHub");
 
 	hub->subscribeListener(this);
 
-	InitData* realBuilder = static_cast<InitData*>(builder.get());
+	InitData* realBuilder = static_cast<InitData*>(getContext()->getResourceInitParams());
 
 	RenderFlowGraphParser parser;
 
-	ParsedRenderFlowGraphData& data = parser.parseRenderFlowGraph(realBuilder->_filename);
+	ParsedRenderFlowGraphData& data = parser.parseRenderFlowGraph(realBuilder->_filename, realBuilder->_resCreator);
 
 	std::shared_ptr<RenderFlowGraphIOInterfaceEvtData> _ioInterfaceQueryEvtData = std::make_shared<RenderFlowGraphIOInterfaceEvtData>();
 
@@ -62,9 +62,10 @@ void RenderFlowGraph::load(std::shared_ptr<IResourceBuilder> builder)
 
 		for each(ParsedNodeEdge edge in node._edges) {
 
-			auto edgeResourceManager = ResourceManagerPool::getInstance()->getResourceManager(_managerNameByResourceTypeName.at(edge._type));
-
-			IResource* edgeResource = edgeResourceManager->getResource(edge._name);
+			IResource* edgeResource = IResource::lookupResource(
+				edge._name, 
+				_resourceGroupByType.at(edge._type), 
+				realBuilder->_resCreator->getParentEngine());
 
 			coreInterface->assignHookResource(edge._type, edge._index, edgeResource);
 		}
@@ -74,9 +75,10 @@ void RenderFlowGraph::load(std::shared_ptr<IResourceBuilder> builder)
 
 		GPUPipelineOP newop;
 
-		auto opTargetManager = ResourceManagerPool::getInstance()->getResourceManager(_managerNameByResourceTypeName.at(op._targetType));
-
-		IResource* opTarget = opTargetManager->getResource(op._targetName);
+		IResource* opTarget = IResource::lookupResource(
+			op._targetName,
+			_resourceGroupByType.at(op._targetType),
+			realBuilder->_resCreator->getParentEngine());
 
 		newop.opTarget = opTarget;
 

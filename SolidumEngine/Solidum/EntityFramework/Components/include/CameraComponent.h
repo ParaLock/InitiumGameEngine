@@ -10,7 +10,7 @@
 
 #include "../../../EngineUtils/include/Timer.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../ResourceFramework/include/Resource.h"
 
 #include "../../../EventFramework/include/IEventListener.h"
 
@@ -63,8 +63,8 @@ private:
 
 	Vector2f _previousMousePos;
 
-	void load(std::shared_ptr<IResourceBuilder> builder) { isLoaded = true; };
-	void unload() { isLoaded = false; };
+	void load() { };
+	void unload() { };
 
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
@@ -72,6 +72,12 @@ private:
 public:
 	CameraComponent(float near_value, float far_value, IEntity* entity);
 	~CameraComponent();
+
+	struct InitData : public ResourceInitParams {
+		InitData() {}
+
+		
+	};
 
 	void onEvent(EVENT_PTR evt);
 
@@ -101,6 +107,8 @@ public:
 	Vector3f getPos() { return _eye; }
 
 	void AddRenderData(RenderDataGroup* collection);
+
+protected:
 };
 
 #endif
