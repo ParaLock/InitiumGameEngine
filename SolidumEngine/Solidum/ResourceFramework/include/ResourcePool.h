@@ -3,9 +3,6 @@
 
 #include "../include/IResource.h"
 
-class PipelineILBindCommand;
-class PipelineSetBlendState;
-
 class ResourcePool {
 private:
 
