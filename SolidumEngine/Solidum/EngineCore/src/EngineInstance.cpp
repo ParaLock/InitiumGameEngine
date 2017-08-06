@@ -184,13 +184,6 @@ void EngineInstance::update(float delta, RenderDataGroup* collection)
 		entity->update(delta, collection);
 	}
 
-	std::list<RenderDataPacket*> testList;
-	collection->getAllRenderData(testList);
-
-	RenderDataPacket* renderData = testList.back();
-	
-	RenderPassPacket_SkyData* realData = (RenderPassPacket_SkyData*)renderData->getData();
-
 	_inputHandler->update();
 }
 
