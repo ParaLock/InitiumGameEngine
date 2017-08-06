@@ -12,15 +12,19 @@
 template<typename T_RESOURCE, typename T_FACTORY, typename T_POOL>
 class Resource : public IResource
 {
+	friend class ResourcePool;
 private:
-
-	int _poolIndex;
 
 	IResourceContext* _context = nullptr;
 
 	std::string _name;
 
 	ResourceSignature _type;
+
+	unsigned int _typePoolIndexRuntime;
+
+	static unsigned int _typePoolIndexCompileTime;
+
 
 protected:
 	IResourceContext* getContext() {
@@ -38,11 +42,13 @@ protected:
 public:
 	Resource()
 	{
-
+		_typePoolIndexRuntime = 0;
 	}
 	~Resource() {
 
 	}
+
+	static bool _typePoolValid;
 
 	typedef T_POOL POOL;
 	typedef T_FACTORY Factory;
@@ -65,8 +71,8 @@ public:
 	std::string name() { return _name; }
 	void name(std::string newName) { _name = newName; }	
 
-	unsigned int poolIndex() { return _poolIndex; }
-	void poolIndex(unsigned int index) { _poolIndex = index; }
+	unsigned int typePoolIndex() { return _typePoolIndexRuntime; }
+	void typePoolIndex(unsigned int index) { _typePoolIndexRuntime = index; }
 
 	unsigned int type() { return _type._typeid;};
 	void type(unsigned int type) { _type._typeid = type; }
@@ -74,3 +80,9 @@ public:
 
 template<typename T_RESOURCE, typename T_FACTORY, typename T_POOL>
 T_POOL Resource<T_RESOURCE, T_FACTORY, T_POOL>::_pool;
+
+template<typename T_RESOURCE, typename T_FACTORY, typename T_POOL>
+unsigned int Resource<T_RESOURCE, T_FACTORY, T_POOL>::_typePoolIndexCompileTime = 0;
+
+template<typename T_RESOURCE, typename T_FACTORY, typename T_POOL>
+bool Resource<T_RESOURCE, T_FACTORY, T_POOL>::_typePoolValid = false;

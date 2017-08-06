@@ -2,7 +2,7 @@
 
 void SlabCache::free(Slab* slabPtr) {
 
-	slabPtr->_isFree = true;
+	_slabList.at(slabPtr->_sizeIndex)._freeSlabs->push_back(slabPtr);
 
 	ZeroMemory(slabPtr->_mem, slabPtr->_size);
 }
@@ -10,48 +10,57 @@ void SlabCache::free(Slab* slabPtr) {
 
 Slab* SlabCache::getSlab(size_t size) {
 
-	auto& itr = _rootSizes.find(size);
+	Slab* slab = nullptr;
 
-	if (itr != _rootSizes.end()) {
-		//Size found, look for free slab
-		auto& slabList = itr->second;
+	//Check slab for size
+	for each(auto& uniqueSize in _slabList) {
 
-		for each(Slab* slab in slabList) {
+		//Proper slab size found
+		if (uniqueSize._slabSize == size) {
 
-			if (slab->_isFree) {
+			//No slabs are free
+			if (uniqueSize._freeSlabs->empty()) {
 
-				slab->_isFree = false;
+				slab = new Slab;
+
+				slab->_sizeIndex = uniqueSize._sizeIndex;
+				slab->_size = size;
+
+				slab->_mem = malloc(size);
+
+				return slab;
+
+			}
+			//There are free slabs of given size
+			else {
+
+				slab = uniqueSize._freeSlabs->back();
+				uniqueSize._freeSlabs->pop_back();
 
 				return slab;
 			}
 		}
-
-		Slab* newSlab = new Slab;
-
-		newSlab->_mem = malloc(size);
-		newSlab->_isFree = false;
-		newSlab->_size = size;
-
-		slabList.push_back(newSlab);
-
-		return newSlab;
-	}
-	else {
-
-		Slab* newSlab = new Slab;
-
-		newSlab->_mem = malloc(size);
-		newSlab->_isFree = false;
-		newSlab->_size = size;
-
-		std::list<Slab*> newSlabList;
-
-		newSlabList.push_back(newSlab);
-
-		_rootSizes.insert({size, newSlabList });
-
-		return newSlab;
 	}
 
-	return nullptr;
+	//No proper size group was found
+	SlabGroup group;
+
+	group._freeSlabs = new std::list<Slab*>;
+
+	group._sizeIndex = _currSizeIndex;
+
+	_currSizeIndex++;
+
+	group._slabSize = size;
+
+	slab = new Slab;
+
+	slab->_sizeIndex = group._sizeIndex;
+	slab->_size = size;
+
+	slab->_mem = malloc(size);
+
+	_slabList.push_back(group);
+
+	return slab;
 }

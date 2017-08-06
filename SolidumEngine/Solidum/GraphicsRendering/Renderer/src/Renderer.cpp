@@ -28,7 +28,7 @@ void Renderer::renderScene(GraphicsCommandList * commandList, RenderDataGroup * 
 
 	for each(std::shared_ptr<RenderPassWrapper> renderPass in _activeRenderOrder) {
 
-		renderPass->execute(commandList, processedCollection);
+		renderPass->execute(commandList, *collection);
 
 	}
 }

@@ -3,80 +3,84 @@
 
 #include "../include/IResource.h"
 
+class PipelineILBindCommand;
+class PipelineSetBlendState;
+
 class ResourcePool {
 private:
 
-	struct PerTypePool {
-		std::list<unsigned int> _freeIndices;
-		std::vector<IResource*> _resourcePool;
+	struct ResourcePoolGroup {
+		unsigned int _typeIndex;
+		unsigned int _type;
+		std::list<IResource*>* _freeResources;
 	};
 
-	std::unordered_map<unsigned int, PerTypePool*> _resourcePools;
+	unsigned int _currTypeIndex;
+
+	std::vector<ResourcePoolGroup> _resourceList;
+
 public:
+
+	ResourcePool() : _currTypeIndex(0) {}
 
 	template<typename T>
 	IResource* getResource() {
 
-		unsigned int type = IResource::getTypeID(std::type_index(typeid(T)));
+		IResource* res = nullptr;
 
-		if (type == 0) { IResource::addType(std::type_index(typeid(T))); type = IResource::getTypeID(std::type_index(typeid(T))); }
+		if (T::_typePoolValid == false) {
 
-		IResource* resource = nullptr;
+			unsigned int type = IResource::getTypeID(std::type_index(typeid(T)));
+			if (type == 0) { IResource::addType(std::type_index(typeid(T))); type = IResource::getTypeID(std::type_index(typeid(T))); }
 
-		PerTypePool* pool = nullptr;
+			ResourcePoolGroup group;
 
-		auto& itr = _resourcePools.find(type);
+			group._freeResources = new std::list<IResource*>;
 
-		if (itr != _resourcePools.end()) {
-			pool = _resourcePools.at(type);
+			group._typeIndex = _currTypeIndex;
+
+			_currTypeIndex++;
+
+			group._type = type;
+
+			res = new T;
+
+			res->typePoolIndex(group._typeIndex);
+
+			T::_typePoolIndexCompileTime = group._typeIndex;
+			T::_typePoolValid = true;
+
+			_resourceList.push_back(group);
+
+			return res;
 		}
 		else {
 
-			pool = new PerTypePool;
+			auto& uniqueTypePool = _resourceList.at(T::_typePoolIndexCompileTime);
 
-			_resourcePools.insert({ type, pool});
+			if (uniqueTypePool._freeResources->empty()) {
+
+				res = new T;
+
+				res->typePoolIndex(uniqueTypePool._typeIndex);
+
+				return res;
+
+			}
+			else {
+
+				res = uniqueTypePool._freeResources->back();
+				uniqueTypePool._freeResources->pop_back();
+
+				return res;
+			}
+
 		}
-
-		if (pool->_freeIndices.empty()) {
-
-			int newIndex = (pool->_resourcePool.size() + 1) - 1;
-
-			pool->_resourcePool.push_back(new T());
-			pool->_freeIndices.push_back(newIndex);
-		}
-
-		int newIndex = pool->_freeIndices.back();
-
-		pool->_freeIndices.pop_back();
-
-		resource = pool->_resourcePool[newIndex];
-		resource->poolIndex(newIndex);
-
-		resource->type(type);
-
-		return resource;
 	}
-	
+
 	void releaseResource(IResource* res) {
-
-		unsigned int type = res->type();
-
-		PerTypePool* pool = nullptr;
-
-		auto& itr = _resourcePools.find(type);
-
-		if (itr != _resourcePools.end()) {
-			pool = _resourcePools.at(type);
-		}
-		else {
-			pool = new PerTypePool;
-			_resourcePools.insert({ type, pool });
-		}
-
-		res->type(type);
-		
-		int index = res->poolIndex();
-
-		pool->_freeIndices.push_back(index);
+	
+		_resourceList.at(res->typePoolIndex())._freeResources->push_back(res);
+	
 	}
 };

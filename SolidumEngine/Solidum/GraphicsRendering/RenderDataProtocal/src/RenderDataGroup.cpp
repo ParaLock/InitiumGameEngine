@@ -7,14 +7,18 @@ RenderDataGroup::RenderDataGroup(SlabCache* cache)
 
 RenderDataGroup::~RenderDataGroup()
 {
-	for each(RenderDataPacket data in _dataStore) {
-		data.free();
-	}
-
-	_dataStore.clear();
 }
 
 void RenderDataGroup::removePacket(RenderDataPacket& packet)
 {
 	_groupItems.removeNode(&packet);
+}
+
+void RenderDataGroup::freeRenderPackets()
+{
+	for each(RenderDataPacket data in _dataStore) {
+		data.free();
+	}
+
+	_dataStore.clear();
 }

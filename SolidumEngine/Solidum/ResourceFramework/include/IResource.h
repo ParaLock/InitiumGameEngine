@@ -23,8 +23,8 @@ public:
 	virtual void updateParameter(std::string varName, void *data) = 0;
 	virtual void* getParameter(std::string varName) = 0;
 
-	virtual void poolIndex(unsigned int index) = 0;
-	virtual unsigned int poolIndex() = 0;
+	virtual void typePoolIndex(unsigned int index) = 0;
+	virtual unsigned int typePoolIndex() = 0;
 
 	virtual IResourceContext* getContext() = 0;
 

@@ -290,8 +290,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	world->addPrimaryCamera(camera, 0000);
 	
-	world->addEntity(particleEmitter2Entity, 8593);
-	world->addEntity(particleEmitter1Entity, 5964);
+	//world->addEntity(particleEmitter2Entity, 8593);
+	//world->addEntity(particleEmitter1Entity, 5964);
 	world->addEntity(sun, 3333);
 	world->addEntity(pointLight2Entity, 0001);
 	world->addEntity(pointLight3Entity, 0010);

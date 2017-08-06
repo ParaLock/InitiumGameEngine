@@ -50,5 +50,7 @@ public:
 
 	void setGlobalData(RenderData_GlobalData& gData) { _globalData = gData; };
 	RenderData_GlobalData* getGlobalData() { return &_globalData; }
+
+	void freeRenderPackets();
 };
 

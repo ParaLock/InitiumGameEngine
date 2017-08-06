@@ -21,6 +21,7 @@ public:
 	~RenderDataPacket() {};
 
 	RenderDataPacket(const RenderDataPacket& other) {
+
 		_data = other._data;
 		_attribs = other._attribs;
 		_type = other._type;

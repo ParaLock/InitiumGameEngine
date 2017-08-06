@@ -19,7 +19,7 @@ public:
 	}
 
 	ShaderUniformGroup& operator=(ShaderUniformGroup& other) {
-		
+
 		_uniformList = other._uniformList;
 		_uniformCache = other._uniformCache;
 
@@ -53,6 +53,8 @@ public:
 		_uniformList.push_back(Uniform(name, dataSlab));
 	}
 	std::list<Uniform>& getUniforms() { return _uniformList; };
+
+	void reset();
 
 private:
 

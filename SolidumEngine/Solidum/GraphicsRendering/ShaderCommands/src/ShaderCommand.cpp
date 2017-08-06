@@ -7,6 +7,8 @@ void ShaderUpdateUniformCommand::execute()
 
 		_shader->updateUniform(uniform._name, uniform._data->_mem);
 	}
+
+	_uniforms.reset();
 }
 
 void ShaderSyncUniforms::execute()

@@ -78,6 +78,9 @@ void EngineInstance::engineHeartbeat()
 			{
 				delete frame._scenePipeline;
 				delete frame._endScenePipeline;
+
+				frame._renderDataGroup->freeRenderPackets();
+
 				delete frame._renderDataGroup;
 
 				if (!_inflightFrames.empty()) {

@@ -438,7 +438,7 @@ protected:
 //};);
 
 
-class PipelineSetBlendStateCommand : public GraphicsCommand<PipelineILBindCommand> {
+class PipelineSetBlendStateCommand : public GraphicsCommand<PipelineSetBlendStateCommand> {
 private:
 	BLEND_STATE _blendState;
 public:

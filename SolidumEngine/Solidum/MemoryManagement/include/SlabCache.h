@@ -9,7 +9,7 @@ private:
 
 	size_t _size;
 
-	bool _isFree;
+	unsigned int _sizeIndex;
 
 public:
 	void* _mem;
@@ -19,7 +19,15 @@ class SlabCache
 {
 public:
 
-	SlabCache() {};
+	int _currSizeIndex;
+
+	struct SlabGroup {
+		size_t _slabSize;
+		unsigned int _sizeIndex;
+		std::list<Slab*>* _freeSlabs;
+	};
+
+	SlabCache() { _currSizeIndex = 0; };
 	~SlabCache() { std::cout << "Slab Cache destruct" << std::endl; };
 
 	void free(Slab* slabPtr);
@@ -28,6 +36,6 @@ public:
 
 private:
 
-	std::unordered_map<size_t, std::list<Slab*>> _rootSizes;
+	std::vector<SlabGroup> _slabList;
 };
 

@@ -118,6 +118,7 @@
     <ClInclude Include="Solidum\GraphicsRendering\RenderTarget\include\RenderTargetFactory.h" />
     <ClInclude Include="Solidum\ResourceFramework\include\ResourcePool.h" />
     <ClInclude Include="Solidum\ResourceFramework\include\ResourceSignature.h" />
+    <ClInclude Include="Solidum\MemoryManagement\include\RefCounted.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -217,5 +218,6 @@
     <ClCompile Include="Solidum\GraphicsRendering\GraphicsBuffers\src\GPUBufferFactory.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\DepthStencil\src\DepthStencilFactory.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderFactory.cpp" />
+    <ClCompile Include="Solidum\MemoryManagement\src\RefCounted.cpp" />
   </ItemGroup>
 </Project>
