@@ -72,7 +72,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	//** RESOURCE LOADING **//
 
-	Renderer* simpleDeferredRenderer = (Renderer*)resCreator.createResourceImmediate<Renderer>(&Renderer::InitData("./res/RenderFlowGraphs/SimpleDeferredRenderFlow.txt", &resCreator),
+	Renderer* simpleDeferredRenderer = resCreator.createResourceImmediate<Renderer>(&Renderer::InitData("./res/RenderFlowGraphs/SimpleDeferredRenderFlow.txt", &resCreator),
 		"simpleDeferredRenderer", [=](IResource* res) { solidum->getGraphicsSubsystem()->registerRenderer((Renderer*)res); });
 
 	simpleDeferredRenderer->pushGeneralProcessingLayer(std::make_shared<FrustumCullingLayer>());
