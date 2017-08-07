@@ -20,7 +20,7 @@ struct RenderFlowGraphNodeIOHook {
 	IResource* _res = nullptr;
 };
 
-typedef std::map<std::string, std::map<int, RenderFlowGraphNodeIOHook*>> HookListMapByType;
+typedef std::map<std::string, std::unordered_map<int, RenderFlowGraphNodeIOHook*>> HookListMapByType;
 
 class RenderFlowGraphIOInterface : public IEventListener
 {
@@ -29,7 +29,7 @@ private:
 protected:
 	std::string _parentName;
 
-	std::map<std::string, RenderFlowGraphNodeIOHook*> _hookByName;
+	std::unordered_map<std::string, RenderFlowGraphNodeIOHook*> _hookByName;
 
 	std::list<RenderFlowGraphNodeIOHook> _hookList;
 

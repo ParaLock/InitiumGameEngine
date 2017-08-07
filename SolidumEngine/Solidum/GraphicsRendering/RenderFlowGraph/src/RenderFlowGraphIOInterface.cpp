@@ -31,7 +31,7 @@ void RenderFlowGraphIOInterface::addResourceHook(RenderFlowGraphNodeIOHook& hook
 
 	if (_hookIndexMapByType.find(hook._type) == _hookIndexMapByType.end()) {
 
-		_hookIndexMapByType.insert({ hook._type, std::map<int, RenderFlowGraphNodeIOHook*>() });
+		_hookIndexMapByType.insert({ hook._type, std::unordered_map<int, RenderFlowGraphNodeIOHook*>() });
 
 	}
 

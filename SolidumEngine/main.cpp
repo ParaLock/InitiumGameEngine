@@ -73,65 +73,65 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	//** RESOURCE LOADING **//
 
-	Renderer* simpleDeferredRenderer = resCreator.createResourceImmediate<Renderer>(&Renderer::InitData("./res/RenderFlowGraphs/SimpleDeferredRenderFlow.txt", &resCreator),
+	Renderer* simpleDeferredRenderer = (Renderer*)resCreator.createResourceImmediate<Renderer>(&Renderer::InitData("./res/RenderFlowGraphs/SimpleDeferredRenderFlow.txt", &resCreator),
 		"simpleDeferredRenderer", [=](IResource* res) { solidum->getGraphicsSubsystem()->registerRenderer((Renderer*)res); });
 
 	simpleDeferredRenderer->pushGeneralProcessingLayer(std::make_shared<FrustumCullingLayer>());
 
-	Light* sunLight = resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::DIRECTIONAL_LIGHT),
+	Light* sunLight = (Light*)resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::DIRECTIONAL_LIGHT),
 		"sun", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("LightGroup"), solidum); });
 
-	Light* moonLight = resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::DIRECTIONAL_LIGHT),
+	Light* moonLight = (Light*)resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::DIRECTIONAL_LIGHT),
 		"moon", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("LightGroup"), solidum); });
 	
-	Light* pointLight1 = resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::POINT_LIGHT),
+	Light* pointLight1 = (Light*)resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::POINT_LIGHT),
 		"pointLight1", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("LightGroup"), solidum); });
 	
-	Light* pointLight2 = resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::POINT_LIGHT),
+	Light* pointLight2 = (Light*)resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::POINT_LIGHT),
 		"pointLight2", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("LightGroup"), solidum); });
 	
-	Light* pointLight3 = resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::POINT_LIGHT),
+	Light* pointLight3 = (Light*)resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::POINT_LIGHT),
 		"pointLight3", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("LightGroup"), solidum); });
 	
-	Light* fireLight = resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::POINT_LIGHT),
+	Light* fireLight = (Light*)resCreator.createResourceImmediate<Light>(&Light::InitData(LIGHT_TYPE::POINT_LIGHT),
 		"fire_light", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("LightGroup"), solidum); });
 	
 
-	mesh* cubeMesh = resCreator.createResourceImmediate<mesh>(&mesh::InitData(L"./res/Meshes/cube.obj", &resCreator),
+	mesh* cubeMesh = (mesh*)resCreator.createResourceImmediate<mesh>(&mesh::InitData(L"./res/Meshes/cube.obj", &resCreator),
 		"cube_mesh", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("MeshGroup"), solidum); });
 	
-	mesh* planeMesh = resCreator.createResourceImmediate<mesh>(&mesh::InitData(L"./res/Meshes/plane.obj", &resCreator),
+	mesh* planeMesh = (mesh*)resCreator.createResourceImmediate<mesh>(&mesh::InitData(L"./res/Meshes/plane.obj", &resCreator),
 		"plane_mesh", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("MeshGroup"), solidum); });
 
-	mesh* skydomeMesh = resCreator.createResourceImmediate<mesh>(&mesh::InitData(L"./res/Meshes/skydome.obj", &resCreator),
+	mesh* skydomeMesh = (mesh*)resCreator.createResourceImmediate<mesh>(&mesh::InitData(L"./res/Meshes/skydome.obj", &resCreator),
 		"sky_mesh", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("MeshGroup"), solidum); });
 	
-	Texture* grassTex = resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/grass.png"),
+	Texture* grassTex = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/grass.png"),
 		"grass_tex", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
 		
-	Texture* woodTex = resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/Wood.png"),
+	Texture* woodTex = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/Wood.png"),
 		"wood_tex", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
 	
-	Texture* metalTex = resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/metal.png"),
+	Texture* metalTex = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/metal.png"),
 		"metal_tex", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
 	
-	Texture* bricksTex = resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/grey_bricks.png"),
+	Texture* bricksTex = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/grey_bricks.png"),
 		"bricks_tex", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
 	
-	Texture* bricksNormalMap = resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/normals/bricks_normal.png"),
+	Texture* bricksNormalMap = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/normals/bricks_normal.png"),
 		"bricks_normal_map", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
 	
-	Texture* skydomeCubeMap = resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/cubemaps/sunsetcube1024.dds"),
+	Texture* skydomeCubeMap = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/cubemaps/sunsetcube1024.dds"),
 		"cube_map", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
 	
-	Texture* smokeTexture = resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/smoke.png"),
+	Texture* smokeTexture = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/smoke.png"),
 		"smoke_tex", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
 	
-	Texture* fireTexture = resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/fire.png"),
+	Texture* fireTexture = (Texture*)resCreator.createResourceImmediate<Texture>(&Texture::InitData(L"./res/Textures/diffuse/fire.png"),
 		"fire_tex", [=](IResource* res) { IResource::addResourceToGroup(res, std::string("TextureGroup"), solidum); });
 
 
-	Material* brickMaterial = resCreator.createResourceImmediate<Material>(&Material::InitData(), "brickMaterial", 
+	Material* brickMaterial = (Material*)resCreator.createResourceImmediate<Material>(&Material::InitData(), "brickMaterial", 
 		[=](IResource* res) { IResource::addResourceToGroup(res, std::string("MaterialGroup"), solidum); });
 		
 	brickMaterial->createPass("basicPhongWSpecular", nullptr);
@@ -142,7 +142,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	brickMaterial->getPass("basicPhongWSpecular")->setNormalTexture(bricksNormalMap);
 	
-	Material* woodMaterial = resCreator.createResourceImmediate<Material>(&Material::InitData(), "woodMaterial",
+	Material* woodMaterial = (Material*)resCreator.createResourceImmediate<Material>(&Material::InitData(), "woodMaterial",
 		[=](IResource* res) { IResource::addResourceToGroup(res, std::string("MaterialGroup"), solidum); });
 
 	woodMaterial->createPass("basicPhongWSpecular", nullptr);
@@ -291,8 +291,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	world->addPrimaryCamera(camera, 0000);
 	
-	//world->addEntity(particleEmitter2Entity, 8593);
-	//world->addEntity(particleEmitter1Entity, 5964);
+	world->addEntity(particleEmitter2Entity, 8593);
+	world->addEntity(particleEmitter1Entity, 5964);
 	world->addEntity(sun, 3333);
 	world->addEntity(pointLight2Entity, 0001);
 	world->addEntity(pointLight3Entity, 0010);
