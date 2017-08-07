@@ -104,6 +104,7 @@ void GraphicsCore::beginRender(GraphicsCommandList * endscenePipeline, GraphicsC
 	for each(Renderer* renderer in _registeredRenderers) {
 
 		renderer->renderScene(scenePipeline, renderData);
+
 	}
 
 	_endFrameState->applyState(endscenePipeline);

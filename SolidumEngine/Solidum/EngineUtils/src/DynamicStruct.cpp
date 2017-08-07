@@ -83,19 +83,13 @@ void DynamicStruct::initMemory(ResourceCreator* resCreator)
 	}
 }
 
-std::vector<std::string> DynamicStruct::getVarNameList()
+void DynamicStruct::getVarNameList(std::vector<std::string>& varList)
 {
-	std::vector<std::string> varNameList;
-
 	for (std::map<std::string, DynamicStructMember*>::iterator itr =
 		_variableMap->begin(); itr != _variableMap->end(); itr++)
 	{
-		varNameList.push_back(itr->first);
-
-		int debugRef = -1;
+		varList.push_back(itr->first);
 	}
-
-	return varNameList;
 }
 
 void DynamicStruct::addVariable(std::string varName, size_t varSize)

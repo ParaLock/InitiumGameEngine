@@ -46,6 +46,7 @@ private:
 	int numVars = 0;
 
 	GPUBuffer* _GPUBuff = nullptr;
+	SHADER_TYPE _targetShader;
 
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName);
@@ -83,7 +84,10 @@ public:
 	void initMemory(ResourceCreator* resCreator);
 
 	std::string getName() { return _name; };
-	std::vector<std::string> getVarNameList();
+	void getVarNameList(std::vector<std::string>& varList);
+	
+	void setTargetShader(SHADER_TYPE type) { _targetShader = type; }
+	SHADER_TYPE getTargetShaderType() { return _targetShader; }
 
 	GPUBuffer* getGPUBuffer() { return _GPUBuff; };
 

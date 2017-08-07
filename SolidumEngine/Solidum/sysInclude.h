@@ -50,6 +50,8 @@
 
 #include "atlstr.h"
 
+#include "EngineUtils\include\PerfProfiler.h"
+
 #include <regex>
 
 #include <stdlib.h>

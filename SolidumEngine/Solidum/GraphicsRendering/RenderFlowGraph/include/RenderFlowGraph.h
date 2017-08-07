@@ -66,7 +66,7 @@ public:
 
 	void load();
 
-	std::list<std::string> getNodeExecutionOrder();
+	std::list<std::string>& getNodeExecutionOrder();
 
 	void onEvent(EVENT_PTR evt);
 

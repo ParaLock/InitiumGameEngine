@@ -94,6 +94,9 @@ void dxShader::load()
 
 void dxShader::unload()
 {
+	_constantBufferList.clear();
+	_varNameToConstantBuffer.clear();
+
 }
 
 void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode, ResourceCreator* resCreator)
@@ -166,10 +169,13 @@ void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode
 				DynamicStruct* cbuff = (DynamicStruct*)resCreator->createResourceImmediate<DynamicStruct>(&DynamicStruct::InitData(BufferLayout.Description.Name, true),
 					BufferLayout.Description.Name, [](IResource*) {});
 
+				cbuff->setTargetShader(shaderType);
+				_constantBufferList.push_back(cbuff);
+
 				for (int q = 0; q < BufferLayout.Variables.size(); q++) {
 					cbuff->addVariable(BufferLayout.Variables.at(q).Name, BufferLayout.Variables.at(q).Size);
 					
-					_varNameToConstantBuffer.insert({ BufferLayout.Variables.at(q).Name, std::make_pair(shaderType, cbuff) });
+					_varNameToConstantBuffer.insert({ BufferLayout.Variables.at(q).Name, cbuff });
 				}
 
 				cbuff->initMemory(resCreator);

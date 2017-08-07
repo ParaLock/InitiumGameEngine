@@ -129,8 +129,10 @@ void GPUPipeline::applyState(GraphicsCommandList* commandList)
 				}
 				else {
 
+					RenderTarget* castRT = (RenderTarget*)element.core;
+
 					rtBindInfo.inputRTList.push_back(PipelineRenderTargetCommand::InitData::InputRenderTargetBindInfo
-						(element.bindSlot, element.parentShader, (RenderTarget*)element.core));			
+						(element.bindSlot, element.parentShader, castRT));
 				}
 			}
 		}

@@ -91,7 +91,7 @@ void RenderFlowGraph::load()
 
 }
 
-std::list<std::string> RenderFlowGraph::getNodeExecutionOrder()
+std::list<std::string>& RenderFlowGraph::getNodeExecutionOrder()
 {
 	return _orderedNodeNames;
 }

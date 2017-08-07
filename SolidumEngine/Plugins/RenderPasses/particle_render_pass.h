@@ -145,7 +145,7 @@ static void reg_render_pass__particleEmitter(std::function<void(std::shared_ptr<
 
 			ParticleInstanceData particleData;
 
-			std::cout << particle->_distance << std::endl;
+			//std::cout << particle->_distance << std::endl;
 
 			int batchIndex = particle->_batchIndex;
 
@@ -229,25 +229,15 @@ static void reg_render_pass__particleEmitter(std::function<void(std::shared_ptr<
 			pipelineState.setDepthTestState(DEPTH_TEST_STATE::LESS_EQUAL);
 			pipelineState.setRasterState(RASTER_STATE::DISABLE_TRIANGLE_CULL);
 
-			std::set<std::pair<SHADER_TYPE, DynamicStruct*>> singleStructs;
+			auto& constantBuffers = _particleRenderingShader->getConstantBuffers();
 
-			auto& constantBuffs = _particleRenderingShader->getConstantBuffers();
+			for each(DynamicStruct* constBuff in constantBuffers) {
 
-			for (auto itr = constantBuffs.begin(); itr != constantBuffs.end(); itr++) {
+				pipelineState.attachResource(constBuff, constBuff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, constBuff->getTargetShaderType(), false);
 
-				singleStructs.insert(itr->second);
 			}
 
-			for (auto itr = singleStructs.begin(); itr != singleStructs.end(); itr++) {
-
-				std::pair<SHADER_TYPE, DynamicStruct*> data = *itr;
-
-				DynamicStruct* buff = data.second;
-
-				pipelineState.attachResource(buff, buff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, data.first, false);
-			}
-
-			wrapper->getIOInterface()->assignHookResourceByName("particle_texture", batch->_particleTex);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("particle_texture"), batch->_particleTex);
 
 			wrapper->rebuildPSO(&pipelineState);
 

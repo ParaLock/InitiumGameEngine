@@ -22,14 +22,19 @@ void Renderer::load()
 
 void Renderer::renderScene(GraphicsCommandList * commandList, RenderDataGroup * collection)
 {
+	PerfProfiler profiler;
+
 	RenderDataGroup processedCollection = *collection;
 
 	processedCollection = performGeneralRenderDataProcessing(processedCollection);
 
 	for each(std::shared_ptr<RenderPassWrapper> renderPass in _activeRenderOrder) {
 
+		profiler.start();
+
 		renderPass->execute(commandList, *collection);
 
+		profiler.end("Renderer: RenderPass: " + renderPass->getName() + " ");
 	}
 }
 

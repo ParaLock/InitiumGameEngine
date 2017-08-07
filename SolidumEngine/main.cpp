@@ -35,6 +35,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	LPSTR lpCmdLine,
 	int nCmdShow)
 {
+
 	srand((unsigned)time(NULL));
 
 	AllocConsole();

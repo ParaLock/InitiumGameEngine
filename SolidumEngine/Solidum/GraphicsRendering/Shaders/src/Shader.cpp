@@ -145,7 +145,7 @@ void Shader::updateUniform(std::string& varName, void * pData)
 
 	if (itr != _varNameToConstantBuffer.end()) {
 
-		DynamicStruct* varsBuff = _varNameToConstantBuffer.at(varName).second;
+		DynamicStruct* varsBuff = _varNameToConstantBuffer.at(varName);
 
 		varsBuff->updateVar(varName, pData);
 	}
@@ -153,8 +153,7 @@ void Shader::updateUniform(std::string& varName, void * pData)
 
 void Shader::updateGPU()
 {
-	for (auto itr = _varNameToConstantBuffer.begin(); itr != _varNameToConstantBuffer.end(); itr++) {
-		DynamicStruct* buff = itr->second.second;
-		buff->updateGPU();
+	for each(DynamicStruct* constBuff in _constantBufferList) {
+		constBuff->updateGPU();
 	}
 }

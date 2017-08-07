@@ -32,7 +32,9 @@ class Shader : public IShader, public Resource<Shader, ShaderFactory, ResourcePo
 protected:
 	ShaderInputLayout* _vertexInputLayout;
 
-	std::map<std::string, std::pair<SHADER_TYPE, DynamicStruct*>> _varNameToConstantBuffer;
+	std::list<DynamicStruct*> _constantBufferList;
+
+	std::map<std::string, DynamicStruct*> _varNameToConstantBuffer;
 public:
 	Shader();
 	~Shader();
@@ -40,8 +42,6 @@ public:
 	struct InitData : public ResourceInitParams {
 
 		InitData() {}
-
-		
 
 		std::string* _shaderCode;
 		bool _genInputLayout = false;
@@ -69,12 +69,9 @@ public:
 	void updateModelUniforms(Transform* transform);
 	void updateCameraUniforms(CameraComponent* cam);
 
-	ShaderInputLayout* getInputLayout() { 
-		return _vertexInputLayout; 
-	
-	}
+	ShaderInputLayout* getInputLayout() { return _vertexInputLayout; }
 
-	const std::map<std::string, std::pair<SHADER_TYPE, DynamicStruct*>>& getConstantBuffers() { return _varNameToConstantBuffer; }
+	const std::list<DynamicStruct*>& getConstantBuffers() { return _constantBufferList; }
 
 	void updateUniform(std::string& varName, void * pData);
 	void updateGPU();

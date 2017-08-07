@@ -64,91 +64,115 @@ void EngineInstance::engineHeartbeat()
 
 	_graphicsCore->setCurrentRenderingCamera(cameraComponent);
 
-	auto& itr = _inflightFrames.begin();
+	//auto& itr = _inflightFrames.begin();
 
-	while (itr != _inflightFrames.end()) {
+	//while (itr != _inflightFrames.end()) {
 
-		Frame& frame = *itr;
+	//	Frame& frame = *itr;
 
-		if (frame._renderCMDProcTaskHandle) {
+	//	if (frame._renderCMDProcTaskHandle) {
 
-			if (frame._renderCMDProcTaskHandle->_taskComplete == true &&
-				frame._simulationTaskHandle->_taskComplete == true &&
-				frame._renderPreReqTaskHandle->_taskComplete == true)
-			{
-				delete frame._scenePipeline;
-				delete frame._endScenePipeline;
+	//		if (frame._renderCMDProcTaskHandle->_taskComplete == true &&
+	//			frame._simulationTaskHandle->_taskComplete == true &&
+	//			frame._renderPreReqTaskHandle->_taskComplete == true)
+	//		{
+	//			delete frame._scenePipeline;
+	//			delete frame._endScenePipeline;
 
-				frame._renderDataGroup->freeRenderPackets();
+	//			frame._renderDataGroup->freeRenderPackets();
 
-				delete frame._renderDataGroup;
+	//			delete frame._renderDataGroup;
 
-				if (!_inflightFrames.empty()) {
+	//			if (!_inflightFrames.empty()) {
 
-					itr = _inflightFrames.erase(itr);
-				}
+	//				itr = _inflightFrames.erase(itr);
+	//			}
 
-				continue;
-			}
-		}
+	//			continue;
+	//		}
+	//	}
 
-		if (!_inflightFrames.empty())
-			itr++;
-	}
+	//	if (!_inflightFrames.empty())
+	//		itr++;
+	//}
 
-	if (_inflightFrames.empty()) {
+	//if (_inflightFrames.empty()) {
 
 		GraphicsCommandList* scenePipeline = new GraphicsCommandList(_resourceCreator);
 		GraphicsCommandList* endScenePipeline = new GraphicsCommandList(_resourceCreator);
 
 		RenderDataGroup* renderDataCollection = new RenderDataGroup(_renderDataCache);
 
-		Frame newFrame;
+	//	Frame newFrame;
 
-		newFrame._renderDataGroup = renderDataCollection;
+	//	newFrame._renderDataGroup = renderDataCollection;
 
-		_inflightFrames.push_back(newFrame);
+	//	_inflightFrames.push_back(newFrame);
 
-		Frame& currentFrame = _inflightFrames.back();
+	//	Frame& currentFrame = _inflightFrames.back();
 
-		currentFrame._scenePipeline = scenePipeline;
-		currentFrame._endScenePipeline = endScenePipeline;
+	//	currentFrame._scenePipeline = scenePipeline;
+	//	currentFrame._endScenePipeline = endScenePipeline;
 
-		currentFrame._simulationTaskHandle = _primaryTaskTree->createThreadedTask(
+	//	currentFrame._simulationTaskHandle = _primaryTaskTree->createThreadedTask(
 
-			std::bind(&EngineInstance::update, this, 0.01f,
-			currentFrame._renderDataGroup),
-			nullptr, "SimAndRenderThread", false, 1, true);
+	//		std::bind(&EngineInstance::update, this, 0.01f,
+	//		currentFrame._renderDataGroup),
+	//		nullptr, "SimAndRenderThread", false, 1, true);
 
-		currentFrame._renderPreReqTaskHandle = _primaryTaskTree->createThreadedTask(
+	//	currentFrame._renderPreReqTaskHandle = _primaryTaskTree->createThreadedTask(
 
-			std::bind(&GraphicsCore::beginRender, _graphicsCore, 
-			std::ref(currentFrame._endScenePipeline), 
-			std::ref(currentFrame._scenePipeline), 
-			currentFrame._renderDataGroup),
-			nullptr, "SimAndRenderThread", false, 1, true);
+	//		std::bind(&GraphicsCore::beginRender, _graphicsCore, 
+	//		std::ref(currentFrame._endScenePipeline), 
+	//		std::ref(currentFrame._scenePipeline), 
+	//		currentFrame._renderDataGroup),
+	//		nullptr, "SimAndRenderThread", false, 1, true);
 
-	}
-	else {
-		Frame& currentFrame = _inflightFrames.back();
+	//}
+	//else {
+	//	Frame& currentFrame = _inflightFrames.back();
 
-		bool simTask_isComplete = currentFrame._simulationTaskHandle->_taskComplete;
-		bool preRenderTask_isComplete = currentFrame._renderPreReqTaskHandle->_taskComplete;
+	//	bool simTask_isComplete = currentFrame._simulationTaskHandle->_taskComplete;
+	//	bool preRenderTask_isComplete = currentFrame._renderPreReqTaskHandle->_taskComplete;
 
-		if (simTask_isComplete && preRenderTask_isComplete) {
+	//	if (simTask_isComplete && preRenderTask_isComplete) {
 
-			if (!currentFrame._renderCMDProcTaskHandle) {
+	//		if (!currentFrame._renderCMDProcTaskHandle) {
 
-				currentFrame._renderCMDProcTaskHandle = _primaryTaskTree->createThreadedTask(
+	//			currentFrame._renderCMDProcTaskHandle = _primaryTaskTree->createThreadedTask(
 
-					std::bind(&GraphicsCore::endRender, _graphicsCore, 
-					std::ref(currentFrame._endScenePipeline), 
-					std::ref(currentFrame._scenePipeline)),
-					nullptr, "CommandProcessingThread", false, 1, true);
+	//				std::bind(&GraphicsCore::endRender, _graphicsCore, 
+	//				std::ref(currentFrame._endScenePipeline), 
+	//				std::ref(currentFrame._scenePipeline)),
+	//				nullptr, "CommandProcessingThread", false, 1, true);
 
-			}
-		}
-	}
+	//		}
+	//	}
+	//}
+
+		PerfProfiler profiler;
+
+		profiler.start();
+
+		update(0.004, renderDataCollection);
+		
+		profiler.end("Engine Update Complete: ");
+
+		profiler.start();
+
+		_graphicsCore->beginRender(endScenePipeline, scenePipeline, renderDataCollection);
+		
+		profiler.end("BegineRender Complete: ");
+		
+		profiler.start();
+
+		_graphicsCore->endRender(endScenePipeline, scenePipeline);
+
+		profiler.end("EndRender Complete: ");
+
+		delete scenePipeline;
+		delete endScenePipeline;
+		delete renderDataCollection;
 }
 
 void EngineInstance::loadWorld(World * world)
@@ -183,13 +207,6 @@ void EngineInstance::update(float delta, RenderDataGroup* collection)
 
 		entity->update(delta, collection);
 	}
-
-	std::list<RenderDataPacket*> testList;
-	collection->getAllRenderData(testList);
-
-	RenderDataPacket* renderData = testList.back();
-	
-	RenderPassPacket_SkyData* realData = (RenderPassPacket_SkyData*)renderData->getData();
 
 	_inputHandler->update();
 }

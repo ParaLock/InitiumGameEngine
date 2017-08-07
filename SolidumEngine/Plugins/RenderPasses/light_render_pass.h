@@ -24,6 +24,9 @@ static void reg_render_pass__light(std::function<void(std::shared_ptr<RenderPass
 
 		for each(RenderDataPacket* light in renderData) {
 
+			PerfProfiler profiler1;
+			profiler1.start();
+
 			RenderPassPacket_LightData* lightData = (RenderPassPacket_LightData*)light->getData();
 			RenderData_GlobalData* globalData = collection.getGlobalData();
 
@@ -53,8 +56,9 @@ static void reg_render_pass__light(std::function<void(std::shared_ptr<RenderPass
 			lightDataUniforms.addUniform<Matrix4f>(Matrix4f::transpose(lightData->_viewMatrix), "cbuff_lightViewMatrix");
 			lightDataUniforms.addUniform<Matrix4f>(Matrix4f::transpose(lightData->_projectionMatrix), "cbuff_lightProjectionMatrix");
 
-			wrapper->getIOInterface()->assignHookResourceByName("index_buffer", lightData->_indexBuff);
-			wrapper->getIOInterface()->assignHookResourceByName("vertex_buffer", lightData->_vertexBuff);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("index_buffer"), lightData->_indexBuff);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("vertex_buffer"), lightData->_vertexBuff);
+
 
 			if (lightData->_lightType == LIGHT_TYPE::DIRECTIONAL_LIGHT) {
 
@@ -72,22 +76,13 @@ static void reg_render_pass__light(std::function<void(std::shared_ptr<RenderPass
 
 				pipelineState.shaderSetVertexInputLayout(directionalLightShader->getInputLayout());
 
-				std::set<std::pair<SHADER_TYPE, DynamicStruct*>> singleStructs;
 
-				auto& constantBuffs = directionalLightShader->getConstantBuffers();
+				auto& constantBuffers = directionalLightShader->getConstantBuffers();
 
-				for (auto itr = constantBuffs.begin(); itr != constantBuffs.end(); itr++) {
+				for each(DynamicStruct* constBuff in constantBuffers) {
 
-					singleStructs.insert(itr->second);
-				}
+					pipelineState.attachResource(constBuff, constBuff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, constBuff->getTargetShaderType(), false);
 
-				for (auto itr = singleStructs.begin(); itr != singleStructs.end(); itr++) {
-
-					std::pair<SHADER_TYPE, DynamicStruct*> data = *itr;
-
-					DynamicStruct* buff = data.second;
-
-					pipelineState.attachResource(buff, buff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, data.first, false);
 				}
 
 				wrapper->rebuildPSO(&pipelineState);
@@ -99,6 +94,7 @@ static void reg_render_pass__light(std::function<void(std::shared_ptr<RenderPass
 				commandList->createCommand<PipelineDrawIndexedCommand>(&PipelineDrawIndexedCommand::InitData(0, lightData->_indiceCount));
 
 				commandList->createCommand<PipelineStateResetCommand>(&PipelineStateResetCommand::InitData());
+
 			}
 
 			if (lightData->_lightType == LIGHT_TYPE::POINT_LIGHT) {
@@ -120,23 +116,12 @@ static void reg_render_pass__light(std::function<void(std::shared_ptr<RenderPass
 
 				pipelineState.shaderSetVertexInputLayout(pointLightShader->getInputLayout());
 
-				std::set<std::pair<SHADER_TYPE, DynamicStruct*>> singleStructs;
+				auto& constantBuffers = pointLightShader->getConstantBuffers();
 
-				auto& constantBuffs = pointLightShader->getConstantBuffers();
+				for each(DynamicStruct* constBuff in constantBuffers) {
 
-				for (auto itr = constantBuffs.begin(); itr != constantBuffs.end(); itr++) {
+					pipelineState.attachResource(constBuff, constBuff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, constBuff->getTargetShaderType(), false);
 
-					singleStructs.insert(itr->second);
-				}
-
-
-				for (auto itr = singleStructs.begin(); itr != singleStructs.end(); itr++) {
-
-					std::pair<SHADER_TYPE, DynamicStruct*> data = *itr;
-
-					DynamicStruct* buff = data.second;
-
-					pipelineState.attachResource(buff, buff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, data.first, false);
 				}
 
 				wrapper->rebuildPSO(&pipelineState);
@@ -148,8 +133,9 @@ static void reg_render_pass__light(std::function<void(std::shared_ptr<RenderPass
 				commandList->createCommand<PipelineDrawIndexedCommand>(&PipelineDrawIndexedCommand::InitData(0, lightData->_indiceCount));
 
 				commandList->createCommand<PipelineStateResetCommand>(&PipelineStateResetCommand::InitData());
-
 			}
+		
+			profiler1.end("Light Render Pass: Per Light: Light processing complete");
 		}
 	}
 	);

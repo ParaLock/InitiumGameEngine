@@ -77,8 +77,8 @@ static void reg_render_pass__shadowmap(std::function<void(std::shared_ptr<Render
 
 					commandList->createCommand<ShaderUpdateUniformCommand>(&ShaderUpdateUniformCommand::InitData(meshDataUniforms, shadowMapGenShader));
 
-					wrapper->getIOInterface()->assignHookResourceByName("index_buffer", meshData->_indiceBuffer);
-					wrapper->getIOInterface()->assignHookResourceByName("vertex_buffer", meshData->_vertexBuffer);
+					wrapper->getIOInterface()->assignHookResourceByName(std::string("index_buffer"), meshData->_indiceBuffer);
+					wrapper->getIOInterface()->assignHookResourceByName(std::string("vertex_buffer"), meshData->_vertexBuffer);
 
 					commandList->createCommand<ShaderSyncUniforms>(&ShaderSyncUniforms::InitData(shadowMapGenShader));
 
@@ -88,24 +88,13 @@ static void reg_render_pass__shadowmap(std::function<void(std::shared_ptr<Render
 
 					pipelineState.shaderSetVertexInputLayout(shadowMapGenShader->getInputLayout());
 
-					std::set<std::pair<SHADER_TYPE, DynamicStruct*>> singleStructs;
+					auto& constantBuffers = shadowMapGenShader->getConstantBuffers();
 
-					auto& constantBuffs = shadowMapGenShader->getConstantBuffers();
+					for each(DynamicStruct* constBuff in constantBuffers) {
 
-					for (auto itr = constantBuffs.begin(); itr != constantBuffs.end(); itr++) {
+						pipelineState.attachResource(constBuff, constBuff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, constBuff->getTargetShaderType(), false);
 
-						singleStructs.insert(itr->second);
 					}
-
-					for (auto itr = singleStructs.begin(); itr != singleStructs.end(); itr++) {
-
-						std::pair<SHADER_TYPE, DynamicStruct*> data = *itr;
-
-						DynamicStruct* buff = data.second;
-
-						pipelineState.attachResource((IResource*)buff, buff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, data.first, false);
-					}
-
 
 					wrapper->rebuildPSO(&pipelineState);
 

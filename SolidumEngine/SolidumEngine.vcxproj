@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Solidum\EngineUtils\include\PerfProfiler.h" />
     <ClInclude Include="Solidum\MemoryManagement\include\RefCounted.h" />
     <ClInclude Include="Solidum\EngineCore\include\IEngineInstance.h" />
     <ClInclude Include="Solidum\GraphicsRendering\DepthStencil\include\DepthStencilFactory.h" />
@@ -139,6 +140,7 @@
     <ClInclude Include="Solidum\GraphicsRendering\Textures\include\TextureFactory.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Solidum\EngineUtils\src\PerfProfiler.cpp" />
     <ClCompile Include="Solidum\MemoryManagement\src\RefCounted.cpp" />
     <ClCompile Include="Solidum\EngineCore\src\IEngineInstance.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\DepthStencil\src\DepthStencilFactory.cpp" />

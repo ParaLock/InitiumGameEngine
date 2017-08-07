@@ -52,10 +52,10 @@ static void reg_render_pass__mesh(std::function<void(std::shared_ptr<RenderPassW
 
 			IShader* _materialShader = nullptr;
 
-			wrapper->getIOInterface()->assignHookResourceByName("index_buffer", meshData->_indiceBuffer);
-			wrapper->getIOInterface()->assignHookResourceByName("vertex_buffer", meshData->_vertexBuffer);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("index_buffer"), meshData->_indiceBuffer);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("vertex_buffer"), meshData->_vertexBuffer);
 
-			wrapper->getIOInterface()->assignHookResourceByName("color_texture", meshData->_modelTex);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("color_texture"), meshData->_modelTex);
 
 			_materialShader = wrapper->getShader("geo_shader_no_normal_mapping");
 
@@ -63,13 +63,13 @@ static void reg_render_pass__mesh(std::function<void(std::shared_ptr<RenderPassW
 
 				_materialShader = wrapper->getShader("geo_shader_w_normal_mapping");
 
-				wrapper->getIOInterface()->assignHookResourceByName("mat_tex_normal", meshData->_materialData._normalTex);
+				wrapper->getIOInterface()->assignHookResourceByName(std::string("mat_tex_normal"), meshData->_materialData._normalTex);
 			}
 
-			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_albedo", meshData->_materialData._albedoTex);
-			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_specular", meshData->_materialData._specularTex);
-			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_emessive", meshData->_materialData._emissiveTex);
-			wrapper->getIOInterface()->assignHookResourceByName("mat_tex_pbr_roughness", meshData->_materialData._roughnessTex);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("mat_tex_albedo"), meshData->_materialData._albedoTex);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("mat_tex_specular"), meshData->_materialData._specularTex);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("mat_tex_pbr_emessive"), meshData->_materialData._emissiveTex);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("mat_tex_pbr_roughness"), meshData->_materialData._roughnessTex);
 
 			materialDataUniforms.addUniform<float>(meshData->_materialData._specularIntensity, "cbuff_specularIntensity");
 			materialDataUniforms.addUniform<Vector4f>(meshData->_materialData._specularColor, "cbuff_specularColor");
@@ -87,22 +87,12 @@ static void reg_render_pass__mesh(std::function<void(std::shared_ptr<RenderPassW
 
 			pipelineState.shaderSetVertexInputLayout(_materialShader->getInputLayout());
 
-			std::set<std::pair<SHADER_TYPE, DynamicStruct*>> singleStructs;
+			auto& constantBuffers = _materialShader->getConstantBuffers();
 
-			auto& constantBuffs = _materialShader->getConstantBuffers();
+			for each(DynamicStruct* constBuff in constantBuffers) {
 
-			for (auto itr = constantBuffs.begin(); itr != constantBuffs.end(); itr++) {
+				pipelineState.attachResource(constBuff, constBuff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, constBuff->getTargetShaderType(), false);
 
-				singleStructs.insert(itr->second);
-			}
-
-			for (auto itr = singleStructs.begin(); itr != singleStructs.end(); itr++) {
-
-				std::pair<SHADER_TYPE, DynamicStruct*> data = *itr;
-
-				DynamicStruct* buff = data.second;
-
-				pipelineState.attachResource(buff, buff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, data.first, false);
 			}
 
 			wrapper->rebuildPSO(&pipelineState);

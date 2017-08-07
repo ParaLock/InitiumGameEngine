@@ -26,7 +26,7 @@ public:
 	virtual void updateModelUniforms(Transform* transform) = 0;
 	virtual void updateCameraUniforms(CameraComponent* cam) = 0;
 
-	virtual const std::map<std::string, std::pair<SHADER_TYPE, DynamicStruct*>>& getConstantBuffers() = 0;
+	virtual const std::list<DynamicStruct*>& getConstantBuffers() = 0;
 
 	virtual ShaderInputLayout* getInputLayout() = 0;
 

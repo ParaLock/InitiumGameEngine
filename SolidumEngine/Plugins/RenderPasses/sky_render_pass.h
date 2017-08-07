@@ -47,10 +47,10 @@ static void reg_render_pass__sky(std::function<void(std::shared_ptr<RenderPassWr
 
 			commandList->createCommand<ShaderUpdateUniformCommand>(&ShaderUpdateUniformCommand::InitData(skyDataUniforms, _skyShader));
 
-			wrapper->getIOInterface()->assignHookResourceByName("index_buffer", skyData->_indexBuffer);
-			wrapper->getIOInterface()->assignHookResourceByName("vertex_buffer", skyData->_vertexBuffer);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("index_buffer"), skyData->_indexBuffer);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("vertex_buffer"), skyData->_vertexBuffer);
 
-			wrapper->getIOInterface()->assignHookResourceByName("skymap_texture", skyData->_skyTexture);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("skymap_texture"), skyData->_skyTexture);
 
 			commandList->createCommand<ShaderSyncUniforms>(&ShaderSyncUniforms::InitData(_skyShader));
 
@@ -60,24 +60,13 @@ static void reg_render_pass__sky(std::function<void(std::shared_ptr<RenderPassWr
 
 			pipelineState.shaderSetVertexInputLayout(_skyShader->getInputLayout());
 
-			std::set<std::pair<SHADER_TYPE, DynamicStruct*>> singleStructs;
+			auto& constantBuffers = _skyShader->getConstantBuffers();
 
-			auto& constantBuffs = _skyShader->getConstantBuffers();
+			for each(DynamicStruct* constBuff in constantBuffers) {
 
-			for (auto itr = constantBuffs.begin(); itr != constantBuffs.end(); itr++) {
+				pipelineState.attachResource(constBuff, constBuff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, constBuff->getTargetShaderType(), false);
 
-				singleStructs.insert(itr->second);
 			}
-
-			for (auto itr = singleStructs.begin(); itr != singleStructs.end(); itr++) {
-
-				std::pair<SHADER_TYPE, DynamicStruct*> data = *itr;
-
-				DynamicStruct* buff = data.second;
-
-				pipelineState.attachResource(buff, buff->getName(), 0, SHADER_RESOURCE_TYPE::CONSTANT_BUFFER, data.first, false);
-			}
-
 
 			wrapper->rebuildPSO(&pipelineState);
 

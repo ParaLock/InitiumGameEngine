@@ -1,6 +1,17 @@
 #include "../include/RenderFlowGraphIOInterface.h"
 
 
+bool RenderFlowGraphIOInterface::isLiveHookPresent(std::list<RenderFlowGraphNodeIOHook*>& liveHooks, RenderFlowGraphNodeIOHook * hookToFind)
+{
+	for each(RenderFlowGraphNodeIOHook* hook in liveHooks) {
+		if (hook == hookToFind)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
 
 RenderFlowGraphIOInterface::RenderFlowGraphIOInterface()
 {
@@ -12,76 +23,59 @@ RenderFlowGraphIOInterface::~RenderFlowGraphIOInterface()
 {
 }
 
-void RenderFlowGraphIOInterface::addResourceHook(RenderFlowGraphNodeIOHook hook)
+void RenderFlowGraphIOInterface::addResourceHook(RenderFlowGraphNodeIOHook& hook)
 {
-	RenderFlowGraphNodeIOHook* newHook = new RenderFlowGraphNodeIOHook();
+	//hook._res = nullptr;
+
+	_hookList.push_back(hook);
+
+	if (_hookIndexMapByType.find(hook._type) == _hookIndexMapByType.end()) {
+
+		_hookIndexMapByType.insert({ hook._type, std::map<int, RenderFlowGraphNodeIOHook*>() });
+
+	}
+
+	auto& hookIndexMap = _hookIndexMapByType.at(hook._type);
+
+	hookIndexMap.insert({ hook._index, &_hookList.back() });
+
+	_hookByName.insert({ hook._name, &_hookList.back() });
 	
-	newHook->_res = nullptr;
-
-	if (_hookMaps.find(hook._type) == _hookMaps.end()) {
-		_hookMaps.insert({ hook._type, std::map<int, RenderFlowGraphNodeIOHook*>() });
-	}
-
-	auto& _hooksByIndex = _hookMaps.at(hook._type);
-
-	*newHook = hook;
-
-	_hooksByName.insert({ newHook->_name, newHook });
-
-	_hooksByIndex.insert({ hook._index, newHook });
 }
 
-void RenderFlowGraphIOInterface::assignHookResource(std::string type, int index, IResource * res)
+void RenderFlowGraphIOInterface::assignHookResource(std::string& type, int index, IResource * res)
 {
-	if (_hookMaps.find(type) != _hookMaps.end()) {
+	RenderFlowGraphNodeIOHook* hook = nullptr;
 
-		auto& _hooksByIndex = _hookMaps.at(type);
+	if (_hookIndexMapByType.find(type) != _hookIndexMapByType.end()) {
 
-		if (_hooksByIndex.find(index) != _hooksByIndex.end()) {
-			RenderFlowGraphNodeIOHook* hook = _hooksByIndex.at(index);
+		auto& hookIndexMap = _hookIndexMapByType.at(type);
 
-			hook->_res = res;
-		}
-	}
-}
-
-void RenderFlowGraphIOInterface::assignHookResourceByName(std::string hookName, IResource * res)
-{
-
-	if (_hooksByName.find(hookName) != _hooksByName.end()) {
-
-		RenderFlowGraphNodeIOHook* hook = _hooksByName.at(hookName);
+		hook = hookIndexMap.at(index);
 
 		hook->_res = res;
+
 	}
+	else {
+		std::cout << "RenderFlowGraphIOInterface: Resource Hook not found at resource designation: Hook index: " 
+			<< std::to_string(index) << " Hook Type: " << type;
+	}
+
+	if (!isLiveHookPresent(_liveHookList, hook)) { _liveHookList.push_back(hook); }
 }
 
-std::list<RenderFlowGraphNodeIOHook*> RenderFlowGraphIOInterface::getLiveHooks()
+void RenderFlowGraphIOInterface::assignHookResourceByName(std::string& hookName, IResource * res)
 {
-	std::list<RenderFlowGraphNodeIOHook*> _usedHooks;
+	auto* hook = _hookByName.at(hookName);
 
-	HookMapsByHookType::iterator hookMapItr = _hookMaps.begin();
+	if(!isLiveHookPresent(_liveHookList, hook)) { _liveHookList.push_back(hook); }
 
-	while(hookMapItr != _hookMaps.end()) {
+	hook->_res = res;
+}
 
-		std::map<int, RenderFlowGraphNodeIOHook*> hooksByIndexMap = hookMapItr->second;
-
-		std::map<int, RenderFlowGraphNodeIOHook*>::iterator hooksByIndexMapItr = hooksByIndexMap.begin();
-
-		while(hooksByIndexMapItr != hooksByIndexMap.end()) {
-
-			RenderFlowGraphNodeIOHook* hook = hooksByIndexMapItr->second;
-
-			if (hook->_res != nullptr)
-				_usedHooks.push_back(hook);
-
-			hooksByIndexMapItr++;
-		}
-
-		hookMapItr++;
-	}
-
-	return _usedHooks;
+std::list<RenderFlowGraphNodeIOHook*>& RenderFlowGraphIOInterface::getLiveHooks()
+{
+	return _liveHookList;
 }
 
 void RenderFlowGraphIOInterface::onEvent(EVENT_PTR evt)
