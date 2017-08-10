@@ -12,6 +12,7 @@ static void reg_render_pass__mesh(std::function<void(std::shared_ptr<RenderPassW
 	RenderPassWrapper* wrapper = (RenderPassWrapper*)resCreator->createResourceImmediate<RenderPassWrapper>(&RenderPassWrapper::InitData("./res/RenderPassDescriptors/MeshRenderPass.txt", resCreator), "mesh_render_pass",
 		[](IResource*) {});
 
+
 	wrapper->setRenderPass
 		(
 			[=](GraphicsCommandList* commandList, RenderDataGroup& collection, RenderPassWrapper* wrapper)
@@ -52,9 +53,6 @@ static void reg_render_pass__mesh(std::function<void(std::shared_ptr<RenderPassW
 
 			IShader* _materialShader = nullptr;
 
-			wrapper->getIOInterface()->assignHookResourceByName(std::string("index_buffer"), meshData->_indiceBuffer);
-			wrapper->getIOInterface()->assignHookResourceByName(std::string("vertex_buffer"), meshData->_vertexBuffer);
-
 			wrapper->getIOInterface()->assignHookResourceByName(std::string("color_texture"), meshData->_modelTex);
 
 			_materialShader = wrapper->getShader("geo_shader_no_normal_mapping");
@@ -70,6 +68,9 @@ static void reg_render_pass__mesh(std::function<void(std::shared_ptr<RenderPassW
 			wrapper->getIOInterface()->assignHookResourceByName(std::string("mat_tex_specular"), meshData->_materialData._specularTex);
 			wrapper->getIOInterface()->assignHookResourceByName(std::string("mat_tex_pbr_emessive"), meshData->_materialData._emissiveTex);
 			wrapper->getIOInterface()->assignHookResourceByName(std::string("mat_tex_pbr_roughness"), meshData->_materialData._roughnessTex);
+
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("index_buffer"), meshData->_indiceBuffer);
+			wrapper->getIOInterface()->assignHookResourceByName(std::string("vertex_buffer"), meshData->_vertexBuffer);
 
 			materialDataUniforms.addUniform<float>(meshData->_materialData._specularIntensity, "cbuff_specularIntensity");
 			materialDataUniforms.addUniform<Vector4f>(meshData->_materialData._specularColor, "cbuff_specularColor");

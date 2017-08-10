@@ -5,7 +5,7 @@
 #include "../../Lights/include/ILight.h"
 #include "../../GraphicsCommand/include/GraphicsCommand.h"
 
-#include "../../../ResourceFramework/include/ResourceInitParams.h"
+#include "../../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
 
 #include "../../Shaders/include/ShaderUniformGroup.h"
 

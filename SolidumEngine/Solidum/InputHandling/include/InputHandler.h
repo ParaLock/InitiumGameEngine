@@ -1,6 +1,5 @@
 #pragma once
 #include "../../ResourceFramework/include/Resource.h"
-#include "../../ResourceFramework/include/ResourceInitParams.h"
 
 #include "../../EventFramework/include/EventFrameworkCore.h"
 
@@ -9,6 +8,8 @@
 #include "../../GraphicsRendering/Window/include/window.h"
 
 #include "../../ResourceFramework/include/GenericFactory.h"
+
+#include "../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
 
 struct InputEvtData : public EventData {
 

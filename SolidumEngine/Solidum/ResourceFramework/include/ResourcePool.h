@@ -1,7 +1,11 @@
 #pragma once
 #include "../../sysInclude.h"
 
-#include "../include/IResource.h"
+#include "../../../SolidumAPI/core_interfaces/IResource.h"
+
+#include "../../../SolidumAPI/core_objects/include/ResourceUtils.h"
+
+class IResourceCreator;
 
 class PipelineILBindCommand;
 class PipelineSetBlendState;
@@ -24,14 +28,14 @@ public:
 	ResourcePool() : _currTypeIndex(0) {}
 
 	template<typename T>
-	IResource* getResource() {
+	IResource* getResource(IResourceCreator* creator) {
 
 		IResource* res = nullptr;
 
 		if (T::_typePoolValid == false) {
 
-			unsigned int type = IResource::getTypeID(std::type_index(typeid(T)));
-			if (type == 0) { IResource::addType(std::type_index(typeid(T))); type = IResource::getTypeID(std::type_index(typeid(T))); }
+			unsigned int type = ResourceUtils::getTypeID(std::type_index(typeid(T)), creator);
+			if (type == 0) { ResourceUtils::addType(std::type_index(typeid(T)), creator); type = ResourceUtils::getTypeID(std::type_index(typeid(T)), creator); }
 
 			ResourcePoolGroup group;
 

@@ -1,4 +1,7 @@
 #pragma once
+
+#include "PrototypeCache.h"
+
 #include "../../sysInclude.h"
 
 #include "../../MemoryManagement/include/SlabCache.h"
@@ -7,9 +10,10 @@
 
 #include "../../TaskFramework/include/Task.h"
 
-#include "../../EngineCore/include/IEngineInstance.h"
+#include "../../../SolidumAPI/core_interfaces/IEngineInstance.h"
 
-#include "IResource.h"
+#include "../../../SolidumAPI/core_interfaces/IResource.h"
+#include "../../../SolidumAPI/core_interfaces/IResourceCreator.h"
 
 struct ResourcePendingCreation {
 
@@ -28,9 +32,11 @@ struct ResourcePendingCreation {
 	std::function<void(IResource*)> _resLoadedCallback;
 };
 
-class ResourceCreator
+class ResourceCreator : public IResourceCreator
 {
 private:
+
+	std::unordered_map<std::type_index, unsigned int> _typeIDByTypeIndex;
 
 	IEngineInstance* _sysInstance;
 
@@ -50,7 +56,7 @@ public:
 	void createResourceDeferred(typename T_RESOURCE::InitData* initParams, std::string name,
 		std::function<void(IResource*)> resLoadedCallback) 
 	{
-		IResource* newResource = T_RESOURCE::Factory::createResource<T_RESOURCE, typename T_RESOURCE::POOL>(&T_RESOURCE::_pool);
+		IResource* newResource = T_RESOURCE::Factory::createResource<T_RESOURCE, typename T_RESOURCE::POOL>(&T_RESOURCE::_pool, this);
 
 		IResourceContext* context = newResource->getContext();
 
@@ -64,7 +70,7 @@ public:
 	T_RESOURCE* createResourceImmediate(typename T_RESOURCE::InitData* initParams, std::string name,
 		std::function<void(IResource*)> resLoadedCallback)
 	{
-		IResource* newResource = T_RESOURCE::Factory::createResource<T_RESOURCE, typename T_RESOURCE::POOL>(&T_RESOURCE::_pool);
+		IResource* newResource = T_RESOURCE::Factory::createResource<T_RESOURCE, typename T_RESOURCE::POOL>(&T_RESOURCE::_pool, this);
 
 		IResourceContext* context = newResource->getContext();
 
@@ -79,11 +85,40 @@ public:
 
 	}
 
+	IResource* createResourceImmediate(ResourceInitParams* params, std::string name, std::string typeName,
+		std::function<void(IResource*)> resLoadedCallback);
+
+	void createResourceDeferred(ResourceInitParams* params, std::string name, std::string typeName,
+		std::function<void(IResource*)> resLoadedCallback);
+
+	template<typename T_PROTO>
+	void addPrototype(std::string typeName) {
+
+		PrototypeCache& cache = _sysInstance->getResourcePrototypeCache();
+
+		cache.addPrototype(typeName, 
+			
+			[=]() {
+
+				IResource* newResource = T_PROTO::Factory::createResource
+					<T_PROTO, typename T_PROTO::POOL>(&T_PROTO::_pool, this);
+
+				return newResource;
+			}
+
+			
+			);
+	}
+
+
+
 	IEngineInstance* getParentEngine() { return _sysInstance; };
 
 	void loadPendingResources();
 
 	void setTaskHandle(std::shared_ptr<TaskHandle> handle) { _taskHandle = handle; };
+
+	std::unordered_map<std::type_index, unsigned int>& getTypeToTypeIDMap();
 };
 
 

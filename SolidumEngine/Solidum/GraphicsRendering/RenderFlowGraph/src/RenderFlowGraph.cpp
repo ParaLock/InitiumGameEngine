@@ -62,7 +62,7 @@ void RenderFlowGraph::load()
 
 		for each(ParsedNodeEdge edge in node._edges) {
 
-			IResource* edgeResource = IResource::lookupResource(
+			IResource* edgeResource = ResourceUtils::lookupResource(
 				edge._name, 
 				_resourceGroupByType.at(edge._type), 
 				realBuilder->_resCreator->getParentEngine());
@@ -75,7 +75,7 @@ void RenderFlowGraph::load()
 
 		GPUPipelineOP newop;
 
-		IResource* opTarget = IResource::lookupResource(
+		IResource* opTarget = ResourceUtils::lookupResource(
 			op._targetName,
 			_resourceGroupByType.at(op._targetType),
 			realBuilder->_resCreator->getParentEngine());

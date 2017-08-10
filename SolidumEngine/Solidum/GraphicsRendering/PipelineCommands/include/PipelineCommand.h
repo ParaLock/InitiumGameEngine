@@ -8,7 +8,7 @@
 
 #include "../../GraphicsCommand/include/GraphicsCommand.h"
 
-#include "../../../ResourceFramework/include/ResourceInitParams.h"
+#include "../../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
 
 #include "../../Viewport/include/Viewport.h"
 

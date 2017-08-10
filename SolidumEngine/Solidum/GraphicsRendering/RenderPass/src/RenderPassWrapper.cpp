@@ -32,7 +32,7 @@ void RenderPassWrapper::load()
 		std::string shaderCode = shaderParser.parseShader(&descData, shaderToLoad._path);
 
 		Shader* newShader = (Shader*)realBuilder->_resourceCreator->createResourceImmediate<Shader>(&Shader::InitData(&shaderCode, true, realBuilder->_resourceCreator), shaderToLoad._name,
-			[=](IResource* res) {IResource::addResourceToGroup(res, std::string("ShaderGroup"), realBuilder->_resourceCreator->getParentEngine()); });
+			[=](IResource* res) {ResourceUtils::addResourceToGroup(res, std::string("ShaderGroup"), realBuilder->_resourceCreator->getParentEngine()); });
 
 		newShader->updateGPU();
 

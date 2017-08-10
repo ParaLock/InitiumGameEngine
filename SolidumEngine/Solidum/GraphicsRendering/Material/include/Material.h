@@ -3,7 +3,7 @@
 #include "../../../sysInclude.h"
 #include "../../Textures/include/Texture.h"
 #include "../../../ResourceFramework/include/Resource.h"
-#include "../../../ResourceFramework/include/ResourceInitParams.h"
+#include "../../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
 
 class Shader;
 

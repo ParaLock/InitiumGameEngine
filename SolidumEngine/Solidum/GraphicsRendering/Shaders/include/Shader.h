@@ -4,7 +4,7 @@
 
 #include "../../../GraphicsRendering/GraphicsCommandList/include/GraphicsCommandList.h"
 
-#include "../../../ResourceFramework/include/ResourceInitParams.h"
+#include "../../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
 
 #include "../../Lights/include/ILight.h"
 #include "../../Material/include/Material.h"

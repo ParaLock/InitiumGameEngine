@@ -15,9 +15,10 @@
 
 #include "../../ResourceFramework/include/ResourceCreator.h"
 
-#include "../../ResourceFramework/include/ResourceLookupCache.h"
+#include "../../ResourceFramework/include/PrototypeCache.h"
 
-#include "IEngineInstance.h"
+#include "../../../SolidumAPI/core_objects/include/ResourceLookupCache.h"
+#include "../../../SolidumAPI/core_interfaces/IEngineInstance.h"
 
 class EngineInstance : public IEngineInstance
 {
@@ -36,6 +37,8 @@ private:
 		std::shared_ptr<TaskHandle> _simulationTaskHandle;
 		std::shared_ptr<TaskHandle> _renderCMDProcTaskHandle;
 	};
+
+	PrototypeCache _resourcePrototypeCache;
 
 	ResourceCreator* _resourceCreator;
 
@@ -62,6 +65,7 @@ public:
 	~EngineInstance();
 
 	ResourceLookupCache* getResourceLookupCache(std::string& resourceGroup);
+	PrototypeCache& getResourcePrototypeCache() { return _resourcePrototypeCache; };
 
 	void engineHeartbeat();
 

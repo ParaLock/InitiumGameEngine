@@ -70,7 +70,7 @@ ParsedRenderFlowGraphData RenderFlowGraphParser::parseRenderFlowGraph(std::strin
 				}
 
 				resCreator->createResourceImmediate<RenderTarget>(&RenderTarget::InitData(rtTexFormat, height, width), spaceSplit.at(2),
-					[=](IResource* res) {IResource::addResourceToGroup(res, std::string("RenderTargetGroup"), resCreator->getParentEngine()); });
+					[=](IResource* res) {ResourceUtils::addResourceToGroup(res, std::string("RenderTargetGroup"), resCreator->getParentEngine()); });
 
 			}
 
@@ -95,7 +95,7 @@ ParsedRenderFlowGraphData RenderFlowGraphParser::parseRenderFlowGraph(std::strin
 				}
 
 				resCreator->createResourceImmediate<TextureSampler>(&TextureSampler::InitData(filterType, ANISOTRPHIC_FILTER_LEVELS::NO_ANISOTROPHIC_FILTERING, addrMode), 
-					spaceSplit.at(4), [=](IResource* res) {IResource::addResourceToGroup(res, std::string("TextureSamplerGroup"), resCreator->getParentEngine()); });
+					spaceSplit.at(4), [=](IResource* res) {ResourceUtils::addResourceToGroup(res, std::string("TextureSamplerGroup"), resCreator->getParentEngine()); });
 			}
 
 			if (spaceSplit.at(1) == "DEPTH_STENCIL") {
@@ -104,13 +104,13 @@ ParsedRenderFlowGraphData RenderFlowGraphParser::parseRenderFlowGraph(std::strin
 
 
 					resCreator->createResourceImmediate<DepthStencil>(&DepthStencil::InitData(std::stoi(spaceSplit.at(3)), std::stoi(spaceSplit.at(4))), spaceSplit.at(2),
-						[=](IResource* res) {IResource::addResourceToGroup(res, std::string("DepthStencilGroup"), resCreator->getParentEngine()); });
+						[=](IResource* res) {ResourceUtils::addResourceToGroup(res, std::string("DepthStencilGroup"), resCreator->getParentEngine()); });
 
 				}
 				else {
 
 					resCreator->createResourceImmediate<DepthStencil>(&DepthStencil::InitData(window::getInstance()->screen_width, window::getInstance()->screen_height), spaceSplit.at(2),
-						[=](IResource* res) {IResource::addResourceToGroup(res, std::string("DepthStencilGroup"), resCreator->getParentEngine()); });
+						[=](IResource* res) {ResourceUtils::addResourceToGroup(res, std::string("DepthStencilGroup"), resCreator->getParentEngine()); });
 				}
 
 			}

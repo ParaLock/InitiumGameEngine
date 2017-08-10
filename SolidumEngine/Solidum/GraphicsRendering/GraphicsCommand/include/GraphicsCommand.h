@@ -4,9 +4,9 @@
 
 #include "../../../ResourceFramework/include/Resource.h"
 
-#include "../../../ResourceFramework/include/ResourceInitParams.h"
-
 #include "../../../ResourceFramework/include/GenericFactory.h"
+
+#include "../../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
 
 class Texture;
 class RenderTarget;

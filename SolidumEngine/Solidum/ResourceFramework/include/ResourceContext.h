@@ -1,26 +1,8 @@
 #pragma once
 #include "../../sysInclude.h"
 
-#include "ResourceInitParams.h"
-
-class IResourceContext {
-public:
-
-	IResourceContext() {}
-
-	virtual void setResourceInitParams(ResourceInitParams* params) = 0;
-	virtual ResourceInitParams* getResourceInitParams() = 0;
-
-	virtual void attachLoadDependancy(std::function<bool()> loadDependancy) = 0;
-	virtual void attachUnloadDependancy(std::function<bool()> unloadDependancy) = 0;
-
-	virtual bool isLoadable() = 0;
-	virtual bool isUnloadable() = 0;
-
-	virtual void setLoadState(bool state) = 0;
-	virtual bool getLoadState() = 0;
-private:
-};
+#include "../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
+#include "../../../SolidumAPI/core_interfaces/IResourceContext.h"
 
 template<typename T_RESOURCE>
 class ResourceContext : public IResourceContext {
@@ -34,7 +16,7 @@ protected:
 	typename T_RESOURCE::InitData _INIT_PARAMS;
 public:
 
-	ResourceContext() { }
+	ResourceContext() {}
 	~ResourceContext() {}
 
 	void* getResourceInitParamsRawPtr() { return &_INIT_PARAMS; }

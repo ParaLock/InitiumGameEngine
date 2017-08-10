@@ -1,13 +1,12 @@
 #pragma once
 #include "../../sysInclude.h"
 
-#include "../../EngineCore/include/IEngineInstance.h"
-
-#include "IResource.h"
-#include "ResourceInitParams.h"
 #include "ResourceContext.h"
 #include "ResourcePool.h"
 #include "ResourceSignature.h"
+
+#include "../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
+#include "../../../SolidumAPI/core_interfaces/IEngineInstance.h"
 
 template<typename T_RESOURCE, typename T_FACTORY, typename T_POOL>
 class Resource : public IResource

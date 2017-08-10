@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../sysInclude.h"
+#include "../../../Solidum/sysInclude.h"
 
 class IResource;
 

@@ -2,7 +2,7 @@
 #include "../../../sysInclude.h"
 #include "../../../ResourceFramework/include/Resource.h"
 #include "../../../ResourceFramework/include/ResourceContext.h"
-#include "../../../ResourceFramework/include/ResourceInitParams.h"
+#include "../../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
 
 #include "../include/GPUBufferFactory.h"
 

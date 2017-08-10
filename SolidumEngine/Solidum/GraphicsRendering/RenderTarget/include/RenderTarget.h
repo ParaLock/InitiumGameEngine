@@ -1,6 +1,6 @@
 #pragma once
 #include "../../../sysInclude.h"
-#include "../../../ResourceFramework/include/ResourceInitParams.h"
+
 #include "../../../ResourceFramework/include/Resource.h"
 
 #include "../../../GraphicsRendering/Viewport/include/Viewport.h"
@@ -11,6 +11,7 @@
 
 #include "../../ActiveGraphicsAPI.h"
 
+#include "../../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
 
 class RenderTarget;
 class dxRenderTarget;

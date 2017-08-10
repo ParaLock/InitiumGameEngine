@@ -4,7 +4,7 @@ class ResourceInitParams
 protected:
 public:
 
-	ResourceInitParams();
-	~ResourceInitParams();
+	ResourceInitParams() {};
+	~ResourceInitParams() {};
 };
 

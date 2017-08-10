@@ -66,7 +66,7 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow,
 
 		RenderTarget* frameBufferRT = (RenderTarget*)resCreator.createResourceImmediate<RenderTarget>
 			(&RenderTarget::InitData(TEX_FORMAT::INVALID, outputWindow->screen_height, outputWindow->screen_width),
-				"framebuffer", [=](IResource* res) {IResource::addResourceToGroup(res, std::string("RenderTargetGroup"), sysInstance); });
+				"framebuffer", [=](IResource* res) {ResourceUtils::addResourceToGroup(res, std::string("RenderTargetGroup"), sysInstance); });
 
 		frameBufferRT->setViewport(frameBuffDepthStencilView);
 
@@ -75,16 +75,16 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow,
 
 		RenderTarget* depthBufferRT = (RenderTarget*)resCreator.createResourceImmediate<RenderTarget>
 			(&RenderTarget::InitData(TEX_FORMAT::INVALID, outputWindow->screen_height, outputWindow->screen_width),
-				"depthbuffer", [=](IResource* res) {IResource::addResourceToGroup(res, std::string("RenderTargetGroup"), sysInstance); });
+				"depthbuffer", [=](IResource* res) {ResourceUtils::addResourceToGroup(res, std::string("RenderTargetGroup"), sysInstance); });
 
 		depthBufferRT->setViewport(frameBuffDepthStencilView);
 
 		depthBufferRT->updateParameter("TEXTURE", dxDeviceAccessor::dxEncapsulator->getDepthBufferTexture());
 		depthBufferRT->updateParameter("SHADERVIEW", dxDeviceAccessor::dxEncapsulator->getDepthBufferShaderView());
 
-		IResource::createResourceGroup(std::string("RenderTargetGroup"), _sysInstance);
+		ResourceUtils::createResourceGroup(std::string("RenderTargetGroup"), _sysInstance);
 
-		IResource::lookupResource(std::string("depthbuffer"), std::string("RenderTargetGroup"), _sysInstance);
+		ResourceUtils::lookupResource(std::string("depthbuffer"), std::string("RenderTargetGroup"), _sysInstance);
 	}
 
 	IGraphicsCore::singletonInstance = this;

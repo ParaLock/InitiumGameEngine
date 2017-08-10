@@ -3,11 +3,11 @@
 
 #include "../../../ResourceFramework/include/Resource.h"
 
-#include "../../../ResourceFramework/include/ResourceInitParams.h"
-
 #include "../../../ResourceFramework/include/GenericFactory.h"
 
 #include "../../../EngineUtils/include/quaternion.h"
+
+#include "../../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
 
 enum ROT_DIR {
 	ROT_LEFT,

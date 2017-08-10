@@ -32,7 +32,7 @@
 
 #include "../../../TaskFramework/include/TaskTree.h"
 
-#include "../../../EngineCore/include/IEngineInstance.h"
+#include "../../../../SolidumAPI/core_interfaces/IEngineInstance.h"
 
 #include "IGraphicsCore.h"
 

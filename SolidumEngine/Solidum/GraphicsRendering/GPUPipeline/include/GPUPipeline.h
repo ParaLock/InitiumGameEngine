@@ -7,7 +7,7 @@
 #include "../../Shaders/include/ShaderInputLayout.h"
 #include "../../../EngineUtils/include/DynamicStruct.h"
 
-#include "../../../ResourceFramework/include/IResource.h"
+#include "../../../../SolidumAPI/core_interfaces/IResource.h"
 #include "../../../ResourceFramework/include/Resource.h"
 
 #include "../../PipelineCommands/include/PipelineCommand.h"

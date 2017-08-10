@@ -3,7 +3,7 @@
 
 #include "../../ActiveGraphicsAPI.h"
 
-#include "../../../ResourceFramework/include/ResourceInitParams.h"
+#include "../../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
 
 #include "../../../ResourceFramework/include/Resource.h"
 

@@ -10,7 +10,7 @@ class GenericFactory {
 public:
 
 	template<typename T, typename T_POOL>
-	static IResource* createResource(T_POOL* pool) { return (IResource*)pool->getResource<T>(); }
+	static IResource* createResource(T_POOL* pool, IResourceCreator* creator) { return (IResource*)pool->getResource<T>(creator); }
 
 private:
 };
