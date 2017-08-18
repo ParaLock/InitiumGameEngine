@@ -8,6 +8,8 @@
 #include "../../../ResourceFramework/include/Resource.h"
 #include "../../../sysInclude.h"
 
+#include "../../../../SolidumAPI/core_interfaces/IRenderFlowGraphIOInterface.h"
+
 struct RenderFlowGraphNodeIOHook {
 	std::string _name;
 	std::string _type;
@@ -22,7 +24,7 @@ struct RenderFlowGraphNodeIOHook {
 
 typedef std::map<std::string, std::unordered_map<int, RenderFlowGraphNodeIOHook*>> HookListMapByType;
 
-class RenderFlowGraphIOInterface : public IEventListener
+class RenderFlowGraphIOInterface : public IEventListener, public IRenderFlowGraphIOInterface
 {
 private:
 	bool isLiveHookPresent(std::list<RenderFlowGraphNodeIOHook*>& liveHooks, RenderFlowGraphNodeIOHook* hookToFind);

@@ -7,7 +7,7 @@ IResource * TextureFactory::createInner(ResourcePool * pool, IResourceCreator* c
 	switch (ActiveGraphicsAPI::getCurrentAPI()) {
 	case SUPPORTED_GRAPHICS_API::DIRECTX11:
 
-		return pool->getResource<dxTexture>(creator);
+		return pool->getResource<dxTexture>(creator, []() {return new dxTexture; });
 
 		break;
 	}

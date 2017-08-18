@@ -45,14 +45,7 @@
     <ClInclude Include="Solidum\EntityFramework\Entity\include\IEntity.h" />
     <ClInclude Include="Solidum\EntityFramework\Entity\include\Entity.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\Component.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\Vector4.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\Vector2.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\Vector3.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\Matrix4x4.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\Matrix3x3.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\MiscMath.h" />
     <ClInclude Include="Solidum\EngineUtils\include\Quaternion.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\IShader.h" />
     <ClInclude Include="Solidum\EntityFramework\Components\include\CameraComponent.h" />
     <ClInclude Include="Solidum\EngineUtils\include\Timer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Directx11Rendering\api_function_wrappers\include\dx11_pipeline_functions_wrapper.h" />
@@ -85,23 +78,13 @@
     <ClInclude Include="Solidum\TaskFramework\include\TaskThread.h" />
     <ClInclude Include="Solidum\TaskFramework\include\Task.h" />
     <ClInclude Include="Solidum\TaskFramework\include\TaskBarrier.h" />
-    <ClInclude Include="Solidum\EngineUtils\include\VariantType.h" />
     <ClInclude Include="Solidum\GraphicsRendering\SpatialAccelerationStructures\include\TypeOptimizedTree.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderDataProtocal\include\RenderDataGroup.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderDataProtocal\include\RenderDataPacket.h" />
     <ClInclude Include="Solidum\GraphicsRendering\Renderer\include\Renderer.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\RenderPass\include\RenderPassWrapper.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderPass\include\RenderPassDescriptorParser.h" />
-    <ClInclude Include="Plugins\RenderPasses\light_render_pass.h" />
-    <ClInclude Include="Plugins\RenderPasses\mesh_render_pass.h" />
-    <ClInclude Include="Plugins\RenderPasses\shadow_map_render_pass.h" />
-    <ClInclude Include="Plugins\RenderPasses\particle_render_pass.h" />
-    <ClInclude Include="Plugins\RenderPasses\sky_render_pass.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\Shaders\include\ShaderUniformGroup.h" />
-    <ClInclude Include="Solidum\GraphicsRendering\RenderDataProtocal\include\RenderDataAttribs.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\include\RenderDataProcessingLayer.h" />
     <ClInclude Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\include\FrustumCullingLayer.h" />
-    <ClInclude Include="Solidum\MemoryManagement\include\SlabCache.h" />
     <ClInclude Include="Solidum\ResourceFramework\include\ResourceCreator.h" />
     <ClInclude Include="Solidum\ResourceFramework\include\Resource.h" />
     <ClInclude Include="Solidum\ResourceFramework\include\ResourceContext.h" />
@@ -124,6 +107,26 @@
     <ClInclude Include="SolidumAPI\core_interfaces\IResourceContext.h" />
     <ClInclude Include="SolidumAPI\core_interfaces\IEngineInstance.h" />
     <ClInclude Include="SolidumAPI\core_objects\include\ResourceInitParams.h" />
+    <ClInclude Include="SolidumAPI\core_interfaces\IRenderPassPlugin.h" />
+    <ClInclude Include="SolidumAPI\core_interfaces\IComponentPlugin.h" />
+    <ClInclude Include="SolidumAPI\core_interfaces\IPlugin.h" />
+    <ClInclude Include="Solidum\PluginFramwork\include\PluginManager.h" />
+    <ClInclude Include="SolidumAPI\core_interfaces\IRenderDataGroup.h" />
+    <ClInclude Include="SolidumAPI\core_interfaces\IGPUBuffer.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\GraphicsCommandList\include\GraphicsCommandBlock.h" />
+    <ClInclude Include="SolidumAPI\core_interfaces\IGraphicsCommandBlock.h" />
+    <ClInclude Include="SolidumAPI\core_interfaces\IGPUPipeline.h" />
+    <ClInclude Include="SolidumAPI\core_interfaces\IRenderFlowGraphIOInterface.h" />
+    <ClInclude Include="SolidumAPI\core_objects\include\SlabCache.h" />
+    <ClInclude Include="SolidumAPI\core_interfaces\IShader.h" />
+    <ClInclude Include="SolidumAPI\core_interfaces\IRenderDataPacket.h" />
+    <ClInclude Include="SolidumAPI\core_objects\include\ShaderUniformGroup.h" />
+    <ClInclude Include="SolidumAPI\common.h" />
+    <ClInclude Include="SolidumAPI\core_objects\include\RenderDataAttribs.h" />
+    <ClInclude Include="SolidumAPI\core_interfaces\IRenderPassPluginWrapper.h" />
+    <ClInclude Include="Solidum\GraphicsRendering\RenderPass\include\RenderPassPluginWrapper.h" />
+    <ClInclude Include="SolidumAPI\core_interfaces\IShaderInputLayout.h" />
+    <ClInclude Include="SolidumAPI\core_objects\include\ShaderInputLayoutElement.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -204,12 +207,9 @@
     <ClCompile Include="Solidum\GraphicsRendering\RenderDataProtocal\src\RenderDataPacket.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderDataProtocal\src\RenderDataGroup.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\Renderer\src\Renderer.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\RenderPass\src\RenderPassWrapper.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderPass\src\RenderPassDescriptorParser.cpp" />
-    <ClCompile Include="Solidum\GraphicsRendering\Shaders\src\ShaderUniformGroup.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\src\RenderDataProcessingLayer.cpp" />
     <ClCompile Include="Solidum\GraphicsRendering\RenderDataProcessingLayers\src\FrustumCullingLayer.cpp" />
-    <ClCompile Include="Solidum\MemoryManagement\src\SlabCache.cpp" />
     <ClCompile Include="Solidum\ResourceFramework\src\ResourceCreator.cpp" />
     <ClCompile Include="Solidum\ResourceFramework\src\Resource.cpp" />
     <ClCompile Include="Solidum\ResourceFramework\src\ResourceContext.cpp" />
@@ -224,5 +224,10 @@
     <ClCompile Include="Solidum\ResourceFramework\src\PrototypeCache.cpp" />
     <ClCompile Include="SolidumAPI\core_objects\src\ResourceLookupCache.cpp" />
     <ClCompile Include="SolidumAPI\core_objects\src\ResourceUtils.cpp" />
+    <ClCompile Include="Solidum\PluginFramwork\src\PluginManager.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\GraphicsCommandList\src\GraphicsCommandBlock.cpp" />
+    <ClCompile Include="SolidumAPI\core_objects\src\SlabCache.cpp" />
+    <ClCompile Include="SolidumAPI\core_objects\src\ShaderUniformGroup.cpp" />
+    <ClCompile Include="Solidum\GraphicsRendering\RenderPass\src\RenderPassPluginWrapper.cpp" />
   </ItemGroup>
 </Project>

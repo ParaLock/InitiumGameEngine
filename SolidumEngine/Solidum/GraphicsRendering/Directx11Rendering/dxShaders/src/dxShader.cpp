@@ -128,7 +128,7 @@ void dxShader::enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode
 
 		if (shaderType == SHADER_TYPE::VERTEX_SHADER) {
 
-			_vertexInputLayout = newLayout;
+			_vertexInputLayout = (IShaderInputLayout*)newLayout;
 
 		}
 		else {
@@ -190,8 +190,3 @@ void dxShader::bind()
 	dxDeviceAccessor::dxEncapsulator->dxDevContext->PSSetShader(pixelShader, NULL, 0);
 }
 
-void dxShader::execute(GraphicsCommandList* commandList)
-{
-	commandList->createCommand<PipelineBindShaderCommand>
-		(&PipelineBindShaderCommand::InitData(this));
-}

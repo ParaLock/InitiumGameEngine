@@ -26,8 +26,6 @@ ParticleEmitterComponent::ParticleEmitterComponent(
 
 	_parent = entity;
 
-	_stream = new ParticleStream();
-
 	_particleInstanceBuffer = resCreator.createResourceImmediate<GPUBuffer>(&GPUBuffer::InitData(maxParticles * sizeof(ParticleInstanceData), 
 		BUFFER_TYPE::VERTEX_BUFF, BUFFER_CPU_ACCESS::CPU_ACCESS_WRITE), std::to_string(getRandomNumber()) + "particle_instance_buffer",
 		[](IResource*) {});
@@ -83,53 +81,59 @@ Particle* ParticleEmitterComponent::emitParticle(Vector3f center)
 
 	newParticle = getDeadParticle(_resourceCreator);
 
-	newParticle->_isAlive = true;
+	ParticleData* _particleData = newParticle->getData();
 
-	newParticle->_scale = 5.0f;
+	_particleData->_isAlive = true;
 
-	newParticle->_elapsedTime = 0;
-	newParticle->_lifeLength = _particleLifeTime;
-	newParticle->_gravityEffect = _gravityComplient;
-	newParticle->_velocity = velocity;
+	_particleData->_scale = 5.0f;
 
-	newParticle->_texNumRows = _texNumRows;
-	newParticle->_texOffset1 = 0;
-	newParticle->_texOffset2 = 0;
-	newParticle->_texBlend = 0;
+	_particleData->_elapsedTime = 0;
+	_particleData->_lifeLength = _particleLifeTime;
+	_particleData->_gravityEffect = _gravityComplient;
+	_particleData->_velocity = velocity;
 
-	newParticle->_position = center;
+	_particleData->_texNumRows = _texNumRows;
+	_particleData->_texOffset1 = 0;
+	_particleData->_texOffset2 = 0;
+	_particleData->_texBlend = 0;
+
+	_particleData->_position = center;
 
 	return newParticle;
 }
 
 bool ParticleEmitterComponent::updateParticle(Particle* particle, float delta)
 {
-	particle->_velocity[1] += _gravityComplient * delta;
-	Vector3f change = Vector3f(particle->_velocity);
+	ParticleData* _particleData = particle->getData();
+
+	_particleData->_velocity[1] += _gravityComplient * delta;
+	Vector3f change = Vector3f(_particleData->_velocity);
 	change = change * delta;
-	particle->_position = change + particle->_position;
+	_particleData->_position = change + _particleData->_position;
 
 	updateParticleTextureState(particle);
 
-	particle->_elapsedTime += delta;
+	_particleData->_elapsedTime += delta;
 
-	return particle->_elapsedTime < _particleLifeTime;
+	return _particleData->_elapsedTime < _particleLifeTime;
 }
 
 void ParticleEmitterComponent::updateParticleTextureState(Particle* particle)
 {
-	float lifeFactor = particle->_elapsedTime / particle->_lifeLength;
+	ParticleData* _particleData = particle->getData();
 
-	int stageCount = particle->_texNumRows * particle->_texNumRows;
+	float lifeFactor = _particleData->_elapsedTime / _particleData->_lifeLength;
+
+	int stageCount = _particleData->_texNumRows * _particleData->_texNumRows;
 	float atlasProgression = lifeFactor * stageCount;
 
 	int index1 = floor(atlasProgression);
 	int index2 = index1 < stageCount - 1 ? index1 + 1 : index1;
 
-	particle->_texBlend = std::fmod(atlasProgression, 1);
+	_particleData->_texBlend = std::fmod(atlasProgression, 1);
 
-	particle->_texOffset1 = calcTextureOffset(index1, particle->_texNumRows);
-	particle->_texOffset2 = calcTextureOffset(index2, particle->_texNumRows);
+	_particleData->_texOffset1 = calcTextureOffset(index1, _particleData->_texNumRows);
+	_particleData->_texOffset2 = calcTextureOffset(index2, _particleData->_texNumRows);
 }
 
 Vector2f ParticleEmitterComponent::calcTextureOffset(int index, int rows)
@@ -167,8 +171,9 @@ void ParticleEmitterComponent::processParticles()
 
 void ParticleEmitterComponent::update(float delta)
 {
-	std::shared_ptr<ParticleBatch> batch = std::make_shared<ParticleBatch>();
-	batch->_particlesToRender = std::make_shared<std::list<Particle*>>();
+	//_particleBatchStore.clear();
+
+	ParticleBatch batch;
 
 	float t = (float)_time.getElapsedTimeSeconds();
 
@@ -200,23 +205,30 @@ void ParticleEmitterComponent::update(float delta)
 
 			itr = _liveParticleList.erase(itr);
 
-			deadParticle->_isAlive = false;
-			deadParticle->_elapsedTime = 0;
+			ParticleData* _data = deadParticle->getData();
+
+			_data->_isAlive = false;
+			_data->_elapsedTime = 0;
 
 			_deadParticleList.push_back(deadParticle);
 		}
 		else {
 
-			if (batch->_particlesToRender.get()->size() < _maxParticles)
-				batch->_particlesToRender.get()->push_back(particle);
+			if (batch._particlesToRender.size() < _maxParticles) {
+
+				ParticleData* _particleData = particle->getData();
+
+				batch._particlesToRender.push_back(_particleData);
+			}
+
 
 			itr++;
 		}
 	}
 
-	batch->_particleTex = _particleTex;
+	batch._particleTex = _particleTex;
 
-	_stream->pushBatch(batch);
+	_particleBatchStore.push_back(batch);
 	
 	_time.reset();
 }
@@ -231,7 +243,7 @@ void ParticleEmitterComponent::AddRenderData(RenderDataGroup * collection)
 	data._particleInstanceBuffer = _particleInstanceBuffer;
 	data._particleDataCPUBuffer = _particleDataCPUBuffer;
 
-	data._particleSteam = _stream;
+	data._particleSteam = &_particleBatchStore;
 
 	data._indexBuffer = _particleQuad->getIndexBuff();
 	data._vertexBuffer = _particleQuad->getVertexBuff();

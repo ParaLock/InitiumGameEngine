@@ -22,13 +22,9 @@
 
 #include "Solidum\GraphicsRendering\RenderDataProcessingLayers\include\FrustumCullingLayer.h"
 
-#include "Plugins\RenderPasses\light_render_pass.h"
-#include "Plugins\RenderPasses\mesh_render_pass.h"
-#include "Plugins\RenderPasses\particle_render_pass.h"
-#include "Plugins\RenderPasses\shadow_map_render_pass.h"
-#include "Plugins\RenderPasses\sky_render_pass.h"
+#include "Solidum\PluginFramwork\include\PluginManager.h"
 
-#include "Solidum\MemoryManagement\include\SlabCache.h"
+#include "SolidumAPI\common.h"
 
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -62,20 +58,22 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	ResourceCreator& resCreator = solidum->getResourceCreator();
 
+	PluginManager pluginManager(resCreator, solidum);
+
+	pluginManager.loadPlugin("./res/Dlls/LightRenderPass.dll", "./res/RenderPassDescriptors/LightsRenderPass.txt", solidum);
+	pluginManager.loadPlugin("./res/Dlls/MeshRenderPass.dll", "./res/RenderPassDescriptors/MeshRenderPass.txt", solidum);
+	pluginManager.loadPlugin("./res/Dlls/SkyRenderPass.dll", "./res/RenderPassDescriptors/SkyRenderPass.txt", solidum);
+	pluginManager.loadPlugin("./res/Dlls/ShadowMapRenderPass.dll", "./res/RenderPassDescriptors/ShadowMapRenderPass.txt", solidum);
+	pluginManager.loadPlugin("./res/Dlls/ParticleRenderPass.dll", "./res/RenderPassDescriptors/ParticleRenderPass.txt", solidum);
+
+
 	//Create common resource prototypes so that plugins may create instances of said resources.
 	resCreator.addPrototype<Light>("TypeLight");
 	resCreator.addPrototype<mesh>("TypeMesh");
 	resCreator.addPrototype<Texture>("TypeTexture");
 	resCreator.addPrototype<Material>("TypeMaterial");
-
-	//** PLUGIN LOADING... !IN THE FUTURE PLUGINS WILL BE LOADED FROM DLL's! **//
-	reg_render_pass__sky(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1), &resCreator);
-	reg_render_pass__light(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1), &resCreator);
-	reg_render_pass__mesh(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1), &resCreator);
-	reg_render_pass__particleEmitter(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1), &resCreator);
-	reg_render_pass__shadowmap(std::bind(&GraphicsCore::registerRenderPass, solidum->getGraphicsSubsystem(), std::placeholders::_1), &resCreator);
-	
-	//** PLUGING LOADING END **//
+	resCreator.addPrototype<GPUBuffer>("TypeGPUBuffer");
+	resCreator.addPrototype<RenderPassPluginWrapper>("TypeRenderPassPlugin");
 
 	//** RESOURCE LOADING **//
 
@@ -159,7 +157,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	KEY_FUNCTION_MAP* moveKeyConfig1 = new KEY_FUNCTION_MAP;
 	KEY_FUNCTION_MAP* moveKeyConfig2 = new KEY_FUNCTION_MAP;
-
+	
 	moveKeyConfig1->insert({ KEY_MAP::UP, MOVE_FUNCTION::MOVE_UP});
 	moveKeyConfig1->insert({ KEY_MAP::DOWN, MOVE_FUNCTION::MOVE_DOWN });
 	moveKeyConfig1->insert({ KEY_MAP::LEFT, MOVE_FUNCTION::MOVE_LEFT });
@@ -297,7 +295,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	world->addPrimaryCamera(camera, 0000);
 	
-	world->addEntity(particleEmitter2Entity, 8593);
+    world->addEntity(particleEmitter2Entity, 8593);
 	world->addEntity(particleEmitter1Entity, 5964);
 	world->addEntity(sun, 3333);
 	world->addEntity(pointLight2Entity, 0001);

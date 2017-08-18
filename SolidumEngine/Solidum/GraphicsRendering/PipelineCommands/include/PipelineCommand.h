@@ -17,7 +17,7 @@
 
 #include "../../../ResourceFramework/include/Resource.h"
 
-#include "../../Shaders/include/IShader.h"
+#include "../../../../SolidumAPI/core_interfaces/IShader.h"
 
 #include "PipelineFunctions.h"
 
@@ -864,6 +864,11 @@ public:
 	void load() {
 
 		InitData* realBuilder = (InitData*)getContext()->getResourceInitParams();
+
+		if (realBuilder->_bindInfo.rtOPList.size() > 0) {
+			
+			int test = 1;
+		}
 
 		_bindInfo = realBuilder->_bindInfo;
 

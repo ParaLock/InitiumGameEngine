@@ -2,8 +2,7 @@
 
 #include "../../../GraphicsRendering/Transform/include/Transform.h"
 
-#include "../../../EngineUtils/include/Vector2.h"
-#include "../../../EngineUtils/include/Vector3.h"
+#include "../../../../SolidumAPI/common.h"
 
 #include "../../../GraphicsRendering/Lights/include/Light.h"
 

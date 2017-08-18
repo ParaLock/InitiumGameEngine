@@ -1,7 +1,7 @@
 #pragma once
-#include "../../../sysInclude.h"
 
-#include "../../../MemoryManagement/include/SlabCache.h"
+#include "../../common.h"
+#include "SlabCache.h"
 
 class ShaderUniformGroup
 {
@@ -10,7 +10,7 @@ public:
 	~ShaderUniformGroup();
 
 	ShaderUniformGroup(ShaderUniformGroup& other) {
-		
+
 		_uniformCache = other._uniformCache;
 		_uniformList = other._uniformList;
 

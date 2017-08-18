@@ -8,7 +8,7 @@ IResource * DepthStencilFactory::createInner(ResourcePool * pool, IResourceCreat
 	switch (ActiveGraphicsAPI::getCurrentAPI()) {
 	case SUPPORTED_GRAPHICS_API::DIRECTX11:
 
-		return pool->getResource<dxDepthStencil>(creator);
+		return pool->getResource<dxDepthStencil>(creator, []() {return new dxDepthStencil; });
 
 		break;
 	}

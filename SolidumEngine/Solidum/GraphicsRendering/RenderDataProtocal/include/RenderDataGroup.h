@@ -5,16 +5,18 @@
 
 #include "../../RenderDataProtocal/include/RenderDataPacket.h"
 
+#include "../../../../SolidumAPI/core_interfaces/IRenderDataGroup.h"
+
 struct RenderDataAttributes;
 
-class RenderDataGroup
+class RenderDataGroup : public IRenderDataGroup
 {
 private:
 
 	std::list<RenderDataPacket> _dataStore;
 
 	TypeOptimizedTree<
-		RenderDataPacket*,
+		IRenderDataPacket*,
 		RENDER_DATA_TYPE
 	> _groupItems;
 
@@ -26,8 +28,8 @@ public:
 	RenderDataGroup(SlabCache* cache);
 	~RenderDataGroup();
 
-	void getRenderDataByType(RENDER_DATA_TYPE type, std::list<RenderDataPacket*>& out) { _groupItems.queryNodesByType(type, out); };
-	void getAllRenderData(std::list<RenderDataPacket*>& out) { _groupItems.queryAllNodes(out); };
+	void getRenderDataByType(RENDER_DATA_TYPE type, std::list<IRenderDataPacket*>& out) { _groupItems.queryNodesByType(type, out); };
+	void getAllRenderData(std::list<IRenderDataPacket*>& out) { _groupItems.queryAllNodes(out); };
 
 	template<typename T>
 	void addRenderData(T* data, RENDER_DATA_TYPE type, RenderDataAttributes* attributes) {

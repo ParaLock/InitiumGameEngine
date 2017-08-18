@@ -20,9 +20,12 @@
 
 #include "../../../ResourceFramework/include/GenericFactory.h"
 
+#include "../../../../SolidumAPI/core_interfaces/IShader.h"
+
+#include "../../Shaders/include/ShaderInputLayout.h"
+
 #include "ShaderFactory.h"
 
-#include "IShader.h"
 
 class MaterialPass;
 class ResourcePool;
@@ -30,7 +33,7 @@ class ResourcePool;
 class Shader : public IShader, public Resource<Shader, ShaderFactory, ResourcePool>
 {
 protected:
-	ShaderInputLayout* _vertexInputLayout;
+	IShaderInputLayout* _vertexInputLayout;
 
 	std::list<DynamicStruct*> _constantBufferList;
 
@@ -69,14 +72,12 @@ public:
 	void updateModelUniforms(Transform* transform);
 	void updateCameraUniforms(CameraComponent* cam);
 
-	ShaderInputLayout* getInputLayout() { return _vertexInputLayout; }
+	IShaderInputLayout* getInputLayout() { return _vertexInputLayout; }
 
 	const std::list<DynamicStruct*>& getConstantBuffers() { return _constantBufferList; }
 
 	void updateUniform(std::string& varName, void * pData);
 	void updateGPU();
-
-	virtual void execute(GraphicsCommandList* commandList);
 protected:
 };
 

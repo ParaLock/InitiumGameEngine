@@ -7,7 +7,7 @@ IResource * GPUBufferFactory::createInner(ResourcePool * pool, IResourceCreator*
 	switch (ActiveGraphicsAPI::getCurrentAPI()) {
 	case SUPPORTED_GRAPHICS_API::DIRECTX11:
 
-		return pool->getResource<dxGPUBuffer>(creator);
+		return pool->getResource<dxGPUBuffer>(creator, []() {return new dxGPUBuffer; });
 
 		break;
 	}

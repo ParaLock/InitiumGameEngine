@@ -73,7 +73,6 @@ RENDERING_BEGIN
 		
 	NODE_END
 		
-		
 	NODE 3
 	
 		CORE_NAME particle_render_pass

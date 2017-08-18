@@ -4,12 +4,14 @@
 #include "../../../ResourceFramework/include/ResourceContext.h"
 #include "../../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
 
+#include "../../../../SolidumAPI/core_interfaces/IGPUBuffer.h"
+
 #include "../include/GPUBufferFactory.h"
 
 class GPUBufferFactory;
 class ResourcePool;
 
-class GPUBuffer : public Resource<GPUBuffer, GPUBufferFactory, ResourcePool>
+class GPUBuffer : public Resource<GPUBuffer, GPUBufferFactory, ResourcePool>, public IGPUBuffer
 {
 public:
 	GPUBuffer();

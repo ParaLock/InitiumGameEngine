@@ -1,5 +1,4 @@
 #pragma once
-#include "../../../sysInclude.h"
 
 class BoundingSphere;
 

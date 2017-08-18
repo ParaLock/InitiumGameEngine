@@ -9,14 +9,13 @@
 
 #include "../../EventFramework/include/EventFrameworkCore.h"
 
-#include "../../MemoryManagement/include/SlabCache.h"
-
 #include "../../TaskFramework/include/TaskTree.h"
 
 #include "../../ResourceFramework/include/ResourceCreator.h"
 
 #include "../../ResourceFramework/include/PrototypeCache.h"
 
+#include "../../../SolidumAPI/core_objects/include/SlabCache.h"
 #include "../../../SolidumAPI/core_objects/include/ResourceLookupCache.h"
 #include "../../../SolidumAPI/core_interfaces/IEngineInstance.h"
 
@@ -85,6 +84,6 @@ public:
 	World* getWorld() { return _currentWorld; }
 
 	EventFrameworkCore* getEventFrameworkCore() { return _eventFrameworkCore; };
-	GraphicsCore* getGraphicsSubsystem() { return _graphicsCore; };
+	IGraphicsCore* getGraphicsSubsystem() { return _graphicsCore; };
 };
 

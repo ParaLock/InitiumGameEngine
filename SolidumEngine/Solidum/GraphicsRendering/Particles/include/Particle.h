@@ -11,11 +11,14 @@ class ResourcePool;
 class Particle : public Resource<Particle, GenericFactory, ResourcePool>
 {
 private:
+
+	ParticleData _data;
+
 	void updateParameter(std::string varName, void *data) {};
 	void* getParameter(std::string varName) { return nullptr; };
 
 	void load() {};
-	void unload() { _elapsedTime = 0;};
+	void unload() { _data._elapsedTime = 0;};
 
 public:
 	Particle();
@@ -27,31 +30,7 @@ public:
 		
 	};
 
-
-	static const unsigned int TYPE = 0;
-
-	int _batchIndex = 0;
-
-	Vector2f _texOffset1;
-	Vector2f _texOffset2;
-
-	float _distance;
-
-	int _texNumRows;
-
-	float _texBlend;
-
-	float _gravityEffect = 0;
-	float _rotation = 0;
-	float _scale = 0;
-
-	float _elapsedTime = 0;
-	float _lifeLength = 0;
-
-	bool _isAlive = false;
-
-	Vector3f _velocity;
-	Vector3f _position;
+	ParticleData* getData();
 
 protected:
 };

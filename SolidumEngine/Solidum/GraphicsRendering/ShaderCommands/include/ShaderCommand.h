@@ -1,13 +1,13 @@
 #pragma once
 #include "../../../sysInclude.h"
 
-#include "../../Shaders/include/IShader.h"
 #include "../../Lights/include/ILight.h"
 #include "../../GraphicsCommand/include/GraphicsCommand.h"
 
 #include "../../../../SolidumAPI/core_objects/include/ResourceInitParams.h"
+#include "../../../../SolidumAPI/core_interfaces/IShader.h"
 
-#include "../../Shaders/include/ShaderUniformGroup.h"
+#include "../../../../SolidumAPI/core_objects/include/ShaderUniformGroup.h"
 
 class MaterialPass;
 class CameraComponent;

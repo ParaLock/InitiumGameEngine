@@ -22,8 +22,6 @@
 
 #include "../../PipelineCommands/include/PipelineCommand.h"
 
-#include "../../RenderPass/include/RenderPassWrapper.h"
-
 #include "../../Renderer/include/Renderer.h"
 
 #include "../../RenderFlowGraph/include/RenderFlowGraph.h"
@@ -34,6 +32,8 @@
 
 #include "../../../../SolidumAPI/core_interfaces/IEngineInstance.h"
 
+#include "../../RenderPass/include/RenderPassPluginWrapper.h"
+
 #include "IGraphicsCore.h"
 
 class BoundingSphere;
@@ -41,7 +41,7 @@ class BoundingSphere;
 class GraphicsCore : public IEventListener, public IGraphicsCore
 {
 private:
-	std::map<std::string, std::shared_ptr<RenderPassWrapper>> _registeredRenderPasses;
+	std::map<std::string, RenderPassPluginWrapper*> _registeredRenderPasses;
 	std::list<Renderer*> _registeredRenderers;
 
 	ResourceCreator& _resourceCreator;
@@ -68,7 +68,7 @@ public:
 
 	~GraphicsCore();
 
-	void registerRenderPass(std::shared_ptr<RenderPassWrapper> renderpass) { _registeredRenderPasses.insert({renderpass->getName(), renderpass}); };
+	void registerRenderPass(RenderPassPluginWrapper* renderpass) { _registeredRenderPasses.insert({renderpass->name(), renderpass}); };
 
 	void registerRenderer(Renderer* renderer) { _registeredRenderers.push_back(renderer); }
 
@@ -86,7 +86,7 @@ public:
 
 	GPUPipeline* getEndscenePSO() { return _endFrameState; }
 
-	std::shared_ptr<RenderPassWrapper> getRegisteredRenderPass(std::string name) { return _registeredRenderPasses.at(name); };
+	RenderPassPluginWrapper* getRegisteredRenderPass(std::string name) { return _registeredRenderPasses.at(name); };
 
 	static GraphicsCore* singletonInstance;
 	static GraphicsCore* getInstance();

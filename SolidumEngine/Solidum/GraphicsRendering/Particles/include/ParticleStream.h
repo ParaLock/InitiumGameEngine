@@ -3,38 +3,39 @@
 
 class Texture;
 class Particle;
+class IResource;
+
+struct ParticleData {
+
+	int _batchIndex = 0;
+
+	Vector2f _texOffset1;
+	Vector2f _texOffset2;
+
+	float _distance;
+
+	int _texNumRows;
+
+	float _texBlend;
+
+	float _gravityEffect = 0;
+	float _rotation = 0;
+	float _scale = 0;
+
+	float _elapsedTime = 0;
+	float _lifeLength = 0;
+
+	bool _isAlive = false;
+
+	Vector3f _velocity;
+	Vector3f _position;
+};
 
 struct ParticleBatch {
 
-	Texture* _particleTex;
+	IResource* _particleTex;
 
 	int _currentInstanceBuffIndex = 0;
 
-	std::shared_ptr<std::list<Particle*>> _particlesToRender;
+	std::list<ParticleData*> _particlesToRender;
 };
-
-class ParticleStream
-{
-private:
-	std::list<std::shared_ptr<ParticleBatch>> _batches;
-public:
-	ParticleStream();
-	~ParticleStream();
-
-	void pushBatch(std::shared_ptr<ParticleBatch> batch) { _batches.push_back(batch); }
-
-	bool isEmpty() { return _batches.empty(); };
-
-	std::shared_ptr<ParticleBatch> getBatch() {
-
-		if (!isEmpty()) {
-			std::shared_ptr<ParticleBatch> batch = _batches.front();
-			_batches.pop_front();
-			
-			return batch;
-		}
-
-		return nullptr;
-	};
-};
-

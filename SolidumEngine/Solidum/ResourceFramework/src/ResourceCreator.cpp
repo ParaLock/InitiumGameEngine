@@ -16,7 +16,8 @@ void ResourceCreator::waitForCompletionOfCreationTask()
 		while (!_taskHandle->_taskComplete) {}
 }
 
-IResource* ResourceCreator::createResourceImmediate(ResourceInitParams * params, std::string name, std::string typeName, std::function<void(IResource*)> resLoadedCallback)
+IResource* ResourceCreator::createResourceByPrototypeImmediate(ResourceInitParams * params, std::string name, std::string typeName,
+	std::function<void(IResource*)> resLoadedCallback)
 {
 	PrototypeCache& cache = _sysInstance->getResourcePrototypeCache();
 
@@ -36,7 +37,8 @@ IResource* ResourceCreator::createResourceImmediate(ResourceInitParams * params,
 	return newResource;
 }
 
-void ResourceCreator::createResourceDeferred(ResourceInitParams * params, std::string name, std::string typeName, std::function<void(IResource*)> resLoadedCallback)
+void ResourceCreator::createResourceByPrototypeDeferred(ResourceInitParams * params, std::string name, std::string typeName,
+	std::function<void(IResource*)> resLoadedCallback)
 {
 	PrototypeCache& cache = _sysInstance->getResourcePrototypeCache();
 

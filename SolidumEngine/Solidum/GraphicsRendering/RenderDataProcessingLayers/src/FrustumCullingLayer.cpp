@@ -14,13 +14,13 @@ void FrustumCullingLayer::execute(RenderDataGroup & data)
 {
 	//Placeholder gist code!!
 
-	std::list<RenderDataPacket*> allNodes;
+	std::list<IRenderDataPacket*> allNodes;
 
 	data.getAllRenderData(allNodes);
 
 	bool cullObject = false;
 
-	for each(RenderDataPacket* node in allNodes) {
+	for each(IRenderDataPacket* node in allNodes) {
 		//Compare node bb with frustum
 		//Do Frustrum culling
 

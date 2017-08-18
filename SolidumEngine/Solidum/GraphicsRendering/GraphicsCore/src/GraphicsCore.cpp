@@ -25,6 +25,8 @@ GraphicsCore::GraphicsCore(SUPPORTED_GRAPHICS_API api, window *outputWindow,
 
 	_endFrameState = new GPUPipeline();
 
+	_endFrameState->setPipelineStateResetAtCompletion(false);
+
 	_primaryTaskTree = masterTaskTree;
 
 	EventFrameworkCore::getInstance()->getGlobalEventHub("ComponentEventHub")->subscribeListener(this);
@@ -107,7 +109,9 @@ void GraphicsCore::beginRender(GraphicsCommandList * endscenePipeline, GraphicsC
 
 	}
 
-	_endFrameState->applyState(endscenePipeline);
+	auto* cmdBlock = endscenePipeline->getNextCmdBlock(0);
+
+	_endFrameState->applyState(cmdBlock);
 }
 
 void GraphicsCore::endRender(GraphicsCommandList * endscenePipeline, GraphicsCommandList * scenePipeline)

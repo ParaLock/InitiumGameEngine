@@ -9,7 +9,7 @@
 
 #include "../../Shaders/include/Shader.h"
 
-#include "../../RenderPass/include/RenderPassWrapper.h"
+#include "../../RenderPass/include/RenderPassPluginWrapper.h"
 
 #include "../../RenderDataProcessingLayers/include/RenderDataProcessingLayer.h"
 
@@ -21,7 +21,7 @@ class Renderer : public Resource<Renderer, GenericFactory, ResourcePool>
 private:
 	std::list<std::shared_ptr<RenderDataProcessingLayer>> _generalProcessingLayerStack;
 
-	std::list<std::shared_ptr<RenderPassWrapper>> _activeRenderOrder;
+	std::list<RenderPassPluginWrapper*> _activeRenderOrder;
 
 	RenderFlowGraph* _renderGraph;
 

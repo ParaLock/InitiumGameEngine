@@ -4,7 +4,7 @@
 
 #include "../../sysInclude.h"
 
-#include "../../MemoryManagement/include/SlabCache.h"
+#include "../../../SolidumAPI/core_objects/include/SlabCache.h"
 
 #include "../../ResourceFramework/include/ResourcePool.h"
 
@@ -85,10 +85,10 @@ public:
 
 	}
 
-	IResource* createResourceImmediate(ResourceInitParams* params, std::string name, std::string typeName,
+	IResource* createResourceByPrototypeImmediate(ResourceInitParams* params, std::string name, std::string typeName,
 		std::function<void(IResource*)> resLoadedCallback);
 
-	void createResourceDeferred(ResourceInitParams* params, std::string name, std::string typeName,
+	void createResourceByPrototypeDeferred(ResourceInitParams* params, std::string name, std::string typeName,
 		std::function<void(IResource*)> resLoadedCallback);
 
 	template<typename T_PROTO>
@@ -96,18 +96,15 @@ public:
 
 		PrototypeCache& cache = _sysInstance->getResourcePrototypeCache();
 
-		cache.addPrototype(typeName, 
-			
+		cache.addPrototype(typeName,
+
 			[=]() {
 
-				IResource* newResource = T_PROTO::Factory::createResource
-					<T_PROTO, typename T_PROTO::POOL>(&T_PROTO::_pool, this);
+			IResource* newResource = T_PROTO::Factory::createResource
+				<T_PROTO, typename T_PROTO::POOL>(&T_PROTO::_pool, this);
 
-				return newResource;
-			}
-
-			
-			);
+			return newResource;
+		});
 	}
 
 

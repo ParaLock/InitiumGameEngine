@@ -7,9 +7,6 @@
 
 class IResourceCreator;
 
-class PipelineILBindCommand;
-class PipelineSetBlendState;
-
 class ResourcePool {
 private:
 
@@ -28,7 +25,7 @@ public:
 	ResourcePool() : _currTypeIndex(0) {}
 
 	template<typename T>
-	IResource* getResource(IResourceCreator* creator) {
+	IResource* getResource(IResourceCreator* creator, std::function<IResource*()> createFunc) {
 
 		IResource* res = nullptr;
 
@@ -47,7 +44,12 @@ public:
 
 			group._type = type;
 
-			res = new T;
+			if (createFunc) {
+				res = createFunc();
+			}
+			else {
+				res = new T;
+			}
 
 			res->typePoolIndex(group._typeIndex);
 
@@ -64,7 +66,12 @@ public:
 
 			if (uniqueTypePool._freeResources->empty()) {
 
-				res = new T;
+				if (createFunc) {
+					res = createFunc();
+				}
+				else {
+					res = new T;
+				}
 
 				res->typePoolIndex(uniqueTypePool._typeIndex);
 

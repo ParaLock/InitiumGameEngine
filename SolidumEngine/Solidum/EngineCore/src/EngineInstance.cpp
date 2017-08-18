@@ -170,6 +170,8 @@ void EngineInstance::engineHeartbeat()
 
 		profiler.end("EndRender Complete: ");
 
+		renderDataCollection->freeRenderPackets();
+
 		delete scenePipeline;
 		delete endScenePipeline;
 		delete renderDataCollection;

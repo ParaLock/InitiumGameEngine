@@ -3,9 +3,6 @@
 
 #include "../../../GraphicsRendering/Transform/include/Transform.h"
 
-#include "../../../EngineUtils/include/Vector2.h"
-#include "../../../EngineUtils/include/Vector3.h"
-
 #include "../../../ResourceFramework/include/Resource.h"
 
 #include "../../../GraphicsRendering/GraphicsCore/include/IGraphicsCore.h"

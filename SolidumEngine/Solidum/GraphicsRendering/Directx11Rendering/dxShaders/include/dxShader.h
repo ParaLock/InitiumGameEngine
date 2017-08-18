@@ -43,7 +43,5 @@ public:
 	void enumerateResources(SHADER_TYPE shaderType, ID3D10Blob *shaderCode, ResourceCreator* resCreator);
 
 	void bind();
-
-	void execute(GraphicsCommandList* commandList);
 };
 

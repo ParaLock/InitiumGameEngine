@@ -1,5 +1,4 @@
 #pragma once
-#include "../../Solidum/sysInclude.h"
 
 #include "IEngineInstance.h"
 

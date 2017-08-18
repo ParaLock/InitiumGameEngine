@@ -7,7 +7,7 @@ IResource * TextureSamplerFactory::createInner(ResourcePool * pool, IResourceCre
 	switch (ActiveGraphicsAPI::getCurrentAPI()) {
 	case SUPPORTED_GRAPHICS_API::DIRECTX11:
 
-		return pool->getResource<dxTextureSampleState>(creator);
+		return pool->getResource<dxTextureSampleState>(creator, []() {return new dxTextureSampleState; });
 
 		break;
 	}

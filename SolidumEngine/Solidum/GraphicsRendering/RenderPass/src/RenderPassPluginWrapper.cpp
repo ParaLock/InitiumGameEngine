@@ -1,17 +1,43 @@
-#include "../include/RenderPassWrapper.h"
+#include "../include/RenderPassPluginWrapper.h"
 
 
 
-RenderPassWrapper::RenderPassWrapper()
+RenderPassPluginWrapper::RenderPassPluginWrapper()
 {
 }
 
 
-RenderPassWrapper::~RenderPassWrapper()
+RenderPassPluginWrapper::~RenderPassPluginWrapper()
 {
 }
 
-void RenderPassWrapper::load()
+void RenderPassPluginWrapper::unload()
+{
+}
+
+void RenderPassPluginWrapper::execute(IRenderDataGroup * collection, IGraphicsCommandBlock * commandBlock)
+{
+	_pluginInterface->execute(collection, commandBlock, this);
+}
+
+void RenderPassPluginWrapper::rebuildPSO(IGPUPipeline* pso)
+{
+	GPUPipeline* castPSO = dynamic_cast<GPUPipeline*>(pso);
+
+	auto& resources = _ioInterface->getLiveHooks();
+
+	for each(RenderFlowGraphNodeIOHook* hook in resources) {
+
+		RenderPassSpecificIOHookData* specificData = (RenderPassSpecificIOHookData*)hook->_userData;
+
+		castPSO->attachResource(hook->_res, hook->_name, hook->_index,
+			specificData->_shaderResType, specificData->_shaderType, hook->_isOutput);
+
+	}
+
+}
+
+void RenderPassPluginWrapper::load()
 {
 	InitData* realBuilder = static_cast<InitData*>(getContext()->getResourceInitParams());
 
@@ -22,6 +48,8 @@ void RenderPassWrapper::load()
 	RenderPassDescriptorData descData = parser.parseRenderPassDescriptor(realBuilder->_filename);
 
 	_name = descData._renderPassName;
+
+	name(_name);
 
 	_ioInterface->setParentName(_name);
 
@@ -45,27 +73,4 @@ void RenderPassWrapper::load()
 		RenderFlowGraphNodeIOHook hook = itr->second;
 		_ioInterface->addResourceHook(hook);
 	}
-
 }
-
-void RenderPassWrapper::execute(GraphicsCommandList * commandList, RenderDataGroup& collection)
-{
-	_renderPassCallback(commandList, collection, this);
-}
-
-GPUPipeline * RenderPassWrapper::rebuildPSO(GPUPipeline* pipeline)
-{
-	auto& resources = _ioInterface->getLiveHooks();
-
-	for each(RenderFlowGraphNodeIOHook* hook in resources) {
-
-		RenderPassSpecificIOHookData* specificData = (RenderPassSpecificIOHookData*)hook->_userData;
-
-		pipeline->attachResource(hook->_res, hook->_name, hook->_index,
-			specificData->_shaderResType, specificData->_shaderType, hook->_isOutput);
-
-	}
-
-	return pipeline;
-}
-

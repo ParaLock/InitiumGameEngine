@@ -1,5 +1,4 @@
 #pragma once
-#include "../../../sysInclude.h"
 
 class mesh;
 class Texture;
@@ -11,7 +10,7 @@ class GPUPipeline;
 class IResource;
 class GraphicsCommandList;
 class RenderFlowGraphIOInterface;
-class ShaderInputLayout;
+class IShaderInputLayout;
 class DynamicStruct;
 
 class IShader {
@@ -28,12 +27,10 @@ public:
 
 	virtual const std::list<DynamicStruct*>& getConstantBuffers() = 0;
 
-	virtual ShaderInputLayout* getInputLayout() = 0;
+	virtual IShaderInputLayout* getInputLayout() = 0;
 
 	virtual void bind() = 0;
 
 	virtual void updateUniform(std::string& varName, void * pData) = 0;
 	virtual void updateGPU() = 0;
-
-	virtual void execute(GraphicsCommandList* commandList) = 0;
 };

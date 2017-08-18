@@ -22,19 +22,25 @@ void Renderer::load()
 
 void Renderer::renderScene(GraphicsCommandList * commandList, RenderDataGroup * collection)
 {
+	int cmdBlockCount = 0;
+
 	PerfProfiler profiler;
 
 	RenderDataGroup processedCollection = *collection;
 
 	processedCollection = performGeneralRenderDataProcessing(processedCollection);
 
-	for each(std::shared_ptr<RenderPassWrapper> renderPass in _activeRenderOrder) {
+	for each(RenderPassPluginWrapper* renderPass in _activeRenderOrder) {
 
 		profiler.start();
 
-		renderPass->execute(commandList, *collection);
+		auto* cmdBlock = commandList->getNextCmdBlock(cmdBlockCount);
 
-		profiler.end("Renderer: RenderPass: " + renderPass->getName() + " ");
+		renderPass->execute(&processedCollection, cmdBlock);
+
+		profiler.end("Renderer: RenderPass: " + renderPass->name() + " ");
+
+		cmdBlockCount++;
 	}
 }
 
@@ -61,7 +67,7 @@ void Renderer::syncWithGraph()
 
 	for each(std::string rendererName in renderOrder) {
 
-		std::shared_ptr<RenderPassWrapper> activeRenderer = IGraphicsCore::getInstance()->getRegisteredRenderPass(rendererName);
+		RenderPassPluginWrapper* activeRenderer = IGraphicsCore::getInstance()->getRegisteredRenderPass(rendererName);
 		_activeRenderOrder.push_back(activeRenderer);
 	}
 }

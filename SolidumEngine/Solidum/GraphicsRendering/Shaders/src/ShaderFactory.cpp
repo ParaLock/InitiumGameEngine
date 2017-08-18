@@ -7,7 +7,7 @@ IResource * ShaderFactory::createInner(ResourcePool * pool, IResourceCreator* cr
 	switch (ActiveGraphicsAPI::getCurrentAPI()) {
 	case SUPPORTED_GRAPHICS_API::DIRECTX11:
 
-		return pool->getResource<dxShader>(creator);
+		return pool->getResource<dxShader>(creator, []() {return new dxShader; });
 
 		break;
 	}

@@ -25,8 +25,6 @@ RenderFlowGraphIOInterface::~RenderFlowGraphIOInterface()
 
 void RenderFlowGraphIOInterface::addResourceHook(RenderFlowGraphNodeIOHook& hook)
 {
-	//hook._res = nullptr;
-
 	_hookList.push_back(hook);
 
 	if (_hookIndexMapByType.find(hook._type) == _hookIndexMapByType.end()) {

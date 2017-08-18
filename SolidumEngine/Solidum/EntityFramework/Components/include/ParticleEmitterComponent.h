@@ -2,9 +2,6 @@
 
 #include "../../../GraphicsRendering/Transform/include/Transform.h"
 
-#include "../../../EngineUtils/include/Vector2.h"
-#include "../../../EngineUtils/include/Vector3.h"
-
 #include "../../../GraphicsRendering/Particles/include/Particle.h"
 #include "../../../GraphicsRendering/Particles/include/ParticleStream.h"
 
@@ -30,7 +27,7 @@ struct RenderPassPacket_ParticleEmitterData {
 
 	IResource* _particleInstanceBuffer;
 
-	ParticleStream* _particleSteam;
+	std::list<ParticleBatch>* _particleSteam;
 	ParticleInstanceData* _particleDataCPUBuffer;
 
 	Matrix4f _translationMatrix;
@@ -51,11 +48,11 @@ private:
 
 	CameraComponent* _cam;
 
-	ParticleStream* _stream;
-
 	mesh* _particleQuad;
 
 	BLEND_STATE _blendState;
+
+	std::list<ParticleBatch> _particleBatchStore;
 
 	ResourceCreator& _resourceCreator;
 

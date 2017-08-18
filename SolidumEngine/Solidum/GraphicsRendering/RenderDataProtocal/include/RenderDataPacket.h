@@ -1,11 +1,10 @@
 #pragma once
-#include "../../../sysInclude.h"
+#include "../../../../SolidumAPI/core_objects/include/RenderDataAttribs.h"
+#include "../../../../SolidumAPI/core_objects/include/SlabCache.h"
 
-#include "../../../MemoryManagement/include/SlabCache.h"
+#include "../../../../SolidumAPI/core_interfaces/IRenderDataPacket.h"
 
-#include "RenderDataAttribs.h"
-
-class RenderDataPacket 
+class RenderDataPacket : public IRenderDataPacket
 {
 private:
 	SlabCache* _cache;

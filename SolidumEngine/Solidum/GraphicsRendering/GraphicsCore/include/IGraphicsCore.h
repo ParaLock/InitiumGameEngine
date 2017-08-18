@@ -10,7 +10,7 @@ class GraphicsCommandList;
 class World;
 class Renderer;
 class TaskTree;
-class RenderPassWrapper;
+class RenderPassPluginWrapper;
 class RenderDataGroup;
 
 
@@ -21,7 +21,7 @@ public:
 	~IGraphicsCore();
 
 	virtual void registerRenderer(Renderer* renderer) = 0;
-	virtual void registerRenderPass(std::shared_ptr<RenderPassWrapper> renderpass) = 0;
+	virtual void registerRenderPass(RenderPassPluginWrapper* renderpass) = 0;
 
 	virtual void beginRender(GraphicsCommandList* endscenePipeline, GraphicsCommandList* scenePipeline, RenderDataGroup* renderData) = 0;
 
@@ -35,7 +35,7 @@ public:
 
 	virtual TaskTree* getPrimaryTaskTree() = 0;
 
-	virtual std::shared_ptr<RenderPassWrapper> getRegisteredRenderPass(std::string name) = 0;
+	virtual RenderPassPluginWrapper* getRegisteredRenderPass(std::string name) = 0;
 
 	static IGraphicsCore* singletonInstance;
 	static IGraphicsCore* getInstance();

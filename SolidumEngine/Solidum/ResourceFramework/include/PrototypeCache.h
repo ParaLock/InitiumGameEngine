@@ -10,5 +10,5 @@ public:
 	void addPrototype(std::string& typeName, std::function<IResource*()> creationfunc);
 	void removePrototype(std::string& typeName);
 	
-	std::function<IResource*()> getPrototype(std::string& typeName);
+	std::function<IResource*()>& getPrototype(std::string& typeName);
 };
