@@ -1,1 +1,1 @@
-# **NOTE: Although project files and some code in this repo reference the "SolidumEngine", this project and the SolidumEngine project are NOT at all related.**
+# **NOTE: Although project files and some code in this repo reference the "SolidumEngine", this project and the SolidumEngine project are NOT at all related.** <- Originally they were going to be related, but "SolidumEngine" took on a life of its own and is not based in anyway on the Initium codebase.
