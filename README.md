@@ -1,3 +1,5 @@
-# NOTE: Although project files and some code in this repo reference the "SolidumEngine", this project and the SolidumEngine project are NOT related.
+## Overview
 
-**Originally Solidum was to be based on Initium, however Solidum took on a life of its own and is a completely different codebase.**
+Initium is a simple and flexible graphics engine designed to act as a sandbox for various experiements in the domain of GPU based computation. 
+
+###### Note: Engine was originally named Solidum hence the references to said name at various points in project and code files.
